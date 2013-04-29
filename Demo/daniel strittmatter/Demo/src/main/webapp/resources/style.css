@@ -1,0 +1,14 @@
+h1 {
+	padding: 5px;
+	margin-left: 150px;
+	margin-top: 50px;
+	margin-bottom: 40px;
+}
+
+#daterange {
+	background: #f5f5f5;
+	padding: 20px;
+	width: 500px;
+	border: 1px solid #e0e0e0;
+	margin-left: 150px;
+}
