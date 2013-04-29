@@ -13,8 +13,12 @@
             function () {
                 drawChart();
             });
-
-
+            function loadJson() {
+            $.ajax({
+            	  url: "test.html?json=true",
+            	  context: document.body
+            	})
+            }
             function drawChart() {
                 var options = {
                     title: 'Company Performance',
@@ -53,6 +57,7 @@
 					$('#dp2').datepicker();
 				});
 			</script>
+			 <button onclick="loadJson()">Click me</button>
     </body>
 
 </html>

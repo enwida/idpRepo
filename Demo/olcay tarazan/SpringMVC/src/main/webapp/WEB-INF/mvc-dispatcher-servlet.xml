@@ -16,6 +16,9 @@ class="org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostP
 
 	<bean name="/welcome.html" 
 		class="com.common.controller.HelloWorldController" />
+		
+	<bean name="/*.html" 
+		class="com.common.controller.HelloWorldController" />
 
 	<bean id="CustomerBean" class="com.common.Customer">
 		<property name="action" value="autowired" />
