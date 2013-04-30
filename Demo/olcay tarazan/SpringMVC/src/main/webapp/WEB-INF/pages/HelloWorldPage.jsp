@@ -13,23 +13,21 @@
             function () {
                 drawChart();
             });
+            
             function loadJson() {
-            $.ajax({
-            	  url: "test.html?json=true",
-            	  context: document.body
-            	})
+	            $.ajax({
+	            	  url: "request.json?json=true"
+	            	})
+	             drawChart();
             }
+            
             function drawChart() {
                 var options = {
                     title: 'Company Performance',
                     'width': 400,
                     'height': 300
                 };
-				var data = google.visualization.arrayToDataTable([
-                    ['Year', 'Sales', 'Expenses', 'Other', 'Other1', 'Other2', 'Other3'],
-                    ['2004', 1000, 400, 402, 403, 400, 410],
-                    ['2005', 1170, 460, 300, 420, 430, 400]
-                ]);
+				var data = google.visualization.arrayToDataTable(${gcd});
                 var view = new google.visualization.DataView(data);
                 var chart = new google.visualization.ColumnChart(document.getElementById('chart_div'));
                 chart.draw(view, options);
@@ -57,7 +55,7 @@
 					$('#dp2').datepicker();
 				});
 			</script>
-			 <button onclick="loadJson()">Click me</button>
+			 <button onclick="loadJson()">LoadJson</button>
     </body>
 
 </html>
