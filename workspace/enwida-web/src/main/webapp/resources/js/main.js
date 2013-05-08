@@ -5,7 +5,7 @@ require.config({
 require(["line_chart", "bar_chart", "carpet_chart"], 
   function(LineChart, BarChart, CarpetChart) {
 	
-  $.ajax("data.json", {
+  $.ajax("data.json?type=rl_ab1&pro=210&res=15min&t1=20101230&locale=en", {
 	  success: drawExample
   });
 
