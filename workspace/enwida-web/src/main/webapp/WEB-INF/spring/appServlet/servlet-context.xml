@@ -48,7 +48,7 @@
 	</beans:bean>	
 	
 	<beans:bean id="valic_db" class="de.enwida.rl.controller.ValidationControllerDb" init-method="init">	
-		<beans:property name="validationFile" value="/tmp/enwida_home/data/validation/validation_db.txt" />
+		<beans:property name="validationFile" value="${ENWIDA_HOME}/data/validation/validation_db.txt" />
 		<beans:property name="dataSource" ref="dataSource" />
 	</beans:bean>
 	
@@ -63,7 +63,7 @@
 		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<beans:property name="locations">
 			<beans:list>
-				<beans:value>file:/tmp/enwida_home/conf/enwida.config</beans:value>
+				<beans:value>file:${ENWIDA_HOME}/conf/enwida.config</beans:value>
 			</beans:list>
 		</beans:property>
 	</beans:bean>	

@@ -30,15 +30,9 @@ public class HomeController {
 	@Autowired
 	private DataRequestManager dataRequestManager;
 	
-//    ValidatorDataRequest dataValidator;
-    
-	/**
-	 * Simply selects the home view to render by returning its name.
-	 */
-	@RequestMapping(value = "/", method = RequestMethod.GET)
+	@RequestMapping(value = "/data.json", method = RequestMethod.GET)
 	@ResponseBody
-	public GoogleChartData home(HttpServletRequest request) {
-		
+	public GoogleChartData exampleData(HttpServletRequest request) {
 		// Example from enwida homepage: Balancing Power -> Abruf -> Activition of control reserve
 		// https://enwida.de/data.json?type=rl_ab1&pro=210&res=15min&t1=20101230&locale=en
 		
@@ -80,6 +74,11 @@ public class HomeController {
 		// Fetch and display chart data in JSON representation
 		final GoogleChartData chartData = dataRequestManager.getData(dr);
 		return chartData;
+	}
+	
+	@RequestMapping(value = "/", method = RequestMethod.GET)
+	public String home(HttpServletRequest request) {
+		return "home";
 	}
 	
 }
