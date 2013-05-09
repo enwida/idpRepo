@@ -46,4 +46,4 @@
 ## Transport Layer
 
 ### UML Draft
-<img src="img/transport_model.jpg" width="  800px" />
+<img src="img/transport_model.jpg" width="700px" />
