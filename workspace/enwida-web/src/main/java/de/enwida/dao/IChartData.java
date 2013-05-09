@@ -7,6 +7,6 @@ package de.enwida.dao;
  * @author Jitin
  *
  */
-public interface IChartData {
-
+public interface IChartData<T> {
+	T getData();
 }
