@@ -1,6 +1,6 @@
 # Download
 
-After Users decide to download a chart, they went to download page by clicking download icon. In download page, they can modify data and create csv file. 
+After Users decide to download a chart, they go to download page by clicking download icon. In download page, they can modify the data and create csv files. 
 
 ##- Questions
 Why users are not allowed to download charts directly?
