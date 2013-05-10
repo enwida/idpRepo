@@ -1,0 +1,18 @@
+# Download
+
+After Users decide to download a chart, they went to download page by clicking download icon. In download page, they can modify data and create csv file. 
+
+##- Questions
+Why users are not allowed to download charts directly?
+
+
+#Upload
+Users can upload cvs formatted files to the webpage. This data is parsed and saved into database and displayed on a chart
+
+##- Questions
+
+#User Management
+Users can register themselves to the webpage and data is stored into database. Next time, users are indentified using browser cookies.
+
+##- Questions
+
