@@ -12,5 +12,6 @@
 	Hello Charts!
 </h1>
 <div id="chart"></div>
+<a id="login" href="login">login</a>
 </body>
 </html>
