@@ -141,5 +141,14 @@ public class HomeController {
 		return mav;	
 
 	}
-
+	@RequestMapping(value = "/register", method = RequestMethod.GET)
+	public String register(HttpServletRequest request) {
+		//download page
+		return "register";
+	}
+	@RequestMapping(value = "/login", method = RequestMethod.GET)
+	public String login(HttpServletRequest request) {
+		//download page
+		return "login";
+	}
 }
