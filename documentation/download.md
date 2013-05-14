@@ -10,29 +10,3 @@ Why users are not allowed to download charts directly?
 Users can upload cvs formatted files to the webpage. This data is parsed and saved into database and displayed on a chart
 
 ##- Questions
-
-#User Management
-Users can register themselves to the webpage and data is stored into database. Next time, users are indentified using browser cookies.
-
-###DataBase Fields
-
-####User table
--	Username 
--	Name-LastName
--	Password
--	Roles
-
-####Custom Charts
--	Chartdata
--	Charttype
-
-####Roles
--	Roles
-
-####User Rights
--	Time
--	Product
--	Resolution
-
-##- Questions
-Any other fields which we need to store?
