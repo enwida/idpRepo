@@ -1,10 +1,10 @@
 package de.enwida.transport;
 
-public class MetaData {
+public class ChartMetaData {
 	
 	private String chartTitle;
 
-	public MetaData(String chartTitle) {
+	public ChartMetaData(String chartTitle) {
 		this.chartTitle = chartTitle;
 	}
 
