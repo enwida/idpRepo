@@ -1,5 +1,6 @@
 package de.enwida.web;
 
+import java.security.Principal;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -13,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -87,6 +89,12 @@ public class HomeController {
 	
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public String home(HttpServletRequest request) {
+		
+
+		//log it via log4j
+				if(logger.isDebugEnabled()){
+					logger.debug("home");
+				}
 		return "home";
 	}
 	
@@ -146,9 +154,45 @@ public class HomeController {
 		//download page
 		return "register";
 	}
-	@RequestMapping(value = "/login", method = RequestMethod.GET)
-	public String login(HttpServletRequest request) {
-		//download page
+	
+	@RequestMapping(value="/welcome", method = RequestMethod.GET)
+	public String printWelcome(ModelMap model, Principal principal ) {
+		String name="unknown";
+		if(principal!=null){
+		name = principal.getName();
+		}
+		model.addAttribute("username", name);
+		model.addAttribute("message", "Spring Security Custom Form example");
+		return "home";
+ 
+	}
+ 
+	@RequestMapping(value="/login", method = RequestMethod.GET)
+	public String login(ModelMap model) {
+ 
 		return "login";
+ 
+	}
+	
+	@RequestMapping(value="/404", method = RequestMethod.GET)
+	public String error404(ModelMap model) {
+ 
+		return "404";
+ 
+	}
+ 
+	@RequestMapping(value="/loginfailed", method = RequestMethod.GET)
+	public String loginerror(ModelMap model) {
+ 
+		model.addAttribute("error", "true");
+		return "login";
+ 
+	}
+ 
+	@RequestMapping(value="/logout", method = RequestMethod.GET)
+	public String logout(ModelMap model) {
+ 
+		return "logout";
+ 
 	}
 }

@@ -6,22 +6,29 @@
                     http://www.springframework.org/schema/security 
                     http://www.springframework.org/schema/security/spring-security-3.1.xsd">
   
-  <authentication-manager>
-        <authentication-provider>
-            <user-service>
-                <user name="Olcay Tarazan" password="123456" authorities="admin,export,testuser" />
-
-            </user-service>
-        </authentication-provider>        
-    </authentication-manager>
+<authentication-manager>
+	   <authentication-provider>
+		<jdbc-user-service data-source-ref="dataSource"
+ 
+		   users-by-username-query="
+		      select username,password, enabled 
+		      from users where username=?" 
+ 
+		   authorities-by-username-query="
+		      select u.username, ur.authority from users u, user_roles ur 
+		      where u.userID = ur.userID and u.username =?  " 
+ 
+		/>
+	   </authentication-provider>
+	</authentication-manager>
 
     <http use-expressions="true">
+ 		<intercept-url pattern="/download" access="hasRole('ROLE USER')"/>
  		<intercept-url pattern="/login.html" access="permitAll" />
- 		<intercept-url pattern="/download" access="hasRole('user')"/>
  		
  		
 	    <intercept-url pattern="/" access="permitAll" />
-	    <form-login  login-page="/login.html" authentication-failure-url="/login.html"/>        
+	    <form-login  login-page="/login.html" default-target-url="/welcome" authentication-failure-url="/loginfailed"/>        
 	    <logout logout-url="/logout.html" logout-success-url="/" />
 	    <access-denied-handler error-page="/403.html"/>
     </http>
