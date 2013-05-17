@@ -25,6 +25,7 @@
     <http use-expressions="true">
  		<intercept-url pattern="/download" access="hasRole('ROLE USER')"/>
  		<intercept-url pattern="/login.html" access="permitAll" />
+ 		<intercept-url pattern="/hello.html" access="permitAll" />
  		
  		
 	    <intercept-url pattern="/" access="permitAll" />
