@@ -27,7 +27,12 @@ public class UserController {
 		User u = userService.getUser(new Long(0));
 		model.addAttribute("user", u);
 		
-		return "dashboard";
+		return "user";
 	}
-
+	
+	@RequestMapping(value = "/", method = RequestMethod.GET)
+	public String home(Locale locale) {
+	
+		return "logout";
+	}
 }

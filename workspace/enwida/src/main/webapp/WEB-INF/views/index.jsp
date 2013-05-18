@@ -11,6 +11,6 @@
 <span style="float: right">
     <a href="?lang=en">en</a> | <a href="?lang=de">de</a>
 </span>
-
+  <a href="dashboard">dashboard</a>
 </body>
 </html>
