@@ -1,38 +1,25 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ page session="false" %>
-
-
-<html>
-    <head>
-
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<%@ page session="true" %>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<title>Hello World with Spring 3 MVC</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=windows-1251">
 	</head>
 	<body>
-	<form name="f" action="<c:url value='register'/>"
-				method="POST">
-				<table>
-					<tr>
-						<td>Username:</td>
-						<td><input type='text' name='j_username'
-							value='<c:if test="${not empty param.login_error}"><c:out value="${SPRING_SECURITY_LAST_USERNAME}"/></c:if>' /></td>
-					</tr>
-					<tr>
-						<td>Password:</td>
-						<td><input type='password' name='j_password'></td>
-					</tr>
-					<tr>
-						<td>Name:</td>
-						<td><input type='text' name='j_name'></td>
-					</tr>
-										<tr>
-						<td>Last Name:</td>
-						<td><input type='text' name='j_lastname'></td>
-					</tr>
-					<tr>
-						<td colspan='2'><input name="submit" type="submit"
-							value="Register"></td>
-					</tr>
-				</table>
-
-		</form>
-    </body>	
+		<h1>Registration Form</h1><br />
+		<form:form commandName="USER">
+		<table>
+			<tr><td colspan="2"><form:errors path="*" cssStyle="color : red;"/></td></tr>
+			<tr><td>Name : </td><td><form:input path="name" /></td></tr>
+			<tr><td>Standard : </td><td><form:input path="standard" /></td></tr>
+			<tr><td>Age : </td><td><form:input path="age" /></td></tr>
+			<tr><td>Sex : </td><td><form:select path="sex">
+					<form:option value="Male"/>
+					<form:option value="Female"/>
+			</form:select></td></tr>
+			<tr><td colspan="2"><input type="submit" value="Save Changes" /></td></tr>
+		</table>
+		</form:form>
+	</body>
 </html>

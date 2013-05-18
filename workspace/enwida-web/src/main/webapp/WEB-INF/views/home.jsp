@@ -9,7 +9,7 @@
 </head>
 <body>
 <h1>
-	Hello Charts!
+	<h1>Hello : ${username}</h1>	
 </h1>
 <div id="chart"></div>
 <a id="login" href="login">login</a>
