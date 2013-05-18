@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import de.enwida.dao.User;
+import de.enwida.dao.UserDAO;
 /**
  * Handles requests for the application registration pages.
  */
@@ -71,6 +72,8 @@ public class UserManagement {
             return "registration";
         }else{
             System.out.println("User values is : " + user);
+            UserDAO userDao=new UserDAO();
+            userDao.SaveToDB(user);
             return "hello";
         }
     }
