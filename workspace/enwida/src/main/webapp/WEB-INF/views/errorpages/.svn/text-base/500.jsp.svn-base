@@ -1,0 +1,56 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Internal Server Error</title>
+<script type="text/javascript" src="<c:url value="/resources/js/jquery-ui/jquery-1.6.2.min.js" />"></script>
+<link href="<c:url value="/resources/css/base.css" />" rel="stylesheet" type="text/css" />
+<link href="<c:url value="/resources/css/styles.css" />" rel="stylesheet" type="text/css" />
+</head>
+<body>
+	<div id="wrapper" style="height:100%;">
+		<div id="mainBodyDiv" style="background: none;">
+			<%-- <%@ include file="../includes/header.jsp"%> --%>
+			<div id="topHeaderDiv">
+			
+			<spring:url var = "home" value='/' />
+			<div style="width: 1000px; margin: 0 auto; padding-top:10px;padding-bottom:6px; position: relative; margin-bottom: 10px;">
+				<div style="float: left; padding-left: 0px;">
+					<a href="${home}"><img src="<c:url value="/resources/images/logo.png"/>" /></a>
+					<c:if test='${serviceType=="ACTIVITY"}'>
+						<img style="vertical-align: top; margin-top: 12px" src="<c:url value="/resources/images/activity-logo.png"/>" />
+					</c:if>
+					<c:if test='${serviceType=="HOMESWAP"}'>
+						<img style="vertical-align: top; margin-top: 12px" src="<c:url value="/resources/images/swap-logo.png"/>" />
+					</c:if>
+					<c:if test='${serviceType=="SUBLET"}'>
+						<img style="vertical-align: top; margin-top: 12px" src="<c:url value="/resources/images/sublets-logo.png"/>" />
+					</c:if>
+				</div>
+				
+				<div style="clear: both;"></div>
+							
+			</div>
+			</div>
+			
+			
+			<div  style="padding: 15px;-moz-border-radius: 10px;-webkit-border-radius: 10px;">
+				<div style="width:600px; margin: 0 auto; padding:30px 0 ">
+					<div style="width:94px;  float:left; padding-top:15px;"><img src="<c:url value="/resources/images/error-icon.png"/> " /></div>
+					<div  style=" padding-top:20px;">
+					<span style="font-size: 30px;  color:#333 ;" >Internal Server Error</span>
+					<br />
+					<span style="font-size: 15px; line-height: 1.4em">Sorry, it appears there has been an internal server error with the page you've.  The site administrator has been notified.</span>
+					</div>
+					<%-- <div  style="width:150px;  float:left"><img src="<c:url value="/resources/images/error500-icon.png"/> " /></div> --%>
+					<div style="clear:both"></div>
+				</div>
+			</div>	
+		</div>
+		<%@ include file="../includes/footer.jsp" %>			
+	</div>
+	
+</body>
+</html>
