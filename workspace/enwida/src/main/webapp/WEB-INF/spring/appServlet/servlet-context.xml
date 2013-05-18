@@ -45,21 +45,6 @@
 	</beans:bean>
 	
 	<context:property-placeholder location="/WEB-INF/configProperties/enwida.jdbc.config" />
-
-	<beans:bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-		<beans:property name="driverClassName">
-			<beans:value>${db.driver}</beans:value>
-		</beans:property>
-		<beans:property name="url">
-			<beans:value>${db1.url}</beans:value>
-		</beans:property>
-		<beans:property name="username">
-			<beans:value>${db.user}</beans:value>
-		</beans:property>
-		<beans:property name="password">
-			<beans:value>${db.pw}</beans:value>
-		</beans:property>
-	</beans:bean>
 	
 	<beans:bean id="dataRequestManager" class="de.enwida.chart.DataRequestManager">	
 		<beans:property name="messageSource" ref="messageSource" />

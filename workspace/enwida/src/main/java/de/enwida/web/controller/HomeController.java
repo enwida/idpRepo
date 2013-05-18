@@ -42,8 +42,8 @@ public class HomeController {
 	}
 	
 	@RequestMapping(value="/dashboard", method = RequestMethod.GET)
-	public String printWelcome(ModelMap model, Principal principal ) {
-		String name="unknown";
+	public String dashboard(ModelMap model, Principal principal ) {
+		String name="anonymous";
 		if(principal!=null){
 		name = principal.getName();
 		}
@@ -56,13 +56,6 @@ public class HomeController {
 	public String login(ModelMap model) {
  
 		return "login";
- 
-	}
-	
-	@RequestMapping(value="/404", method = RequestMethod.GET)
-	public String error404(ModelMap model) {
- 
-		return "404";
  
 	}
  
