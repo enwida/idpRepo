@@ -1,21 +1,39 @@
 package de.enwida.transport;
 
-import java.util.Calendar;
+import java.util.Arrays;
+import java.util.List;
 
 public class XYDataLine extends DataLine<XYDataPoint> {
 	
-	public XYDataLine(String title, Product product, Calendar startTime,
-			Calendar endTime, DataResolution resolution, boolean hasDataAxis) {
-		
-		super(title, product, startTime, endTime, resolution, hasDataAxis);
-	}
+	private String xTitle;
+	private String yTitle;
 	
-	public XYDataLine(DataRequest request, String title, boolean hasDataAxis) {
-		super(request, title, hasDataAxis);
+	public XYDataLine(DataRequest request, boolean hasDateAxis) {
+		super(request, hasDateAxis);
 	}
 	
 	public void addDataPoint(double x, double y) {
 		addDataPoint(new XYDataPoint(x, y));
 	}
 
+	public String getxTitle() {
+		return xTitle;
+	}
+
+	public void setxTitle(String xTitle) {
+		this.xTitle = xTitle;
+	}
+
+	public String getyTitle() {
+		return yTitle;
+	}
+
+	public void setyTitle(String yTitle) {
+		this.yTitle = yTitle;
+	}
+
+	public List<String> getTitles() {
+		return Arrays.asList(new String[] { xTitle, yTitle });
+	}
+	
 }

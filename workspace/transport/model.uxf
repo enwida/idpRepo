@@ -4,114 +4,17 @@
   <element>
     <type>com.umlet.element.Class</type>
     <coordinates>
-      <x>610</x>
-      <y>70</y>
-      <w>200</w>
-      <h>70</h>
-    </coordinates>
-    <panel_attributes>MetaData
---
-- chartTitle: String
-- ...</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
-    <type>com.umlet.element.Relation</type>
-    <coordinates>
-      <x>390</x>
-      <y>140</y>
-      <w>130</w>
-      <h>130</h>
-    </coordinates>
-    <panel_attributes>lt=&lt;-
-m1=*
-m2=1</panel_attributes>
-    <additional_attributes>110;110;30;30</additional_attributes>
-  </element>
-  <element>
-    <type>com.umlet.element.Class</type>
-    <coordinates>
-      <x>250</x>
-      <y>480</y>
-      <w>210</w>
-      <h>30</h>
-    </coordinates>
-    <panel_attributes>XYDataLine
-</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
-    <type>com.umlet.element.Relation</type>
-    <coordinates>
-      <x>470</x>
-      <y>390</y>
-      <w>150</w>
+      <x>450</x>
+      <y>580</y>
+      <w>240</w>
       <h>110</h>
     </coordinates>
-    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
-    <additional_attributes>30;30;130;90</additional_attributes>
-  </element>
-  <element>
-    <type>com.umlet.element.Class</type>
-    <coordinates>
-      <x>510</x>
-      <y>480</y>
-      <w>230</w>
-      <h>30</h>
-    </coordinates>
-    <panel_attributes>MinMaxDataLine</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
-    <type>com.umlet.element.Relation</type>
-    <coordinates>
-      <x>540</x>
-      <y>480</y>
-      <w>110</w>
-      <h>120</h>
-    </coordinates>
-    <panel_attributes>lt=&lt;-
-m1=*
-m2=1</panel_attributes>
-    <additional_attributes>30;100;90;30</additional_attributes>
-  </element>
-  <element>
-    <type>com.umlet.element.Class</type>
-    <coordinates>
-      <x>330</x>
-      <y>40</y>
-      <w>190</w>
-      <h>130</h>
-    </coordinates>
-    <panel_attributes>DataResponse
+    <panel_attributes>MinMaxDataPoint
 --
-- error: Exception
---
-+ throwError()
-+ getMetaData()
-+ getAllDataLines()
-+ getDataLine(product)</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
-    <type>com.umlet.element.Class</type>
-    <coordinates>
-      <x>390</x>
-      <y>250</y>
-      <w>210</w>
-      <h>170</h>
-    </coordinates>
-    <panel_attributes>DataLine&lt;T&gt;
-&lt;&lt;abstract&gt;&gt;
---
-- title: String
-- product: enum
-- startTime: Calendar
-- endTime: Calendar
-- resolution: enum
-- hasDateAxis: boolean
---
-+getDataPoints()</panel_attributes>
+- x: double
+- mean: double
+- min: double
+- max: double</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
@@ -134,6 +37,55 @@ m2=1</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>330</x>
+      <y>410</y>
+      <w>160</w>
+      <h>90</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>140;30;30;70</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>490</x>
+      <y>40</y>
+      <w>140</w>
+      <h>80</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+m1=1
+m2=1</panel_attributes>
+    <additional_attributes>120;60;30;30</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>610</x>
+      <y>70</y>
+      <w>200</w>
+      <h>70</h>
+    </coordinates>
+    <panel_attributes>MetaData
+--
+- chartTitle: String
+- ...</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>510</x>
+      <y>480</y>
+      <w>230</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>MinMaxDataLine</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
     <type>com.umlet.element.Class</type>
     <coordinates>
       <x>270</x>
@@ -145,6 +97,72 @@ m2=1</panel_attributes>
 --
 - x: double
 - y: double</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>540</x>
+      <y>480</y>
+      <w>110</w>
+      <h>120</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+m1=*
+m2=1</panel_attributes>
+    <additional_attributes>30;100;90;30</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>320</x>
+      <y>480</y>
+      <w>80</w>
+      <h>120</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;-
+m1=*
+m2=1</panel_attributes>
+    <additional_attributes>60;100;30;30</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>250</x>
+      <y>480</y>
+      <w>210</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>XYDataLine
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>470</x>
+      <y>410</y>
+      <w>150</w>
+      <h>90</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
+    <additional_attributes>30;30;130;70</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>330</x>
+      <y>40</y>
+      <w>190</w>
+      <h>110</h>
+    </coordinates>
+    <panel_attributes>DataResponse
+--
+- error: Exception
+--
++ throwError()
++ getMetaData()
++ getAllDataLines()</panel_attributes>
     <additional_attributes/>
   </element>
   <element>
@@ -163,54 +181,36 @@ m2=1</panel_attributes>
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>330</x>
-      <y>390</y>
-      <w>160</w>
-      <h>110</h>
-    </coordinates>
-    <panel_attributes>lt=&lt;&lt;-</panel_attributes>
-    <additional_attributes>140;30;30;90</additional_attributes>
-  </element>
-  <element>
-    <type>com.umlet.element.Relation</type>
-    <coordinates>
-      <x>320</x>
-      <y>480</y>
-      <w>80</w>
-      <h>120</h>
+      <x>390</x>
+      <y>120</y>
+      <w>130</w>
+      <h>150</h>
     </coordinates>
     <panel_attributes>lt=&lt;-
 m1=*
 m2=1</panel_attributes>
-    <additional_attributes>60;100;30;30</additional_attributes>
+    <additional_attributes>110;130;30;30</additional_attributes>
   </element>
   <element>
     <type>com.umlet.element.Class</type>
     <coordinates>
-      <x>450</x>
-      <y>580</y>
-      <w>240</w>
-      <h>110</h>
+      <x>390</x>
+      <y>250</y>
+      <w>210</w>
+      <h>190</h>
     </coordinates>
-    <panel_attributes>MinMaxDataPoint
+    <panel_attributes>DataLine&lt;T&gt;
+&lt;&lt;abstract&gt;&gt;
 --
-- x: double
-- mean: double
-- min: double
-- max: double</panel_attributes>
+- chartType: enum
+- title: String
+- product: int
+- startTime: Calendar
+- endTime: Calendar
+- resolution: enum
+- hasDateAxis: boolean
+--
++getDataPoints()</panel_attributes>
     <additional_attributes/>
-  </element>
-  <element>
-    <type>com.umlet.element.Relation</type>
-    <coordinates>
-      <x>490</x>
-      <y>40</y>
-      <w>140</w>
-      <h>80</h>
-    </coordinates>
-    <panel_attributes>lt=&lt;-
-m1=1
-m2=1</panel_attributes>
-    <additional_attributes>120;60;30;30</additional_attributes>
   </element>
 </diagram>

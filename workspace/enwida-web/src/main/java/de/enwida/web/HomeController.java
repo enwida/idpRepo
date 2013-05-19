@@ -87,6 +87,12 @@ public class HomeController {
 	
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public String home(HttpServletRequest request) {
+		
+
+		//log it via log4j
+				if(logger.isDebugEnabled()){
+					logger.debug("home");
+				}
 		return "home";
 	}
 	
@@ -141,14 +147,5 @@ public class HomeController {
 		return mav;	
 
 	}
-	@RequestMapping(value = "/register", method = RequestMethod.GET)
-	public String register(HttpServletRequest request) {
-		//download page
-		return "register";
-	}
-	@RequestMapping(value = "/login", method = RequestMethod.GET)
-	public String login(HttpServletRequest request) {
-		//download page
-		return "login";
-	}
+	
 }

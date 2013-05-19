@@ -1,23 +1,27 @@
 package de.enwida.transport;
 
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.Arrays;
 import java.util.List;
 
 public class DataResponse {
 
 	private Exception error;
-	private MetaData metaData;
+	private ChartMetaData metaData;
 	private List<IDataLine> dataLines;
 	
 	public DataResponse(Exception error) {
 		this.error = error;
 	}
 	
-	public DataResponse(MetaData metaData) {
+	public DataResponse(ChartMetaData metaData, List<? extends IDataLine> lines) {
 		this.error = null;;
 		this.metaData = metaData;
-		this.dataLines = new ArrayList<IDataLine>();
+		this.dataLines = new ArrayList<IDataLine>(lines);
+	}
+	
+	public DataResponse(ChartMetaData metaData, IDataLine line) {
+		this(metaData, Arrays.asList(new IDataLine[] { line }));
 	}
 	
 	public void throwError() throws Exception {
@@ -26,24 +30,12 @@ public class DataResponse {
 		}
 	}
 	
-	public MetaData getMetaData() {
+	public ChartMetaData getMetaData() {
 		return metaData;
 	}
 	
 	public List<IDataLine> getAllDataLines() { 
 		return dataLines;
-	}
-	
-	public IDataLine getDataLine(Product product) {
-		final Iterator<IDataLine> iter = dataLines.iterator();
-		
-		while (iter.hasNext()) {
-			final IDataLine dataLine = iter.next();
-			if (dataLine.getProduct().equals(product)) {
-				return dataLine;
-			}
-		}
-		return null;
 	}
 	
 	public void addDataLine(IDataLine dataLine) {

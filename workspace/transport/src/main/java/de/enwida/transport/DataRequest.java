@@ -5,16 +5,16 @@ import java.util.Locale;
 
 public class DataRequest {
 	
-	private Product product;
+	private ChartType chartType;
+	private int product;
 	private Calendar startTime;
 	private Calendar endTime;
 	private DataResolution resolution;
 	private Locale locale;
 	
-	
-	
-	public DataRequest(Product product, Calendar startTime, Calendar endTime,
-			DataResolution resolution, Locale locale) {
+	public DataRequest(ChartType chartType, int product, Calendar startTime,
+					   Calendar endTime, DataResolution resolution, Locale locale) {
+		this.chartType = chartType;
 		this.product = product;
 		this.startTime = startTime;
 		this.endTime = endTime;
@@ -22,10 +22,16 @@ public class DataRequest {
 		this.locale = locale;
 	}
 	
-	public Product getProduct() {
+	public ChartType getChartType() {
+		return chartType;
+	}
+	public void setChartType(ChartType chartType) {
+		this.chartType = chartType;
+	}
+	public int getProduct() {
 		return product;
 	}
-	public void setProduct(Product product) {
+	public void setProduct(int product) {
 		this.product = product;
 	}
 	public Calendar getStartTime() {

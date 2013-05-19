@@ -1,11 +1,12 @@
 package de.enwida.transport;
 
 import java.util.Calendar;
+import java.util.List;
 
 public interface IDataLine {
 	
-	public String getTitle();
-	public Product getProduct();
+	public List<String> getTitles();
+	public int getProduct();
 	public Calendar getStartTime();
 	public Calendar getEndTime();
 	public DataResolution getResolution();
