@@ -6,9 +6,19 @@
 	<!-- Root Context: defines shared resources visible to all other web components -->
 	
 	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-		<property name="driverClassName" value="org.postgresql.Driver" />
-		<property name="url" value="jdbc:postgresql://localhost:5432/enwida" />
-		<property name="username" value="enwida" />
-		<property name="password" value="adi1new" />
+		<property name="driverClassName" value="${db.driver}" />
+		<property name="url" value="${db1.url}" />
+		<property name="username" value="${db.user}" />
+		<property name="password" value="${db.pw}" />
 	</bean>
+	
+	<bean id="propertyConfigurer"
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>file:${ENWIDA_HOME}/conf/enwida.config</value>
+			</list>
+		</property>
+	</bean>	
+	
 </beans>
