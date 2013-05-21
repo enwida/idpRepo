@@ -162,4 +162,44 @@ public class HomeController {
 		return mav;	
 
 	}
+	
+	@RequestMapping(value="/login", method = RequestMethod.GET)
+	public String login(ModelMap model) {
+ 
+		return "login";
+ 
+	}
+ 
+	@RequestMapping(value="/loginfailed", method = RequestMethod.GET)
+	public String loginerror(ModelMap model) {
+ 
+		model.addAttribute("error", "true");
+		return "login";
+ 
+	}
+ 
+	@RequestMapping(value="/logout", method = RequestMethod.GET)
+	public String logout(ModelMap model) {
+ 
+		return "logout";
+ 
+	}
+		
+	@RequestMapping(value="/register",method=RequestMethod.GET)
+    public String showForm(ModelMap model){
+        User user = new User();
+        model.addAttribute("USER", user);
+        return "register";
+    }
+	
+
+    @RequestMapping(value="/register",method=RequestMethod.POST)
+    public String processForm(@ModelAttribute(value="USER") User user,BindingResult result){
+        if(result.hasErrors()){
+            return "registration";
+        }else{
+            System.out.println("User values is : " + user);
+            return "hello";
+        }
+    }
 }

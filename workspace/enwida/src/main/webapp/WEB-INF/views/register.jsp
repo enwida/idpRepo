@@ -11,8 +11,8 @@
 		<form:form commandName="USER">
 		<table>
 			<tr><td colspan="2"><form:errors path="*" cssStyle="color : red;"/></td></tr>
-			<tr><td>Name : </td><td><form:input path="firstName" /></td></tr>
-			<tr><td>Lastname : </td><td><form:input path="lastName" /></td></tr>
+			<tr><td>Username : </td><td><form:input path="firstName" /></td></tr>
+			<tr><td>Password : </td><td><form:input path="lastName" /></td></tr>
 			
 			<tr><td colspan="2"><input type="submit" value="Save Changes" /></td></tr>
 		</table>

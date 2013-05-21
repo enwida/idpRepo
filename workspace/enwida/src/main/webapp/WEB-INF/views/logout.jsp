@@ -1,7 +1,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <html>
 <body>
-	<h3>You are logged out</h3>	
+	<h3>You are about the logout</h3>	
 	<a href="<c:url value="j_spring_security_logout" />" > Logout</a>
 </body>
 </html>

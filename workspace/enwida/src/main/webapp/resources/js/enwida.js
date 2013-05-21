@@ -87,7 +87,7 @@ function chgRange(chart,id){
 
 function downloadCsv(chart){
 	var instance="#"+chart+"_datepicker";
-   	var url= "export?"+
+   	var url= "../export?"+
    		   "type="+chart+"&pro=210&res=15min&locale=en"+
    		   "&t1="+$(instance).datepicker('getDate').format('yyyyMMdd');
 
