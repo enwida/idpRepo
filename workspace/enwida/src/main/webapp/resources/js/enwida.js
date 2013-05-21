@@ -10,7 +10,8 @@ function setupPage(chart){
 	//All event bindings can be done here
 	$(function() {
 		var instance ="#"+chart+"_datepicker";
-		$('#downloadLink').click(function(){ downloadCsv(chart); return false; });
+		
+//		$('#downloadLink').click(function(){ downloadCsv(chart); return false; });
 	    
 		$(instance).datepicker({
 	        changeMonth: true,
@@ -36,7 +37,7 @@ function drawChart(data,options) {
 
 function load(chart){
    	$.ajax({
-     	  url: "init.json",
+     	  url: "../init.json",
      	  success: function(options){
      		 loadChartData(chart,options);
      	  }
@@ -46,7 +47,7 @@ function load(chart){
 function loadChartData(chart,options){
 	var instance ="#"+chart+"_datepicker";
 	$.ajax({
-     	  url: "data.json?"+
+     	  url: "../data.json?"+
      		   "type=rl_ab1&pro=210&res=15min&locale=en"+
      		   "&t1="+$(instance).datepicker('getDate').format('yyyyMMdd'),
      	  success: function(data){
@@ -87,7 +88,7 @@ function chgRange(chart,id){
 
 function downloadCsv(chart){
 	var instance="#"+chart+"_datepicker";
-   	var url= "export?"+
+   	var url= "../export?"+
    		   "type="+chart+"&pro=210&res=15min&locale=en"+
    		   "&t1="+$(instance).datepicker('getDate').format('yyyyMMdd');
 

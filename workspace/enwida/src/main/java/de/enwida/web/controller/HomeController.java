@@ -23,7 +23,7 @@ import org.springframework.web.servlet.ModelAndView;
 import de.enwida.chart.DataRequest;
 import de.enwida.chart.DataRequestManager;
 import de.enwida.chart.GoogleChartData;
-import de.enwida.web.model.ChartInitData;
+import de.enwida.web.model.ChartNavigationData;
 import de.enwida.web.model.User;
 import de.enwida.web.utils.JsonResponse;
 
@@ -80,9 +80,9 @@ public class HomeController {
 	
 	@RequestMapping(value = "/init.json", method = RequestMethod.GET)
 	@ResponseBody
-	public ChartInitData initData(HttpServletRequest request) {
+	public ChartNavigationData initData(HttpServletRequest request) {
 		//Chart settings object
-		ChartInitData cid=new ChartInitData();
+		ChartNavigationData cid=new ChartNavigationData();
 		cid.setWidth(400);
 		cid.setHeight(300);
 		cid.setTitle("Capacity");
@@ -108,65 +108,7 @@ public class HomeController {
 	    ret.addRow(new JsonResponse.Cell("Others"), new JsonResponse.Cell(10));
 		
 		return ret;
-	}
-	
-	@RequestMapping(value="/dashboard", method = RequestMethod.GET)
-	public String dashboard(ModelMap model, Principal principal ) {
-		String name="anonymous";
-		if(principal!=null){
-		name = principal.getName();
-		}
-		model.addAttribute("username", name);
-		return "dashboard";
- 
-	}
- 
-	@RequestMapping(value="/login", method = RequestMethod.GET)
-	public String login(ModelMap model) {
- 
-		return "login";
- 
-	}
- 
-	@RequestMapping(value="/loginfailed", method = RequestMethod.GET)
-	public String loginerror(ModelMap model) {
- 
-		model.addAttribute("error", "true");
-		return "login";
- 
-	}
- 
-	@RequestMapping(value="/logout", method = RequestMethod.GET)
-	public String logout(ModelMap model) {
- 
-		return "logout";
- 
-	}
-	
-	@RequestMapping(value="/download", method = RequestMethod.GET)
-	public String download(ModelMap model) {
- 
-		return "download";
- 
-	}
-	
-	@RequestMapping(value="/register",method=RequestMethod.GET)
-    public String showForm(ModelMap model){
-        User user = new User();
-        model.addAttribute("USER", user);
-        return "register";
-    }
-	
-
-    @RequestMapping(value="/register",method=RequestMethod.POST)
-    public String processForm(@ModelAttribute(value="USER") User user,BindingResult result){
-        if(result.hasErrors()){
-            return "registration";
-        }else{
-            System.out.println("User values is : " + user);
-            return "hello";
-        }
-    }
+	}	
     
 	@RequestMapping(value = "/export", method = RequestMethod.GET)
 	@ResponseBody		
@@ -208,7 +150,7 @@ public class HomeController {
 		map.put("block", "0");
 		map.put("from", "0");
 		map.put("to", "0");
-		map.put("content", dataRequestManager.csv_pc2(dr).toString());
+		map.put("content", dataRequestManager.csv_pc1(dr).toString());
 		ModelAndView mav=new  ModelAndView("csv", map);
 		return mav;	
 

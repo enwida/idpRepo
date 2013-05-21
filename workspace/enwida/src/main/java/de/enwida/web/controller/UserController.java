@@ -1,13 +1,25 @@
 package de.enwida.web.controller;
 
+import java.security.Principal;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
 
+import de.enwida.chart.GoogleChartData;
+import de.enwida.web.dao.implementation.UserDao;
 import de.enwida.web.model.User;
 import de.enwida.web.service.interfaces.UserService;
 
@@ -21,7 +33,13 @@ public class UserController {
 	@Autowired
 	private UserService userService;
 	
-	@RequestMapping(value="/dashboard", method = RequestMethod.GET)
+	@Autowired
+	private DriverManagerDataSource datasource;
+
+	@Autowired
+	UserDao userDao;
+	
+	@RequestMapping(value="/user", method = RequestMethod.GET)
 	public String displayDashboard(Model model, Locale locale) {
 		
 		User u = userService.getUser(new Long(0));
@@ -29,10 +47,90 @@ public class UserController {
 		
 		return "user";
 	}
-	
+
 	@RequestMapping(value = "/", method = RequestMethod.GET)
-	public String home(Locale locale) {
+	public String home(ModelMap model, Principal principal) {
+		String name,userStatus,userStatusURL;
+		
+		if(principal!=null){
+			name = principal.getName();
+			userStatus="logout";
+			userStatusURL="../j_spring_security_logout";
+		}else{
+			name="anonymous";
+			userStatusURL=userStatus="login";
+		}
+		model.addAttribute("username", name);
+		model.addAttribute("userStatus", userStatus);
+		model.addAttribute("userStatusURL", userStatusURL);
+		return "user/index";
+	}
 	
+	@RequestMapping(value="/login", method = RequestMethod.GET)
+	public String login(ModelMap model) {
+		return "user/login";
+	}
+	
+	@RequestMapping(value="/logout", method = RequestMethod.GET)
+	public String logout(ModelMap model) {
 		return "logout";
+	}
+	
+	
+	@RequestMapping(value="/download", method = RequestMethod.GET)
+	public String download(ModelMap model) {
+		return "user/download";
+	}
+	
+	@RequestMapping(value="/register",method=RequestMethod.GET)
+    public String showForm(ModelMap model){
+        User user = new User();
+        model.addAttribute("USER", user);
+        return "user/register";
+    }
+	
+	
+	@RequestMapping(value="/register",method=RequestMethod.POST)
+	public String processForm(@ModelAttribute(value="USER") User user,BindingResult result){
+	    if(result.hasErrors()){
+	        return "user/register";
+	    }else{
+	        System.out.println("User values is : " + user);
+	        return "user/register";
+	    }
+	}
+	
+	@RequestMapping(value="/admin", method = RequestMethod.GET)
+	public String manageUsers(ModelMap model) {
+		
+		List<User> users= userDao.findAll();
+		model.addAttribute("users", users);
+		return "user/admin";
+	}
+	
+	@RequestMapping(value="/updateRole", method = RequestMethod.GET)
+	public String updateRole(HttpServletRequest request) {
+		String state="";
+		String userID="";
+		String roleID="";
+		UserDao userDao=new UserDao();
+		Map pMap=request.getParameterMap();
+		if (pMap.containsKey("state")){
+			state=((String[]) pMap.get("state"))[0];
+		}
+		if (pMap.containsKey("userID")){
+			userID=((String[]) pMap.get("userID"))[0];
+		}
+		if (pMap.containsKey("roleID")){
+			roleID=((String[]) pMap.get("roleID"))[0];
+		}
+		
+		if (state=="true"){
+			userDao.addPermission(userID,roleID);
+		}
+		else{
+			userDao.removePermission(userID,roleID);
+		}
+		return "ok";
 	}
 }

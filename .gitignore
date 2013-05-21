@@ -1,0 +1,5 @@
+target
+.DS_Store
+.metadata
+workspace/Servers
+workspace/enwida/src/main/webapp/resources/js/chart/lib/*.js
