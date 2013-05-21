@@ -12,12 +12,7 @@
       var lineChart;
 
       $("#chart svg").remove();
-      console.log(JSON.stringify(data));
-      console.log(d3.legend);
       $("#chart h3").text(data.metaData.chartTitle);
-      $("#legend").text(data.allDataLines.map(function(dl) {
-        return dl.yTitle;
-      }));
       lineChart = LineChart.init({
         parent: "#chart",
         data: data,

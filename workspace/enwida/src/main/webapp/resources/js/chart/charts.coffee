@@ -8,10 +8,7 @@ require ["line_chart", "bar_chart", "carpet_chart"],
 
     drawData = (data) ->
       $("#chart svg").remove()
-      console.log JSON.stringify data
-      console.log d3.legend
       $("#chart h3").text data.metaData.chartTitle
-      $("#legend").text data.allDataLines.map (dl) -> dl.yTitle
       lineChart = LineChart.init(
         parent: "#chart"
         data: data
