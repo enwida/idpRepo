@@ -15,7 +15,7 @@ define ["generic_chart"], (generic_chart) ->
       @chart.svg.append("path")
         .datum(data)
         .attr("class", "line line#{id}")
-        .attr("data-legend", @chart.chartData.allDataLines[id].yTitle)
+        .attr("data-legend", @chart.lineLabels[id])
         .attr("d", line)
 
     drawDots: (data, id=0) ->

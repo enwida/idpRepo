@@ -17,6 +17,10 @@ define ["scale"], (scale) ->
 
       @options = $.extend default_options, options
       @chartData = options.data
+      @metaData = @chartData.metaData
+      @xLabel = @metaData.hAxisLabel ? @chartData.allDataLines[0].xTitle
+      @yLabel = @metaData.vAxisLabel ? @chartData.allDataLines[0].yTitle
+      @lineLabels = @chartData.allDataLines.map (line) -> line.yTitle
 
       # @data is an array of line data
       @data = @chartData.allDataLines.map (dataLine) -> dataLine.dataPoints
@@ -48,11 +52,21 @@ define ["scale"], (scale) ->
         .attr("class", "x axis")
         .attr("transform", "translate(0,#{@options.height})")
         .call(xAxis)
+        .append("text")
+          .attr("x", @options.width)
+          .attr("y", -5)
+          .attr("text-anchor", "end")
+          .text("#{@xLabel}")
 
     drawYAxis: (yAxis) ->
       @svg.append("g")
         .attr("class", "y axis")
         .call(yAxis)
+        .append("text")
+          .attr("transform", "rotate(-90)")
+          .attr("y", 12)
+          .attr("text-anchor", "end")
+          .text("#{@yLabel}")
 
     drawLegend: ->
       @legend = @svg.append("g")
