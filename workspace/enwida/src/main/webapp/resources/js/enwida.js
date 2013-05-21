@@ -36,7 +36,7 @@ function drawChart(data,options) {
 
 function load(chart){
    	$.ajax({
-     	  url: "init.json",
+     	  url: "../init.json",
      	  success: function(options){
      		 loadChartData(chart,options);
      	  }
@@ -46,7 +46,7 @@ function load(chart){
 function loadChartData(chart,options){
 	var instance ="#"+chart+"_datepicker";
 	$.ajax({
-     	  url: "data.json?"+
+     	  url: "../data.json?"+
      		   "type=rl_ab1&pro=210&res=15min&locale=en"+
      		   "&t1="+$(instance).datepicker('getDate').format('yyyyMMdd'),
      	  success: function(data){
