@@ -9,8 +9,19 @@
 }
 .line {
   fill: none;
-  stroke: steelblue;
   stroke-width: 1.5px;
+}
+.line0 {
+  stroke: steelblue;
+}
+.line1 {
+  stroke: red;
+}
+.dot0 {
+	fill: steelblue;
+}
+.dot1 {
+	fill: red;
 }
 .tooltip {
   display: none;
