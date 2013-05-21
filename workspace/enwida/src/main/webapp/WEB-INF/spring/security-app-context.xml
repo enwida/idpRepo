@@ -24,13 +24,12 @@
 
     <http use-expressions="true">
 <!--  		<intercept-url pattern="/dashboard" access="hasRole('ROLE USER')"/> -->
- 		<intercept-url pattern="/login.html" access="permitAll" />
- 		<intercept-url pattern="/hello.html" access="permitAll" />
+ 		<intercept-url pattern="/user/login.html" access="permitAll" />
  		
  		
 	    <intercept-url pattern="/" access="permitAll" />
-	    <form-login  login-page="/login.html" default-target-url="/dashboard" authentication-failure-url="/loginfailed"/>        
-	    <logout logout-url="/logout.html" logout-success-url="/" />
+	    <form-login  login-page="/user/login.html" default-target-url="/user/index" authentication-failure-url="/user/loginfailed"/>        
+	    <logout logout-url="/user/logout.html" logout-success-url="/" />
 	    <access-denied-handler error-page="/403.html"/>
     </http>
 </beans:beans>   
