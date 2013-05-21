@@ -54,6 +54,13 @@ define ["scale"], (scale) ->
         .attr("class", "y axis")
         .call(yAxis)
 
+    drawLegend: ->
+      @legend = @svg.append("g")
+        .attr("class","legend")
+        .attr("transform","translate(50,30)")
+        .attr("data-style-padding", 10)
+        .call(d3.legend)
+
     drawAxes: ->
       @drawXAxis @xAxis
       @drawYAxis @yAxis

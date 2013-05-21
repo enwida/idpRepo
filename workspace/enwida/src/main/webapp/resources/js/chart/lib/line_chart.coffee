@@ -10,29 +10,30 @@ define ["generic_chart"], (generic_chart) ->
         .x((d) => @chart.xScale(d.x))
         .y((d) => @chart.yScale(d.y))
 
-    drawLine: (data) ->
+    drawLine: (data, id=0) ->
       line = @generateLine()
       @chart.svg.append("path")
         .datum(data)
-        .attr("class", "line")
+        .attr("class", "line line#{id}")
+        .attr("data-legend", @chart.chartData.allDataLines[id].yTitle)
         .attr("d", line)
 
-    drawDots: (data) ->
+    drawDots: (data, id=0) ->
       @chart.svg.selectAll("dot")
         .data(data)
           .enter().append("circle")
-          .attr("class", "dot")
+          .attr("class", "dot dot#{id}")
           .attr("r", 4.5)
           .attr("cx", (d) => @chart.xScale(d.x))
           .attr("cy", (d) => @chart.yScale(d.y))
-          .attr("fill", "rgb(40, 100, 150)")
 
     draw: ->
       @chart.drawSvg()
       @chart.drawAxes()
-      for lineData in @chart.data
-        @drawLine lineData
-        @drawDots lineData
+      for lineData, i in @chart.data
+        @drawLine lineData, i
+        @drawDots lineData, i
+      @chart.drawLegend()
 
     redraw: ->
       @chart.svg = null
