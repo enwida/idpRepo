@@ -1,5 +1,6 @@
 ASSETS_DIR=assets
 ASSETS=$(ASSETS_DIR)/jquery-1.9.1.min.js \
+       $(ASSETS_DIR)/tipsy.js \
        $(ASSETS_DIR)/d3.v3.min.js \
        $(ASSETS_DIR)/d3-legend.js \
        $(ASSETS_DIR)/require.js

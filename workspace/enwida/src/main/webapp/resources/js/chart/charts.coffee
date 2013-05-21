@@ -17,6 +17,7 @@ require ["line_chart", "bar_chart", "carpet_chart"],
             type: "date"
       )
       lineChart.draw()
+      $("circle").tipsy(gravity: "s")
 
     drawUrl = (url) ->
       $.ajax url,

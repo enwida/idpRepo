@@ -3,6 +3,7 @@
 <html>
 <head>
 	<title>Enwida Home Page</title>
+	<link rel="stylesheet" href="/enwida/resources/css/tipsy.css" >
 	<link rel="stylesheet" href="/enwida/resources/css/chart.css" >
     <script src="/enwida/resources/js/chart/assets.js"></script>
     <script src="/enwida/resources/js/chart/charts.js"></script>
@@ -42,6 +43,7 @@
 	<h3>Common requests</h3>
 	<ul id="templates">
 		<li><a href="#chart">json?type=rl_ab1&product=210&startTime=2010-12-30&endTime=2010-12-31&resolution=HOURLY</a></li>
+		<li><a href="#chart">json?type=rl_ab1&product=211&startTime=2010-12-01&endTime=2010-12-31&resolution=DAILY</a></li>
 		<li><a href="#chart">json?type=rl_ab2&product=311&startTime=2010-12-20&endTime=2010-12-31&resolution=DAILY</a></li>
 		<li><a href="#chart">json?type=rl_abg1&product=314&startTime=2009-01-01&endTime=2010-01-01&resolution=WEEKLY</a></li>
 		<li><a href="#chart">json?type=rl_vol1&product=211&startTime=2008-01-01&endTime=2011-01-01&resolution=MONTHLY</a></li>

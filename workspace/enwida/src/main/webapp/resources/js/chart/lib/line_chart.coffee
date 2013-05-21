@@ -26,6 +26,12 @@ define ["generic_chart"], (generic_chart) ->
           .attr("r", 4.5)
           .attr("cx", (d) => @chart.xScale(d.x))
           .attr("cy", (d) => @chart.yScale(d.y))
+          .attr("original-title", (d) =>
+            x = d.x
+            if @chart.options?.scale?.x?.type is "date"
+              x = d3.time.format("%Y-%m-%d %H:%M") new Date x
+            "#{@chart.xLabel}: #{x} #{@chart.yLabel}: #{d.y}"
+          )
 
     draw: ->
       @chart.drawSvg()

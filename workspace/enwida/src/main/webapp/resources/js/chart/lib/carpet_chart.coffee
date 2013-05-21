@@ -25,7 +25,7 @@ define ["generic_chart"], (generic_chart) ->
     draw: ->
       @chart.drawSvg()
       @chart.drawAxes()
-      @drawCarpet data[0]
+      @drawCarpet @chart.data[0]
 
     redraw: ->
       @chart.svg = null

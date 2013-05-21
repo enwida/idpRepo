@@ -22,7 +22,10 @@
           }
         }
       });
-      return lineChart.draw();
+      lineChart.draw();
+      return $("circle").tipsy({
+        gravity: "s"
+      });
     };
     drawUrl = function(url) {
       return $.ajax(url, {
