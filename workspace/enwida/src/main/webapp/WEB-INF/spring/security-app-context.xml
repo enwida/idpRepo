@@ -29,7 +29,7 @@
 	    <intercept-url pattern="/user/login.htm" access="IS_AUTHENTICATED_ANONYMOUSLY" />
 	    
 	    <form-login  login-page="/user/login.html" default-target-url="/user/" authentication-failure-url="/user/loginfailed" />        
-	    <logout logout-url="/logout.html" logout-success-url="/" />
+	   <logout logout-success-url="/" logout-url="/j_spring_security_logout" />
 	    <access-denied-handler error-page="/403.html"/>
     </http>
 </beans:beans>   

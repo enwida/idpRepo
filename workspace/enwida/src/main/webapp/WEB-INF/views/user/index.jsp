@@ -14,7 +14,7 @@
 	</head>
 	<body>
 		<h1>Hello : ${username}</h1>
-		<a href="../${userStatus}">${userStatus}</a>
+		<a href="${userStatusURL}">${userStatus}</a>
         <div id="chart_div"></div>
         <input id="rl_ab1_datepicker"  onchange="load('rl_ab1')">
         <select id="rl_ab1_selProduct1"  onchange="load('rl_ab1')">

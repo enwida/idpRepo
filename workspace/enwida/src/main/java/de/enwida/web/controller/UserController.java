@@ -25,6 +25,9 @@ public class UserController {
 	@Autowired
 	private UserService userService;
 	
+	@Autowired
+	private UserService datasource;
+	
 	@RequestMapping(value="/user", method = RequestMethod.GET)
 	public String displayDashboard(Model model, Locale locale) {
 		
@@ -36,17 +39,52 @@ public class UserController {
 
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public String home(ModelMap model, Principal principal) {
-		String name,userStatus;
+		String name,userStatus,userStatusURL;
 		
 		if(principal!=null){
 			name = principal.getName();
 			userStatus="logout";
+			userStatusURL="../j_spring_security_logout";
 		}else{
 			name="anonymous";
-			userStatus="login";
+			userStatusURL=userStatus="login";
 		}
 		model.addAttribute("username", name);
 		model.addAttribute("userStatus", userStatus);
+		model.addAttribute("userStatusURL", userStatusURL);
 		return "user/index";
+	}
+	
+	@RequestMapping(value="/login", method = RequestMethod.GET)
+	public String login(ModelMap model) {
+		return "user/login";
+	}
+	
+	@RequestMapping(value="/logout", method = RequestMethod.GET)
+	public String logout(ModelMap model) {
+		return "logout";
+	}
+	
+	@RequestMapping(value="/register",method=RequestMethod.GET)
+    public String showForm(ModelMap model){
+        User user = new User();
+        model.addAttribute("USER", user);
+        return "user/register";
+    }
+	
+	
+	@RequestMapping(value="/register",method=RequestMethod.POST)
+	public String processForm(@ModelAttribute(value="USER") User user,BindingResult result){
+	    if(result.hasErrors()){
+	        return "user/register";
+	    }else{
+	        System.out.println("User values is : " + user);
+	        return "user/register";
+	    }
+	}
+	
+	@RequestMapping(value="/admin", method = RequestMethod.GET)
+	public String manageUsers(ModelMap model) {
+		return "user/admin";
 	}
 }
