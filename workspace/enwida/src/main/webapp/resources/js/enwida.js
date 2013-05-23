@@ -10,7 +10,8 @@ function setupPage(chart){
 	//All event bindings can be done here
 	$(function() {
 		var instance ="#"+chart+"_datepicker";
-		$('#downloadLink').click(function(){ downloadCsv(chart); return false; });
+		
+//		$('#downloadLink').click(function(){ downloadCsv(chart); return false; });
 	    
 		$(instance).datepicker({
 	        changeMonth: true,
