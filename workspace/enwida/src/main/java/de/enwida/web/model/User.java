@@ -3,19 +3,25 @@ package de.enwida.web.model;
 
 public class User {
  
-	private Long Id;
+	private Long userID;
 	private String userName;
 	private String lastName;
 	private String firstName;
 	private String password;
 
-	public Long getId() {
-		return Id;
+	public User(long userID, String userName, String password, boolean enabled) {
+		// TODO Auto-generated constructor stub
+		this.setUserID(userID);
+		this.setUserName(userName);
+		this.setLastName(lastName);
+		this.setFirstName(firstName);
+		this.setPassword(password);
 	}
 
-	public void setId(Long id) {
-		Id = id;
+	public User() {
+		// TODO Auto-generated constructor stub
 	}
+	
 
 	public String getLastName() {
 		return lastName;
@@ -47,6 +53,14 @@ public class User {
 
 	public void setUserName(String userName) {
 		this.userName = userName;
+	}
+
+	public Long getUserID() {
+		return userID;
+	}
+
+	public void setUserID(Long userID) {
+		this.userID = userID;
 	}
 
 }

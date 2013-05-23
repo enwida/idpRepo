@@ -35,6 +35,6 @@
         	  <option value="3">1 month</option>
         	  <option value="4">1 year</option>
         </select>
-        <a id="downloadLink" href="#">download</a>
+        <a href="download">download</a>
     </body>	
 </html>

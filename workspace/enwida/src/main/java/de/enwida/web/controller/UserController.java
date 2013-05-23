@@ -1,9 +1,11 @@
 package de.enwida.web.controller;
 
 import java.security.Principal;
+import java.util.List;
 import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import de.enwida.web.dao.implementation.UserDao;
 import de.enwida.web.model.User;
 import de.enwida.web.service.interfaces.UserService;
 
@@ -26,7 +29,10 @@ public class UserController {
 	private UserService userService;
 	
 	@Autowired
-	private UserService datasource;
+	private DriverManagerDataSource datasource;
+
+	@Autowired
+	UserDao userDao;
 	
 	@RequestMapping(value="/user", method = RequestMethod.GET)
 	public String displayDashboard(Model model, Locale locale) {
@@ -65,6 +71,12 @@ public class UserController {
 		return "logout";
 	}
 	
+	
+	@RequestMapping(value="/download", method = RequestMethod.GET)
+	public String download(ModelMap model) {
+		return "user/download";
+	}
+	
 	@RequestMapping(value="/register",method=RequestMethod.GET)
     public String showForm(ModelMap model){
         User user = new User();
@@ -85,6 +97,10 @@ public class UserController {
 	
 	@RequestMapping(value="/admin", method = RequestMethod.GET)
 	public String manageUsers(ModelMap model) {
+		
+		List<User> users= userDao.findAll();
+		System.out.println("Olcay"+users);
+		model.addAttribute("users", users);
 		return "user/admin";
 	}
 }
