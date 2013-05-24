@@ -21,5 +21,4 @@ Users can register themselves to the webpage and data is stored into database. N
 -	Product
 -	Resolution
 
-##- Questions
-Any other fields which we need to store?
+<img src="img/userManagementUML.jpg" width="600px" />
