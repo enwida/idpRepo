@@ -21,4 +21,4 @@ Users can register themselves to the webpage and data is stored into database. N
 -	Product
 -	Resolution
 
-<img src="img/userManagementUML.jpg" width="600px" />
+<img src="img/userManagementUML.png" width="600px" />
