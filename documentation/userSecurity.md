@@ -36,3 +36,6 @@ Users can upload cvs formatted files to the webpage. This data is parsed and sav
 
 ##Security structure
 <img src="img/securitySequenceDiagram.png" width="600px" />
+
+##Additional Database structure
+<img src="img/db.png" width="600px" />
