@@ -35,12 +35,13 @@ public class UserDao extends BaseDao<User> implements IUserDao {
 			ResultSet rs = ps.executeQuery();
 			while (rs.next()) {
 				user = new User(
-					rs.getLong("userid"),
+					rs.getLong("user_id"),
 					rs.getString("username"), 
 					rs.getString("password"), 
 					rs.getBoolean("enabled")
 				);
-				users.add(user);
+				;
+				users.add(getUserPermissions(user));
 			}
 			rs.close();
 			ps.close();
@@ -55,5 +56,48 @@ public class UserDao extends BaseDao<User> implements IUserDao {
 		}
 
 		return users;
+	}
+
+	private User getUserPermissions(User user) {
+		// TODO Auto-generated method stub
+		String sql = "SELECT * FROM user_roles where user_id=?";
+		 
+		Connection conn = null;
+ 
+		try {
+			conn = datasource.getConnection();
+			PreparedStatement ps = conn.prepareStatement(sql);
+			ps.setLong(1, user.getUserID());
+			ResultSet rs = ps.executeQuery();
+			while (rs.next()) {
+				int permission= rs.getInt("role_id");
+				if (permission==1){
+					user.setAdmin(true);
+				}else if(permission==2){
+					user.setTestuser(true);
+				}else if(permission==3){
+					user.setExport(true);
+				}
+			}
+			rs.close();
+			ps.close();
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		} finally {
+			if (conn != null) {
+				try {
+				conn.close();
+				} catch (SQLException e) {}
+			}
+		}
+		return user;
+	}
+
+	public void addPermission(String userID, String roleID) {
+	}
+
+	public void removePermission(String userID, String roleID) {
+		// TODO Auto-generated method stub
+		
 	}
 }
