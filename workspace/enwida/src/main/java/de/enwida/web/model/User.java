@@ -8,6 +8,7 @@ public class User {
 	private String lastName;
 	private String firstName;
 	private String password;
+	private boolean enabled=false;
 	private boolean admin=false;
 	private boolean testuser=false;
 	private boolean export=false;
@@ -95,4 +96,11 @@ public class User {
 		this.export = export;
 	}
 
+	public boolean isEnabled() {
+		return enabled;
+	}
+
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
+	}
 }

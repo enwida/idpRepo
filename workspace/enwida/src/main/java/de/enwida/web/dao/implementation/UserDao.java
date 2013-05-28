@@ -60,7 +60,7 @@ public class UserDao extends BaseDao<User> implements IUserDao {
 
 	private User getUserPermissions(User user) {
 		// TODO Auto-generated method stub
-		String sql = "SELECT * FROM user_roles where user_id=?";
+		String sql = "SELECT * FROM user_roles INNER JOIN users	ON users.user_id=user_roles.user_id where user_roles.user_id=?";
 		 
 		Connection conn = null;
  
@@ -69,8 +69,9 @@ public class UserDao extends BaseDao<User> implements IUserDao {
 			PreparedStatement ps = conn.prepareStatement(sql);
 			ps.setLong(1, user.getUserID());
 			ResultSet rs = ps.executeQuery();
-			while (rs.next()) {
+			if (rs.next()) {
 				int permission= rs.getInt("role_id");
+				user.setEnabled(rs.getBoolean("enabled"));
 				if (permission==1){
 					user.setAdmin(true);
 				}else if(permission==2){
