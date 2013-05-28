@@ -10,6 +10,6 @@ public interface IDataLine {
 	public Calendar getStartTime();
 	public Calendar getEndTime();
 	public DataResolution getResolution();
-	public boolean hasDateAxis();
+	public boolean getHasDateAxis();
 
 }
