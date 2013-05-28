@@ -68,7 +68,7 @@ public abstract class DataLine<T> implements IDataLine {
 		this.resolution = resolution;
 	}
 
-	public boolean hasDateAxis() {
+	public boolean getHasDateAxis() {
 		return hasDateAxis;
 	}
 
