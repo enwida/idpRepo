@@ -19,6 +19,7 @@ function updateRole(userID,permissionID,cb)
 	 <table id="tablePermissions">
 	 	<tr>
 	 		<td>User</td>
+	 		<td>Enabled</td>
 	 		<td>admin</td>
 	 		<td>testuser</td>
 	 		<td>export</td>
@@ -26,6 +27,7 @@ function updateRole(userID,permissionID,cb)
 	 	<c:forEach var="user" items="${users}">
 	 	<tr>
 		    <td>${user.userName} </td>
+	 		<td><input type="checkbox" onclick="updateRole(${user.userID},0,this);"  ${user.enabled == 'true' ? 'checked' : ''}></td>
 	 		<td><input type="checkbox" onclick="updateRole(${user.userID},1,this);" ${user.admin == 'true' ? 'checked' : ''}></td>
 	 		<td><input type="checkbox" onclick="updateRole(${user.userID},2,this);"  ${user.testuser == 'true' ? 'checked' : ''}></td>
 	 		<td><input type="checkbox" onclick="updateRole(${user.userID},3,this);"  ${user.export == 'true' ? 'checked' : ''}></td>

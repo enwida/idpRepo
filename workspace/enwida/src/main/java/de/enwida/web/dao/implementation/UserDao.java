@@ -36,8 +36,8 @@ public class UserDao extends BaseDao<User> implements IUserDao {
 			while (rs.next()) {
 				user = new User(
 					rs.getLong("user_id"),
-					rs.getString("username"), 
-					rs.getString("password"), 
+					rs.getString("user_name"), 
+					rs.getString("user_password"), 
 					rs.getBoolean("enabled")
 				);
 				;
@@ -60,7 +60,7 @@ public class UserDao extends BaseDao<User> implements IUserDao {
 
 	private User getUserPermissions(User user) {
 		// TODO Auto-generated method stub
-		String sql = "SELECT * FROM user_roles where user_id=?";
+		String sql = "SELECT * FROM user_roles INNER JOIN users	ON users.user_id=user_roles.user_id where user_roles.user_id=?";
 		 
 		Connection conn = null;
  
@@ -69,8 +69,9 @@ public class UserDao extends BaseDao<User> implements IUserDao {
 			PreparedStatement ps = conn.prepareStatement(sql);
 			ps.setLong(1, user.getUserID());
 			ResultSet rs = ps.executeQuery();
-			while (rs.next()) {
+			if (rs.next()) {
 				int permission= rs.getInt("role_id");
+				user.setEnabled(rs.getBoolean("enabled"));
 				if (permission==1){
 					user.setAdmin(true);
 				}else if(permission==2){
@@ -94,10 +95,49 @@ public class UserDao extends BaseDao<User> implements IUserDao {
 	}
 
 	public void addPermission(String userID, String roleID) {
+		// TODO Auto-generated method stub
+		String sql = "INSERT INTO user_roles VALUES (?, ?)";
+		 
+		Connection conn = null;
+ 
+		try {
+			conn = datasource.getConnection();
+			PreparedStatement ps = conn.prepareStatement(sql);
+			ps.setString(1, userID);
+			ps.setString(2, roleID);
+			ps.executeQuery();
+			ps.close();
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		} finally {
+			if (conn != null) {
+				try {
+				conn.close();
+				} catch (SQLException e) {}
+			}
+		}
 	}
 
 	public void removePermission(String userID, String roleID) {
 		// TODO Auto-generated method stub
-		
+		String sql = "DELETE FROM user_roles WHERE (user_id=?,role_id=?)";
+		Connection conn = null;
+ 
+		try {
+			conn = datasource.getConnection();
+			PreparedStatement ps = conn.prepareStatement(sql);
+			ps.setString(1, userID);
+			ps.setString(2, roleID);
+			ps.executeQuery();
+			ps.close();
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		} finally {
+			if (conn != null) {
+				try {
+				conn.close();
+				} catch (SQLException e) {}
+			}
+		}		
 	}
 }
