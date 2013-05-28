@@ -9,5 +9,5 @@ public interface UserService {
 	public User getUser(Long id);
 	public List<User> getUsers();
 	public boolean saveUser(User user);
-
+	public boolean sendVerificationEmail(User user);
 }

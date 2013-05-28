@@ -16,6 +16,10 @@ import de.enwida.web.model.User;
 import de.enwida.web.service.interfaces.UserService;
 import de.enwida.web.utils.Constants;
 
+import org.springframework.mail.MailException;
+import org.springframework.mail.MailSender;
+import org.springframework.mail.SimpleMailMessage;
+
 @Service("UserService")
 @Transactional
 public class UserServiceImpl implements UserService {
@@ -26,6 +30,18 @@ public class UserServiceImpl implements UserService {
 	@Autowired
 	private DataRequestManager dataRequestManager;
 	
+	private MailSender mailSender;
+    
+	private SimpleMailMessage message;
+
+    public void setMailSender(MailSender mailSender) {
+        this.mailSender = mailSender;
+    }
+
+    public void setMessage(SimpleMailMessage message) {
+        this.message = message;
+    }
+
 	public User getUser(Long id) {
 		// TODO Auto-generated method stub
 		return null;
@@ -56,6 +72,11 @@ public class UserServiceImpl implements UserService {
 		{
 			return false;
 		}		 
+	}
+
+	public boolean sendVerificationEmail(User user) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 
