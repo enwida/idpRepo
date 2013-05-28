@@ -2,12 +2,12 @@
 
 ## Teams
 
-### [User Management, Data Download / Upload](download.md) 
+### [User Management, Data Download / Upload](userSecuriy.md) 
 - Olcay
 - Abdul
+- Atif (Spring)
 
 ### Charts, Communication with Data Manager
-- Atif (Spring)
 - Jitin (Charts / JS)
 - Daniel (Charts / JS)
 

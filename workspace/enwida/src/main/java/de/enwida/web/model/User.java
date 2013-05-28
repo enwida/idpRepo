@@ -8,6 +8,9 @@ public class User {
 	private String lastName;
 	private String firstName;
 	private String password;
+	private boolean admin=false;
+	private boolean testuser=false;
+	private boolean export=false;
 
 	public User(long userID, String userName, String password, boolean enabled) {
 		// TODO Auto-generated constructor stub
@@ -61,6 +64,35 @@ public class User {
 
 	public void setUserID(Long userID) {
 		this.userID = userID;
+	}
+	
+	@Override
+	public String toString() {
+		return this.getUserName();
+	}
+
+	public boolean isAdmin() {
+		return admin;
+	}
+
+	public void setAdmin(boolean admin) {
+		this.admin = admin;
+	}
+
+	public boolean isTestuser() {
+		return testuser;
+	}
+
+	public void setTestuser(boolean testuser) {
+		this.testuser = testuser;
+	}
+
+	public boolean isExport() {
+		return export;
+	}
+
+	public void setExport(boolean export) {
+		this.export = export;
 	}
 
 }
