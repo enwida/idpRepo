@@ -35,7 +35,7 @@ public class UserDao extends BaseDao<User> implements IUserDao {
 			ResultSet rs = ps.executeQuery();
 			while (rs.next()) {
 				user = new User(
-					rs.getLong("userid"),
+					rs.getLong("user_id"),
 					rs.getString("username"), 
 					rs.getString("password"), 
 					rs.getBoolean("enabled")
