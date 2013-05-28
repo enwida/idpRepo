@@ -23,7 +23,7 @@ import org.springframework.web.servlet.ModelAndView;
 import de.enwida.chart.DataRequest;
 import de.enwida.chart.DataRequestManager;
 import de.enwida.chart.GoogleChartData;
-import de.enwida.web.model.ChartInitData;
+import de.enwida.web.model.ChartNavigationData;
 import de.enwida.web.model.User;
 import de.enwida.web.utils.JsonResponse;
 
@@ -80,9 +80,9 @@ public class HomeController {
 	
 	@RequestMapping(value = "/init.json", method = RequestMethod.GET)
 	@ResponseBody
-	public ChartInitData initData(HttpServletRequest request) {
+	public ChartNavigationData initData(HttpServletRequest request) {
 		//Chart settings object
-		ChartInitData cid=new ChartInitData();
+		ChartNavigationData cid=new ChartNavigationData();
 		cid.setWidth(400);
 		cid.setHeight(300);
 		cid.setTitle("Capacity");

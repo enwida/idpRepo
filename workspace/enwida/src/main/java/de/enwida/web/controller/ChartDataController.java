@@ -16,6 +16,7 @@ import de.enwida.transport.ChartType;
 import de.enwida.transport.DataRequest;
 import de.enwida.transport.DataResolution;
 import de.enwida.transport.DataResponse;
+import de.enwida.web.model.ChartNavigationData;
 
 /**
  * Handles chart data requests
@@ -27,7 +28,7 @@ public class ChartDataController {
 	@Autowired
 	private DataManager dataManager;
 	
-	@RequestMapping(value="/json", method = RequestMethod.GET)
+	@RequestMapping(value="/lines", method = RequestMethod.GET)
 	@ResponseBody
 	public DataResponse displayDashboard(
 											@RequestParam ChartType type,
@@ -46,6 +47,17 @@ public class ChartDataController {
 	@RequestMapping(value="/chart", method=RequestMethod.GET)
 	public String exampleChart() {
 		return "charts/index";
+	}
+	
+	@RequestMapping(value = "/navigation", method = RequestMethod.GET)
+	@ResponseBody
+	public ChartNavigationData initData() {
+		// FIXME: Get navigation data from a dedicated service
+		ChartNavigationData dummy = new ChartNavigationData();
+		dummy.setWidth(600);
+		dummy.setHeight(480);
+		dummy.setTitle("Capacity");
+		return dummy;
 	}
 	
 }

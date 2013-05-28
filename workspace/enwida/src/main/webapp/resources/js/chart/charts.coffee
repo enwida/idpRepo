@@ -4,26 +4,46 @@ require.config
 require ["line_chart", "bar_chart", "carpet_chart"],
   (LineChart, BarChart, CarpetChart) ->
 
-    exampleUrl = "json?type=rl_ab1&product=210&startTime=2010-12-30&endTime=2010-12-31&resolution=HOURLY"
+    exampleUrl = "lines?type=rl_ab1&product=210&startTime=2010-12-30&endTime=2010-12-31&resolution=HOURLY"
+
+    chartOptions =
+      parent: "#chart"
+
+    setDateAxisOption = (data) ->
+      hasDateAxes = data.allDataLines.map (line) -> line.hasDateAxis
+      chartOptions.scale =
+        x:
+          type: if _.any hasDateAxes then "date" else "linear"
+
+    drawNavigation = (data, callback) ->
+      chart_id = $("#chart").attr "data-chart-id"
+
+      $.ajax "navigation?id=#{chart_id}",
+        error: (err) -> alert err.message
+        success: (data) ->
+          $("#chart h3").text data.title
+          chartOptions.width = data.width
+          chartOptions.height = data.height
+          callback?()
 
     drawData = (data) ->
+      console.log data
       $("#chart svg").remove()
-      $("#chart h3").text data.metaData.chartTitle
-      lineChart = LineChart.init(
-        parent: "#chart"
-        data: data
-        scale:
-          x:
-            type: "date"
-      )
+      # $("#chart h3").text data.metaData.chartTitle
+      setDateAxisOption data
+      chartOptions.data = data
+      chartOptions.scale =
+        x:
+          type: "date"
+
+      lineChart = LineChart.init chartOptions
       lineChart.draw()
       $("circle").tipsy(gravity: "s")
 
     drawUrl = (url) ->
       $.ajax url,
         success: drawData
-        error: (err) ->
-          alert err
+        error: (err) -> alert err.message
 
     $(document).ready ->
       $("#url").keyup (e) ->
@@ -35,4 +55,5 @@ require ["line_chart", "bar_chart", "carpet_chart"],
         drawUrl $(e.target).text()
 
       $("#url").val exampleUrl
-      drawUrl exampleUrl
+      drawNavigation()
+      # drawUrl exampleUrl
