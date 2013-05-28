@@ -3,6 +3,9 @@ package de.enwida.web.controller;
 import java.security.Principal;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
@@ -13,6 +16,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
 
 import de.enwida.web.dao.implementation.UserDao;
 import de.enwida.web.model.User;
@@ -99,8 +103,33 @@ public class UserController {
 	public String manageUsers(ModelMap model) {
 		
 		List<User> users= userDao.findAll();
-		System.out.println("Olcay"+users);
 		model.addAttribute("users", users);
 		return "user/admin";
+	}
+	
+	@RequestMapping(value="/updateRole", method = RequestMethod.GET)
+	public String updateRole(HttpServletRequest request) {
+		String state="";
+		String userID="";
+		String roleID="";
+		UserDao userDao=new UserDao();
+		Map pMap=request.getParameterMap();
+		if (pMap.containsKey("state")){
+			state=((String[]) pMap.get("state"))[0];
+		}
+		if (pMap.containsKey("userID")){
+			userID=((String[]) pMap.get("userID"))[0];
+		}
+		if (pMap.containsKey("roleID")){
+			roleID=((String[]) pMap.get("roleID"))[0];
+		}
+		
+		if (state=="true"){
+			userDao.addPermission(userID,roleID);
+		}
+		else{
+			userDao.removePermission(userID,roleID);
+		}
+		return "ok";
 	}
 }
