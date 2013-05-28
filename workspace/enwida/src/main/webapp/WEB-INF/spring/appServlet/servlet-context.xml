@@ -50,7 +50,7 @@
 		<beans:property name="messageSource" ref="messageSource" />
 	</beans:bean>	
 	
-	<beans:bean id="dataManager" class="de.enwida.chart.DataManager">	
+	<beans:bean id="dataManager" class="de.enwida.chart.LineManager">	
 		<beans:property name="messageSource" ref="messageSource" />
 	</beans:bean>	
 	

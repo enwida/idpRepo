@@ -9,12 +9,6 @@ require ["line_chart", "bar_chart", "carpet_chart"],
     chartOptions =
       parent: "#chart"
 
-    setDateAxisOption = (data) ->
-      hasDateAxes = data.allDataLines.map (line) -> line.hasDateAxis
-      chartOptions.scale =
-        x:
-          type: if _.any hasDateAxes then "date" else "linear"
-
     drawNavigation = (data, callback) ->
       chart_id = $("#chart").attr "data-chart-id"
 
@@ -24,17 +18,16 @@ require ["line_chart", "bar_chart", "carpet_chart"],
           $("#chart h3").text data.title
           chartOptions.width = data.width
           chartOptions.height = data.height
+          # FIXME: read from navigation info
+          chartOptions.scale =
+            x:
+              type: "date"
           callback?()
 
     drawData = (data) ->
       console.log data
       $("#chart svg").remove()
-      # $("#chart h3").text data.metaData.chartTitle
-      setDateAxisOption data
-      chartOptions.data = data
-      chartOptions.scale =
-        x:
-          type: "date"
+      chartOptions.lines = [data]
 
       lineChart = LineChart.init chartOptions
       lineChart.draw()

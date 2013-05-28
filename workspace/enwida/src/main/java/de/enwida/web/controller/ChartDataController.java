@@ -11,11 +11,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import de.enwida.chart.DataManager;
-import de.enwida.transport.ChartType;
-import de.enwida.transport.DataRequest;
+import de.enwida.chart.LineManager;
+import de.enwida.transport.Aspect;
 import de.enwida.transport.DataResolution;
-import de.enwida.transport.DataResponse;
+import de.enwida.transport.LineRequest;
+import de.enwida.transport.XYDataLine;
 import de.enwida.web.model.ChartNavigationData;
 
 /**
@@ -26,22 +26,26 @@ import de.enwida.web.model.ChartNavigationData;
 public class ChartDataController {
 	
 	@Autowired
-	private DataManager dataManager;
+	private LineManager lineManager;
 	
 	@RequestMapping(value="/lines", method = RequestMethod.GET)
 	@ResponseBody
-	public DataResponse displayDashboard(
-											@RequestParam ChartType type,
-											@RequestParam int product,
-											@RequestParam @DateTimeFormat(pattern="YYYY-MM-DD") Calendar startTime,
-											@RequestParam @DateTimeFormat(pattern="YYYY-MM-DD") Calendar endTime,
-											@RequestParam DataResolution resolution,
-											Locale locale
-										)
+	public XYDataLine getLines (
+								@RequestParam int chartId,
+								@RequestParam int product,
+								@RequestParam @DateTimeFormat(pattern="YYYY-MM-DD") Calendar startTime,
+								@RequestParam @DateTimeFormat(pattern="YYYY-MM-DD") Calendar endTime,
+								@RequestParam DataResolution resolution,
+								Locale locale
+							   )
 	{
-		final DataRequest request = new DataRequest(type, product, startTime, endTime, resolution, locale);
-		final DataResponse response = dataManager.getData(request);
-		return response;
+	    try {
+    	    final LineRequest request = new LineRequest(Aspect.VOL_ACTIVATION, product, startTime, endTime, resolution, locale);
+    	    final XYDataLine line = lineManager.getLine(request);
+    		return line;
+    	} catch (Exception e) {
+    	    return null;
+    	}
 	}
 	
 	@RequestMapping(value="/chart", method=RequestMethod.GET)
