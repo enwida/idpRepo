@@ -127,9 +127,9 @@ public class UserController {
 			roleID=((String[]) pMap.get("roleID"))[0];
 		}
 
-		System.out.println(userID+"-"+roleID+":state"+state=="true"); 
+		System.out.println(userID+"-"+roleID+":state"+state.equals("true")); 
 		
-		if (state=="true"){
+		if (state.equals("true")){
 			userDao.addPermission(userID,roleID);
 		}
 		else{
