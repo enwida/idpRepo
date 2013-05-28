@@ -10,13 +10,13 @@
 		<h1>Registration Form</h1><br />
 		<form:form commandName="USER">
 		<table>
-			<tr><td colspan="2"><form:errors path="*" cssStyle="color : red;"/></td></tr>
-			<tr><td>UserName : </td><td><form:input path="userName" /></td></tr>
-			<tr><td>First Name : </td><td><form:input path="firstName" /></td></tr>
-			<tr><td>Last Name : </td><td><form:input path="lastName" /></td></tr>
-			<tr><td>Password : </td><td><form:input path="password" /></td></tr>
-			<tr><td>Password(Repeat) : </td><td><form:input path="password" /></td></tr>
-			<tr><td><img src="https://confluence.atlassian.com/download/attachments/216957808/captcha.png"></img> </td><td><form:input path="password" /></td></tr>
+			<tr><td colspan="2"></td></tr>
+			<tr><td>UserName : </td><td><form:input path="userName" /><form:errors path="userName" cssStyle="color : red;"/></td></tr>
+			<tr><td>First Name : </td><td><form:input path="firstName" /><form:errors path="firstName" cssStyle="color : red;"/></td></tr>
+			<tr><td>Last Name : </td><td><form:input path="lastName" /><form:errors path="lastName" cssStyle="color : red;"/></td></tr>
+			<tr><td>Password : </td><td><form:input path="password" /><form:errors path="password" cssStyle="color : red;"/></td></tr>
+			<tr><td>Confirm Password : </td><td><form:input path="confirmPassword" /><form:errors path="confirmPassword" cssStyle="color : red;"/></td></tr>
+			<tr><td><img src="https://confluence.atlassian.com/download/attachments/216957808/captcha.png"></img> </td><td><form:input path="" /></td></tr>
 			<tr><td><input type="reset" value="Reset" /></td><td><input type="submit" value="Save Changes" /></td></tr>
 		</table>
 		</form:form>

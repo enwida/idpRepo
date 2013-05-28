@@ -15,8 +15,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import de.enwida.web.dao.implementation.UserDao;
+import de.enwida.web.dto.UserDTO;
 import de.enwida.web.model.User;
 import de.enwida.web.service.interfaces.UserService;
+import de.enwida.web.validator.UserValidator;
 
 /**
  * Handles requests for the user service.
@@ -32,8 +34,11 @@ public class UserController {
 	private DriverManagerDataSource datasource;
 
 	@Autowired
-	UserDao userDao;
+	private UserValidator userValidator;
 	
+	@Autowired
+	private UserDao userDao;
+
 	@RequestMapping(value="/user", method = RequestMethod.GET)
 	public String displayDashboard(Model model, Locale locale) {
 		
@@ -79,19 +84,37 @@ public class UserController {
 	
 	@RequestMapping(value="/register",method=RequestMethod.GET)
     public String showForm(ModelMap model){
-        User user = new User();
+		UserDTO user = new UserDTO();
         model.addAttribute("USER", user);
         return "user/register";
     }
 	
 	
 	@RequestMapping(value="/register",method=RequestMethod.POST)
-	public String processForm(@ModelAttribute(value="USER") User user,BindingResult result){
-	    if(result.hasErrors()){
+	public String processForm(@ModelAttribute(value="USER") UserDTO user, BindingResult result, ModelMap model)
+	{
+	    userValidator.validate(user, result);	    
+		if(result.hasErrors())
+		{
 	        return "user/register";
-	    }else{
-	        System.out.println("User values is : " + user);
-	        return "user/register";
+	    }
+		else
+		{
+	        if(userService.saveUser(getUserDTO(user)))
+	        {	        		        
+        		String name = user.getFirstName() + " " + user.getLastName();
+        		String userStatus="logout";
+        		String userStatusURL="../j_spring_security_logout";
+
+        		model.addAttribute("username", name);
+        		model.addAttribute("userStatus", userStatus);
+        		model.addAttribute("userStatusURL", userStatusURL);
+        		return "user/index";        		
+	        }
+	        else
+	        {
+	            return "user/register";
+	        }
 	    }
 	}
 	
@@ -102,5 +125,16 @@ public class UserController {
 		System.out.println("Olcay"+users);
 		model.addAttribute("users", users);
 		return "user/admin";
+	}
+	
+	private User getUserDTO(UserDTO userDTO)
+	{
+		User user = new User();
+		user.setUserName(userDTO.getUserName());
+		user.setPassword(userDTO.getPassword());
+		user.setFirstName(userDTO.getFirstName());
+		user.setLastName(userDTO.getLastName());
+		
+		return user;
 	}
 }

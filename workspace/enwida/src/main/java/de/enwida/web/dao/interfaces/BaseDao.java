@@ -8,14 +8,17 @@ import java.util.Map;
 import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
+import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
-public abstract class BaseDao<T> implements IDao<T> {
+public abstract class BaseDao<T> {
 
 	private Class<T> modelClass;
-	private NamedParameterJdbcTemplate jdbcTemplate;
+	protected JdbcTemplate jdbcTemplate;
 	
 	@SuppressWarnings("unchecked")
 	public BaseDao() {
@@ -29,15 +32,15 @@ public abstract class BaseDao<T> implements IDao<T> {
 	
 	@Autowired
 	public void setDataSource(DataSource dataSource) {
-		this.jdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+		this.jdbcTemplate = new JdbcTemplate(dataSource);
 		
 	}
 	
-	public T findById(Long id) {
+	/*public T findById(Long id) {
 		String sql = "SELECT * FROM T_" + this.modelClass.getSimpleName().toUpperCase() + " WHERE id = :id";
 		Map namedParameters = Collections.singletonMap("id", id);
 		return (T) this.jdbcTemplate.queryForObject(sql, namedParameters, this.modelClass);
-	}
+	}*/
 
 	public List<T> findByExample(T obj) {
 		String sql = "SELECT * FROM T_" + this.modelClass.getSimpleName().toUpperCase() + " where first_name = :firstName and last_name = :lastName";
@@ -58,11 +61,6 @@ public abstract class BaseDao<T> implements IDao<T> {
 	public void deleteAll() {
 		// TODO Auto-generated method stub
 		
-	}
-
-	public T save(T obj) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	public T update(T obj) {
