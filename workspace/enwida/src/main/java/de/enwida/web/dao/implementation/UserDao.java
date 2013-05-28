@@ -95,10 +95,49 @@ public class UserDao extends BaseDao<User> implements IUserDao {
 	}
 
 	public void addPermission(String userID, String roleID) {
+		// TODO Auto-generated method stub
+		String sql = "INSERT INTO user_roles VALUES (?, ?)";
+		 
+		Connection conn = null;
+ 
+		try {
+			conn = datasource.getConnection();
+			PreparedStatement ps = conn.prepareStatement(sql);
+			ps.setString(1, userID);
+			ps.setString(2, roleID);
+			ps.executeQuery();
+			ps.close();
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		} finally {
+			if (conn != null) {
+				try {
+				conn.close();
+				} catch (SQLException e) {}
+			}
+		}
 	}
 
 	public void removePermission(String userID, String roleID) {
 		// TODO Auto-generated method stub
-		
+		String sql = "DELETE FROM user_roles WHERE (user_id=?,role_id=?)";
+		Connection conn = null;
+ 
+		try {
+			conn = datasource.getConnection();
+			PreparedStatement ps = conn.prepareStatement(sql);
+			ps.setString(1, userID);
+			ps.setString(2, roleID);
+			ps.executeQuery();
+			ps.close();
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		} finally {
+			if (conn != null) {
+				try {
+				conn.close();
+				} catch (SQLException e) {}
+			}
+		}		
 	}
 }

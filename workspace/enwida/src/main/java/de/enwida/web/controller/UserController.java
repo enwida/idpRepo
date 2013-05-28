@@ -16,6 +16,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import de.enwida.chart.GoogleChartData;
@@ -109,6 +110,7 @@ public class UserController {
 	}
 	
 	@RequestMapping(value="/updateRole", method = RequestMethod.GET)
+	@ResponseBody
 	public String updateRole(HttpServletRequest request) {
 		String state="";
 		String userID="";
@@ -124,6 +126,8 @@ public class UserController {
 		if (pMap.containsKey("roleID")){
 			roleID=((String[]) pMap.get("roleID"))[0];
 		}
+
+		System.out.println(userID+"-"+roleID+":state"+state=="true"); 
 		
 		if (state=="true"){
 			userDao.addPermission(userID,roleID);
