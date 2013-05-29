@@ -14,8 +14,9 @@ import de.enwida.chart.DataLineRequestManager;
 import de.enwida.chart.DataRequest;
 import de.enwida.chart.DataRequestManager;
 import de.enwida.chart.GoogleChartData;
+import de.enwida.web.service.interfaces.AspectService;
 
-public class AspectServiceImp {
+public class AspectServiceImp implements AspectService{
 	
 	@Autowired
 	public DataLineRequestManager dataRequestManager;
