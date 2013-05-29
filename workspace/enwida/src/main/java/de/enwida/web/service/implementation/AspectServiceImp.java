@@ -1,4 +1,4 @@
-package de.enwida.web.controller;
+package de.enwida.web.service.implementation;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -15,12 +15,12 @@ import de.enwida.chart.DataRequest;
 import de.enwida.chart.DataRequestManager;
 import de.enwida.chart.GoogleChartData;
 
-public class LineMapService {
+public class AspectServiceImp {
 	
-
+	@Autowired
 	public DataLineRequestManager dataRequestManager;
 
-	public GoogleChartData getChart(HttpServletRequest request,String completeUrl,Map pMap) {
+	public GoogleChartData getLine(HttpServletRequest request,String completeUrl,Map pMap) {
 
 		// Create the data request
 		DataRequest dr = new DataRequest("json",request.getLocale(),completeUrl, pMap);

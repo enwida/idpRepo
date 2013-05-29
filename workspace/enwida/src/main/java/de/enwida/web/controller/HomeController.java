@@ -26,6 +26,7 @@ import de.enwida.chart.DataRequestManager;
 import de.enwida.chart.GoogleChartData;
 import de.enwida.web.model.ChartNavigationData;
 import de.enwida.web.model.User;
+import de.enwida.web.service.implementation.AspectServiceImp;
 import de.enwida.web.utils.JsonResponse;
 
 /**
@@ -46,9 +47,9 @@ public class HomeController {
 		
 		final String completeUrl=""+request.getRequestURL().append('?').append(request.getQueryString());
 		Map pMap=request.getParameterMap();
-		LineMapService lms=new LineMapService();
-		lms.dataRequestManager=dataLineRequestManager;
-		return lms.getChart(request,completeUrl, pMap);
+		AspectServiceImp aspectService=new AspectServiceImp();
+		aspectService.dataRequestManager=dataLineRequestManager;
+		return aspectService.getLine(request,completeUrl, pMap);
 	}
 	
 	@RequestMapping(value = "/init.json", method = RequestMethod.GET)
