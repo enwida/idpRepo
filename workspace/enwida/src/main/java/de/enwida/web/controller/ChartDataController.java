@@ -73,17 +73,6 @@ public class ChartDataController {
 		return defaultNavigationData;
 	}
 
-	@RequestMapping(value = "/navigation", method = RequestMethod.GET)
-	@ResponseBody
-	public ChartNavigationData initData() {
-		// FIXME: Get navigation data from a dedicated service
-		final ChartNavigationData dummy = new ChartNavigationData();
-		dummy.setWidth(600);
-		dummy.setHeight(480);
-		dummy.setTitle("Capacity");
-		return dummy;
-	}
-
 	private Map<String, Object> prepareNavigationMap(DataRequest request,
 			Principal principal) {
 		final Map<String, Object> paramMap = new HashMap<String, Object>();

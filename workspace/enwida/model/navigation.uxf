@@ -2,18 +2,88 @@
 <diagram program="umlet" version="12.0">
   <zoom_level>10</zoom_level>
   <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>120</x>
+      <y>70</y>
+      <w>200</w>
+      <h>110</h>
+    </coordinates>
+    <panel_attributes>ChartNavigationData
+--
+- chartTitle: String
+- xAxisLabel: String
+- yAxisLabel: String</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>290</x>
-      <y>120</y>
-      <w>170</w>
-      <h>90</h>
+      <x>190</x>
+      <y>240</y>
+      <w>172</w>
+      <h>110</h>
+    </coordinates>
+    <panel_attributes>lt=&gt;
+children
+m1=*
+m2=*</panel_attributes>
+    <additional_attributes>30;70;30;50;120;50;120;90;60;90</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>390</x>
+      <y>420</y>
+      <w>200</w>
+      <h>80</h>
+    </coordinates>
+    <panel_attributes>NavigationDefaults
+--
+tsoId: int
+
+product: int
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Class</type>
+    <coordinates>
+      <x>210</x>
+      <y>210</y>
+      <w>140</w>
+      <h>30</h>
+    </coordinates>
+    <panel_attributes>DataResolution
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>20</x>
+      <y>100</y>
+      <w>390</w>
+      <h>390</h>
+    </coordinates>
+    <panel_attributes>lt=&gt;
+m1=*
+m2=1</panel_attributes>
+    <additional_attributes>100;30;30;30;30;370;280;370;370;370</additional_attributes>
+  </element>
+  <element>
+    <type>com.umlet.element.Relation</type>
+    <coordinates>
+      <x>200</x>
+      <y>150</y>
+      <w>90</w>
+      <h>80</h>
     </coordinates>
     <panel_attributes>lt=-&lt;
 m1=*
 m2=*
 </panel_attributes>
-    <additional_attributes>150;70;30;30</additional_attributes>
+    <additional_attributes>70;60;30;30</additional_attributes>
   </element>
   <element>
     <type>com.umlet.element.Class</type>
@@ -46,15 +116,16 @@ to: Calendar</panel_attributes>
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>20</x>
-      <y>100</y>
-      <w>390</w>
-      <h>390</h>
+      <x>290</x>
+      <y>120</y>
+      <w>170</w>
+      <h>90</h>
     </coordinates>
-    <panel_attributes>lt=&gt;
+    <panel_attributes>lt=-&lt;
 m1=*
-m2=1</panel_attributes>
-    <additional_attributes>100;30;30;30;30;370;280;370;370;370</additional_attributes>
+m2=*
+</panel_attributes>
+    <additional_attributes>150;70;30;30</additional_attributes>
   </element>
   <element>
     <type>com.umlet.element.Class</type>
@@ -73,28 +144,16 @@ name: String</panel_attributes>
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>290</x>
-      <y>70</y>
-      <w>160</w>
-      <h>60</h>
+      <x>300</x>
+      <y>210</y>
+      <w>190</w>
+      <h>230</h>
     </coordinates>
     <panel_attributes>lt=-&lt;
-m1=*
+m1=1
 m2=*
 </panel_attributes>
-    <additional_attributes>140;40;30;30</additional_attributes>
-  </element>
-  <element>
-    <type>com.umlet.element.Class</type>
-    <coordinates>
-      <x>210</x>
-      <y>210</y>
-      <w>140</w>
-      <h>30</h>
-    </coordinates>
-    <panel_attributes>DataResolution
-</panel_attributes>
-    <additional_attributes/>
+    <additional_attributes>30;30;170;210</additional_attributes>
   </element>
   <element>
     <type>com.umlet.element.Relation</type>
@@ -109,66 +168,6 @@ m1=*
 m2=*
 </panel_attributes>
     <additional_attributes>30;160;30;30</additional_attributes>
-  </element>
-  <element>
-    <type>com.umlet.element.Class</type>
-    <coordinates>
-      <x>120</x>
-      <y>70</y>
-      <w>200</w>
-      <h>110</h>
-    </coordinates>
-    <panel_attributes>ChartNavigationData
---
-- chartTitle: String
-- xAxisLabel: String
-- yAxisLabel: String
-</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
-    <type>com.umlet.element.Relation</type>
-    <coordinates>
-      <x>200</x>
-      <y>150</y>
-      <w>90</w>
-      <h>80</h>
-    </coordinates>
-    <panel_attributes>lt=-&lt;
-m1=*
-m2=*
-</panel_attributes>
-    <additional_attributes>70;60;30;30</additional_attributes>
-  </element>
-  <element>
-    <type>com.umlet.element.Class</type>
-    <coordinates>
-      <x>390</x>
-      <y>420</y>
-      <w>200</w>
-      <h>80</h>
-    </coordinates>
-    <panel_attributes>NavigationDefaults
---
-tsoId: int
-
-product: int
-</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
-    <type>com.umlet.element.Relation</type>
-    <coordinates>
-      <x>190</x>
-      <y>240</y>
-      <w>172</w>
-      <h>110</h>
-    </coordinates>
-    <panel_attributes>lt=&gt;
-children
-m1=*
-m2=*</panel_attributes>
-    <additional_attributes>30;70;30;50;120;50;120;90;60;90</additional_attributes>
   </element>
   <element>
     <type>com.umlet.element.Relation</type>
@@ -187,15 +186,15 @@ m2=*
   <element>
     <type>com.umlet.element.Relation</type>
     <coordinates>
-      <x>300</x>
-      <y>210</y>
-      <w>190</w>
-      <h>230</h>
+      <x>290</x>
+      <y>70</y>
+      <w>160</w>
+      <h>60</h>
     </coordinates>
     <panel_attributes>lt=-&lt;
-m1=1
+m1=*
 m2=*
 </panel_attributes>
-    <additional_attributes>30;30;170;210</additional_attributes>
+    <additional_attributes>140;40;30;30</additional_attributes>
   </element>
 </diagram>

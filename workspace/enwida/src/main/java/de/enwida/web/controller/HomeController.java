@@ -1,6 +1,5 @@
 package de.enwida.web.controller;
 
-import java.security.Principal;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -13,8 +12,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -24,7 +21,6 @@ import de.enwida.chart.DataRequest;
 import de.enwida.chart.DataRequestManager;
 import de.enwida.chart.GoogleChartData;
 import de.enwida.web.model.ChartNavigationData;
-import de.enwida.web.model.User;
 import de.enwida.web.utils.JsonResponse;
 
 /**
@@ -81,12 +77,7 @@ public class HomeController {
 	@RequestMapping(value = "/init.json", method = RequestMethod.GET)
 	@ResponseBody
 	public ChartNavigationData initData(HttpServletRequest request) {
-		//Chart settings object
-		ChartNavigationData cid=new ChartNavigationData();
-		cid.setWidth(400);
-		cid.setHeight(300);
-		cid.setTitle("Capacity");
-		return cid;
+	    return null;
 	}
 	
 	@RequestMapping(value = "/", method = RequestMethod.GET)
