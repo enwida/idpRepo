@@ -19,7 +19,7 @@ import de.enwida.web.service.interfaces.AspectService;
 public class AspectServiceImp implements AspectService{
 	
 	@Autowired
-	public DataLineRequestManager dataRequestManager;
+	public DataLineRequestManager dataLineRequestManager;
 
 	public GoogleChartData getLine(String completeUrl,Map pMap) {
 
@@ -38,12 +38,12 @@ public class AspectServiceImp implements AspectService{
 		}
 		dr.setTime1(calStart.getTimeInMillis());
 		dr.setTime2(calEnd.getTimeInMillis());
-		dataRequestManager.setDatef(dateFormat);
-		dataRequestManager.setDatef2(dateFormat);
+		dataLineRequestManager.setDatef(dateFormat);
+		dataLineRequestManager.setDatef2(dateFormat);
 		
-		dr=dataRequestManager.setUsualValues(dr, 2);
+		dr=dataLineRequestManager.setUsualValues(dr, 2);
 		// Fetch and display chart data in JSON representation
-		dr=dataRequestManager.getLineData(dr);
+		dr=dataLineRequestManager.getLineData(dr);
 		
 		return dr.getGcd();
 	}

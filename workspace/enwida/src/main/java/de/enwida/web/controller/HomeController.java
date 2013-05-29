@@ -49,7 +49,7 @@ public class HomeController {
 		Map pMap=request.getParameterMap();
 		//TODO:Fix here
 		AspectServiceImp aspectService=new AspectServiceImp();
-		aspectService.dataRequestManager=dataLineRequestManager;
+		aspectService.dataLineRequestManager=dataLineRequestManager;
 		return aspectService.getLine(completeUrl, pMap);
 	}
 	
