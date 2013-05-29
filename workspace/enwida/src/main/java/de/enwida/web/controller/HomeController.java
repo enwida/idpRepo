@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import de.enwida.chart.DataLineRequestManager;
 import de.enwida.chart.DataRequest;
 import de.enwida.chart.DataRequestManager;
 import de.enwida.chart.GoogleChartData;
@@ -35,7 +36,7 @@ public class HomeController {
 	
 	
 	@Autowired
-	private DataRequestManager dataRequestManager;
+	private DataLineRequestManager dataLineRequestManager;
 	
 	@RequestMapping(value = "/data.json", method = RequestMethod.GET)
 	@ResponseBody
@@ -46,7 +47,7 @@ public class HomeController {
 		final String completeUrl=""+request.getRequestURL().append('?').append(request.getQueryString());
 		Map pMap=request.getParameterMap();
 		LineMapService lms=new LineMapService();
-		lms.dataRequestManager=dataRequestManager;
+		lms.dataRequestManager=dataLineRequestManager;
 		return lms.getChart(request,completeUrl, pMap);
 	}
 	
@@ -107,10 +108,10 @@ public class HomeController {
 		dr.setTime1(calStart.getTimeInMillis());
 		dr.setTime2(calEnd.getTimeInMillis());
 		dr.setProduct(211);
-		dataRequestManager.setDatef(dateFormat);
-		dataRequestManager.setDatef2(dateFormat);
+		dataLineRequestManager.setDatef(dateFormat);
+		dataLineRequestManager.setDatef2(dateFormat);
 		response.setContentType("text/plain");
-		response.setHeader("Content-Disposition","attachment;filename="+dr.getChartType()+dataRequestManager.getDatef2().format(dr.getTime1())+".csv");
+		response.setHeader("Content-Disposition","attachment;filename="+dr.getChartType()+dataLineRequestManager.getDatef2().format(dr.getTime1())+".csv");
 			
 		dr.setDataFormat("csv");
 		Map<String, String> map=new HashMap<String, String>();
@@ -122,7 +123,7 @@ public class HomeController {
 		map.put("block", "0");
 		map.put("from", "0");
 		map.put("to", "0");
-		map.put("content", dataRequestManager.csv_pc1(dr).toString());
+	//	map.put("content", dataRequestManager.csv_pc1(dr).toString());
 		ModelAndView mav=new  ModelAndView("csv", map);
 		return mav;	
 

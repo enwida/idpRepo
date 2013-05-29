@@ -35,22 +35,23 @@ function drawChart(data,options) {
         chart.draw(googleDataTable, options);
 }
 
-function load(chart){
+function load(){
    	$.ajax({
      	  url: "../init.json",
      	  success: function(options){
-     		 loadChartData(chart,options);
+     		 loadChartData(options);
      	  }
     });
 }    
 
-function loadChartData(chart,options){
-	var instance ="#"+chart+"_datepicker";
+function loadChartData(options){
 	$.ajax({
      	  url: "../data.json?"+
-     		   "type=rl_vol1&pro=211&res=1h&locale=en"+
+     		   "aspect="+$("#aspect").val() +
+     		   "&pro=211&res=1h&locale=en"+
      		  // "&t1="+$(instance).datepicker('getDate').format('yyyyMMdd'),
-     		   "&t1=20101227",
+     		   "&t1=20101227" +
+     		   "&t2=20101231",
      	  success: function(data){
      		 drawChart(data,options);
      	  }
