@@ -20,10 +20,10 @@ public class AspectServiceImp {
 	@Autowired
 	public DataLineRequestManager dataRequestManager;
 
-	public GoogleChartData getLine(HttpServletRequest request,String completeUrl,Map pMap) {
+	public GoogleChartData getLine(String completeUrl,Map pMap) {
 
 		// Create the data request
-		DataRequest dr = new DataRequest("json",request.getLocale(),completeUrl, pMap);
+		DataRequest dr = new DataRequest("json",pMap);
 		
 
 		final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");

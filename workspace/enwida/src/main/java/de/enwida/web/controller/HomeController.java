@@ -49,7 +49,7 @@ public class HomeController {
 		Map pMap=request.getParameterMap();
 		AspectServiceImp aspectService=new AspectServiceImp();
 		aspectService.dataRequestManager=dataLineRequestManager;
-		return aspectService.getLine(request,completeUrl, pMap);
+		return aspectService.getLine(completeUrl, pMap);
 	}
 	
 	@RequestMapping(value = "/init.json", method = RequestMethod.GET)
@@ -84,49 +84,49 @@ public class HomeController {
 		return ret;
 	}	
     
-	@RequestMapping(value = "/export", method = RequestMethod.GET)
-	@ResponseBody		
-	public ModelAndView chart_csv(HttpServletResponse response, Locale locale, HttpServletRequest request) {
-	    response.setStatus(HttpServletResponse.SC_OK);	    
-	    final String completeUrl=""+request.getRequestURL().append('?').append(request.getQueryString());
-		Map pMap =request.getParameterMap();
-		DataRequest dr = new DataRequest("csv",request.getLocale(),completeUrl,pMap);
-		final Calendar calStart = Calendar.getInstance();
-		calStart.set(Calendar.YEAR, 2010);
-		calStart.set(Calendar.MONTH, Calendar.DECEMBER);
-		calStart.set(Calendar.DAY_OF_MONTH, 30);
-		calStart.set(Calendar.HOUR, 0);
-		calStart.set(Calendar.MINUTE, 0);
-		
-		final Calendar calEnd = Calendar.getInstance();
-		calEnd.set(Calendar.YEAR, 2010);
-		calEnd.set(Calendar.MONTH, Calendar.DECEMBER);
-		calEnd.set(Calendar.DAY_OF_MONTH, 31);	
-		calStart.set(Calendar.HOUR, 23);
-		calStart.set(Calendar.MINUTE, 59);
-		dr.setChartType("rl_ab1");
-		final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
-		dr.setTime1(calStart.getTimeInMillis());
-		dr.setTime2(calEnd.getTimeInMillis());
-		dr.setProduct(211);
-		dataLineRequestManager.setDatef(dateFormat);
-		dataLineRequestManager.setDatef2(dateFormat);
-		response.setContentType("text/plain");
-		response.setHeader("Content-Disposition","attachment;filename="+dr.getChartType()+dataLineRequestManager.getDatef2().format(dr.getTime1())+".csv");
-			
-		dr.setDataFormat("csv");
-		Map<String, String> map=new HashMap<String, String>();
-
-		map.put("title", "de.enwida.chart.pc2.title");
-		map.put("description", "de.enwida.chart.pc1.text1");
-		map.put("type", "0");
-		map.put("sign", "0");
-		map.put("block", "0");
-		map.put("from", "0");
-		map.put("to", "0");
-	//	map.put("content", dataRequestManager.csv_pc1(dr).toString());
-		ModelAndView mav=new  ModelAndView("csv", map);
-		return mav;	
-
-	}
+//	@RequestMapping(value = "/export", method = RequestMethod.GET)
+//	@ResponseBody		
+//	public ModelAndView chart_csv(HttpServletResponse response, Locale locale, HttpServletRequest request) {
+//	    response.setStatus(HttpServletResponse.SC_OK);	    
+//	    final String completeUrl=""+request.getRequestURL().append('?').append(request.getQueryString());
+//		Map pMap =request.getParameterMap();
+//		DataRequest dr = new DataRequest("csv",request.getLocale(),completeUrl,pMap);
+//		final Calendar calStart = Calendar.getInstance();
+//		calStart.set(Calendar.YEAR, 2010);
+//		calStart.set(Calendar.MONTH, Calendar.DECEMBER);
+//		calStart.set(Calendar.DAY_OF_MONTH, 30);
+//		calStart.set(Calendar.HOUR, 0);
+//		calStart.set(Calendar.MINUTE, 0);
+//		
+//		final Calendar calEnd = Calendar.getInstance();
+//		calEnd.set(Calendar.YEAR, 2010);
+//		calEnd.set(Calendar.MONTH, Calendar.DECEMBER);
+//		calEnd.set(Calendar.DAY_OF_MONTH, 31);	
+//		calStart.set(Calendar.HOUR, 23);
+//		calStart.set(Calendar.MINUTE, 59);
+//		dr.setChartType("rl_ab1");
+//		final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
+//		dr.setTime1(calStart.getTimeInMillis());
+//		dr.setTime2(calEnd.getTimeInMillis());
+//		dr.setProduct(211);
+//		dataLineRequestManager.setDatef(dateFormat);
+//		dataLineRequestManager.setDatef2(dateFormat);
+//		response.setContentType("text/plain");
+//		response.setHeader("Content-Disposition","attachment;filename="+dr.getChartType()+dataLineRequestManager.getDatef2().format(dr.getTime1())+".csv");
+//			
+//		dr.setDataFormat("csv");
+//		Map<String, String> map=new HashMap<String, String>();
+//
+//		map.put("title", "de.enwida.chart.pc2.title");
+//		map.put("description", "de.enwida.chart.pc1.text1");
+//		map.put("type", "0");
+//		map.put("sign", "0");
+//		map.put("block", "0");
+//		map.put("from", "0");
+//		map.put("to", "0");
+//	//	map.put("content", dataRequestManager.csv_pc1(dr).toString());
+//		ModelAndView mav=new  ModelAndView("csv", map);
+//		return mav;	
+//
+//	}
 }
