@@ -55,5 +55,5 @@ require ["line_chart", "bar_chart", "carpet_chart"],
         drawUrl $(e.target).text()
 
       $("#url").val exampleUrl
-      drawNavigation()
-      # drawUrl exampleUrl
+      # drawNavigation()
+      drawUrl exampleUrl
