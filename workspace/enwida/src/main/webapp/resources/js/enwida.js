@@ -48,8 +48,9 @@ function loadChartData(chart,options){
 	var instance ="#"+chart+"_datepicker";
 	$.ajax({
      	  url: "../data.json?"+
-     		   "type=rl_ab1&pro=210&res=15min&locale=en"+
-     		   "&t1="+$(instance).datepicker('getDate').format('yyyyMMdd'),
+     		   "type=rl_vol1&pro=211&res=1h&locale=en"+
+     		  // "&t1="+$(instance).datepicker('getDate').format('yyyyMMdd'),
+     		   "&t1=20101227",
      	  success: function(data){
      		 drawChart(data,options);
      	  }

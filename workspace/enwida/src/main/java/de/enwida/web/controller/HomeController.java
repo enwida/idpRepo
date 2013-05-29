@@ -45,37 +45,9 @@ public class HomeController {
 		
 		final String completeUrl=""+request.getRequestURL().append('?').append(request.getQueryString());
 		Map pMap=request.getParameterMap();
-		
-		// Define the start and end dates manually
-		final Calendar calStart = Calendar.getInstance();
-		calStart.set(Calendar.YEAR, 2010);
-		calStart.set(Calendar.MONTH, Calendar.DECEMBER);
-		calStart.set(Calendar.DAY_OF_MONTH, 30);
-		calStart.set(Calendar.HOUR, 0);
-		calStart.set(Calendar.MINUTE, 0);
-		
-		final Calendar calEnd = Calendar.getInstance();
-		calEnd.set(Calendar.YEAR, 2010);
-		calEnd.set(Calendar.MONTH, Calendar.DECEMBER);
-		calEnd.set(Calendar.DAY_OF_MONTH, 31);	
-		calStart.set(Calendar.HOUR, 23);
-		calStart.set(Calendar.MINUTE, 59);
-		// Create the data request
-		final DataRequest dr = new DataRequest("json",request.getLocale(),completeUrl, pMap);
-		
-		// Set these values manually because they are not converted automatically from the string
-		// representation
-		final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyyMMdd");
-
-		dr.setTime1(calStart.getTimeInMillis());
-		dr.setTime2(calEnd.getTimeInMillis());
-		dr.setProduct(211);
-		dataRequestManager.setDatef(dateFormat);
-		dataRequestManager.setDatef2(dateFormat);
-		
-		// Fetch and display chart data in JSON representation
-		final GoogleChartData chartData = dataRequestManager.getData(dr);
-		return chartData;
+		LineMapService lms=new LineMapService();
+		lms.dataRequestManager=dataRequestManager;
+		return lms.getChart(request,completeUrl, pMap);
 	}
 	
 	@RequestMapping(value = "/init.json", method = RequestMethod.GET)
