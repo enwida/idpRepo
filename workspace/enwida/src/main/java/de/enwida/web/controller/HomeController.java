@@ -1,31 +1,20 @@
 package de.enwida.web.controller;
 
-import java.security.Principal;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.ModelAndView;
 
 import de.enwida.chart.DataLineRequestManager;
-import de.enwida.chart.DataRequest;
-import de.enwida.chart.DataRequestManager;
 import de.enwida.chart.GoogleChartData;
 import de.enwida.web.model.ChartNavigationData;
-import de.enwida.web.model.User;
 import de.enwida.web.service.implementation.AspectServiceImp;
 import de.enwida.web.utils.JsonResponse;
 
@@ -46,34 +35,17 @@ public class HomeController {
 		// https://enwida.de/data.json?type=rl_ab1&pro=210&res=15min&t1=20101230&locale=en
 		
 		final String completeUrl=""+request.getRequestURL().append('?').append(request.getQueryString());
-		Map pMap=request.getParameterMap();
+		final Map pMap=request.getParameterMap();
 		//TODO:Fix here
-		AspectServiceImp aspectService=new AspectServiceImp();
-		aspectService.dataLineRequestManager=dataLineRequestManager;
+		final AspectServiceImp aspectService=new AspectServiceImp();
+		aspectService.dataLineRequestManager=this.dataLineRequestManager;
 		return aspectService.getLine(completeUrl, pMap);
-	}
-	
-	@RequestMapping(value = "/init.json", method = RequestMethod.GET)
-	@ResponseBody
-	public ChartNavigationData initData(HttpServletRequest request) {
-		//Chart settings object
-		ChartNavigationData cid=new ChartNavigationData();
-		cid.setWidth(400);
-		cid.setHeight(300);
-		cid.setTitle("Capacity");
-		return cid;
-	}
-	
-	@RequestMapping(value = "/", method = RequestMethod.GET)
-	public String home(Locale locale) {
-	
-		return "index";
 	}
 	
 	@RequestMapping(value="/getexampledata", method = RequestMethod.GET)
 	public @ResponseBody JsonResponse getExampleData(ModelMap model) {
 
-		JsonResponse ret = new JsonResponse();
+		final JsonResponse ret = new JsonResponse();
 	    ret.addColl("string", "Operating System");
 	    ret.addColl("number", "Percentage");
 	    
@@ -83,6 +55,23 @@ public class HomeController {
 	    ret.addRow(new JsonResponse.Cell("Others"), new JsonResponse.Cell(10));
 		
 		return ret;
+	}
+	
+	@RequestMapping(value = "/", method = RequestMethod.GET)
+	public String home(Locale locale) {
+	
+		return "index";
+	}
+	
+	@RequestMapping(value = "/init.json", method = RequestMethod.GET)
+	@ResponseBody
+	public ChartNavigationData initData(HttpServletRequest request) {
+		//Chart settings object
+		final ChartNavigationData cid=new ChartNavigationData();
+		//cid.setWidth(400);
+		//cid.setHeight(300);
+		cid.setTitle("Capacity");
+		return cid;
 	}	
     
 //	@RequestMapping(value = "/export", method = RequestMethod.GET)
