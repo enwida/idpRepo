@@ -67,6 +67,24 @@ public class UserController {
 		return "user/index";
 	}
 	
+	@RequestMapping(value = "/test", method = RequestMethod.GET)
+	public String test(ModelMap model, Principal principal) {
+		String name,userStatus,userStatusURL;
+		
+		if(principal!=null){
+			name = principal.getName();
+			userStatus="logout";
+			userStatusURL="../j_spring_security_logout";
+		}else{
+			name="anonymous";
+			userStatusURL=userStatus="login";
+		}
+		model.addAttribute("username", name);
+		model.addAttribute("userStatus", userStatus);
+		model.addAttribute("userStatusURL", userStatusURL);
+		return "user/test";
+	}
+	
 	@RequestMapping(value="/login", method = RequestMethod.GET)
 	public String login(ModelMap model) {
 		return "user/login";

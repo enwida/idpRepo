@@ -58,6 +58,9 @@
 		<beans:property name="messageSource" ref="messageSource" />
 	</beans:bean>	
 	
+	<beans:bean id="datasource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">	
+	</beans:bean>
+	
 	<!-- <beans:bean id="availability" class="de.enwida.rl.Availability" init-method="init">	
 	</beans:bean> -->
 	

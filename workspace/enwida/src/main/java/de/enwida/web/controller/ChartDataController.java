@@ -1,5 +1,6 @@
 package de.enwida.web.controller;
 
+import java.security.Principal;
 import java.util.Calendar;
 import java.util.Locale;
 
@@ -45,7 +46,10 @@ public class ChartDataController {
 	}
 	
 	@RequestMapping(value="/chart", method=RequestMethod.GET)
-	public String exampleChart() {
+	public String exampleChart(Principal principal) {
+		if(principal!=null){
+			System.out.println(principal.getName());
+		}
 		return "charts/index";
 	}
 	

@@ -12,7 +12,7 @@
 }
 </style>
 </head>
-<body onload='document.f.j_username.focus();'>
+<body>
 	<h3>Forgot Password</h3>
  
 	<a>${error}</a>
