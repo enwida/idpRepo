@@ -14,7 +14,6 @@ import org.springframework.stereotype.Repository;
 import de.enwida.web.dao.interfaces.BaseDao;
 import de.enwida.web.dao.interfaces.IUserDao;
 import de.enwida.web.model.User;
-import de.enwida.web.service.interfaces.UserService;
 
 @Repository
 public class UserDao extends BaseDao<User> implements IUserDao {
@@ -139,5 +138,61 @@ public class UserDao extends BaseDao<User> implements IUserDao {
 				} catch (SQLException e) {}
 			}
 		}		
+	}
+
+	public String getPassword(String email) {
+		// TODO Auto-generated method stub
+		String sql = "SELECT * FROM users where user_name=?";
+		String password=null;
+		Connection conn = null;
+ 
+		try {
+			conn = datasource.getConnection();
+			PreparedStatement ps = conn.prepareStatement(sql);
+			ps.setString(1, email);
+			ResultSet rs = ps.executeQuery();
+			if (rs.next()) {
+				password= rs.getString("user_password");
+			}
+			rs.close();
+			ps.close();
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		} finally {
+			if (conn != null) {
+				try {
+				conn.close();
+				} catch (SQLException e) {}
+			}
+		}
+		return password;
+	}
+	
+	public String getRoles(String email) {
+		// TODO Auto-generated method stub
+		String sql = "SELECT * FROM users where user_name=?";
+		String password=null;
+		Connection conn = null;
+ 
+		try {
+			conn = datasource.getConnection();
+			PreparedStatement ps = conn.prepareStatement(sql);
+			ps.setString(1, email);
+			ResultSet rs = ps.executeQuery();
+			if (rs.next()) {
+				password= rs.getString("user_password");
+			}
+			rs.close();
+			ps.close();
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		} finally {
+			if (conn != null) {
+				try {
+				conn.close();
+				} catch (SQLException e) {}
+			}
+		}
+		return password;
 	}
 }
