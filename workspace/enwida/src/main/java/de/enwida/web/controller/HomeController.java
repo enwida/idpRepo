@@ -50,7 +50,7 @@ public class HomeController {
 		//TODO:Fix here
 		AspectServiceImp aspectService=new AspectServiceImp();
 		aspectService.dataLineRequestManager=dataLineRequestManager;
-		return aspectService.getLine(completeUrl, pMap);
+		return aspectService.getChart(pMap);
 	}
 	
 	@RequestMapping(value = "/init.json", method = RequestMethod.GET)
