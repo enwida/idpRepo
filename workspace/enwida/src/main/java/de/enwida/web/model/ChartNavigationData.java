@@ -14,121 +14,131 @@ import de.enwida.web.utils.TSO;
 public class ChartNavigationData {
 
 	private String chartTitle;
+	private NavigationDefaults defaults;
+	private NavigationDataStructure navigationDS;
+	private List<ProductPart> products;
+	private List<DataResolution> resolutions;
+	private CalendarRange timeRange;
+	private List<TSO> tsos;
 	private String xAxisLabel;
 	private String yAxisLabel;
-	private List<TSO> tsos;
-	private CalendarRange timeRange;
-	private List<DataResolution> resolutions;
-	private List<ProductPart> products;
-	private NavigationDefaults defaults;
-	
-	
+
+	public ChartNavigationData() {
+	}
+
+	public ChartNavigationData(String chartTitle, String xAxisLabel, String yAxisLabel) {
+		this(chartTitle, xAxisLabel, yAxisLabel, new ArrayList<TSO>(), null, new ArrayList<DataResolution>(), new ArrayList<ProductPart>(), null);
+
+		// Set the time range to the maximum
+		final Calendar from = Calendar.getInstance();
+		final Calendar to = Calendar.getInstance();
+		from.setTimeInMillis(0);
+		to.setTimeInMillis(Long.MAX_VALUE);
+		this.timeRange = new CalendarRange(from, to);
+	}
 
 	public ChartNavigationData(String chartTitle, String xAxisLabel, String yAxisLabel, List<TSO> tsos, CalendarRange timeRange,
-                    	       List<DataResolution> resolutions, List<ProductPart> products, NavigationDefaults defaults) {
-        this.chartTitle = chartTitle;
-        this.xAxisLabel = xAxisLabel;
-        this.yAxisLabel = yAxisLabel;
-        this.tsos = tsos;
-        this.timeRange = timeRange;
-        this.resolutions = resolutions;
-        this.products = products;
-        this.defaults = defaults;
-    }
-	
-	public ChartNavigationData(String chartTitle, String xAxisLabel, String yAxisLabel) {
-	    this(chartTitle, xAxisLabel, yAxisLabel, new ArrayList<TSO>(), null, new ArrayList<DataResolution>(), new ArrayList<ProductPart>(), null);
-	    
-	    // Set the time range to the maximum
-	    final Calendar from = Calendar.getInstance();
-	    final Calendar to = Calendar.getInstance();
-	    from.setTimeInMillis(0);
-	    to.setTimeInMillis(Long.MAX_VALUE);
-	    this.timeRange = new CalendarRange(from, to);
-	}
-	
-	public void addTso(TSO tso) {
-	    tsos.add(tso);
-	}
-	
-	public void addResolution(DataResolution resolution) {
-	    resolutions.add(resolution);
-	}
-	
-	public void addProduct(ProductPart product) {
-	    products.add(product);
+			List<DataResolution> resolutions, List<ProductPart> products, NavigationDefaults defaults) {
+		this.chartTitle = chartTitle;
+		this.xAxisLabel = xAxisLabel;
+		this.yAxisLabel = yAxisLabel;
+		this.tsos = tsos;
+		this.timeRange = timeRange;
+		this.resolutions = resolutions;
+		this.products = products;
+		this.defaults = defaults;
 	}
 
-    public String getTitle() {
-		return chartTitle;
+	public void addProduct(ProductPart product) {
+		this.products.add(product);
+	}
+
+	public void addResolution(DataResolution resolution) {
+		this.resolutions.add(resolution);
+	}
+
+	public void addTso(TSO tso) {
+		this.tsos.add(tso);
+	}
+
+	public String getChartTitle() {
+		return this.chartTitle;
+	}
+
+	public NavigationDefaults getDefaults() {
+		return this.defaults;
+	}
+
+	public NavigationDataStructure getNavigationDS() {
+		return this.navigationDS;
+	}
+
+	public List<ProductPart> getProducts() {
+		return this.products;
+	}
+
+	public List<DataResolution> getResolutions() {
+		return this.resolutions;
+	}
+
+	public CalendarRange getTimeRange() {
+		return this.timeRange;
+	}
+
+	public String getTitle() {
+		return this.chartTitle;
+	}
+
+	public List<TSO> getTsos() {
+		return this.tsos;
+	}
+
+	public String getxAxisLabel() {
+		return this.xAxisLabel;
+	}
+
+	public String getyAxisLabel() {
+		return this.yAxisLabel;
+	}
+
+	public void setChartTitle(String chartTitle) {
+		this.chartTitle = chartTitle;
+	}
+
+	public void setDefaults(NavigationDefaults defaults) {
+		this.defaults = defaults;
+	}
+
+	public void setNavigationDS(NavigationDataStructure navigationDS) {
+		this.navigationDS = navigationDS;
+	}
+
+	public void setProducts(List<ProductPart> products) {
+		this.products = products;
+	}
+
+	public void setResolutions(List<DataResolution> resolutions) {
+		this.resolutions = resolutions;
+	}
+
+	public void setTimeRange(CalendarRange timeRange) {
+		this.timeRange = timeRange;
 	}
 
 	public void setTitle(String title) {
 		this.chartTitle = title;
 	}
 
-    public String getChartTitle() {
-        return chartTitle;
-    }
+	public void setTsos(List<TSO> tsos) {
+		this.tsos = tsos;
+	}
 
-    public void setChartTitle(String chartTitle) {
-        this.chartTitle = chartTitle;
-    }
+	public void setxAxisLabel(String xAxisLabel) {
+		this.xAxisLabel = xAxisLabel;
+	}
 
-    public String getxAxisLabel() {
-        return xAxisLabel;
-    }
+	public void setyAxisLabel(String yAxisLabel) {
+		this.yAxisLabel = yAxisLabel;
+	}
 
-    public void setxAxisLabel(String xAxisLabel) {
-        this.xAxisLabel = xAxisLabel;
-    }
-
-    public String getyAxisLabel() {
-        return yAxisLabel;
-    }
-
-    public void setyAxisLabel(String yAxisLabel) {
-        this.yAxisLabel = yAxisLabel;
-    }
-
-    public List<TSO> getTsos() {
-        return tsos;
-    }
-
-    public void setTsos(List<TSO> tsos) {
-        this.tsos = tsos;
-    }
-
-    public CalendarRange getTimeRange() {
-        return timeRange;
-    }
-
-    public void setTimeRange(CalendarRange timeRange) {
-        this.timeRange = timeRange;
-    }
-
-    public List<DataResolution> getResolutions() {
-        return resolutions;
-    }
-
-    public void setResolutions(List<DataResolution> resolutions) {
-        this.resolutions = resolutions;
-    }
-
-    public List<ProductPart> getProducts() {
-        return products;
-    }
-
-    public void setProducts(List<ProductPart> products) {
-        this.products = products;
-    }
-
-    public NavigationDefaults getDefaults() {
-        return defaults;
-    }
-
-    public void setDefaults(NavigationDefaults defaults) {
-        this.defaults = defaults;
-    }
-	
 }

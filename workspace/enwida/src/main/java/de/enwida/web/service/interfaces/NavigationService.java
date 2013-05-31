@@ -3,14 +3,12 @@
  */
 package de.enwida.web.service.interfaces;
 
-import java.util.Map;
-
-import de.enwida.web.model.ChartNavigationData;
+import de.enwida.web.model.NavigationDataStructure;
 
 /**
  * @author Jitin
  *
  */
 public interface NavigationService {
-	ChartNavigationData getNavigataionData(Map<String, Object> navigationParam);
+	void getNavigationData(NavigationDataStructure navigationParam);
 }
