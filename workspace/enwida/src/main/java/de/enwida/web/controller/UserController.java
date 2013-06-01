@@ -104,7 +104,8 @@ public class UserController {
 	@RequestMapping(value="/admin", method = RequestMethod.GET)
 	public String manageUsers(ModelMap model) {
 		
-		List<User> users= userDao.findAll();
+		List<User> users= userDao.findAllUsersWithPermissions();
+
 		model.addAttribute("users", users);
 		return "user/admin";
 	}
@@ -113,18 +114,17 @@ public class UserController {
 	@ResponseBody
 	public String updateRole(HttpServletRequest request) {
 		String state="";
-		String userID="";
-		String roleID="";
-		UserDao userDao=new UserDao();
+		int userID=0;
+		int roleID=0;
 		Map pMap=request.getParameterMap();
 		if (pMap.containsKey("state")){
 			state=((String[]) pMap.get("state"))[0];
 		}
 		if (pMap.containsKey("userID")){
-			userID=((String[]) pMap.get("userID"))[0];
+			userID=Integer.parseInt(((String[]) pMap.get("userID"))[0]);
 		}
 		if (pMap.containsKey("roleID")){
-			roleID=((String[]) pMap.get("roleID"))[0];
+			roleID=Integer.parseInt(((String[]) pMap.get("roleID"))[0]);
 		}
 		
 		if (state.equals("true")){

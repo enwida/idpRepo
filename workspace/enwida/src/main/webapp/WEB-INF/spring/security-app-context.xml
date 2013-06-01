@@ -15,9 +15,10 @@
 		      from users where user_name=?" 
  
 		   authorities-by-username-query="     
-				select user_name, authority from users INNER JOIN user_roles
-					ON users.user_id=user_roles.user_id
-						WHERE user_name=?" 
+				select user_name, authority 
+				from users INNER JOIN user_roles ON users.user_id=user_roles.user_id
+				 INNER JOIN roles ON roles.role_id=user_roles.role_id
+				  WHERE user_name=?" 
  
 		/>
 	   </authentication-provider>

@@ -1,5 +1,9 @@
 package de.enwida.web.model;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
+import de.enwida.web.dao.implementation.UserDao;
+
 
 public class User {
  
@@ -8,24 +12,30 @@ public class User {
 	private String lastName;
 	private String firstName;
 	private String password;
-	private boolean enabled=false;
-	private boolean admin=false;
-	private boolean testuser=false;
-	private boolean export=false;
+	private boolean enabled;
+	
 
-	public User(long userID, String userName, String password, boolean enabled) {
+	private UserPermissionCollection userPermissionCollection=new UserPermissionCollection();
+	
+	UserDao userDao=new UserDao();
+
+	public User(long userID, String userName, String password,String firstName,String lastName, boolean enabled) {
 		// TODO Auto-generated constructor stub
 		this.setUserID(userID);
 		this.setUserName(userName);
 		this.setLastName(lastName);
 		this.setFirstName(firstName);
 		this.setPassword(password);
+		this.setEnabled(enabled);
+	}
+	
+	public User(long userID,String userName,String password, boolean enabled){
+		this(userID,userName,password,null,null,enabled);
 	}
 
 	public User() {
 		// TODO Auto-generated constructor stub
 	}
-	
 
 	public String getLastName() {
 		return lastName;
@@ -72,28 +82,17 @@ public class User {
 		return this.getUserName();
 	}
 
-	public boolean isAdmin() {
-		return admin;
+	public UserPermissionCollection getUserPermissionCollection() {
+		return userPermissionCollection;
 	}
 
-	public void setAdmin(boolean admin) {
-		this.admin = admin;
+	public void setUserPermissionCollection(
+			UserPermissionCollection userPermissionCollection) {
+		this.userPermissionCollection = userPermissionCollection;
 	}
-
-	public boolean isTestuser() {
-		return testuser;
-	}
-
-	public void setTestuser(boolean testuser) {
-		this.testuser = testuser;
-	}
-
-	public boolean isExport() {
-		return export;
-	}
-
-	public void setExport(boolean export) {
-		this.export = export;
+	
+	public boolean hasPermission(String permission){
+		return getUserPermissionCollection().implies(new UserPermission(permission));
 	}
 
 	public boolean isEnabled() {

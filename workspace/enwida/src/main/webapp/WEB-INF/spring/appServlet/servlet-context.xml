@@ -33,6 +33,12 @@
 	<beans:bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
 		<beans:property name="basename" value="/resources/messages/messages" />
 	</beans:bean>
+	
+	<beans:bean id="userPermissionCollection" class="de.enwida.web.model.UserPermissionCollection">
+	</beans:bean>
+	
+	<beans:bean id="userDao" class="de.enwida.web.dao.implementation.UserDao">
+	</beans:bean>
 
 	<interceptors>
     	<beans:bean id="localeChangeInterceptor" class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor">
