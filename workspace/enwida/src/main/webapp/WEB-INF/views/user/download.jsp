@@ -13,7 +13,7 @@
 	</head>
 	<body>
 		<a href="${userStatusURL}">${userStatus}</a>
-        <input id="rl_ab1_datepicker"  onchange="load('rl_ab1')">
+        <input id="datepicker"  onchange="load()">
         <select id="rl_ab1_selProduct1"  onchange="load('rl_ab1')">
         	  <option value="1">SCR</option>
         	  <option value="2">TCR</option>

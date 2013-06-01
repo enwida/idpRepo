@@ -9,11 +9,10 @@ function () {
 function setupPage(chart){
 	//All event bindings can be done here
 	$(function() {
-		var instance ="#"+chart+"_datepicker";
 		
 //		$('#downloadLink').click(function(){ downloadCsv(chart); return false; });
 	    
-		$(instance).datepicker({
+		$("#datepicker").datepicker({
 	        changeMonth: true,
 	        changeYear: true,
 	        setDate: new Date(),
@@ -24,7 +23,7 @@ function setupPage(chart){
 	 		   }
 	    });
 
-	    $( "#rl_ab1_datepicker" ).datepicker( "setDate", new Date());
+	    $( "#datepicker" ).datepicker( "setDate", new Date());
 	});
 }
 
@@ -60,7 +59,7 @@ function loadChartData(options){
 
 
 function chgRange(chart,id){
-	var instance="#"+chart+"_datepicker";
+	var instance="#datepicker";
 	
 	//default remove unused events
 	$(instance).empty();
@@ -89,7 +88,7 @@ function chgRange(chart,id){
 }
 
 function downloadCsv(chart){
-	var instance="#"+chart+"_datepicker";
+	var instance="#datepicker";
    	var url= "../export?"+
    		   "type="+chart+"&pro=210&res=15min&locale=en"+
    		   "&t1="+$(instance).datepicker('getDate').format('yyyyMMdd');
@@ -100,7 +99,7 @@ function downloadCsv(chart){
 function setWeekRange(chart) {
 $(function() {
 	var startDate;
-	var instance="#"+chart+"_datepicker";
+	var instance="#datepicker";
     $(instance).datepicker( {
         onSelect: function(dateText, inst) { 
             var date = $(this).datepicker('getDate');
