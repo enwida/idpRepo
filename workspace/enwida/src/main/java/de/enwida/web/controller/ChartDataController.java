@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,6 +26,7 @@ import de.enwida.web.model.GenericData;
 import de.enwida.web.model.NavigationDataStructure;
 import de.enwida.web.model.NavigationNode;
 import de.enwida.web.service.interfaces.NavigationService;
+import de.enwida.web.utils.ProductPart;
 
 /**
  * Handles chart data requests
@@ -37,6 +39,8 @@ public class ChartDataController {
 	private DataManager dataManager;
 	@Autowired
 	private NavigationService navigationService;
+	@Autowired
+	private MessageSource messageSource;
 
 	private void convertListToNavigationStructure(List<String> inputList,
 			List<NavigationNode> navigationStructure) {
@@ -93,6 +97,49 @@ public class ChartDataController {
 		// dummy.setHeight(480);
 		dummy.setTitle("Capacity");
 		return dummy;
+	}
+	
+	private void fillDefaultProducts(ChartNavigationData navigationData) {
+	    // ProdA (type of RC)
+	    final ProductPart prodSCR = new ProductPart(2, "SCR");
+	    final ProductPart prodTCR = new ProductPart(3, "TCR");
+	    
+	    // ProdB (time slot)
+	    final ProductPart prodWholeDay = new ProductPart(1, "");
+
+	    final ProductPart prodPT = new ProductPart(1, "PT");
+	    final ProductPart prodOPT = new ProductPart(2, "OPT");
+
+	    final ProductPart prod04 = new ProductPart(1, "0-4");
+	    final ProductPart prod48 = new ProductPart(2, "4-8");
+	    final ProductPart prod812 = new ProductPart(3, "8-12");
+	    final ProductPart prod1216 = new ProductPart(4, "12-16");
+	    final ProductPart prod1620 = new ProductPart(5, "16-20");
+	    final ProductPart prod2024 = new ProductPart(6, "20-24");
+	    
+	    // ProdC (positive / negative)
+	    final ProductPart prodPos = new ProductPart(1, "pos");
+	    final ProductPart prodNeg = new ProductPart(2, "neg");
+	    
+	    // Add pos/neg to every time slot
+	    for (final ProductPart timeslot : new ProductPart[]
+	        { prodWholeDay, prodOPT, prod04, prod48, prod812, prod1216, prod1620, prod2024 }
+	    ) {
+	        timeslot.addChild(prodPos);
+	        timeslot.addChild(prodNeg);
+	    }
+	    
+	    // Append time slots to RC types
+	    prodSCR.addChild(prodPT);
+	    prodSCR.addChild(prodOPT);
+	    
+	    prodTCR.getChildren().addAll(Arrays.asList(new ProductPart[]
+	        { prod04, prod48, prod812, prod1216, prod1620, prod2024 }
+	    ));
+	    
+	    // Add root elements (RC types)
+	    navigationData.addProduct(prodSCR);
+	    navigationData.addProduct(prodTCR);
 	}
 
 	private NavigationDataStructure prepareNavigationDS(DataRequest request,
