@@ -39,7 +39,7 @@ public class HomeController {
 		//TODO:Fix here
 		final AspectServiceImp aspectService=new AspectServiceImp();
 		aspectService.dataLineRequestManager=this.dataLineRequestManager;
-		return aspectService.getLine(completeUrl, pMap);
+		return aspectService.getLine(pMap);
 	}
 	
 	@RequestMapping(value="/getexampledata", method = RequestMethod.GET)

@@ -3,7 +3,7 @@ package de.enwida.web.service.implementation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import de.enwida.chart.Aspect;
+import de.enwida.transport.Aspect;
 import de.enwida.web.dao.interfaces.IDataAutorizationDao;
 import de.enwida.web.dao.interfaces.IDataAvailibilityDao;
 import de.enwida.web.model.DataAuthorization;

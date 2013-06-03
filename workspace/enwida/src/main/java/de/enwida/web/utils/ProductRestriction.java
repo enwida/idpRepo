@@ -2,7 +2,7 @@ package de.enwida.web.utils;
 
 import java.util.List;
 
-import de.enwida.chart.Aspect;
+import de.enwida.transport.Aspect;
 import de.enwida.transport.DataResolution;
 
 public class ProductRestriction {

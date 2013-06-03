@@ -1,6 +1,6 @@
 package de.enwida.web.service.interfaces;
 
-import de.enwida.chart.Aspect;
+import de.enwida.transport.Aspect;
 import de.enwida.web.model.DataAuthorization;
 import de.enwida.web.utils.ProductRestriction;
 
