@@ -1,9 +1,11 @@
 package de.enwida.web.model;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import de.enwida.transport.DataResolution;
+import de.enwida.web.model.ProductTree.ProductAttributes;
 import de.enwida.web.utils.CalendarRange;
 import de.enwida.web.utils.NavigationDefaults;
 import de.enwida.web.utils.TSO;
@@ -15,8 +17,6 @@ public class ChartNavigationData {
 	private NavigationDefaults defaults;
 	private NavigationDataStructure navigationDS;
 	private ProductTree productTree;
-	private List<DataResolution> resolutions;
-	private CalendarRange timeRange;
 	private List<TSO> tsos;
 	private String xAxisLabel;
 	private String yAxisLabel;
@@ -25,24 +25,17 @@ public class ChartNavigationData {
 	}
 
 	public ChartNavigationData(String chartTitle, String xAxisLabel, String yAxisLabel) {
-		this(chartTitle, xAxisLabel, yAxisLabel, new ArrayList<TSO>(), null, new ArrayList<DataResolution>(), new ProductTree(), null);
-		this.timeRange = CalendarRange.always();
+		this(chartTitle, xAxisLabel, yAxisLabel, new ArrayList<TSO>(), new ProductTree(), null);
 	}
 
-	public ChartNavigationData(String chartTitle, String xAxisLabel, String yAxisLabel, List<TSO> tsos, CalendarRange timeRange,
-			List<DataResolution> resolutions, ProductTree productTree, NavigationDefaults defaults) {
+	public ChartNavigationData(String chartTitle, String xAxisLabel, String yAxisLabel, List<TSO> tsos,
+	       ProductTree productTree, NavigationDefaults defaults) {
 		this.chartTitle = chartTitle;
 		this.xAxisLabel = xAxisLabel;
 		this.yAxisLabel = yAxisLabel;
 		this.tsos = tsos;
-		this.timeRange = timeRange;
-		this.resolutions = resolutions;
 		this.productTree = productTree;
 		this.defaults = defaults;
-	}
-
-	public void addResolution(DataResolution resolution) {
-		this.resolutions.add(resolution);
 	}
 
 	public void addTso(TSO tso) {
@@ -69,12 +62,45 @@ public class ChartNavigationData {
 	    this.productTree = productTree;
 	}
 
-	public List<DataResolution> getResolutions() {
-		return this.resolutions;
+	public List<DataResolution> getAllResolutions() {
+	    final List<DataResolution> result = new ArrayList<DataResolution>();
+
+	    for (final ProductAttributes product : productTree.flatten()) {
+	        result.addAll(product.resolutions);
+	    }
+	    return result;
 	}
 
-	public CalendarRange getTimeRange() {
-		return this.timeRange;
+	public CalendarRange getTimeRangeMax() {
+	    final List<ProductAttributes> products = productTree.flatten();
+	    Calendar from = null;
+	    Calendar to = null;
+	    
+	    for (final ProductAttributes product : products) {
+	        if (from == null || product.timeRange.getFrom().compareTo(from) < 0) {
+	            from = product.timeRange.getFrom();
+	        }
+	        if (to == null || product.timeRange.getTo().compareTo(to) > 0) {
+	            to = product.timeRange.getTo();
+	        }
+	    }
+	    return new CalendarRange(from, to);
+	}
+
+	public CalendarRange getTimeRangeMin() {
+	    final List<ProductAttributes> products = productTree.flatten();
+	    Calendar from = null;
+	    Calendar to = null;
+	    
+	    for (final ProductAttributes product : products) {
+	        if (from == null || product.timeRange.getFrom().compareTo(from) > 0) {
+	            from = product.timeRange.getFrom();
+	        }
+	        if (to == null || product.timeRange.getTo().compareTo(to) < 0) {
+	            to = product.timeRange.getTo();
+	        }
+	    }
+	    return new CalendarRange(from, to);
 	}
 
 	public String getTitle() {
@@ -103,14 +129,6 @@ public class ChartNavigationData {
 
 	public void setNavigationDS(NavigationDataStructure navigationDS) {
 		this.navigationDS = navigationDS;
-	}
-
-	public void setResolutions(List<DataResolution> resolutions) {
-		this.resolutions = resolutions;
-	}
-
-	public void setTimeRange(CalendarRange timeRange) {
-		this.timeRange = timeRange;
 	}
 
 	public void setTitle(String title) {
