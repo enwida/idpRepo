@@ -119,7 +119,6 @@ public class UserController {
 	
 	@RequestMapping(value="/forgotPassword",method=RequestMethod.POST)
 	public String forgotPassword(ModelMap model,String email){
-		UserDao userDao=new UserDao();
 		String password=userDao.getPassword(email);
 		if(password==null){
 			model.addAttribute("error", "User is not found");
