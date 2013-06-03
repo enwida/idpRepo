@@ -102,7 +102,9 @@ public class ProductTree {
     }
     
     public void cleanTree() {
-        for (ProductNode child : root.getChildren()) {
+        // Clone list in order to avoid concurrent modifications
+        final List<ProductNode> childrenClone = new ArrayList<ProductNode>(root.getChildren());
+        for (ProductNode child : childrenClone) {
             cleanTree(child, root);
         }
     }
@@ -112,15 +114,19 @@ public class ProductTree {
             // Nothing to clean
             return;
         }
+
+        // Clone list in order to avoid concurrent modifications
+        final List<ProductNode> childrenClone = new ArrayList<ProductNode>(node.getChildren());
+
+        // Recurse
+        for (final ProductNode child : childrenClone) {
+            cleanTree(child, node);
+        }
+
+        // Check if node still has children
         if (node.getChildren() == null || node.getChildren().size() == 0) {
             // Remove node if it has no children
             parent.getChildren().remove(node);
-            return;
-        }
-        
-        // Recurse
-        for (final ProductNode child : node.getChildren()) {
-            cleanTree(child, node);
         }
     }
     

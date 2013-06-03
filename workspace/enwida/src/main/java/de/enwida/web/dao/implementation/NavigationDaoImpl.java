@@ -65,7 +65,7 @@ public class NavigationDaoImpl extends BaseDao<User> implements INavigationDao {
 	    
 	    // Add pos/neg to every time slot
 	    for (final ProductNode timeslot : new ProductNode[]
-	        { prodWholeDay, prodOPT, prod04, prod48, prod812, prod1216, prod1620, prod2024 }
+	        { prodWholeDay, prodPT, prodOPT, prod04, prod48, prod812, prod1216, prod1620, prod2024 }
 	    ) {
 	        timeslot.addChild(prodPos);
 	        timeslot.addChild(prodNeg);

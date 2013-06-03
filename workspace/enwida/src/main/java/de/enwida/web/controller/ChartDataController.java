@@ -25,6 +25,7 @@ import de.enwida.web.model.ChartNavigationData;
 import de.enwida.web.model.GenericData;
 import de.enwida.web.model.NavigationDataStructure;
 import de.enwida.web.model.NavigationNode;
+import de.enwida.web.model.User;
 import de.enwida.web.service.interfaces.NavigationService;
 import de.enwida.web.utils.CalendarRange;
 import de.enwida.web.utils.ProductLeaf;
@@ -84,7 +85,7 @@ public class ChartDataController {
 				endTime, resolution, locale);
 		final NavigationDataStructure navigationDS = this.prepareNavigationDS(
 				request, principal);
-		this.navigationService.getNavigationData(navigationDS);
+//		this.navigationService.getNavigationData(navigationDS);
 		final ChartNavigationData response = new ChartNavigationData();
 		response.setNavigationDS(navigationDS);
 		return response;
@@ -92,57 +93,9 @@ public class ChartDataController {
 
 	@RequestMapping(value = "/navigation", method = RequestMethod.GET)
 	@ResponseBody
-	public ChartNavigationData initData() {
-		// FIXME: Get navigation data from a dedicated service
-		final ChartNavigationData dummy = new ChartNavigationData();
-		dummy.setTitle("Capacity");
-		fillDefaultProducts(dummy);
-		return dummy;
-	}
-	
-	private void fillDefaultProducts(ChartNavigationData navigationData) {
-	    final List<DataResolution> allResolutions = Arrays.asList(DataResolution.values());
-	    
-	    // ProdA (type of RC)
-	    final ProductNode prodSCR = new ProductNode(2, "SCR");
-	    final ProductNode prodTCR = new ProductNode(3, "TCR");
-	    
-	    // ProdB (time slot)
-	    final ProductNode prodWholeDay = new ProductNode(1, "");
-
-	    final ProductNode prodPT = new ProductNode(1, "PT");
-	    final ProductNode prodOPT = new ProductNode(2, "OPT");
-
-	    final ProductNode prod04 = new ProductNode(1, "0-4");
-	    final ProductNode prod48 = new ProductNode(2, "4-8");
-	    final ProductNode prod812 = new ProductNode(3, "8-12");
-	    final ProductNode prod1216 = new ProductNode(4, "12-16");
-	    final ProductNode prod1620 = new ProductNode(5, "16-20");
-	    final ProductNode prod2024 = new ProductNode(6, "20-24");
-	    
-	    // ProdC (positive / negative) as leaves
-	    final ProductLeaf prodPos = new ProductLeaf(1, "pos", allResolutions, CalendarRange.always());
-	    final ProductLeaf prodNeg = new ProductLeaf(2, "neg", allResolutions, CalendarRange.always());
-	    
-	    // Add pos/neg to every time slot
-	    for (final ProductNode timeslot : new ProductNode[]
-	        { prodWholeDay, prodOPT, prod04, prod48, prod812, prod1216, prod1620, prod2024 }
-	    ) {
-	        timeslot.addChild(prodPos);
-	        timeslot.addChild(prodNeg);
-	    }
-	    
-	    // Append time slots to RC types
-	    prodSCR.addChild(prodPT);
-	    prodSCR.addChild(prodOPT);
-	    
-	    prodTCR.getChildren().addAll(Arrays.asList(new ProductNode[]
-	        { prod04, prod48, prod812, prod1216, prod1620, prod2024 }
-	    ));
-	    
-	    // Add root elements (RC types)
-	    navigationData.getProductTree().addNode(prodSCR);
-	    navigationData.getProductTree().addNode(prodTCR);
+	public ChartNavigationData initData(@RequestParam int chartId, Locale locale, Principal principal) {
+	    // TODO: get user
+	    return navigationService.getNavigationData(chartId, null, locale);
 	}
 	
 	private NavigationDataStructure prepareNavigationDS(DataRequest request,

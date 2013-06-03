@@ -1,6 +1,7 @@
 package de.enwida.web.utils;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import de.enwida.transport.DataResolution;
@@ -38,7 +39,7 @@ public class ProductLeaf extends ProductNode {
     
     @Override
     public List<ProductNode> getChildren() {
-        throw new IllegalAccessError("Illegal call to getChildren of a leaf");
+        return Collections.emptyList();
     }
     
     @Override
