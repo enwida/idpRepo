@@ -18,6 +18,7 @@ import de.enwida.transport.DataRequest;
 import de.enwida.transport.DataResolution;
 import de.enwida.transport.DataResponse;
 import de.enwida.web.model.ChartNavigationData;
+import de.enwida.web.service.interfaces.NavigationService;
 
 /**
  * Handles chart data requests
@@ -28,6 +29,9 @@ public class ChartDataController {
 	
 	@Autowired
 	private DataManager dataManager;
+	
+	@Autowired
+	private NavigationService navigationService;
 	
 	@RequestMapping(value="/lines", method = RequestMethod.GET)
 	@ResponseBody
@@ -55,13 +59,9 @@ public class ChartDataController {
 	
 	@RequestMapping(value = "/navigation", method = RequestMethod.GET)
 	@ResponseBody
-	public ChartNavigationData initData() {
-		// FIXME: Get navigation data from a dedicated service
-		ChartNavigationData dummy = new ChartNavigationData();
-		dummy.setWidth(600);
-		dummy.setHeight(480);
-		dummy.setTitle("Capacity");
-		return dummy;
+	public ChartNavigationData getNavigationData(@RequestParam int chartId, Principal principal, Locale locale) {
+	    // FIXME: get user
+	    return navigationService.getNavigationData(chartId, null, locale);
 	}
 	
 }
