@@ -11,25 +11,25 @@ import de.enwida.web.utils.ProductNode;
 public class ProductTree {
     
     public static class ProductAttributes {
-        public int product;
+        public int productId;
         public List<DataResolution> resolutions;
         public CalendarRange timeRange;
 
-        public ProductAttributes(int product, List<DataResolution> resolutions, CalendarRange timeRange) {
-            this.product = product;
+        public ProductAttributes(int productId, List<DataResolution> resolutions, CalendarRange timeRange) {
+            this.productId = productId;
             this.resolutions = resolutions;
             this.timeRange = timeRange;
         }
     }
     
-    private List<ProductNode> nodes;
+    private ProductNode root;
 
-    public ProductTree(List<ProductNode> nodes) {
-        this.nodes = nodes;
+    public ProductTree(ProductNode root) {
+        this.root = root;
     }
 
     public ProductTree() {
-        this(new ArrayList<ProductNode>());
+        this.root = new ProductNode(0, "root", new ArrayList<ProductNode>());
     }
     
     /**
@@ -39,7 +39,7 @@ public class ProductTree {
      */
     public List<ProductAttributes> flatten() {
         final List<ProductAttributes> result = new ArrayList<ProductAttributes>();
-        for (final ProductNode node : nodes) {
+        for (final ProductNode node : root.getChildren()) {
             flatten(node, "", result);
         }
         return result;
@@ -64,10 +64,15 @@ public class ProductTree {
      * @return The corresponding {@link ProductLeaf}
      */
     public ProductLeaf getLeaf(int product) {
-        return getLeaf(String.valueOf(product), getRoot());
+        return getLeaf(String.valueOf(product), getRoot(), null);
     }
     
-    private static ProductLeaf getLeaf(String product, ProductNode node) {
+    private static ProductLeaf getLeaf(String product, ProductNode node, List<ProductNode> trace) {
+        // Leave breadcrumbs
+        if (trace != null) {
+            trace.add(node);
+        }
+
         if (product.isEmpty()) {
             if (node instanceof ProductLeaf ){
                 return (ProductLeaf) node;
@@ -93,19 +98,49 @@ public class ProductTree {
         if (nextNode == null) {
             return null;
         }
-        return getLeaf(remainingId, nextNode);
+        return getLeaf(remainingId, nextNode, trace);
+    }
+    
+    public void cleanTree() {
+        for (ProductNode child : root.getChildren()) {
+            cleanTree(child, root);
+        }
+    }
+    
+    private static void cleanTree(ProductNode node, ProductNode parent) {
+        if (node instanceof ProductLeaf) {
+            // Nothing to clean
+            return;
+        }
+        if (node.getChildren() == null || node.getChildren().size() == 0) {
+            // Remove node if it has no children
+            parent.getChildren().remove(node);
+            return;
+        }
+        
+        // Recurse
+        for (final ProductNode child : node.getChildren()) {
+            cleanTree(child, node);
+        }
+    }
+    
+    public void removeProduct(int productId) {
+        final List<ProductNode> trace = new ArrayList<ProductNode>();
+        final ProductLeaf leaf = getLeaf(String.valueOf(productId), getRoot(), trace);
+        final ProductNode parent = trace.get(trace.size() - 2);
+        
+        if (parent != null) {
+            parent.getChildren().remove(leaf);
+        }
+        cleanTree();
     }
     
     public ProductNode getRoot() {
-        return new ProductNode(0, "root", nodes);
-    }
-    
-    public List<ProductNode> getNodes() {
-        return nodes;
+        return root;
     }
     
     public void addNode(ProductNode node) {
-        nodes.add(node);
+        root.addChild(node);
     }
 
 }
