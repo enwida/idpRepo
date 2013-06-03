@@ -1,13 +1,11 @@
 package de.enwida.web.model;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 import de.enwida.transport.DataResolution;
 import de.enwida.web.utils.CalendarRange;
 import de.enwida.web.utils.NavigationDefaults;
-import de.enwida.web.utils.ProductNode;
 import de.enwida.web.utils.TSO;
 
 
@@ -16,7 +14,7 @@ public class ChartNavigationData {
 	private String chartTitle;
 	private NavigationDefaults defaults;
 	private NavigationDataStructure navigationDS;
-	private List<ProductNode> products;
+	private ProductTree productTree;
 	private List<DataResolution> resolutions;
 	private CalendarRange timeRange;
 	private List<TSO> tsos;
@@ -27,24 +25,20 @@ public class ChartNavigationData {
 	}
 
 	public ChartNavigationData(String chartTitle, String xAxisLabel, String yAxisLabel) {
-		this(chartTitle, xAxisLabel, yAxisLabel, new ArrayList<TSO>(), null, new ArrayList<DataResolution>(), new ArrayList<ProductNode>(), null);
+		this(chartTitle, xAxisLabel, yAxisLabel, new ArrayList<TSO>(), null, new ArrayList<DataResolution>(), new ProductTree(), null);
 		this.timeRange = CalendarRange.always();
 	}
 
 	public ChartNavigationData(String chartTitle, String xAxisLabel, String yAxisLabel, List<TSO> tsos, CalendarRange timeRange,
-			List<DataResolution> resolutions, List<ProductNode> products, NavigationDefaults defaults) {
+			List<DataResolution> resolutions, ProductTree productTree, NavigationDefaults defaults) {
 		this.chartTitle = chartTitle;
 		this.xAxisLabel = xAxisLabel;
 		this.yAxisLabel = yAxisLabel;
 		this.tsos = tsos;
 		this.timeRange = timeRange;
 		this.resolutions = resolutions;
-		this.products = products;
+		this.productTree = productTree;
 		this.defaults = defaults;
-	}
-
-	public void addProduct(ProductNode product) {
-		this.products.add(product);
 	}
 
 	public void addResolution(DataResolution resolution) {
@@ -67,8 +61,12 @@ public class ChartNavigationData {
 		return this.navigationDS;
 	}
 
-	public List<ProductNode> getProducts() {
-		return this.products;
+	public ProductTree getProductTree() {
+		return this.productTree;
+	}
+	
+	public void setProductTree(ProductTree productTree) {
+	    this.productTree = productTree;
 	}
 
 	public List<DataResolution> getResolutions() {
@@ -105,10 +103,6 @@ public class ChartNavigationData {
 
 	public void setNavigationDS(NavigationDataStructure navigationDS) {
 		this.navigationDS = navigationDS;
-	}
-
-	public void setProducts(List<ProductNode> products) {
-		this.products = products;
 	}
 
 	public void setResolutions(List<DataResolution> resolutions) {

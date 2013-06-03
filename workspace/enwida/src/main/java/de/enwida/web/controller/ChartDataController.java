@@ -141,8 +141,8 @@ public class ChartDataController {
 	    ));
 	    
 	    // Add root elements (RC types)
-	    navigationData.addProduct(prodSCR);
-	    navigationData.addProduct(prodTCR);
+	    navigationData.getProductTree().addNode(prodSCR);
+	    navigationData.getProductTree().addNode(prodTCR);
 	}
 	
 	private NavigationDataStructure prepareNavigationDS(DataRequest request,
