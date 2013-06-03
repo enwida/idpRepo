@@ -26,7 +26,9 @@ import de.enwida.web.model.GenericData;
 import de.enwida.web.model.NavigationDataStructure;
 import de.enwida.web.model.NavigationNode;
 import de.enwida.web.service.interfaces.NavigationService;
-import de.enwida.web.utils.ProductPart;
+import de.enwida.web.utils.CalendarRange;
+import de.enwida.web.utils.ProductLeaf;
+import de.enwida.web.utils.ProductNode;
 
 /**
  * Handles chart data requests
@@ -93,36 +95,37 @@ public class ChartDataController {
 	public ChartNavigationData initData() {
 		// FIXME: Get navigation data from a dedicated service
 		final ChartNavigationData dummy = new ChartNavigationData();
-		// dummy.setWidth(600);
-		// dummy.setHeight(480);
 		dummy.setTitle("Capacity");
+		fillDefaultProducts(dummy);
 		return dummy;
 	}
 	
 	private void fillDefaultProducts(ChartNavigationData navigationData) {
+	    final List<DataResolution> allResolutions = Arrays.asList(DataResolution.values());
+	    
 	    // ProdA (type of RC)
-	    final ProductPart prodSCR = new ProductPart(2, "SCR");
-	    final ProductPart prodTCR = new ProductPart(3, "TCR");
+	    final ProductNode prodSCR = new ProductNode(2, "SCR");
+	    final ProductNode prodTCR = new ProductNode(3, "TCR");
 	    
 	    // ProdB (time slot)
-	    final ProductPart prodWholeDay = new ProductPart(1, "");
+	    final ProductNode prodWholeDay = new ProductNode(1, "");
 
-	    final ProductPart prodPT = new ProductPart(1, "PT");
-	    final ProductPart prodOPT = new ProductPart(2, "OPT");
+	    final ProductNode prodPT = new ProductNode(1, "PT");
+	    final ProductNode prodOPT = new ProductNode(2, "OPT");
 
-	    final ProductPart prod04 = new ProductPart(1, "0-4");
-	    final ProductPart prod48 = new ProductPart(2, "4-8");
-	    final ProductPart prod812 = new ProductPart(3, "8-12");
-	    final ProductPart prod1216 = new ProductPart(4, "12-16");
-	    final ProductPart prod1620 = new ProductPart(5, "16-20");
-	    final ProductPart prod2024 = new ProductPart(6, "20-24");
+	    final ProductNode prod04 = new ProductNode(1, "0-4");
+	    final ProductNode prod48 = new ProductNode(2, "4-8");
+	    final ProductNode prod812 = new ProductNode(3, "8-12");
+	    final ProductNode prod1216 = new ProductNode(4, "12-16");
+	    final ProductNode prod1620 = new ProductNode(5, "16-20");
+	    final ProductNode prod2024 = new ProductNode(6, "20-24");
 	    
-	    // ProdC (positive / negative)
-	    final ProductPart prodPos = new ProductPart(1, "pos");
-	    final ProductPart prodNeg = new ProductPart(2, "neg");
+	    // ProdC (positive / negative) as leaves
+	    final ProductLeaf prodPos = new ProductLeaf(1, "pos", allResolutions, CalendarRange.always());
+	    final ProductLeaf prodNeg = new ProductLeaf(2, "neg", allResolutions, CalendarRange.always());
 	    
 	    // Add pos/neg to every time slot
-	    for (final ProductPart timeslot : new ProductPart[]
+	    for (final ProductNode timeslot : new ProductNode[]
 	        { prodWholeDay, prodOPT, prod04, prod48, prod812, prod1216, prod1620, prod2024 }
 	    ) {
 	        timeslot.addChild(prodPos);
@@ -133,7 +136,7 @@ public class ChartDataController {
 	    prodSCR.addChild(prodPT);
 	    prodSCR.addChild(prodOPT);
 	    
-	    prodTCR.getChildren().addAll(Arrays.asList(new ProductPart[]
+	    prodTCR.getChildren().addAll(Arrays.asList(new ProductNode[]
 	        { prod04, prod48, prod812, prod1216, prod1620, prod2024 }
 	    ));
 	    
@@ -141,7 +144,7 @@ public class ChartDataController {
 	    navigationData.addProduct(prodSCR);
 	    navigationData.addProduct(prodTCR);
 	}
-
+	
 	private NavigationDataStructure prepareNavigationDS(DataRequest request,
 			Principal principal) {
 		final NavigationDataStructure navigationDS = new NavigationDataStructure();

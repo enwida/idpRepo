@@ -11,6 +11,14 @@ public class CalendarRange {
         this.from = from;
         this.to = to;
     }
+    
+    public static CalendarRange always() {
+		final Calendar from = Calendar.getInstance();
+		final Calendar to = Calendar.getInstance();
+		from.setTimeInMillis(0);
+		to.setTimeInMillis(Long.MAX_VALUE);
+		return new CalendarRange(from, to);
+    }
 
     public Calendar getFrom() {
         return from;

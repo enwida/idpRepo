@@ -7,7 +7,7 @@ import java.util.List;
 import de.enwida.transport.DataResolution;
 import de.enwida.web.utils.CalendarRange;
 import de.enwida.web.utils.NavigationDefaults;
-import de.enwida.web.utils.ProductPart;
+import de.enwida.web.utils.ProductNode;
 import de.enwida.web.utils.TSO;
 
 
@@ -16,7 +16,7 @@ public class ChartNavigationData {
 	private String chartTitle;
 	private NavigationDefaults defaults;
 	private NavigationDataStructure navigationDS;
-	private List<ProductPart> products;
+	private List<ProductNode> products;
 	private List<DataResolution> resolutions;
 	private CalendarRange timeRange;
 	private List<TSO> tsos;
@@ -27,18 +27,12 @@ public class ChartNavigationData {
 	}
 
 	public ChartNavigationData(String chartTitle, String xAxisLabel, String yAxisLabel) {
-		this(chartTitle, xAxisLabel, yAxisLabel, new ArrayList<TSO>(), null, new ArrayList<DataResolution>(), new ArrayList<ProductPart>(), null);
-
-		// Set the time range to the maximum
-		final Calendar from = Calendar.getInstance();
-		final Calendar to = Calendar.getInstance();
-		from.setTimeInMillis(0);
-		to.setTimeInMillis(Long.MAX_VALUE);
-		this.timeRange = new CalendarRange(from, to);
+		this(chartTitle, xAxisLabel, yAxisLabel, new ArrayList<TSO>(), null, new ArrayList<DataResolution>(), new ArrayList<ProductNode>(), null);
+		this.timeRange = CalendarRange.always();
 	}
 
 	public ChartNavigationData(String chartTitle, String xAxisLabel, String yAxisLabel, List<TSO> tsos, CalendarRange timeRange,
-			List<DataResolution> resolutions, List<ProductPart> products, NavigationDefaults defaults) {
+			List<DataResolution> resolutions, List<ProductNode> products, NavigationDefaults defaults) {
 		this.chartTitle = chartTitle;
 		this.xAxisLabel = xAxisLabel;
 		this.yAxisLabel = yAxisLabel;
@@ -49,7 +43,7 @@ public class ChartNavigationData {
 		this.defaults = defaults;
 	}
 
-	public void addProduct(ProductPart product) {
+	public void addProduct(ProductNode product) {
 		this.products.add(product);
 	}
 
@@ -73,7 +67,7 @@ public class ChartNavigationData {
 		return this.navigationDS;
 	}
 
-	public List<ProductPart> getProducts() {
+	public List<ProductNode> getProducts() {
 		return this.products;
 	}
 
@@ -113,7 +107,7 @@ public class ChartNavigationData {
 		this.navigationDS = navigationDS;
 	}
 
-	public void setProducts(List<ProductPart> products) {
+	public void setProducts(List<ProductNode> products) {
 		this.products = products;
 	}
 

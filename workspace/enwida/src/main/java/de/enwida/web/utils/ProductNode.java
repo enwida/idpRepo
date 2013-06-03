@@ -3,20 +3,20 @@ package de.enwida.web.utils;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProductPart {
+public class ProductNode {
     
     private int id;
     private String name;
-    private List<ProductPart> children;
+    private List<ProductNode> children;
     
-    public ProductPart(int id, String name, List<ProductPart> children) {
+    public ProductNode(int id, String name, List<ProductNode> children) {
         this.id = id;
         this.name = name;
         this.children = children;
     }
     
-    public ProductPart(int id, String name) {
-        this(id, name, new ArrayList<ProductPart>());
+    public ProductNode(int id, String name) {
+        this(id, name, new ArrayList<ProductNode>());
     }
 
     public int getId() {
@@ -35,11 +35,11 @@ public class ProductPart {
         this.name = name;
     }
 
-    public List<ProductPart> getChildren() {
+    public List<ProductNode> getChildren() {
         return children;
     }
     
-    public void addChild(ProductPart child) {
+    public void addChild(ProductNode child) {
         children.add(child);
     }
     
