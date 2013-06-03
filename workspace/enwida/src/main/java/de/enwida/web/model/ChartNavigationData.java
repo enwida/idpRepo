@@ -73,34 +73,22 @@ public class ChartNavigationData {
 
 	public CalendarRange getTimeRangeMax() {
 	    final List<ProductAttributes> products = productTree.flatten();
-	    Calendar from = null;
-	    Calendar to = null;
+	    final List<CalendarRange> ranges = new ArrayList<CalendarRange>();
 	    
 	    for (final ProductAttributes product : products) {
-	        if (from == null || product.timeRange.getFrom().compareTo(from) < 0) {
-	            from = product.timeRange.getFrom();
-	        }
-	        if (to == null || product.timeRange.getTo().compareTo(to) > 0) {
-	            to = product.timeRange.getTo();
-	        }
+	        ranges.add(product.timeRange);
 	    }
-	    return new CalendarRange(from, to);
+	    return CalendarRange.getMaximum(ranges);
 	}
 
 	public CalendarRange getTimeRangeMin() {
 	    final List<ProductAttributes> products = productTree.flatten();
-	    Calendar from = null;
-	    Calendar to = null;
+	    final List<CalendarRange> ranges = new ArrayList<CalendarRange>();
 	    
 	    for (final ProductAttributes product : products) {
-	        if (from == null || product.timeRange.getFrom().compareTo(from) > 0) {
-	            from = product.timeRange.getFrom();
-	        }
-	        if (to == null || product.timeRange.getTo().compareTo(to) < 0) {
-	            to = product.timeRange.getTo();
-	        }
+	        ranges.add(product.timeRange);
 	    }
-	    return new CalendarRange(from, to);
+	    return CalendarRange.getMinimum(ranges);
 	}
 
 	public String getTitle() {

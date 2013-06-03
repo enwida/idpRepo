@@ -1,6 +1,7 @@
 package de.enwida.web.utils;
 
 import java.util.Calendar;
+import java.util.List;
 
 public class CalendarRange {
     
@@ -19,6 +20,42 @@ public class CalendarRange {
 		to.setTimeInMillis(Long.MAX_VALUE);
 		return new CalendarRange(from, to);
     }
+    
+	public static CalendarRange getMaximum(List<CalendarRange> ranges) {
+	    Calendar from = null;
+	    Calendar to = null;
+	    
+	    for (final CalendarRange range : ranges) {
+	        if (from == null || range.getFrom().compareTo(from) < 0) {
+	            from = range.getFrom();
+	        }
+	        if (to == null || range.getTo().compareTo(to) > 0) {
+	            to = range.getTo();
+	        }
+	    }
+	    if (from == null || to == null) {
+	        return null;
+	    }
+	    return new CalendarRange(from, to);
+	}
+
+	public static CalendarRange getMinimum(List<CalendarRange> ranges) {
+	    Calendar from = null;
+	    Calendar to = null;
+	    
+	    for (final CalendarRange range : ranges) {
+	        if (from == null || range.getFrom().compareTo(from) > 0) {
+	            from = range.getFrom();
+	        }
+	        if (to == null || range.getTo().compareTo(to) < 0) {
+	            to = range.getTo();
+	        }
+	    }
+	    if (from == null || to == null) {
+	        return null;
+	    }
+	    return new CalendarRange(from, to);
+	}
 
     public Calendar getFrom() {
         return from;

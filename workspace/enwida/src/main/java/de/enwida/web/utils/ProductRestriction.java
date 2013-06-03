@@ -1,40 +1,39 @@
 package de.enwida.web.utils;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
-import de.enwida.transport.Aspect;
 import de.enwida.transport.DataResolution;
 
 public class ProductRestriction {
     
-    private int productId;
-    private Aspect aspect;
     private List<DataResolution> resolutions;
     private CalendarRange timeRange;
 
-    public ProductRestriction(int productId, Aspect aspect,
-           List<DataResolution> resolutions, CalendarRange timeRange) {
+    public ProductRestriction(List<DataResolution> resolutions, CalendarRange timeRange) {
 
-        this.productId = productId;
-        this.aspect = aspect;
         this.resolutions = resolutions;
         this.timeRange = timeRange;
     }
-
-    public int getProductId() {
-        return productId;
-    }
-
-    public void setProductId(int productId) {
-        this.productId = productId;
-    }
-
-    public Aspect getAspect() {
-        return aspect;
-    }
-
-    public void setAspect(Aspect aspect) {
-        this.aspect = aspect;
+    
+    public static ProductRestriction combineMaximum(List<ProductRestriction> restrictions) {
+        final List<CalendarRange> ranges = new ArrayList<CalendarRange>();
+        final Set<DataResolution> resolutions = new HashSet<DataResolution>();
+        
+        for (final ProductRestriction restriction : restrictions) {
+            if (restriction != null) {
+                ranges.add(restriction.getTimeRange());
+                resolutions.addAll(restriction.getResolutions());
+            }
+        }
+        
+        // Return null if all list elements (i.e. restrictions) are null or the list is empty
+        if (ranges.size() == 0 || resolutions.size() == 0) {
+            return null;
+        }
+        return new ProductRestriction(new ArrayList<DataResolution>(resolutions), CalendarRange.getMaximum(ranges));
     }
 
     public List<DataResolution> getResolutions() {

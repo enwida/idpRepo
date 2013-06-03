@@ -40,6 +40,9 @@
 	<beans:bean id="userDao" class="de.enwida.web.dao.implementation.UserDao">
 	</beans:bean>
 
+	<beans:bean id="aspectDao" class="de.enwida.web.dao.implementation.AspectDaoImpl">
+	</beans:bean>
+
 	<interceptors>
     	<beans:bean id="localeChangeInterceptor" class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor">
         	<beans:property name="paramName" value="lang" />
