@@ -42,8 +42,8 @@
 				</td>
 			</tr>
 			<tr>
-				<td colspan='2'><input name="reset" type="reset" />
-				<a href="register">register</a>
+				<td colspan='2'>
+				<a href="forgotPassword">Forgot Your Password?</a>
 				</td>
 			</tr>
 		</table>
