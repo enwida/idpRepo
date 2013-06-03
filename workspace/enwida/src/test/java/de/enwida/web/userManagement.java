@@ -80,7 +80,7 @@ public class userManagement {
 
 	@Test
 	public void GetAllUser() {
-		List<User> users= userDao.findAll();
+		List<User> users= userDao.findAllUsers();
 		assertEquals(true,!users.isEmpty());
 	}
 	
