@@ -1,21 +1,16 @@
 package de.enwida.web.controller;
 
 import java.util.Locale;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import de.enwida.chart.DataLineRequestManager;
-import de.enwida.chart.GoogleChartData;
 import de.enwida.web.model.ChartNavigationData;
-import de.enwida.web.service.implementation.AspectServiceImp;
 import de.enwida.web.utils.JsonResponse;
 
 /**
@@ -23,24 +18,6 @@ import de.enwida.web.utils.JsonResponse;
  */
 @Controller
 public class HomeController {	
-	
-	
-	@Autowired
-	private DataLineRequestManager dataLineRequestManager;
-	
-	@RequestMapping(value = "/data.json", method = RequestMethod.GET)
-	@ResponseBody
-	public GoogleChartData exampleData(HttpServletRequest request) {
-		// Example from enwida homepage: Balancing Power -> Abruf -> Activition of control reserve
-		// https://enwida.de/data.json?type=rl_ab1&pro=210&res=15min&t1=20101230&locale=en
-		
-		final String completeUrl=""+request.getRequestURL().append('?').append(request.getQueryString());
-		final Map pMap=request.getParameterMap();
-		//TODO:Fix here
-		final AspectServiceImp aspectService=new AspectServiceImp();
-		aspectService.dataLineRequestManager=this.dataLineRequestManager;
-		return aspectService.getLine(pMap);
-	}
 	
 	@RequestMapping(value="/getexampledata", method = RequestMethod.GET)
 	public @ResponseBody JsonResponse getExampleData(ModelMap model) {

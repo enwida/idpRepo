@@ -2,21 +2,24 @@ package de.enwida.transport;
 
 public enum Aspect {
 	
-	VOL_ACTIVATION,
-	DEGREE_OF_ACTIVATION,
-	VOL_ACCEPTED,
-	VOL_OFFERED,
-	POWERPRICE_ACCEPTED,
-	POWERPRICE_REJECTED,
-	WORKPRICE_ACCEPTED,
-	WORKPRICE_REJECRED,
-	POWERPRICE_MIN,
-	POWERPRICE_MID,
-	POWERPRICE_MAX,
-	WORKPRICE_ACC_MIN,
-	WORKPRICE_ACC_MID,
-	WORKPRICE_ACC_MAX,
-	WORKPRICE_MARG_MID,
-	WORKPRICE_MARG_MAX
+	CR_VOL_ACTIVATION,                    // rl_ab1
+	CR_VOL_ACTIVATION2,                   // rl_ab2
+	CR_DEGREE_OF_ACTIVATION,              // rl_abg1
+	CR_ACTIVATION_FREQUENCY,              // rl_abh1
+	CR_VOL_ACCEPTED,                      // rl_vol1
+	CR_VOL_OFFERED,                       // rl_vol1
+	CR_POWERPRICE_ACCEPTED,               // rl_geb1
+	CR_POWERPRICE_REJECTED,               // rl_geb1
+	CR_WORKPRICE_ACCEPTED,                // rl_prs1
+	CR_WORKPRICE_REJECRED,                // rl_prs1
+	CR_POWERPRICE_MIN,                    // rl_prs1
+	CR_POWERPRICE_MID,                    // rl_prs1
+	CR_POWERPRICE_MAX,                    // rl_prs1
+	CR_WORKPRICE_ACC_MIN,                 // rl_prs1
+	CR_WORKPRICE_ACC_MID,                 // rl_prs1
+	CR_WORKPRICE_ACC_MAX,                 // rl_prs1
+	CR_WORKPRICE_MARG_MID,                // rl_prs1
+	CR_WORKPRICE_MARG_MAX,                // rl_prs1
+	CR_REVENUES
 
 }

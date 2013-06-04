@@ -55,15 +55,7 @@
 	
 	<context:property-placeholder location="/WEB-INF/configProperties/enwida.jdbc.config" />
 	
-	<beans:bean id="dataRequestManager" class="de.enwida.chart.DataRequestManager">	
-		<beans:property name="messageSource" ref="messageSource" />
-	</beans:bean>	
-	
-	<beans:bean id="dataLineRequestManager" class="de.enwida.chart.DataLineRequestManager">	
-		<beans:property name="messageSource" ref="messageSource" />
-	</beans:bean>	
-	
-	<beans:bean id="dataManager" class="de.enwida.chart.DataManager">	
+	<beans:bean id="lineManager" class="de.enwida.chart.LineManager">	
 		<beans:property name="messageSource" ref="messageSource" />
 	</beans:bean>	
 	
@@ -80,11 +72,6 @@
 	
 	<beans:bean id="dbc" class="de.enwida.rl.controller.DatabaseController">	
 	</beans:bean>	
-	
-	<beans:bean id="valic_db" class="de.enwida.rl.controller.ValidationControllerDb" init-method="init">	
-		<beans:property name="validationFile" value="${ENWIDA_HOME}/data/validation/validation_db.txt" />
-		<beans:property name="dataSource" ref="dataSource" />
-	</beans:bean>
 	
 	<beans:bean id="userValidator" class="de.enwida.web.validator.UserValidator" />
 </beans:beans>

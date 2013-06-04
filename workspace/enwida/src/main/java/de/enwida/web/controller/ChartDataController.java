@@ -38,6 +38,7 @@ public class ChartDataController {
 	public XYDataLine getLines (
 								@RequestParam int chartId,
 								@RequestParam int product,
+								@RequestParam int tso,
 								@RequestParam @DateTimeFormat(pattern="YYYY-MM-DD") Calendar startTime,
 								@RequestParam @DateTimeFormat(pattern="YYYY-MM-DD") Calendar endTime,
 								@RequestParam DataResolution resolution,
@@ -45,7 +46,7 @@ public class ChartDataController {
 							   )
 	{
 	    try {
-    	    final LineRequest request = new LineRequest(Aspect.VOL_ACTIVATION, product, startTime, endTime, resolution, locale);
+    	    final LineRequest request = new LineRequest(Aspect.CR_DEGREE_OF_ACTIVATION, product, tso, startTime, endTime, resolution, locale);
     	    final XYDataLine line = lineManager.getLine(request);
     		return line;
     	} catch (Exception e) {

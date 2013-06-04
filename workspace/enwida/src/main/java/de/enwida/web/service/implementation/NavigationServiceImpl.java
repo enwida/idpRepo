@@ -11,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import de.enwida.chart.DataRequestManager;
 import de.enwida.transport.Aspect;
 import de.enwida.web.dao.interfaces.IAspectsDao;
 import de.enwida.web.dao.interfaces.INavigationDao;
@@ -28,9 +27,6 @@ import de.enwida.web.utils.ProductRestriction;
 @Transactional
 public class NavigationServiceImpl implements NavigationService {
 
-	@Autowired
-	private DataRequestManager dataRequestManager;
-	
 	@Autowired
 	private INavigationDao navigationDao;
 	
