@@ -13,10 +13,11 @@ public class LineRequest {
 	private Locale locale;
 	private int tso;
 	
-	public LineRequest(Aspect aspect, int product, Calendar startTime,
+	public LineRequest(Aspect aspect, int product, int tso, Calendar startTime,
 					   Calendar endTime, DataResolution resolution, Locale locale) {
 		this.aspect = aspect;
 		this.product = product;
+		this.tso = tso;
 		this.startTime = startTime;
 		this.endTime = endTime;
 		this.resolution = resolution;
