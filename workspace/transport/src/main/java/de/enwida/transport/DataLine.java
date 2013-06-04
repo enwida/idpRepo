@@ -10,22 +10,20 @@ public abstract class DataLine<T> implements IDataLine {
 	protected Calendar startTime;
 	protected Calendar endTime;
 	protected DataResolution resolution;
-	protected boolean hasDateAxis;
 	protected List<T> dataPoints;
 	
 	public DataLine(int product, Calendar startTime,
-			Calendar endTime, DataResolution resolution, boolean hasDateAxis) {
+			Calendar endTime, DataResolution resolution) {
 		this.product = product;
 		this.startTime = startTime;
 		this.endTime = endTime;
 		this.resolution = resolution;
-		this.hasDateAxis = hasDateAxis;
 		this.dataPoints = new ArrayList<T>();
 	}
 	
-	public DataLine(DataRequest request, boolean hasDateAxis) {
+	public DataLine(LineRequest request) {
 		this(request.getProduct(), request.getStartTime(), request.getEndTime(),
-				request.getResolution(), hasDateAxis);
+				request.getResolution());
 	}
 
 	public List<T> getDataPoints() {
@@ -66,14 +64,6 @@ public abstract class DataLine<T> implements IDataLine {
 
 	public void setResolution(DataResolution resolution) {
 		this.resolution = resolution;
-	}
-
-	public boolean getHasDateAxis() {
-		return hasDateAxis;
-	}
-
-	public void setHasDateAxis(boolean hasDataAxis) {
-		this.hasDateAxis = hasDataAxis;
 	}
 
 }

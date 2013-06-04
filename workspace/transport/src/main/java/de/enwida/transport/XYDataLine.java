@@ -8,10 +8,10 @@ public class XYDataLine extends DataLine<XYDataPoint> {
 	private String xTitle;
 	private String yTitle;
 	
-	public XYDataLine(DataRequest request, boolean hasDateAxis) {
-		super(request, hasDateAxis);
+	public XYDataLine(LineRequest request) {
+		super(request);
 	}
-	
+
 	public void addDataPoint(double x, double y) {
 		addDataPoint(new XYDataPoint(x, y));
 	}
