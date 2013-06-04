@@ -14,7 +14,7 @@ public class Mail
       // Assuming you are sending email from localhost
       String host = "smtp.gmail.com";
 
-      String pass = "Safak!123";
+      String pass = "123456";
       Properties props = System.getProperties();
       props.put("mail.smtp.starttls.enable", "true"); // added this line
       props.put("mail.smtp.host", host);

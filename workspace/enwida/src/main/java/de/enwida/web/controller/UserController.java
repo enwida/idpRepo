@@ -95,6 +95,11 @@ public class UserController {
 		return "logout";
 	}
 	
+	@RequestMapping(value="/loginFailed", method = RequestMethod.GET)
+	public String loginFailed(ModelMap model) {
+		return "user/loginFailed";
+	}
+	
 	
 	@RequestMapping(value="/download", method = RequestMethod.GET)
 	public String download(ModelMap model) {
@@ -129,7 +134,7 @@ public class UserController {
 				model.addAttribute("error", "Mailling Error");
 			}
 		}
-		return "user/login";
+		return "user/forgotPassword";
 	}
 	
 	@RequestMapping(value="/admin", method = RequestMethod.GET)
