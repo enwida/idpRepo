@@ -1,8 +1,9 @@
 package de.enwida.web.model;
 
 import java.util.ArrayList;
-import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import de.enwida.transport.DataResolution;
 import de.enwida.web.model.ProductTree.ProductAttributes;
@@ -16,8 +17,8 @@ public class ChartNavigationData {
 	private String chartTitle;
 	private NavigationDefaults defaults;
 	private NavigationDataStructure navigationDS;
-	private ProductTree productTree;
-	private List<TSO> tsos;
+	private List<ProductTree> productTrees;
+	private Map<Integer, String> tsos;
 	private String xAxisLabel;
 	private String yAxisLabel;
 
@@ -25,21 +26,21 @@ public class ChartNavigationData {
 	}
 
 	public ChartNavigationData(String chartTitle, String xAxisLabel, String yAxisLabel) {
-		this(chartTitle, xAxisLabel, yAxisLabel, new ArrayList<TSO>(), new ProductTree(), null);
+		this(chartTitle, xAxisLabel, yAxisLabel, new ArrayList<ProductTree>(), null);
 	}
 
-	public ChartNavigationData(String chartTitle, String xAxisLabel, String yAxisLabel, List<TSO> tsos,
-	       ProductTree productTree, NavigationDefaults defaults) {
+	public ChartNavigationData(String chartTitle, String xAxisLabel, String yAxisLabel,
+	       List<ProductTree> productTrees, NavigationDefaults defaults) {
 		this.chartTitle = chartTitle;
 		this.xAxisLabel = xAxisLabel;
 		this.yAxisLabel = yAxisLabel;
-		this.tsos = tsos;
-		this.productTree = productTree;
+		this.tsos = new HashMap<Integer, String>();
+		this.productTrees = productTrees;
 		this.defaults = defaults;
 	}
 
-	public void addTso(TSO tso) {
-		this.tsos.add(tso);
+	public void addTso(int id, String name) {
+		this.tsos.put(id, name);
 	}
 
 	public String getChartTitle() {
@@ -54,39 +55,47 @@ public class ChartNavigationData {
 		return this.navigationDS;
 	}
 
-	public ProductTree getProductTree() {
-		return this.productTree;
+	public List<ProductTree> getProductTrees() {
+		return this.productTrees;
 	}
 	
-	public void setProductTree(ProductTree productTree) {
-	    this.productTree = productTree;
+	public void addProductTree(ProductTree productTree) {
+	    this.productTrees.add(productTree);
 	}
 
 	public List<DataResolution> getAllResolutions() {
 	    final List<DataResolution> result = new ArrayList<DataResolution>();
 
-	    for (final ProductAttributes product : productTree.flatten()) {
-	        result.addAll(product.resolutions);
+	    for (final ProductTree productTree : productTrees) {
+    	    for (final ProductAttributes product : productTree.flatten()) {
+    	        result.addAll(product.resolutions);
+    	    }
 	    }
 	    return result;
 	}
 
 	public CalendarRange getTimeRangeMax() {
-	    final List<ProductAttributes> products = productTree.flatten();
 	    final List<CalendarRange> ranges = new ArrayList<CalendarRange>();
-	    
-	    for (final ProductAttributes product : products) {
-	        ranges.add(product.timeRange);
+
+	    for (final ProductTree productTree : productTrees) {
+    	    final List<ProductAttributes> products = productTree.flatten();
+    	    
+    	    for (final ProductAttributes product : products) {
+    	        ranges.add(product.timeRange);
+    	    }
 	    }
 	    return CalendarRange.getMaximum(ranges);
 	}
 
 	public CalendarRange getTimeRangeMin() {
-	    final List<ProductAttributes> products = productTree.flatten();
 	    final List<CalendarRange> ranges = new ArrayList<CalendarRange>();
-	    
-	    for (final ProductAttributes product : products) {
-	        ranges.add(product.timeRange);
+
+	    for (final ProductTree productTree : productTrees) {
+    	    final List<ProductAttributes> products = productTree.flatten();
+    	    
+    	    for (final ProductAttributes product : products) {
+    	        ranges.add(product.timeRange);
+    	    }
 	    }
 	    return CalendarRange.getMinimum(ranges);
 	}
@@ -95,7 +104,7 @@ public class ChartNavigationData {
 		return this.chartTitle;
 	}
 
-	public List<TSO> getTsos() {
+	public Map<Integer, String> getTsos() {
 		return this.tsos;
 	}
 
@@ -121,10 +130,6 @@ public class ChartNavigationData {
 
 	public void setTitle(String title) {
 		this.chartTitle = title;
-	}
-
-	public void setTsos(List<TSO> tsos) {
-		this.tsos = tsos;
 	}
 
 	public void setxAxisLabel(String xAxisLabel) {
