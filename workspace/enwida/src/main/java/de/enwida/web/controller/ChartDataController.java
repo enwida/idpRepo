@@ -46,7 +46,7 @@ public class ChartDataController {
 							   )
 	{
 	    try {
-    	    final LineRequest request = new LineRequest(Aspect.CR_DEGREE_OF_ACTIVATION, product, tso, startTime, endTime, resolution, locale);
+    	    final LineRequest request = new LineRequest(Aspect.DEGREE_OF_ACTIVATION, product, tso, startTime, endTime, resolution, locale);
     	    final XYDataLine line = lineManager.getLine(request);
     		return line;
     	} catch (Exception e) {
