@@ -1,5 +1,8 @@
 package de.enwida.web.service.implementation;
 
+import java.sql.Date;
+import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +13,7 @@ import de.enwida.chart.DataRequestManager;
 import de.enwida.web.dao.interfaces.IUserDao;
 import de.enwida.web.model.User;
 import de.enwida.web.service.interfaces.UserService;
+import de.enwida.web.utils.Constants;
 
 @Service("UserService")
 @Transactional
@@ -32,4 +36,25 @@ public class UserServiceImpl implements UserService {
 	}
 
 
+	public boolean saveUser(User user) 
+	{
+		// Saving user in the user table
+		Date date = new Date(Calendar.getInstance().getTimeInMillis());
+		user.setJoiningDate(date);
+		user.setEnabled(false);
+		int userId = userDao.save(user);
+		
+		// If successfully saved, than assign default roles to user and save userId in user_roles table
+		if(userId != -1)
+		{
+			HashMap userRoles = new HashMap(); 
+			userRoles.put(Constants.ANONYMOUS_ROLE, 3);
+			userDao.setUserRoles(userId, userRoles);
+			return true;
+		}
+		else
+		{
+			return false;
+		}		 
+	}
 }

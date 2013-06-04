@@ -85,4 +85,6 @@
 		<beans:property name="validationFile" value="${ENWIDA_HOME}/data/validation/validation_db.txt" />
 		<beans:property name="dataSource" ref="dataSource" />
 	</beans:bean>
+	
+	<beans:bean id="userValidator" class="de.enwida.web.validator.UserValidator" />
 </beans:beans>

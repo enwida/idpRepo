@@ -13,7 +13,7 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 public abstract class BaseDao<T> {
 
 	private Class<T> modelClass;
-	private JdbcTemplate jdbcTemplate;
+	protected JdbcTemplate jdbcTemplate;
 	
 	@SuppressWarnings("unchecked")
 	public BaseDao() {

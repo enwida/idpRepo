@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import de.enwida.web.dao.implementation.UserDao;
 
+import java.sql.Date;
 
 public class User {
  
@@ -13,7 +14,8 @@ public class User {
 	private String firstName;
 	private String password;
 	private boolean enabled;
-	
+	private Date joiningDate;
+
 
 	private UserPermissionCollection userPermissionCollection=new UserPermissionCollection();
 
@@ -99,5 +101,13 @@ public class User {
 
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
+	}
+	
+	public Date getJoiningDate() {
+		return joiningDate;
+	}
+
+	public void setJoiningDate(Date joiningDate) {
+		this.joiningDate = joiningDate;
 	}
 }
