@@ -11,6 +11,7 @@ public class LineRequest {
 	private Calendar endTime;
 	private DataResolution resolution;
 	private Locale locale;
+	private int tso;
 	
 	public LineRequest(Aspect aspect, int product, Calendar startTime,
 					   Calendar endTime, DataResolution resolution, Locale locale) {
@@ -61,6 +62,14 @@ public class LineRequest {
 	
 	public void calcResolution() {
 		throw new RuntimeException("Stub!");
+	}
+
+	public int getTso() {
+		return tso;
+	}
+
+	public void setTso(int tso) {
+		this.tso = tso;
 	}
 
 }
