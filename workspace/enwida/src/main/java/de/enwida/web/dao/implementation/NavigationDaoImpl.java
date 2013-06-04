@@ -12,6 +12,7 @@ import de.enwida.transport.DataResolution;
 import de.enwida.web.dao.interfaces.BaseDao;
 import de.enwida.web.dao.interfaces.INavigationDao;
 import de.enwida.web.model.ChartNavigationData;
+import de.enwida.web.model.ProductTree;
 import de.enwida.web.model.User;
 import de.enwida.web.utils.CalendarRange;
 import de.enwida.web.utils.ProductLeaf;
@@ -80,7 +81,9 @@ public class NavigationDaoImpl extends BaseDao<User> implements INavigationDao {
 	    ));
 	    
 	    // Add root elements (RC types)
-	    navigationData.getProductTree().addNode(prodSCR);
-	    navigationData.getProductTree().addNode(prodTCR);
+	    final ProductTree tree = new ProductTree(99);
+	    tree.addNode(prodSCR);
+	    tree.addNode(prodTCR);
+	    navigationData.addProductTree(tree);
     }
 }

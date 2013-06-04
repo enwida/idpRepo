@@ -11,11 +11,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import de.enwida.chart.DataRequestManager;
 import de.enwida.transport.Aspect;
 import de.enwida.web.dao.interfaces.IAspectsDao;
 import de.enwida.web.dao.interfaces.INavigationDao;
 import de.enwida.web.model.ChartNavigationData;
+import de.enwida.web.model.ProductTree;
 import de.enwida.web.model.ProductTree.ProductAttributes;
 import de.enwida.web.model.User;
 import de.enwida.web.service.interfaces.IAvailibilityService;
@@ -28,9 +28,6 @@ import de.enwida.web.utils.ProductRestriction;
 @Transactional
 public class NavigationServiceImpl implements NavigationService {
 
-	@Autowired
-	private DataRequestManager dataRequestManager;
-	
 	@Autowired
 	private INavigationDao navigationDao;
 	
@@ -59,24 +56,26 @@ public class NavigationServiceImpl implements NavigationService {
     }
     
     private void shrinkNavigation(ChartNavigationData navigationData, List<Aspect> aspects, IProductRestrictionGetter service) {
-        final List<ProductAttributes> products = navigationData.getProductTree().flatten();
-        
-        for (final ProductAttributes productAttrs : products) {
-            final List<ProductRestriction> restrictions = new ArrayList<ProductRestriction>();
-            for (final Aspect aspect : aspects) {
-                restrictions.add(service.getProductRestriction(productAttrs.productId, aspect));
-            }
-            final ProductRestriction combinedRestriction = ProductRestriction.combineMaximum(restrictions);
-
-            if (combinedRestriction == null) {
-                // Assume nothing is allowed (i.e. fully restricted)
-                // Delete the corresponding product leaf from the tree
-                navigationData.getProductTree().removeProduct(productAttrs.productId);
-            } else {
-                // Apply restrictions to the tree
-                final ProductLeaf leaf = navigationData.getProductTree().getLeaf(productAttrs.productId);
-                leaf.setTimeRange(combinedRestriction.getTimeRange());
-                leaf.setResolution(combinedRestriction.getResolutions());
+        for (final ProductTree productTree : navigationData.getProductTrees()) {
+            final List<ProductAttributes> products = productTree.flatten();
+            
+            for (final ProductAttributes productAttrs : products) {
+                final List<ProductRestriction> restrictions = new ArrayList<ProductRestriction>();
+                for (final Aspect aspect : aspects) {
+                    restrictions.add(service.getProductRestriction(productAttrs.productId, aspect));
+                }
+                final ProductRestriction combinedRestriction = ProductRestriction.combineMaximum(restrictions);
+    
+                if (combinedRestriction == null) {
+                    // Assume nothing is allowed (i.e. fully restricted)
+                    // Delete the corresponding product leaf from the tree
+                    productTree.removeProduct(productAttrs.productId);
+                } else {
+                    // Apply restrictions to the tree
+                    final ProductLeaf leaf = productTree.getLeaf(productAttrs.productId);
+                    leaf.setTimeRange(combinedRestriction.getTimeRange());
+                    leaf.setResolution(combinedRestriction.getResolutions());
+                }
             }
         }
     }

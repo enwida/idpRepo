@@ -3,30 +3,32 @@ package de.enwida.transport;
 import java.util.Calendar;
 import java.util.Locale;
 
-public class DataRequest {
+public class LineRequest {
 	
-	private ChartType chartType;
+	private Aspect aspect;
 	private int product;
 	private Calendar startTime;
 	private Calendar endTime;
 	private DataResolution resolution;
 	private Locale locale;
+	private int tso;
 	
-	public DataRequest(ChartType chartType, int product, Calendar startTime,
+	public LineRequest(Aspect aspect, int product, int tso, Calendar startTime,
 					   Calendar endTime, DataResolution resolution, Locale locale) {
-		this.chartType = chartType;
+		this.aspect = aspect;
 		this.product = product;
+		this.tso = tso;
 		this.startTime = startTime;
 		this.endTime = endTime;
 		this.resolution = resolution;
 		this.locale = locale;
 	}
 	
-	public ChartType getChartType() {
-		return chartType;
+	public Aspect getAspect() {
+		return aspect;
 	}
-	public void setChartType(ChartType chartType) {
-		this.chartType = chartType;
+	public void setAspect(Aspect aspect) {
+		this.aspect = aspect;
 	}
 	public int getProduct() {
 		return product;
@@ -61,6 +63,14 @@ public class DataRequest {
 	
 	public void calcResolution() {
 		throw new RuntimeException("Stub!");
+	}
+
+	public int getTso() {
+		return tso;
+	}
+
+	public void setTso(int tso) {
+		this.tso = tso;
 	}
 
 }

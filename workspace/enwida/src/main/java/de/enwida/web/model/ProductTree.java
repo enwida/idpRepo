@@ -23,12 +23,14 @@ public class ProductTree {
     }
     
     private ProductNode root;
+    private int tso;
 
     public ProductTree(ProductNode root) {
         this.root = root;
     }
 
-    public ProductTree() {
+    public ProductTree(int tso) {
+        this.tso = tso;
         this.root = new ProductNode(0, "root", new ArrayList<ProductNode>());
     }
     
@@ -147,6 +149,14 @@ public class ProductTree {
     
     public void addNode(ProductNode node) {
         root.addChild(node);
+    }
+
+    public int getTso() {
+        return tso;
+    }
+
+    public void setTso(int tso) {
+        this.tso = tso;
     }
 
 }

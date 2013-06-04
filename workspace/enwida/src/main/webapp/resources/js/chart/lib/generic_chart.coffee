@@ -3,7 +3,7 @@ define ["scale"], (scale) ->
   class Chart
 
     constructor: (options) ->
-      throw "No data given" unless options? and options.data?
+      throw "No data given" unless options? and options.lines?
 
       default_options =
         margin:
@@ -16,14 +16,13 @@ define ["scale"], (scale) ->
         parent: "body"
 
       @options = $.extend default_options, options
-      @chartData = options.data
-      @metaData = @chartData.metaData
-      @xLabel = @metaData.hAxisLabel ? @chartData.allDataLines[0].xTitle
-      @yLabel = @metaData.vAxisLabel ? @chartData.allDataLines[0].yTitle
-      @lineLabels = @chartData.allDataLines.map (line) -> line.yTitle
+      @lines = options.lines
+      @xLabel = @options.hAxisLabel ? ""
+      @yLabel = @options.vAxisLabel ? ""
+      @lineLabels = @lines.map (line) -> line.yTitle
 
       # @data is an array of line data
-      @data = @chartData.allDataLines.map (dataLine) -> dataLine.dataPoints
+      @data = @lines.map (line) -> line.dataPoints
       scale.init @
       @generateAxes()
 
