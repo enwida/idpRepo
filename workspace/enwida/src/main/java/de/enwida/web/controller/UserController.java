@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import de.enwida.web.dao.implementation.UserDao;
 import de.enwida.web.dto.UserDTO;
 import de.enwida.web.model.User;
 import de.enwida.web.service.implementation.Mail;
@@ -38,9 +37,6 @@ public class UserController {
 	
 	@Autowired
 	private DriverManagerDataSource datasource;
-
-	@Autowired
-	UserDao userDao;
 	
 	@Autowired
 	private UserValidator userValidator;
@@ -153,7 +149,8 @@ public class UserController {
 	
 	@RequestMapping(value="/forgotPassword",method=RequestMethod.POST)
 	public String forgotPassword(ModelMap model,String email){
-		String password=userDao.getPassword(email);
+		
+		String password=userService.getPassword(email);
 		if(password==null){
 			model.addAttribute("error", "User is not found");
 		}else{
@@ -169,7 +166,7 @@ public class UserController {
 	@RequestMapping(value="/admin", method = RequestMethod.GET)
 	public String manageUsers(ModelMap model) {
 		
-		List<User> users= userDao.findAllUsersWithPermissions();
+		List<User> users= userService.findAllUsersWithPermissions();
 
 		model.addAttribute("users", users);
 		return "user/admin";
@@ -193,10 +190,10 @@ public class UserController {
 		}
 		
 		if (state.equals("true")){
-			userDao.addPermission(userID,roleID);
+			userService.addPermission(userID,roleID);
 		}
 		else{
-			userDao.removePermission(userID,roleID);
+			userService.removePermission(userID,roleID);
 		}
 		return "ok";
 	}

@@ -57,4 +57,21 @@ public class UserServiceImpl implements UserService {
 			return false;
 		}		 
 	}
+
+	@Override
+	public String getPassword(String email) {
+		return userDao.getPassword(email);
+	}
+
+	public List<User> findAllUsersWithPermissions(){
+		return userDao.findAllUsersWithPermissions();
+	}
+	
+
+	public void addPermission(int userID, int roleID){
+		userDao.addPermission(userID, roleID);		
+	}
+	public void removePermission(int userID, int roleID){
+		userDao.removePermission(userID, roleID);	
+	}
 }
