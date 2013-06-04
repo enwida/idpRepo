@@ -1,5 +1,6 @@
 package de.enwida.web.controller;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -27,11 +28,16 @@ public class TestController {
 	@RequestMapping(value="/availibilty", method = RequestMethod.GET)
 	public String testAvailibilty(Model model, Locale locale) {
 		
+		Calendar cal = Calendar.getInstance();
+				
 		DataAvailibility da = new DataAvailibility();
-		da.setProduct(321);
-		da.setTimeFrom(new Date());
-		da.setTimeTo(new Date());
-		da.setTableName("analysis_15min");
+		da.setProduct(211);		
+		cal.set(2008, 00, 02, 00, 00, 00);
+		da.setTimeFrom(new Date(cal.getTimeInMillis()));
+		cal.set(2013, 02, 13, 19, 30, 00);
+		da.setTimeTo(new Date(cal.getTimeInMillis()));
+		da.setTableName("15min");
+		
 		boolean isAvailable = availibilitService.isAvailable(da);
 		
 		return "user";
@@ -40,14 +46,18 @@ public class TestController {
 	@RequestMapping(value="/authorization", method = RequestMethod.GET)
 	public String testAuthorization(Model model, Locale locale) {
 		
+		Calendar cal = Calendar.getInstance();
+		
 		DataAuthorization da = new DataAuthorization();
-		da.setRole(1);
+		da.setRole(3);
 		da.setTso(99);
 		da.setProductId(321);
 		da.setAspect("rl_ab1");
 		da.setResolution("15min");
-		da.setTimeFrom(new Date());
-		da.setTimeTo(new Date());		
+		cal.set(2010, 00, 01, 00, 00, 00);
+		da.setTimeFrom(new Date(cal.getTimeInMillis()));
+		cal.set(2011, 00, 01, 00, 00, 00);
+		da.setTimeTo(new Date(cal.getTimeInMillis()));	
 		boolean isAuthorized = securityService.isAllowed(da);
 		
 		return "user";

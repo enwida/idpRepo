@@ -5,4 +5,5 @@ import de.enwida.web.model.DataAvailibility;
 public interface IDataAvailibilityDao {
 
 	public boolean isAvailableByExample(DataAvailibility dataAvailibility);
+	public DataAvailibility getByExample(DataAvailibility dataAvailibility);
 }
