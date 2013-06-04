@@ -16,8 +16,6 @@ public class User {
 	
 
 	private UserPermissionCollection userPermissionCollection=new UserPermissionCollection();
-	
-	UserDao userDao=new UserDao();
 
 	public User(long userID, String userName, String password,String firstName,String lastName, boolean enabled) {
 		// TODO Auto-generated constructor stub

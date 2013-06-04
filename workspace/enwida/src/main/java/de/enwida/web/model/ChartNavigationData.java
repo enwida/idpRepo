@@ -5,9 +5,9 @@ import java.util.Calendar;
 import java.util.List;
 
 import de.enwida.transport.DataResolution;
+import de.enwida.web.model.ProductTree.ProductAttributes;
 import de.enwida.web.utils.CalendarRange;
 import de.enwida.web.utils.NavigationDefaults;
-import de.enwida.web.utils.ProductPart;
 import de.enwida.web.utils.TSO;
 
 
@@ -16,9 +16,7 @@ public class ChartNavigationData {
 	private String chartTitle;
 	private NavigationDefaults defaults;
 	private NavigationDataStructure navigationDS;
-	private List<ProductPart> products;
-	private List<DataResolution> resolutions;
-	private CalendarRange timeRange;
+	private ProductTree productTree;
 	private List<TSO> tsos;
 	private String xAxisLabel;
 	private String yAxisLabel;
@@ -27,34 +25,17 @@ public class ChartNavigationData {
 	}
 
 	public ChartNavigationData(String chartTitle, String xAxisLabel, String yAxisLabel) {
-		this(chartTitle, xAxisLabel, yAxisLabel, new ArrayList<TSO>(), null, new ArrayList<DataResolution>(), new ArrayList<ProductPart>(), null);
-
-		// Set the time range to the maximum
-		final Calendar from = Calendar.getInstance();
-		final Calendar to = Calendar.getInstance();
-		from.setTimeInMillis(0);
-		to.setTimeInMillis(Long.MAX_VALUE);
-		this.timeRange = new CalendarRange(from, to);
+		this(chartTitle, xAxisLabel, yAxisLabel, new ArrayList<TSO>(), new ProductTree(), null);
 	}
 
-	public ChartNavigationData(String chartTitle, String xAxisLabel, String yAxisLabel, List<TSO> tsos, CalendarRange timeRange,
-			List<DataResolution> resolutions, List<ProductPart> products, NavigationDefaults defaults) {
+	public ChartNavigationData(String chartTitle, String xAxisLabel, String yAxisLabel, List<TSO> tsos,
+	       ProductTree productTree, NavigationDefaults defaults) {
 		this.chartTitle = chartTitle;
 		this.xAxisLabel = xAxisLabel;
 		this.yAxisLabel = yAxisLabel;
 		this.tsos = tsos;
-		this.timeRange = timeRange;
-		this.resolutions = resolutions;
-		this.products = products;
+		this.productTree = productTree;
 		this.defaults = defaults;
-	}
-
-	public void addProduct(ProductPart product) {
-		this.products.add(product);
-	}
-
-	public void addResolution(DataResolution resolution) {
-		this.resolutions.add(resolution);
 	}
 
 	public void addTso(TSO tso) {
@@ -73,16 +54,41 @@ public class ChartNavigationData {
 		return this.navigationDS;
 	}
 
-	public List<ProductPart> getProducts() {
-		return this.products;
+	public ProductTree getProductTree() {
+		return this.productTree;
+	}
+	
+	public void setProductTree(ProductTree productTree) {
+	    this.productTree = productTree;
 	}
 
-	public List<DataResolution> getResolutions() {
-		return this.resolutions;
+	public List<DataResolution> getAllResolutions() {
+	    final List<DataResolution> result = new ArrayList<DataResolution>();
+
+	    for (final ProductAttributes product : productTree.flatten()) {
+	        result.addAll(product.resolutions);
+	    }
+	    return result;
 	}
 
-	public CalendarRange getTimeRange() {
-		return this.timeRange;
+	public CalendarRange getTimeRangeMax() {
+	    final List<ProductAttributes> products = productTree.flatten();
+	    final List<CalendarRange> ranges = new ArrayList<CalendarRange>();
+	    
+	    for (final ProductAttributes product : products) {
+	        ranges.add(product.timeRange);
+	    }
+	    return CalendarRange.getMaximum(ranges);
+	}
+
+	public CalendarRange getTimeRangeMin() {
+	    final List<ProductAttributes> products = productTree.flatten();
+	    final List<CalendarRange> ranges = new ArrayList<CalendarRange>();
+	    
+	    for (final ProductAttributes product : products) {
+	        ranges.add(product.timeRange);
+	    }
+	    return CalendarRange.getMinimum(ranges);
 	}
 
 	public String getTitle() {
@@ -111,18 +117,6 @@ public class ChartNavigationData {
 
 	public void setNavigationDS(NavigationDataStructure navigationDS) {
 		this.navigationDS = navigationDS;
-	}
-
-	public void setProducts(List<ProductPart> products) {
-		this.products = products;
-	}
-
-	public void setResolutions(List<DataResolution> resolutions) {
-		this.resolutions = resolutions;
-	}
-
-	public void setTimeRange(CalendarRange timeRange) {
-		this.timeRange = timeRange;
 	}
 
 	public void setTitle(String title) {

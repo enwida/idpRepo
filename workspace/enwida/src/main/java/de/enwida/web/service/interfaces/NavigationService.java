@@ -3,12 +3,11 @@
  */
 package de.enwida.web.service.interfaces;
 
-import de.enwida.web.model.NavigationDataStructure;
+import java.util.Locale;
 
-/**
- * @author Jitin
- *
- */
+import de.enwida.web.model.ChartNavigationData;
+import de.enwida.web.model.User;
+
 public interface NavigationService {
-	void getNavigationData(NavigationDataStructure navigationParam);
+	ChartNavigationData getNavigationData(int chartId, User user, Locale locale);
 }

@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.mail.MessagingException;
+import javax.mail.internet.AddressException;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,11 +19,9 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.ModelAndView;
-
-import de.enwida.chart.GoogleChartData;
 import de.enwida.web.dao.implementation.UserDao;
 import de.enwida.web.model.User;
+import de.enwida.web.service.implementation.Mail;
 import de.enwida.web.service.interfaces.UserService;
 
 /**
@@ -67,6 +67,24 @@ public class UserController {
 		return "user/index";
 	}
 	
+	@RequestMapping(value = "/test", method = RequestMethod.GET)
+	public String test(ModelMap model, Principal principal) {
+		String name,userStatus,userStatusURL;
+		
+		if(principal!=null){
+			name = principal.getName();
+			userStatus="logout";
+			userStatusURL="../j_spring_security_logout";
+		}else{
+			name="anonymous";
+			userStatusURL=userStatus="login";
+		}
+		model.addAttribute("username", name);
+		model.addAttribute("userStatus", userStatus);
+		model.addAttribute("userStatusURL", userStatusURL);
+		return "user/test";
+	}
+	
 	@RequestMapping(value="/login", method = RequestMethod.GET)
 	public String login(ModelMap model) {
 		return "user/login";
@@ -77,18 +95,16 @@ public class UserController {
 		return "logout";
 	}
 	
+	@RequestMapping(value="/loginFailed", method = RequestMethod.GET)
+	public String loginFailed(ModelMap model) {
+		return "user/loginFailed";
+	}
+	
 	
 	@RequestMapping(value="/download", method = RequestMethod.GET)
 	public String download(ModelMap model) {
 		return "user/download";
 	}
-	
-	@RequestMapping(value="/register",method=RequestMethod.GET)
-    public String showForm(ModelMap model){
-        User user = new User();
-        model.addAttribute("USER", user);
-        return "user/register";
-    }
 	
 	
 	@RequestMapping(value="/register",method=RequestMethod.POST)
@@ -99,6 +115,26 @@ public class UserController {
 	        System.out.println("User values is : " + user);
 	        return "user/register";
 	    }
+	}
+	
+	@RequestMapping(value="/forgotPassword",method=RequestMethod.GET)
+    public String showForgotPassForm(ModelMap model){
+		return "user/forgotPassword";
+    }
+	
+	@RequestMapping(value="/forgotPassword",method=RequestMethod.POST)
+	public String forgotPassword(ModelMap model,String email){
+		String password=userDao.getPassword(email);
+		if(password==null){
+			model.addAttribute("error", "User is not found");
+		}else{
+			try {
+				Mail.SendEmail(email,"Your Password:",password);
+			} catch (Exception e) {
+				model.addAttribute("error", "Mailling Error");
+			}
+		}
+		return "user/forgotPassword";
 	}
 	
 	@RequestMapping(value="/admin", method = RequestMethod.GET)

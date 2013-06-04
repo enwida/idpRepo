@@ -16,7 +16,7 @@ import de.enwida.web.model.User;
 import de.enwida.web.model.UserPermission;
 
 
-public class userManagement {
+public class UserManagementTest {
 
 	@Autowired
 	private DriverManagerDataSource datasource;
