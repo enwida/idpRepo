@@ -6,7 +6,7 @@
 <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
 <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
 <script src="../resources/js/admin/jquery.tablesorter.js"></script>
-<link rel="stylesheet" href="../resources/css/jquery-ui.css" />
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
 <link rel="stylesheet" href="../resources/css/table.css" />
 </head>
 <body>
@@ -57,8 +57,8 @@ $(function() {
 
 		</div>
 		<div id="tabs-2">
-			<input type='text' name='group' />
-			<button>add</button>
+			<input id="newGroup" type='text' />
+			<a href="#">Add</a>
 			<br>
 			<table id="tblGroups" class="tablesorter">
 				<thead>
@@ -68,16 +68,22 @@ $(function() {
 						<th>Operation</th>
 					</tr>
 				<thead>
-
-					<tbody></table>
+				<tbody> 
+					<c:forEach var="role" items="${roles}">
+						<tr>
+							<td>enwida</td>
+							<td>enwida users</td>
+							<td>delete</td>
+						</tr>
+					</c:forEach>
+				</tbody> 
+				</table>
 		</div>
 		<div id="tabs-3">
-		<form name='f' method='POST'>
-			<input type='text' name='newGroup' />
-			<input type="submit" value="Add" />
-		</form>
+			<input id="newRole" type='text' />
+			<a href="#">Add</a>
 			<br>
-			<table id="tblRoles" class="tablesorter">
+				<table id="tblRoles" class="tablesorter">
 				<thead>
 					<tr>
 						<th>Roles Name</th>
@@ -87,13 +93,11 @@ $(function() {
 				
 				<thead>
 				<tbody> 
-				<c:forEach var="role" items="${roles}">
 					<tr>
 						<td>enwida</td>
 						<td>enwida users</td>
-						<td>delete</td>
+						<td><a href="">Aspects</a> <a href="">delete</a></td>
 					</tr>
-				</c:forEach>
 				</tbody> 
 			</table>
 		</div>

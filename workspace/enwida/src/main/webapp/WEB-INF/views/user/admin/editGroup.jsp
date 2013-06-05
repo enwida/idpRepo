@@ -1,16 +1,38 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page session="false" %>
-<html>
-<head>
-	<title>Enwida Home Page</title>
-	<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
-	<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
-	  <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
-</head>
-<body>
+
 	<h1>User : ${username}</h1>
 	<div>
-		
+		<table>
+			<tr>
+				<td>Available Groups</td>
+				<td></td>
+				<td>Assigned Groups</td>
+			</tr>
+			
+			<tr>
+				<td>
+				<select name="FavWebSite" size="5">
+					<option value="SM">http://www.scriptingmaster.com</option>
+					<option value="Google">http://www.google.com</option>
+					<option value="MSN">http://www.msn.com</option>
+					<option value="yahoo">http://www.yahoo.com</option>
+					<option value="microsoft">http://www.microsoft.com</option>
+				</select>				
+				</td>
+				<td>
+					<button >>></button><br>
+					<button ><<</button>
+				</td>
+				<td>
+				<select name="FavWebSite" size="5">
+					<option value="SM">http://www.scriptingmaster.com</option>
+					<option value="Google">http://www.google.com</option>
+					<option value="MSN">http://www.msn.com</option>
+					<option value="yahoo">http://www.yahoo.com</option>
+					<option value="microsoft">http://www.microsoft.com</option>
+				</select>	
+				</td>
+			</tr>
+		</table>
 	</div>
-</body>
-</html>

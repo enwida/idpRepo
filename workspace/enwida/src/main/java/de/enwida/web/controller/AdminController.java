@@ -46,8 +46,13 @@ public class AdminController {
 		User user = userService.getUser(userID);
 		model.addAttribute("username", user.getUserName());
 		
-		
-		return "user/admin/editGroup";
+		model.addAttribute("content", "editGroup");
+		return "user/admin/master";
 	}
 	
+	@RequestMapping(value="/aspect", method = RequestMethod.GET)
+	public String aspect(Model model) {
+		model.addAttribute("content", "aspect");
+		return "user/admin/master";
+	}
 }
