@@ -30,38 +30,43 @@
 			<artifactId>spring-web</artifactId>
 			<version>${spring.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
 
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-webmvc</artifactId>
 			<version>${spring.version}</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context-support</artifactId>
 			<version>${spring.version}</version>
 		</dependency>
-		
+
 		<!-- Spring Security -->
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-core</artifactId>
 			<version>3.1.2.RELEASE</version>
 		</dependency>
- 
+
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-web</artifactId>
 			<version>3.1.2.RELEASE</version>
 		</dependency>
- 
+
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-config</artifactId>
 			<version>3.1.2.RELEASE</version>
 		</dependency>
-		
+
 
 		<!-- enwida data manager -->
 		<dependency>
@@ -142,14 +147,15 @@
 			<version>${junit-version}</version>
 			<scope>test</scope>
 		</dependency>
+
 		<dependency>
 			<groupId>de.enwida</groupId>
 			<artifactId>transport</artifactId>
-			<version>1.2</version>
+			<version>1.2.1</version>
 		</dependency>
 	</dependencies>
 	<build>
 		<finalName>enwida</finalName>
-		
+
 	</build>
 </project>

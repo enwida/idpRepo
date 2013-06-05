@@ -13,4 +13,5 @@ public interface IUserDao {
 	public List<User> findAllUsersWithPermissions();
 	public void addPermission(int userID, int roleID);
 	public void removePermission(int userID, int roleID);
+	public User getUser(Long id);
 }

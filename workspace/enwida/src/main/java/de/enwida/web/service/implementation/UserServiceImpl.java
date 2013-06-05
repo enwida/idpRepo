@@ -22,8 +22,8 @@ public class UserServiceImpl implements UserService {
 	private IUserDao userDao;
 	
     public User getUser(Long id) {
-		// TODO Auto-generated method stub
-		return null;
+		
+		return userDao.getUser(id);
 	}
 
 	public List<User> getUsers() {
@@ -54,7 +54,6 @@ public class UserServiceImpl implements UserService {
 		}		 
 	}
 
-	@Override
 	public String getPassword(String email) {
 		return userDao.getPassword(email);
 	}

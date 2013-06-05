@@ -7,9 +7,6 @@
         <dependent-module archiveName="datamanager-1.3.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/datamanager/datamanager">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module archiveName="transport-1.2.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/transport/transport">
-            <dependency-type>uses</dependency-type>
-        </dependent-module>
         <property name="context-root" value="enwida"/>
         <property name="java-output-path" value="/enwida/target/classes"/>
     </wb-module>

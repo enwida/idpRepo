@@ -14,8 +14,13 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import de.enwida.web.dao.implementation.UserDao;
 import de.enwida.web.model.User;
 import de.enwida.web.model.UserPermission;
-
-
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+ 
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = "classpath:/root-context-test.xml")
 public class UserManagementTest {
 
 	@Autowired

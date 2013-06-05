@@ -48,6 +48,8 @@ public class UserDao extends BaseDao<User> implements IUserDao {
 					rs.getBoolean("enabled")
 				);
 				;
+				user.setFirstName(rs.getString("first_name"));
+				user.setLastName(rs.getString("last_name"));
 				users.add(loadUserFromDB(user));
 			}
 			rs.close();
@@ -115,7 +117,7 @@ public class UserDao extends BaseDao<User> implements IUserDao {
 			ps.setString(3, user.getFirstName());
 			ps.setString(4, user.getLastName());
 			ps.setBoolean(5, false);
-			ps.executeQuery();
+			ps.executeUpdate();
 			ps.close();
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
@@ -262,7 +264,7 @@ public class UserDao extends BaseDao<User> implements IUserDao {
 			conn = datasource.getConnection();
 			PreparedStatement ps = conn.prepareStatement(sql);
 			ps.setString(1, user.getUserName());
-			ps.executeQuery();
+			ps.executeUpdate();
 			ps.close();
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
@@ -366,5 +368,38 @@ public class UserDao extends BaseDao<User> implements IUserDao {
 		{
 			e.printStackTrace();
 		}      
+	}
+
+	public User getUser(Long id) {
+		String sql = "SELECT * FROM users WHERE user_id=?";
+		Connection conn = null;
+		User user = null;
+		try {
+			conn = datasource.getConnection();
+			PreparedStatement ps = conn.prepareStatement(sql);
+			ps.setLong(1, id);
+			ResultSet rs = ps.executeQuery();
+			while (rs.next()) {
+				user = new User(
+					rs.getLong("user_id"),
+					rs.getString("user_name"), 
+					rs.getString("user_password"), 
+					rs.getBoolean("enabled")
+				);
+				;
+			}
+			rs.close();
+			ps.close();
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		} finally {
+			if (conn != null) {
+				try {
+				conn.close();
+				} catch (SQLException e) {}
+			}
+		}
+
+		return user;
 	}
 }

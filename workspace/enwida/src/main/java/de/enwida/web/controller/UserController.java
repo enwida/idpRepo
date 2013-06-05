@@ -172,6 +172,15 @@ public class UserController {
 		return "user/admin";
 	}
 	
+	@RequestMapping(value="/admin", method = RequestMethod.POST)
+	public String addUser(ModelMap model) {
+		
+		List<User> users= userService.findAllUsersWithPermissions();
+
+		model.addAttribute("users", users);
+		return "user/admin";
+	}
+	
 	@RequestMapping(value="/updateRole", method = RequestMethod.GET)
 	@ResponseBody
 	public String updateRole(HttpServletRequest request) {
