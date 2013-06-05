@@ -65,7 +65,8 @@ public class UserController {
 		model.addAttribute("username", name);
 		model.addAttribute("userStatus", userStatus);
 		model.addAttribute("userStatusURL", userStatusURL);
-		return "user/index";
+		model.addAttribute("content", "user/index");
+		return "master";
 	}
 	
 	@RequestMapping(value = "/test", method = RequestMethod.GET)
@@ -165,15 +166,6 @@ public class UserController {
 	
 	@RequestMapping(value="/admin", method = RequestMethod.GET)
 	public String manageUsers(ModelMap model) {
-		
-		List<User> users= userService.findAllUsersWithPermissions();
-
-		model.addAttribute("users", users);
-		return "user/admin";
-	}
-	
-	@RequestMapping(value="/admin", method = RequestMethod.POST)
-	public String addUser(ModelMap model) {
 		
 		List<User> users= userService.findAllUsersWithPermissions();
 

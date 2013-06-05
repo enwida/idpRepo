@@ -1,5 +1,8 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page session="false" %>
 <div>
-Hello
+<h1>Role: ${username}</h1>
+	<div>
+		<table>
+		</table>
 </div>

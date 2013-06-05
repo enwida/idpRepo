@@ -50,9 +50,19 @@ public class AdminController {
 		return "user/admin/master";
 	}
 	
-	@RequestMapping(value="/aspect", method = RequestMethod.GET)
+	@RequestMapping(value="/editAspect", method = RequestMethod.GET)
 	public String aspect(Model model) {
-		model.addAttribute("content", "aspect");
+		model.addAttribute("content", "editAspect");
 		return "user/admin/master";
 	}
+	@RequestMapping(value="/", method = RequestMethod.GET)
+	public String admin(Model model) {
+		
+		List<User> users= userService.findAllUsersWithPermissions();
+		model.addAttribute("users", users);
+		model.addAttribute("content", "index");
+		return "user/admin/master";
+	}
+	
+
 }

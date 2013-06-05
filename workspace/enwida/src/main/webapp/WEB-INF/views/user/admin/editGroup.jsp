@@ -13,11 +13,9 @@
 			<tr>
 				<td>
 				<select name="FavWebSite" size="5">
-					<option value="SM">http://www.scriptingmaster.com</option>
-					<option value="Google">http://www.google.com</option>
-					<option value="MSN">http://www.msn.com</option>
-					<option value="yahoo">http://www.yahoo.com</option>
-					<option value="microsoft">http://www.microsoft.com</option>
+					<option value="MSN">group3</option>
+					<option value="yahoo">group4</option>
+					<option value="microsoft">group5</option>
 				</select>				
 				</td>
 				<td>
@@ -26,12 +24,9 @@
 				</td>
 				<td>
 				<select name="FavWebSite" size="5">
-					<option value="SM">http://www.scriptingmaster.com</option>
-					<option value="Google">http://www.google.com</option>
-					<option value="MSN">http://www.msn.com</option>
-					<option value="yahoo">http://www.yahoo.com</option>
-					<option value="microsoft">http://www.microsoft.com</option>
-				</select>	
+					<option value="SM">group1</option>
+					<option value="Google">group2</option>
+				</select>		
 				</td>
 			</tr>
 		</table>

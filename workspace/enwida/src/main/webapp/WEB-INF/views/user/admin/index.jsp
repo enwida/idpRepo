@@ -1,16 +1,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ page session="false"%>
-<html>
-<head>
-<title>Enwida Home Page</title>
-<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
-<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
-<script src="../resources/js/admin/jquery.tablesorter.js"></script>
-<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
-<link rel="stylesheet" href="../resources/css/table.css" />
-</head>
-<body>
-	<script>
+<script>
 $(function() {
     $( "#tabs" ).tabs();
     $("#tblGroups").tablesorter(); 
@@ -69,13 +59,11 @@ $(function() {
 					</tr>
 				<thead>
 				<tbody> 
-					<c:forEach var="role" items="${roles}">
 						<tr>
 							<td>enwida</td>
 							<td>enwida users</td>
-							<td>delete</td>
+							<td><a href="editRole">Edit Role</a> | <a href="">delete</a></td>
 						</tr>
-					</c:forEach>
 				</tbody> 
 				</table>
 		</div>
@@ -96,11 +84,9 @@ $(function() {
 					<tr>
 						<td>enwida</td>
 						<td>enwida users</td>
-						<td><a href="">Aspects</a> <a href="">delete</a></td>
+						<td><a href="editAspect">Edit Aspect</a> | <a href="">delete</a></td>
 					</tr>
 				</tbody> 
 			</table>
 		</div>
 	</div>
-</body>
-</html>
