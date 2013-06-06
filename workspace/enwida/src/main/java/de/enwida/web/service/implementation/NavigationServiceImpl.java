@@ -83,7 +83,6 @@ public class NavigationServiceImpl implements NavigationService {
     private void shrinkNavigationOnSecurity(ChartNavigationData navigationData, List<Aspect> aspects) {
         shrinkNavigation(navigationData, aspects, new IProductRestrictionGetter() {
             
-            @Override
             public ProductRestriction getProductRestriction(int productId, Aspect aspect) {
                 return securityService.getProductRestriction(productId, aspect);
             }
@@ -93,7 +92,6 @@ public class NavigationServiceImpl implements NavigationService {
     private void shrinkNavigationOnAvailibility(ChartNavigationData navigationData, List<Aspect> aspects) {
         shrinkNavigation(navigationData, aspects, new IProductRestrictionGetter() {
             
-            @Override
             public ProductRestriction getProductRestriction(int productId, Aspect aspect) {
                 return availibilityService.getProductRestriction(productId, aspect);
             }

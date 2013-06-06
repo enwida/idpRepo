@@ -23,7 +23,6 @@ public class AvailibilityService implements IAvailibilityService {
 		return dataAvailibilityDao.isAvailableByExample(dataAvailibility);
 	}
 
-    @Override
     public ProductRestriction getProductRestriction(int productId, Aspect aspect) {
         // TODO: please implement :)
         return null;
