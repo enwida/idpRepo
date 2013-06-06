@@ -16,7 +16,6 @@ public class ChartNavigationData {
 
 	private String chartTitle;
 	private NavigationDefaults defaults;
-	private NavigationDataStructure navigationDS;
 	private List<ProductTree> productTrees;
 	private Map<Integer, String> tsos;
 	private String xAxisLabel;
@@ -49,10 +48,6 @@ public class ChartNavigationData {
 
 	public NavigationDefaults getDefaults() {
 		return this.defaults;
-	}
-
-	public NavigationDataStructure getNavigationDS() {
-		return this.navigationDS;
 	}
 
 	public List<ProductTree> getProductTrees() {
@@ -122,10 +117,6 @@ public class ChartNavigationData {
 
 	public void setDefaults(NavigationDefaults defaults) {
 		this.defaults = defaults;
-	}
-
-	public void setNavigationDS(NavigationDataStructure navigationDS) {
-		this.navigationDS = navigationDS;
 	}
 
 	public void setTitle(String title) {

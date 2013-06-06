@@ -23,7 +23,7 @@ public class SecurityService implements ISecurityService {
 		return dataAuthorizationDao.isAuthorizedByExample(dataAuthorization);
 	}
 
-    public ProductRestriction getProductRestriction(int productId, Aspect aspect) {
+    public ProductRestriction getProductRestriction(int productId, int tso, Aspect aspect, int role) {
         // TODO Please implement :)
         return null;
     }	
