@@ -4,49 +4,54 @@ require.config
 require ["line_chart", "bar_chart", "carpet_chart"],
   (LineChart, BarChart, CarpetChart) ->
 
-    exampleUrl = "lines?type=rl_ab1&product=210&startTime=2010-12-30&endTime=2010-12-31&resolution=HOURLY"
+    drawDefaultChart = (element, chartId, navigationData) ->
+      defaults = navigationData.defaults
+      getLines chartId,
+               defaults.product,
+               defaults.tsoId,
+               defaults.timeRange.from,
+               defaults.timeRange.to,
+               defaults.resolution,
+               (err, data) ->
+                 return console.log err if err?
+                 console.log data
+                 drawData data
 
-    chartOptions =
-      parent: "#chart"
+    getNavigationData = (chartId, callback) ->
+      $.ajax "navigation.test",
+        data:
+          chartId: chartId
+        success: (data) -> callback null, data
+        error: (err) -> callback err
 
-    drawNavigation = (data, callback) ->
-      chart_id = $("#chart").attr "data-chart-id"
+    getLines = (chartId, product, tso, from, to, resolution, callback) ->
+      format = d3.time.format "%Y-%m-%d"
+      $.ajax "lines.test",
+        data:
+          chartId: chartId
+          product: product
+          tso: tso
+          startTime: format new Date from
+          endTime: format new Date to
+          resolution: resolution
+        success: (data) -> callback null, data
+        error: (err) -> callback err
 
-      $.ajax "navigation?id=#{chart_id}",
-        error: (err) -> alert err.message
-        success: (data) ->
-          $("#chart h3").text data.title
-          chartOptions.width = data.width
-          chartOptions.height = data.height
-          # FIXME: read from navigation info
-          chartOptions.scale =
-            x:
-              type: "date"
-          callback?()
-
-    drawData = (data) ->
+    drawData = (data, isDateScale=true) ->
       console.log data
       $("#chart svg").remove()
-      chartOptions.lines = [data]
+      chartOptions = {}
+      chartOptions.scale = x: type: if isDateScale then "date" else "linear"
+      chartOptions.lines = data
 
       lineChart = LineChart.init chartOptions
       lineChart.draw()
       $("circle").tipsy(gravity: "s")
 
-    drawUrl = (url) ->
-      $.ajax url,
-        success: drawData
-        error: (err) -> alert err.message
-
     $(document).ready ->
-      $("#url").keyup (e) ->
-        return unless e.which is 13
-        drawUrl $("#url").val()
-
-      $("#templates a").click (e) ->
-        $("#url").val $(e.target).text()
-        drawUrl $(e.target).text()
-
-      $("#url").val exampleUrl
-      # drawNavigation()
-      drawUrl exampleUrl
+      $(".chart").each ->
+        chartId = $(@).attr "data-chart-id"
+        getNavigationData chartId, (err, data) =>
+          return console.log err if err?
+          console.log data
+          drawDefaultChart $(@), chartId, data

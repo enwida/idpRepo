@@ -9,7 +9,6 @@ import de.enwida.transport.DataResolution;
 import de.enwida.web.model.ProductTree.ProductAttributes;
 import de.enwida.web.utils.CalendarRange;
 import de.enwida.web.utils.NavigationDefaults;
-import de.enwida.web.utils.TSO;
 
 
 public class ChartNavigationData {
@@ -20,19 +19,21 @@ public class ChartNavigationData {
 	private Map<Integer, String> tsos;
 	private String xAxisLabel;
 	private String yAxisLabel;
+	private boolean isDateScale;
 
 	public ChartNavigationData() {
 	}
 
 	public ChartNavigationData(String chartTitle, String xAxisLabel, String yAxisLabel) {
-		this(chartTitle, xAxisLabel, yAxisLabel, new ArrayList<ProductTree>(), null);
+		this(chartTitle, xAxisLabel, yAxisLabel, false, new ArrayList<ProductTree>(), null);
 	}
 
 	public ChartNavigationData(String chartTitle, String xAxisLabel, String yAxisLabel,
-	       List<ProductTree> productTrees, NavigationDefaults defaults) {
+	       boolean dateScale, List<ProductTree> productTrees, NavigationDefaults defaults) {
 		this.chartTitle = chartTitle;
 		this.xAxisLabel = xAxisLabel;
 		this.yAxisLabel = yAxisLabel;
+		this.isDateScale = dateScale;
 		this.tsos = new HashMap<Integer, String>();
 		this.productTrees = productTrees;
 		this.defaults = defaults;
@@ -131,4 +132,12 @@ public class ChartNavigationData {
 		this.yAxisLabel = yAxisLabel;
 	}
 
+    public boolean getIsDateScale() {
+        return isDateScale;
+    }
+
+    public void setIsDateScale(boolean dateScale) {
+        this.isDateScale = dateScale;
+    }
+	
 }
