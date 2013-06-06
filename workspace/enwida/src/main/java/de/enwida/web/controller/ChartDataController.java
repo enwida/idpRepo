@@ -2,6 +2,7 @@ package de.enwida.web.controller;
 
 import java.security.Principal;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,13 +13,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import de.enwida.chart.LineManager;
-import de.enwida.transport.Aspect;
 import de.enwida.transport.DataResolution;
-import de.enwida.transport.LineRequest;
-import de.enwida.transport.XYDataLine;
+import de.enwida.transport.IDataLine;
+import de.enwida.web.model.ChartLinesRequest;
 import de.enwida.web.model.ChartNavigationData;
+import de.enwida.web.service.implementation.LineService;
 import de.enwida.web.service.interfaces.INavigationService;
+import de.enwida.web.utils.CalendarRange;
 
 /**
  * Handles chart data requests
@@ -28,14 +29,14 @@ import de.enwida.web.service.interfaces.INavigationService;
 public class ChartDataController {
 	
 	@Autowired
-	private LineManager lineManager;
+	private LineService lineService;
 	
 	@Autowired
 	private INavigationService navigationService;
 	
 	@RequestMapping(value="/lines", method = RequestMethod.GET)
 	@ResponseBody
-	public XYDataLine getLines (
+	public List<IDataLine> getLines (
 								@RequestParam int chartId,
 								@RequestParam int product,
 								@RequestParam int tso,
@@ -45,13 +46,16 @@ public class ChartDataController {
 								Locale locale
 							   )
 	{
-	    try {
-    	    final LineRequest request = new LineRequest(Aspect.CR_DEGREE_OF_ACTIVATION, product, tso, startTime, endTime, resolution, locale);
-    	    final XYDataLine line = lineManager.getLine(request);
-    		return line;
-    	} catch (Exception e) {
-    	    return null;
-    	}
+	    final ChartLinesRequest request = new ChartLinesRequest(
+	            chartId,
+	            product,
+	            tso,
+	            new CalendarRange(startTime, startTime),
+	            resolution,
+	            locale
+	            );
+	    
+	    return lineService.getLines(request);
 	}
 	
 	@RequestMapping(value="/chart", method=RequestMethod.GET)
