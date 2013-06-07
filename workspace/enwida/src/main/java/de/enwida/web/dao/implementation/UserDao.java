@@ -20,6 +20,7 @@ import org.springframework.stereotype.Repository;
 
 import de.enwida.web.dao.interfaces.BaseDao;
 import de.enwida.web.dao.interfaces.IUserDao;
+import de.enwida.web.model.Group;
 import de.enwida.web.model.User;
 import de.enwida.web.model.UserPermission;
 
@@ -401,5 +402,91 @@ public class UserDao extends BaseDao<User> implements IUserDao {
 		}
 
 		return user;
+	}
+
+	public ArrayList<Group> getAvailableGroupsForUser(long userID) {
+		String sql = "select * FROM groups";
+		Connection conn = null;
+		ArrayList<Group> groups = new ArrayList<Group>();
+		try {
+			conn = datasource.getConnection();
+			PreparedStatement ps = conn.prepareStatement(sql);
+		//	ps.setLong(1, userID);
+			ResultSet rs = ps.executeQuery();
+			while (rs.next()) {
+				Group group = new Group();
+				group.setGroupID(rs.getLong("group_id"));
+				group.setGroupName(rs.getString("group_name"));
+				groups.add(group);
+			}
+			rs.close();
+			ps.close();
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		} finally {
+			if (conn != null) {
+				try {
+				conn.close();
+				} catch (SQLException e) {}
+			}
+		}
+		return groups;
+	}
+	
+	public ArrayList<Group> getUserGroups(long userID) {
+		String sql = "select * FROM groups INNER JOIN user_group ON user_group.group_id=groups.group_id where user_group.user_id=?";
+		Connection conn = null;
+		ArrayList<Group> groups = new ArrayList<Group>();
+		try {
+			conn = datasource.getConnection();
+			PreparedStatement ps = conn.prepareStatement(sql);
+			ps.setLong(1, userID);
+			ResultSet rs = ps.executeQuery();
+			while (rs.next()) {
+				Group group = new Group();
+				group.setGroupID(rs.getLong("group_id"));
+				group.setGroupName(rs.getString("group_name"));
+				groups.add(group);
+			}
+			rs.close();
+			ps.close();
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		} finally {
+			if (conn != null) {
+				try {
+				conn.close();
+				} catch (SQLException e) {}
+			}
+		}
+		return groups;
+	}
+
+	public List<Group> getAllGroups() {
+		String sql = "select * FROM groups";
+		Connection conn = null;
+		ArrayList<Group> groups = new ArrayList<Group>();
+		try {
+			conn = datasource.getConnection();
+			PreparedStatement ps = conn.prepareStatement(sql);
+			ResultSet rs = ps.executeQuery();
+			while (rs.next()) {
+				Group group = new Group();
+				group.setGroupID(rs.getLong("group_id"));
+				group.setGroupName(rs.getString("group_name"));
+				groups.add(group);
+			}
+			rs.close();
+			ps.close();
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		} finally {
+			if (conn != null) {
+				try {
+				conn.close();
+				} catch (SQLException e) {}
+			}
+		}
+		return groups;
 	}
 }

@@ -13,7 +13,7 @@
 </style>
 </head>
 <body onload='document.f.j_username.focus();'>
-	<h3>Login with Username and Password (Custom Page2)</h3>
+	<h3>User Login</h3>
  
 	<c:if test="${not empty error}">
 		<div class="errorblock">
@@ -27,7 +27,7 @@
  
 		<table>
 			<tr>
-				<td>User:</td>
+				<td>E-Mail:</td>
 				<td><input type='text' name='j_username' value=''>
 				</td>
 			</tr>

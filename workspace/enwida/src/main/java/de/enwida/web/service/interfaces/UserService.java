@@ -2,6 +2,7 @@ package de.enwida.web.service.interfaces;
 
 import java.util.List;
 
+import de.enwida.web.model.Group;
 import de.enwida.web.model.User;
 
 public interface UserService {
@@ -13,4 +14,7 @@ public interface UserService {
 	public List<User> findAllUsersWithPermissions();
 	public void addPermission(int userID, int roleID);
 	public void removePermission(int userID, int roleID);
+	public List<Group> getAvailableGroupsForUser(long userID);
+	public List<Group> getUserGroups(long userID);
+	public List<Group> getAllGroups();
 }

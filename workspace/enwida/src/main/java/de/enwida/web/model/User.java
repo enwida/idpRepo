@@ -1,9 +1,5 @@
 package de.enwida.web.model;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
-import de.enwida.web.dao.implementation.UserDao;
-
 import java.sql.Date;
 
 public class User {

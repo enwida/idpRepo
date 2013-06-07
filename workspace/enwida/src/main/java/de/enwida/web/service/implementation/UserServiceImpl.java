@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import de.enwida.web.dao.interfaces.IUserDao;
+import de.enwida.web.model.Group;
 import de.enwida.web.model.User;
 import de.enwida.web.service.interfaces.UserService;
 import de.enwida.web.utils.Constants;
@@ -68,5 +69,17 @@ public class UserServiceImpl implements UserService {
 	}
 	public void removePermission(int userID, int roleID){
 		userDao.removePermission(userID, roleID);	
+	}
+
+	public List<Group> getAvailableGroupsForUser(long userID) {
+		return userDao.getAvailableGroupsForUser(userID);
+	}
+	
+	public List<Group> getUserGroups(long userID) {
+		return userDao.getUserGroups(userID);
+	}
+
+	public List<Group> getAllGroups() {
+		return userDao.getAllGroups();
 	}
 }

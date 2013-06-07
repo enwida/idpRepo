@@ -2,7 +2,7 @@
 <%@ page session="false"%>
 
 <h1>Hello : ${username}</h1>
-<a href="admin">admin</a>
+<a href="admin/">admin</a>
 <a href="${userStatusURL}">${userStatus}</a>
 <div id="chart_div"></div>
 
