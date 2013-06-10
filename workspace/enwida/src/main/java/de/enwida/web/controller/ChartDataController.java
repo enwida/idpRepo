@@ -113,6 +113,8 @@ public class ChartDataController {
 	    cTo.setTime(to);
 	    result.setDefaults(new NavigationDefaults(99, DataResolution.HOURLY, 211, new CalendarRange(cFrom, cTo)));
 	    result.setIsDateScale(true);
+	    result.addTso(99, "Standard");
+	    result.addTso(1, "Test");
 	    return result;
 	}
 	
