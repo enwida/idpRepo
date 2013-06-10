@@ -39,8 +39,8 @@
 <h1>Chart Experiments</h1>
 
 <input type="text" id="url" style="width: 80%; padding: 10px; font-size: 13px; margin: 10px;" />
-<div class="chart" data-chart-id="0">
-</div>
+<div class="chart" data-chart-id="0"></div>
+<div class="chart" data-chart-id="1"></div>
 
 </body>
 </html>
