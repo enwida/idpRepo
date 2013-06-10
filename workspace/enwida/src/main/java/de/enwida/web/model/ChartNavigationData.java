@@ -2,8 +2,10 @@ package de.enwida.web.model;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import de.enwida.transport.DataResolution;
 import de.enwida.web.model.ProductTree.ProductAttributes;
@@ -60,12 +62,14 @@ public class ChartNavigationData {
 
 	public List<DataResolution> getAllResolutions() {
 	    final List<DataResolution> result = new ArrayList<DataResolution>();
+	    final Set<DataResolution> set = new HashSet<DataResolution>();
 
 	    for (final ProductTree productTree : productTrees) {
     	    for (final ProductAttributes product : productTree.flatten()) {
-    	        result.addAll(product.resolutions);
+    	        set.addAll(product.resolutions);
     	    }
 	    }
+	    result.addAll(set);
 	    return result;
 	}
 
