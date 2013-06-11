@@ -51,8 +51,8 @@ public class ChartDataController {
 								@RequestParam int chartId,
 								@RequestParam int product,
 								@RequestParam int tso,
-								@RequestParam @DateTimeFormat(pattern="YYYY-MM-DD") Calendar startTime,
-								@RequestParam @DateTimeFormat(pattern="YYYY-MM-DD") Calendar endTime,
+								@RequestParam @DateTimeFormat(pattern="yyyy-MM-dd") Calendar startTime,
+								@RequestParam @DateTimeFormat(pattern="yyyy-MM-dd") Calendar endTime,
 								@RequestParam DataResolution resolution,
 								Locale locale
 							   )
@@ -124,13 +124,15 @@ public class ChartDataController {
 								@RequestParam int chartId,
 								@RequestParam int product,
 								@RequestParam int tso,
-								@RequestParam @DateTimeFormat(pattern="YYYY-MM-DD") Calendar startTime,
-								@RequestParam @DateTimeFormat(pattern="YYYY-MM-DD") Calendar endTime,
+								@RequestParam @DateTimeFormat(pattern="yyyy-MM-dd") Calendar startTime,
+								@RequestParam @DateTimeFormat(pattern="yyyy-MM-dd") Calendar endTime,
 								@RequestParam DataResolution resolution,
 								Locale locale
 							   )
 	{
 	    final List<IDataLine> result = new ArrayList<IDataLine>();
+
+	    System.out.println(startTime.get(Calendar.YEAR) + "-" + startTime.get(Calendar.MONTH) + "-" + startTime.get(Calendar.DATE));
 
 	    for (final Aspect aspect : Arrays.asList(new Aspect[] { Aspect.CR_DEGREE_OF_ACTIVATION })) {
 	        final LineRequest req = new LineRequest(aspect, product, tso, startTime, endTime, resolution, locale);
