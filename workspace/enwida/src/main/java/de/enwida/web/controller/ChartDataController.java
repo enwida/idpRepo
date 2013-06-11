@@ -1,5 +1,6 @@
 package de.enwida.web.controller;
 
+import java.io.IOException;
 import java.security.Principal;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -11,6 +12,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import org.codehaus.jackson.JsonParseException;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
@@ -27,6 +31,7 @@ import de.enwida.transport.LineRequest;
 import de.enwida.web.dao.interfaces.INavigationDao;
 import de.enwida.web.model.ChartLinesRequest;
 import de.enwida.web.model.ChartNavigationData;
+import de.enwida.web.model.ProductTree;
 import de.enwida.web.service.implementation.LineService;
 import de.enwida.web.service.interfaces.INavigationService;
 import de.enwida.web.utils.CalendarRange;
@@ -104,6 +109,7 @@ public class ChartDataController {
 	@ResponseBody
 	public ChartNavigationData getNavigationDataTest(@RequestParam int chartId, Principal principal, Locale locale) throws ParseException {
 	    final ChartNavigationData result = navigationDao.getDefaultNavigation(chartId, locale);
+	    result.addProductTree(new ProductTree(1));
 	    final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 	    final Date from = dateFormat.parse("2010-12-29");
 	    final Date to = dateFormat.parse("2010-12-31");
@@ -134,7 +140,7 @@ public class ChartDataController {
 
 	    System.out.println(startTime.get(Calendar.YEAR) + "-" + startTime.get(Calendar.MONTH) + "-" + startTime.get(Calendar.DATE));
 
-	    for (final Aspect aspect : Arrays.asList(new Aspect[] { Aspect.CR_DEGREE_OF_ACTIVATION })) {
+	    for (final Aspect aspect : Arrays.asList(new Aspect[] { Aspect.CR_VOL_ACTIVATION })) {
 	        final LineRequest req = new LineRequest(aspect, product, tso, startTime, endTime, resolution, locale);
 	        try {
                 result.add(lineManager.getLine(req));

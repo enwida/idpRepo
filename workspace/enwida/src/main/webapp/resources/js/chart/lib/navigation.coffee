@@ -11,18 +11,15 @@ define ->
       @chartId = $(@element).attr "data-chart-id"
       return throw "No chart ID given" unless @chartId
 
-    draw: (callback) ->
+    draw: (parent=@element, callback) ->
       @getNavigationData (err, data) =>
         return callback err if err?
-        heading = $ "<h2>"
-        heading.text data.title
-        @element.append heading
-        @element.append @getNavigationElements data
+        parent.append @getNavigationElements data
         defaults = @navigationData.defaults
         @setProduct defaults.tsoId, defaults.product
         @element.find(".resolutions").val defaults.resolution
         @setTimeRange defaults.timeRange
-        callback null, data
+        callback? null, data
 
     getNavigationData: (callback) ->
       $.ajax "navigation.test",
@@ -142,3 +139,6 @@ define ->
 
     updateSelections: ->
       @setProduct parseInt(@getTso()), @getProduct()
+
+    isDateScale: ->
+      @navigationData.isDateScale
