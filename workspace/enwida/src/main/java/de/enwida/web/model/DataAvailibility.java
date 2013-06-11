@@ -6,6 +6,7 @@ public class DataAvailibility {
 	
 	private String tableName;
 	private int product;
+	private int tso;
 	private Date timeFrom;
 	private Date timeTo;
 	private int nrows;
@@ -24,6 +25,14 @@ public class DataAvailibility {
 
 	public void setProduct(int product) {
 		this.product = product;
+	}
+	
+	public int getTso() {
+		return tso;
+	}
+
+	public void setTso(int tso) {
+		this.tso = tso;
 	}
 
 	public Date getTimeFrom() {

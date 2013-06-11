@@ -10,7 +10,11 @@ public class UserDTO
 	private String firstName;
 	private String password;
 	private String confirmPassword;
+	private String companyName;
+	private String companyURL;
+	private String telephone;
 	private boolean enabled;
+	
 	private Date joiningDate;
 	
 	public Long getUserID() {
@@ -60,5 +64,23 @@ public class UserDTO
 	}
 	public void setJoiningDate(Date joiningDate) {
 		this.joiningDate = joiningDate;
+	}
+	public String getCompanyURL() {
+		return companyURL;
+	}
+	public void setCompanyURL(String companyURL) {
+		this.companyURL = companyURL;
+	}
+	public String getTelephone() {
+		return telephone;
+	}
+	public void setTelephone(String telephone) {
+		this.telephone = telephone;
+	}
+	public String getCompanyName() {
+		return companyName;
+	}
+	public void setCompanyName(String companyName) {
+		this.companyName = companyName;
 	}
 }

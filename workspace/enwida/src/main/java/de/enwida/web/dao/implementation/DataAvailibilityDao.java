@@ -1,5 +1,7 @@
 package de.enwida.web.dao.implementation;
 
+import java.util.List;
+
 import org.springframework.stereotype.Repository;
 
 import de.enwida.web.dao.interfaces.BaseDao;
@@ -35,6 +37,19 @@ public class DataAvailibilityDao extends BaseDao<DataAvailibility> implements ID
 		
 		DataAvailibility dAvailability = jdbcTemplate.queryForObject(SELECT_QUERY, param, new DataAvailabilityRowMapper());
 		return dAvailability;
+	}
+
+	@Override
+	public List<DataAvailibility> getListByExample(DataAvailibility dataAvailibility) {
+		String SELECT_QUERY = "SELECT * FROM availability WHERE product = ? AND tso = ? AND tablename SIMILAR TO ?;";
+		
+		Object[] param = new Object[4];
+		param[0] = dataAvailibility.getProduct();
+		param[1] = dataAvailibility.getTso();		
+		param[2] = "%" + dataAvailibility.getTableName() + "%";		
+		
+		List<DataAvailibility> dAvailibilities = jdbcTemplate.queryForList(SELECT_QUERY, param, DataAvailibility.class);
+		return dAvailibilities;	
 	}
 
 }

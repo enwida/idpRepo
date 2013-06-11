@@ -1,3 +1,6 @@
+body {
+	padding: 20px;
+}
 .axis path,
 .axis line {
   fill: none;
@@ -35,4 +38,8 @@
   padding: 10px 20px;
   -moz-box-shadow: 0px 2px 2px 0px rgba(204, 204, 204, 0.6);
   -webkit-box-shadow: 0px 2px 2px 0px rgba(204, 204, 204, 0.6);
+}
+
+.spreadsheet {
+	display: none;
 }

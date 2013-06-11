@@ -43,6 +43,9 @@
 	<beans:bean id="aspectDao" class="de.enwida.web.dao.implementation.AspectDaoImpl">
 	</beans:bean>
 
+	<beans:bean id="lineService" class="de.enwida.web.service.implementation.LineService">
+	</beans:bean>
+
 	<interceptors>
     	<beans:bean id="localeChangeInterceptor" class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor">
         	<beans:property name="paramName" value="lang" />

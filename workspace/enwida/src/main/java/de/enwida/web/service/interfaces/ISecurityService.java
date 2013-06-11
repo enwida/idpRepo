@@ -7,6 +7,6 @@ import de.enwida.web.utils.ProductRestriction;
 public interface ISecurityService {
 	
 	public boolean isAllowed(DataAuthorization dataAuthorization);
-	public ProductRestriction getProductRestriction(int productId, Aspect aspect);
+	public ProductRestriction getProductRestriction(int productId, int tso, Aspect aspect, int role);
 
 }

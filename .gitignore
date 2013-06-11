@@ -3,3 +3,10 @@ target
 .metadata
 workspace/Servers
 workspace/enwida/src/main/webapp/resources/js/chart/lib/*.js
+/workspace/enwida/src/main/java/de/enwida/web/model/GenericData.java
+/workspace/enwida/src/main/java/de/enwida/web/service/interfaces/NavigationService.java
+/workspace/enwida/src/main/java/de/enwida/web/model/GenericData.java
+/workspace/enwida/src/main/java/de/enwida/web/model/NavigationDataStructure.java
+/workspace/enwida/src/main/java/de/enwida/web/model/NavigationNode.java
+
+/workspace/enwida/src/main/java/de/enwida/web/model/GenericData.java

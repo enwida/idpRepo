@@ -5,13 +5,13 @@ import de.enwida.transport.DataResolution;
 public class NavigationDefaults {
     
     private int tsoId;
-    private DataResolution resoulution;
+    private DataResolution resolution;
     private int product;
     private CalendarRange timeRange;
     
-    public NavigationDefaults(int tsoId, DataResolution resoulution, int product, CalendarRange timeRange) {
+    public NavigationDefaults(int tsoId, DataResolution resolution, int product, CalendarRange timeRange) {
         this.tsoId = tsoId;
-        this.resoulution = resoulution;
+        this.resolution = resolution;
         this.product = product;
         this.timeRange = timeRange;
     }
@@ -24,12 +24,12 @@ public class NavigationDefaults {
         this.tsoId = tsoId;
     }
 
-    public DataResolution getResoulution() {
-        return resoulution;
+    public DataResolution getResolution() {
+        return resolution;
     }
 
-    public void setResoulution(DataResolution resoulution) {
-        this.resoulution = resoulution;
+    public void setResolution(DataResolution resoulution) {
+        this.resolution = resoulution;
     }
 
     public int getProduct() {

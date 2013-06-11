@@ -7,14 +7,17 @@ import java.util.List;
 public abstract class DataLine<T> implements IDataLine {
 	
 	protected int product;
+	protected Aspect aspect;
 	protected Calendar startTime;
 	protected Calendar endTime;
 	protected DataResolution resolution;
+	protected String title;
 	protected List<T> dataPoints;
 	
-	public DataLine(int product, Calendar startTime,
+	public DataLine(int product, Aspect aspect, Calendar startTime,
 			Calendar endTime, DataResolution resolution) {
 		this.product = product;
+		this.aspect = aspect;
 		this.startTime = startTime;
 		this.endTime = endTime;
 		this.resolution = resolution;
@@ -22,7 +25,7 @@ public abstract class DataLine<T> implements IDataLine {
 	}
 	
 	public DataLine(LineRequest request) {
-		this(request.getProduct(), request.getStartTime(), request.getEndTime(),
+		this(request.getProduct(), request.getAspect(), request.getStartTime(), request.getEndTime(),
 				request.getResolution());
 	}
 
@@ -66,4 +69,20 @@ public abstract class DataLine<T> implements IDataLine {
 		this.resolution = resolution;
 	}
 
+    public Aspect getAspect() {
+        return aspect;
+    }
+
+    public void setAspect(Aspect aspect) {
+        this.aspect = aspect;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+	
 }

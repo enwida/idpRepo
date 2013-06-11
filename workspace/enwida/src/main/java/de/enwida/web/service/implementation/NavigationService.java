@@ -17,16 +17,15 @@ import de.enwida.web.dao.interfaces.INavigationDao;
 import de.enwida.web.model.ChartNavigationData;
 import de.enwida.web.model.ProductTree;
 import de.enwida.web.model.ProductTree.ProductAttributes;
-import de.enwida.web.model.User;
 import de.enwida.web.service.interfaces.IAvailibilityService;
 import de.enwida.web.service.interfaces.ISecurityService;
-import de.enwida.web.service.interfaces.NavigationService;
+import de.enwida.web.service.interfaces.INavigationService;
 import de.enwida.web.utils.ProductLeaf;
 import de.enwida.web.utils.ProductRestriction;
 
 @Service("NavigationService")
 @Transactional
-public class NavigationServiceImpl implements NavigationService {
+public class NavigationService implements INavigationService {
 
 	@Autowired
 	private INavigationDao navigationDao;
@@ -40,19 +39,19 @@ public class NavigationServiceImpl implements NavigationService {
 	@Autowired
 	private IAspectsDao aspectsDao;
 
-    public ChartNavigationData getNavigationData(int chartId, User user, Locale locale) {
+    public ChartNavigationData getNavigationData(int chartId, int role, Locale locale) {
         final ChartNavigationData navigationData = navigationDao.getDefaultNavigation(chartId, locale);
         final List<Aspect> aspects = aspectsDao.getAspects(chartId);
         
-        shrinkNavigationOnSecurity(navigationData, aspects);
-        shrinkNavigationOnAvailibility(navigationData, aspects);
+        shrinkNavigationOnSecurity(navigationData, aspects, role);
+        shrinkNavigationOnAvailibility(navigationData, aspects, role);
         addDefaults(navigationData);
         
         return navigationData;
     }
     
     private interface IProductRestrictionGetter {
-        public ProductRestriction getProductRestriction(int productId, Aspect aspect);
+        public ProductRestriction getProductRestriction(int productId, int tso, Aspect aspect);
     }
     
     private void shrinkNavigation(ChartNavigationData navigationData, List<Aspect> aspects, IProductRestrictionGetter service) {
@@ -62,7 +61,7 @@ public class NavigationServiceImpl implements NavigationService {
             for (final ProductAttributes productAttrs : products) {
                 final List<ProductRestriction> restrictions = new ArrayList<ProductRestriction>();
                 for (final Aspect aspect : aspects) {
-                    restrictions.add(service.getProductRestriction(productAttrs.productId, aspect));
+                    restrictions.add(service.getProductRestriction(productAttrs.productId, productTree.getTso(), aspect));
                 }
                 final ProductRestriction combinedRestriction = ProductRestriction.combineMaximum(restrictions);
     
@@ -80,22 +79,20 @@ public class NavigationServiceImpl implements NavigationService {
         }
     }
     
-    private void shrinkNavigationOnSecurity(ChartNavigationData navigationData, List<Aspect> aspects) {
+    private void shrinkNavigationOnSecurity(ChartNavigationData navigationData, List<Aspect> aspects, final int role) {
         shrinkNavigation(navigationData, aspects, new IProductRestrictionGetter() {
             
-            @Override
-            public ProductRestriction getProductRestriction(int productId, Aspect aspect) {
-                return securityService.getProductRestriction(productId, aspect);
+            public ProductRestriction getProductRestriction(int productId, int tso, Aspect aspect) {
+                return securityService.getProductRestriction(productId, tso, aspect, role);
             }
         });
     }
 
-    private void shrinkNavigationOnAvailibility(ChartNavigationData navigationData, List<Aspect> aspects) {
+    private void shrinkNavigationOnAvailibility(ChartNavigationData navigationData, List<Aspect> aspects, final int role) {
         shrinkNavigation(navigationData, aspects, new IProductRestrictionGetter() {
             
-            @Override
-            public ProductRestriction getProductRestriction(int productId, Aspect aspect) {
-                return availibilityService.getProductRestriction(productId, aspect);
+            public ProductRestriction getProductRestriction(int productId, int tso, Aspect aspect) {
+                return availibilityService.getProductRestriction(productId, tso, aspect, role);
             }
         });
     }

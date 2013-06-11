@@ -2,38 +2,40 @@ package de.enwida.web.model;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import de.enwida.transport.DataResolution;
 import de.enwida.web.model.ProductTree.ProductAttributes;
 import de.enwida.web.utils.CalendarRange;
 import de.enwida.web.utils.NavigationDefaults;
-import de.enwida.web.utils.TSO;
 
 
 public class ChartNavigationData {
 
 	private String chartTitle;
 	private NavigationDefaults defaults;
-	private NavigationDataStructure navigationDS;
 	private List<ProductTree> productTrees;
 	private Map<Integer, String> tsos;
 	private String xAxisLabel;
 	private String yAxisLabel;
+	private boolean isDateScale;
 
 	public ChartNavigationData() {
 	}
 
 	public ChartNavigationData(String chartTitle, String xAxisLabel, String yAxisLabel) {
-		this(chartTitle, xAxisLabel, yAxisLabel, new ArrayList<ProductTree>(), null);
+		this(chartTitle, xAxisLabel, yAxisLabel, false, new ArrayList<ProductTree>(), null);
 	}
 
 	public ChartNavigationData(String chartTitle, String xAxisLabel, String yAxisLabel,
-	       List<ProductTree> productTrees, NavigationDefaults defaults) {
+	       boolean dateScale, List<ProductTree> productTrees, NavigationDefaults defaults) {
 		this.chartTitle = chartTitle;
 		this.xAxisLabel = xAxisLabel;
 		this.yAxisLabel = yAxisLabel;
+		this.isDateScale = dateScale;
 		this.tsos = new HashMap<Integer, String>();
 		this.productTrees = productTrees;
 		this.defaults = defaults;
@@ -51,10 +53,6 @@ public class ChartNavigationData {
 		return this.defaults;
 	}
 
-	public NavigationDataStructure getNavigationDS() {
-		return this.navigationDS;
-	}
-
 	public List<ProductTree> getProductTrees() {
 		return this.productTrees;
 	}
@@ -65,12 +63,14 @@ public class ChartNavigationData {
 
 	public List<DataResolution> getAllResolutions() {
 	    final List<DataResolution> result = new ArrayList<DataResolution>();
+	    final Set<DataResolution> set = new HashSet<DataResolution>();
 
 	    for (final ProductTree productTree : productTrees) {
     	    for (final ProductAttributes product : productTree.flatten()) {
-    	        result.addAll(product.resolutions);
+    	        set.addAll(product.resolutions);
     	    }
 	    }
+	    result.addAll(set);
 	    return result;
 	}
 
@@ -124,10 +124,6 @@ public class ChartNavigationData {
 		this.defaults = defaults;
 	}
 
-	public void setNavigationDS(NavigationDataStructure navigationDS) {
-		this.navigationDS = navigationDS;
-	}
-
 	public void setTitle(String title) {
 		this.chartTitle = title;
 	}
@@ -140,4 +136,12 @@ public class ChartNavigationData {
 		this.yAxisLabel = yAxisLabel;
 	}
 
+    public boolean getIsDateScale() {
+        return isDateScale;
+    }
+
+    public void setIsDateScale(boolean dateScale) {
+        this.isDateScale = dateScale;
+    }
+	
 }

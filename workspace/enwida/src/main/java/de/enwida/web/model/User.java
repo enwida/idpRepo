@@ -1,5 +1,9 @@
 package de.enwida.web.model;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
+import de.enwida.web.dao.implementation.UserDao;
+
 import java.sql.Date;
 
 public class User {
@@ -9,12 +13,14 @@ public class User {
 	private String lastName;
 	private String firstName;
 	private String password;
+	private String companyURL;
+	private String contactNo;
 	private boolean enabled;
 	private Date joiningDate;
-	private int loginCount;
-	private String lastLogin;
-    private Date groups;
-    private String joinDate;
+	private Date loginCount;
+	private Date lastLogin;
+	private Date groups;
+	private String companyName;
 
 
 	private UserPermissionCollection userPermissionCollection=new UserPermissionCollection();
@@ -111,19 +117,19 @@ public class User {
 		this.joiningDate = joiningDate;
 	}
 
-	public int getLoginCount() {
+	public Date getLoginCount() {
 		return loginCount;
 	}
 
-	public void setLoginCount(int loginCount) {
+	public void setLoginCount(Date loginCount) {
 		this.loginCount = loginCount;
 	}
 
-	public String getLastLogin() {
+	public Date getLastLogin() {
 		return lastLogin;
 	}
 
-	public void setLastLogin(String lastLogin) {
+	public void setLastLogin(Date lastLogin) {
 		this.lastLogin = lastLogin;
 	}
 
@@ -135,11 +141,27 @@ public class User {
 		this.groups = groups;
 	}
 
-    public String getJoinDate() {
-        return joinDate;
-    }
+	public String getCompanyURL() {
+		return companyURL;
+	}
 
-    public void setJoinDate(String joinDate) {
-        this.joinDate = joinDate;
-    }
+	public void setCompanyURL(String companyURL) {
+		this.companyURL = companyURL;
+	}
+
+	public String getContactNo() {
+		return contactNo;
+	}
+
+	public void setContactNo(String contactNo) {
+		this.contactNo = contactNo;
+	}
+
+	public String getCompanyName() {
+		return companyName;
+	}
+
+	public void setCompanyName(String companyName) {
+		this.companyName = companyName;
+	}
 }
