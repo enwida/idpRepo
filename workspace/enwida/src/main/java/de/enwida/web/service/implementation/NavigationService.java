@@ -44,7 +44,7 @@ public class NavigationService implements INavigationService {
         final List<Aspect> aspects = aspectsDao.getAspects(chartId);
         
         shrinkNavigationOnSecurity(navigationData, aspects, role);
-        shrinkNavigationOnAvailibility(navigationData, aspects);
+        shrinkNavigationOnAvailibility(navigationData, aspects, role);
         addDefaults(navigationData);
         
         return navigationData;
@@ -88,11 +88,11 @@ public class NavigationService implements INavigationService {
         });
     }
 
-    private void shrinkNavigationOnAvailibility(ChartNavigationData navigationData, List<Aspect> aspects) {
+    private void shrinkNavigationOnAvailibility(ChartNavigationData navigationData, List<Aspect> aspects, final int role) {
         shrinkNavigation(navigationData, aspects, new IProductRestrictionGetter() {
             
             public ProductRestriction getProductRestriction(int productId, int tso, Aspect aspect) {
-                return availibilityService.getProductRestriction(productId, tso, aspect);
+                return availibilityService.getProductRestriction(productId, tso, aspect, role);
             }
         });
     }

@@ -1,6 +1,7 @@
 package de.enwida.web.utils;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 public class CalendarRange {
@@ -13,7 +14,12 @@ public class CalendarRange {
         this.to = to;
     }
     
-    public static CalendarRange always() {
+    public CalendarRange(Date from, Date to) {
+        this.from.setTime(from);
+        this.to.setTime(to);
+    }
+
+	public static CalendarRange always() {
 		final Calendar from = Calendar.getInstance();
 		final Calendar to = Calendar.getInstance();
 		from.setTimeInMillis(0);

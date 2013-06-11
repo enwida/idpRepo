@@ -1,5 +1,7 @@
 package de.enwida.web.dao.implementation;
 
+import java.util.List;
+
 import org.springframework.stereotype.Repository;
 
 import de.enwida.web.dao.interfaces.BaseDao;
@@ -48,6 +50,20 @@ public class DataAuthorizationDao extends BaseDao<DataAuthorization> implements 
 		
 		DataAuthorization dAuthorizartion = jdbcTemplate.queryForObject(SELECT_QUERY, param, new DataAuthorizationRowMapper());
 		return dAuthorizartion;		
+	}
+
+	@Override
+	public List<DataAuthorization> getListByExample(DataAuthorization dataAuthorization) {
+		String SELECT_QUERY = "SELECT * FROM data_authorization WHERE role = ? AND tso = ? AND product = ? AND aspect SIMILAR TO ?;";
+		
+		Object[] param = new Object[4];
+		param[0] = dataAuthorization.getRole();
+		param[1] = dataAuthorization.getTso();
+		param[2] = dataAuthorization.getProductId();
+		param[3] = "%" + dataAuthorization.getAspect() + "%";		
+		
+		List<DataAuthorization> dAuthorizartion = jdbcTemplate.queryForList(SELECT_QUERY, param, DataAuthorization.class);
+		return dAuthorizartion;	
 	}
 	
 }
