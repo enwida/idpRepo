@@ -1,9 +1,20 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ page session="false"%>
 
-Group Name:
-<input id="newGroup" type='text' />
-<a href="#tab-2">Add</a>
+
+<form name='f' method='POST'>
+	<table>
+		<tr>
+			<td>Group Name:</td>
+			<td></td>
+		</tr>
+		<tr>
+			<td></td>
+			<td><input type="submit" value="Add" /></td>
+		</tr>
+	</table>
+	
+</form>
 <br>
 <table id="tblGroups" class="tablesorter">
 	<thead>
@@ -23,5 +34,11 @@ Group Name:
 			<tr>
 		</c:forEach>
 	</tbody>
+	<tfoot>
+		<tr>
+			<tr><input name="newGroup" type='text' value="new Group"/></tr>
+			<tr></th>
+			<tr><a href="">Add</a></tr>
+		<tr>
+	<tfoot>
 </table>
-</div>

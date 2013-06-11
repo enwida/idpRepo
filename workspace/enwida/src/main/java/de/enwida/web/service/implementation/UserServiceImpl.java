@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import de.enwida.web.dao.interfaces.IUserDao;
 import de.enwida.web.model.Group;
+import de.enwida.web.model.Role;
 import de.enwida.web.model.User;
 import de.enwida.web.service.interfaces.UserService;
 import de.enwida.web.utils.Constants;
@@ -82,4 +83,16 @@ public class UserServiceImpl implements UserService {
 	public List<Group> getAllGroups() {
 		return userDao.getAllGroups();
 	}
+
+    public void addGroup(Group newGroup) {
+        userDao.addGroup(newGroup);
+    }
+
+    public void saveRole(Role role) {
+        userDao.addRole(role);
+    }
+
+    public List<Role> getAllRoles() {
+        return userDao.getAllRoles();
+    }
 }

@@ -11,9 +11,10 @@ public class User {
 	private String password;
 	private boolean enabled;
 	private Date joiningDate;
-	private Date loginCount;
-	private Date lastLogin;
-	private Date groups;
+	private int loginCount;
+	private String lastLogin;
+    private Date groups;
+    private String joinDate;
 
 
 	private UserPermissionCollection userPermissionCollection=new UserPermissionCollection();
@@ -110,19 +111,19 @@ public class User {
 		this.joiningDate = joiningDate;
 	}
 
-	public Date getLoginCount() {
+	public int getLoginCount() {
 		return loginCount;
 	}
 
-	public void setLoginCount(Date loginCount) {
+	public void setLoginCount(int loginCount) {
 		this.loginCount = loginCount;
 	}
 
-	public Date getLastLogin() {
+	public String getLastLogin() {
 		return lastLogin;
 	}
 
-	public void setLastLogin(Date lastLogin) {
+	public void setLastLogin(String lastLogin) {
 		this.lastLogin = lastLogin;
 	}
 
@@ -133,4 +134,12 @@ public class User {
 	public void setGroups(Date groups) {
 		this.groups = groups;
 	}
+
+    public String getJoinDate() {
+        return joinDate;
+    }
+
+    public void setJoinDate(String joinDate) {
+        this.joinDate = joinDate;
+    }
 }

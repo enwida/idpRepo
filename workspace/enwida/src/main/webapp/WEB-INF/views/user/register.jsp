@@ -13,10 +13,10 @@
 			<tr><td>Mail Address(*) : </td><td><form:input path="userName" /><form:errors path="userName" cssStyle="color : red;"/></td></tr>
 			<tr><td>First Name(*) : </td><td><form:input path="firstName" /><form:errors path="firstName" cssStyle="color : red;"/></td></tr>
 			<tr><td>Last Name(*) : </td><td><form:input path="lastName" /><form:errors path="lastName" cssStyle="color : red;"/></td></tr>
-			<tr><td>Last Name(*) : </td><td><form:input path="password" /><form:errors path="password" cssStyle="color : red;"/></td></tr>
+			<tr><td>Password(*) : </td><td><form:input path="password" /><form:errors path="password" cssStyle="color : red;"/></td></tr>
 			<tr><td>Password(*)(Repeat) : </td><td><form:input path="confirmPassword" /><form:errors path="confirmPassword" cssStyle="color : red;"/></td></tr>
 			<tr><td>Tel : </td><td><form:input path="" /></td></tr>
-			<tr><td>Company Web Address : </td><td><form:input path="" /></td></tr>
+			<tr><td>Company : </td><td><form:input path="" /></td></tr>
 			<tr><td>Logo : </td><td><form:input path="" /></td></tr>
 			<tr><td><input type="reset" value="Reset" /></td><td><input type="submit" value="Save Changes" /></td></tr>
 		</table>

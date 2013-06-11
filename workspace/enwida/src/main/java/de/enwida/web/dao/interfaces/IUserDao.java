@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import de.enwida.web.model.Group;
+import de.enwida.web.model.Role;
 import de.enwida.web.model.User;
 
 
@@ -19,4 +20,7 @@ public interface IUserDao {
 	public ArrayList<Group> getAvailableGroupsForUser(long userID);
 	public ArrayList<Group> getUserGroups(long userID);
 	public List<Group> getAllGroups();
+    public void addGroup(Group newGroup);
+    public void addRole(Role role);
+    public List<Role> getAllRoles();
 }

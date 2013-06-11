@@ -3,6 +3,7 @@ package de.enwida.web.service.interfaces;
 import java.util.List;
 
 import de.enwida.web.model.Group;
+import de.enwida.web.model.Role;
 import de.enwida.web.model.User;
 
 public interface UserService {
@@ -17,4 +18,7 @@ public interface UserService {
 	public List<Group> getAvailableGroupsForUser(long userID);
 	public List<Group> getUserGroups(long userID);
 	public List<Group> getAllGroups();
+    public void addGroup(Group newGroup);
+    public void saveRole(Role role);
+    public List<Role> getAllRoles();
 }

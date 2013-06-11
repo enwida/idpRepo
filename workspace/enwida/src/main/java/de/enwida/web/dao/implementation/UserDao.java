@@ -21,6 +21,7 @@ import org.springframework.stereotype.Repository;
 import de.enwida.web.dao.interfaces.BaseDao;
 import de.enwida.web.dao.interfaces.IUserDao;
 import de.enwida.web.model.Group;
+import de.enwida.web.model.Role;
 import de.enwida.web.model.User;
 import de.enwida.web.model.UserPermission;
 
@@ -135,7 +136,7 @@ public class UserDao extends BaseDao<User> implements IUserDao {
 
 	public User loadUserFromDB(User user) {
 		
-		String sql = "SELECT users.user_id,user_name,user_password,enabled,string_agg(roles.authority, ', ')as permissions" +
+		String sql = "SELECT users.user_id,user_name,user_password,enabled,string_agg(roles.name, ', ')as permissions" +
 				" FROM users  INNER JOIN user_roles ON users.user_id=user_roles.user_id" +
 				" INNER JOIN roles ON roles.role_id=user_roles.role_id " +
 				" where users.user_name=? group by users.user_id,user_name,user_password,enabled";
@@ -381,13 +382,15 @@ public class UserDao extends BaseDao<User> implements IUserDao {
 			ps.setLong(1, id);
 			ResultSet rs = ps.executeQuery();
 			while (rs.next()) {
-				user = new User(
-					rs.getLong("user_id"),
-					rs.getString("user_name"), 
-					rs.getString("user_password"), 
-					rs.getBoolean("enabled")
-				);
-				;
+				user = new User();
+                user.setUserID(rs.getLong("user_id"));
+                user.setUserName(rs.getString("user_name"));
+                user.setPassword(rs.getString("user_password"));
+                user.setEnabled(rs.getBoolean("enabled"));
+                user.setFirstName(rs.getString("first_name"));
+                user.setLastName(rs.getString("last_name"));
+                user.setLastName(rs.getString("last_name"));
+                user.setJoinDate(rs.getString("joining_date"));
 			}
 			rs.close();
 			ps.close();
@@ -489,4 +492,86 @@ public class UserDao extends BaseDao<User> implements IUserDao {
 		}
 		return groups;
 	}
+
+    public void addGroup(Group newGroup) {
+        if(newGroup.getGroupName().isEmpty()){
+            return;
+        }
+                
+        String sql = "INSERT INTO groups(group_name) VALUES (?);";
+         
+        Connection conn = null;
+ 
+        try {
+            conn = datasource.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, newGroup.getGroupName());
+            ps.executeUpdate();
+            ps.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            if (conn != null) {
+                try {
+                conn.close();
+                } catch (SQLException e) {}
+            }
+        }
+    }
+
+    public void addRole(Role role) {
+        if(role.getName().isEmpty()){
+            return;
+        }
+                
+        String sql = "INSERT INTO roles(name,description) VALUES (?,?);";
+         
+        Connection conn = null;
+ 
+        try {
+            conn = datasource.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, role.getName());
+            ps.setString(2, role.getDescription());
+            ps.executeUpdate();
+            ps.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            if (conn != null) {
+                try {
+                conn.close();
+                } catch (SQLException e) {}
+            }
+        }
+    }
+
+    public List<Role> getAllRoles() {
+        String sql = "select * FROM roles";
+        Connection conn = null;
+        ArrayList<Role> roles = new ArrayList<Role>();
+        try {
+            conn = datasource.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Role role = new Role();
+                role.setRoleID(rs.getLong("role_id"));
+                role.setName(rs.getString("name"));
+                role.setDescription(rs.getString("description"));
+                roles.add(role);
+            }
+            rs.close();
+            ps.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            if (conn != null) {
+                try {
+                conn.close();
+                } catch (SQLException e) {}
+            }
+        }
+        return roles;
+    }
 }
