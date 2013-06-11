@@ -15,9 +15,8 @@ define ["line_chart", "bar_chart", "carpet_chart", "navigation"],
         @navigation.draw (err, data) =>
           throw err if err?
           @element.find(".navigation select").change => @drawLines()
-          submit = $ "<input type='button' value='test'>"
-          submit.click => @drawLines()
-          @element.find(".navigation").append submit
+          @element.find(".from").on "changeDate", => @drawLines()
+          @element.find(".to").on "changeDate", => @drawLines()
           @chartOptions.xLabel = data.xAxisLabel
           @chartOptions.yLabel = data.yAxisLabel
           @drawDefaultChart data

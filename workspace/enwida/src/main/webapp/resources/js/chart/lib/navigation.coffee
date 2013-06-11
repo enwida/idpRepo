@@ -4,6 +4,8 @@ define ->
 
     productParts: ["type", "posneg", "timeslot"]
     treeParts: ["type", "timeslot", "posneg"]
+    dateFormat: d3.time.format "%Y-%m-%d"
+    datePickerFormat: "yyyy-mm-dd"
 
     constructor: (@element) ->
       @chartId = $(@element).attr "data-chart-id"
@@ -19,6 +21,7 @@ define ->
         defaults = @navigationData.defaults
         @setProduct defaults.tsoId, defaults.product
         @element.find(".resolutions").val defaults.resolution
+        @setTimeRange defaults.timeRange
         callback null, data
 
     getNavigationData: (callback) ->
@@ -31,15 +34,25 @@ define ->
 
     getNavigationElements: (navigationData) ->
       console.log navigationData
-      root = $("<div class='navigation'>")
-      root.append @getStartTimeElement navigationData.timeRangeMax
-      root.append @getTsoElement navigationData.tsos
-      root.append @getProductElements navigationData.productTrees[0]
-      root.append @getResolutionElement navigationData.allResolutions
+      root = $ "<div class='navigation'>"
+      productSelection = $ "<div class='productselect'>"
+      timeSelection = $ "<div class='timeselect'>"
+      timeSelection.append @getTimeElement navigationData.timeRangeMax, "from"
+      timeSelection.append @getTimeElement navigationData.timeRangeMax, "to"
+      productSelection.append @getTsoElement navigationData.tsos
+      productSelection.append @getProductElements navigationData.productTrees[0]
+      timeSelection.append @getResolutionElement navigationData.allResolutions
+      root.append productSelection
+      root.append timeSelection
       root
 
-    getStartTimeElement: (timeRange) ->
-      result = $("<input type='text' class='timerange'>")
+    getTimeElement: (timeRange, klass="time") ->
+      result = $("<input type='text' class='#{klass}'>")
+      result.datepicker
+        format: @datePickerFormat
+      result.on "changeDate", (e) =>
+        @timeRange[klass] = e.date
+      result
 
     getTsoElement: (tsos) ->
       result = $("<select class='tsos'>")
@@ -105,6 +118,11 @@ define ->
           select.append option
         node = nextNode ? node.children[0]
 
+    setTimeRange: (timeRange) ->
+      @timeRange = timeRange
+      @element.find(".from").datepicker "setValue", new Date timeRange.from
+      @element.find(".to").datepicker "setValue", new Date timeRange.to
+
     getProduct: ->
       result = ""
       for name in @productParts
@@ -119,7 +137,8 @@ define ->
       @element.find(".resolutions").val()
 
     getTimeRange: ->
-      @navigationData.defaults.timeRange
+      console.log @timeRange
+      @timeRange
 
     updateSelections: ->
       @setProduct parseInt(@getTso()), @getProduct()
