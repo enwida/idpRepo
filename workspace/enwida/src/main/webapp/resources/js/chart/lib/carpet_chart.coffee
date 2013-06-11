@@ -8,10 +8,12 @@ define ["generic_chart"], (generic_chart) ->
     drawCarpet: (data) ->
       xDomain = @chart.xScale.domain()
       yDomain = @chart.yScale.domain()
-      rectWidth = @chart.options.width / (xDomain[1] - xDomain[0] + 1)
-      rectHeight = @chart.options.height / (yDomain[1] - yDomain[0] + 1) + 1
+      rectWidth = @chart.options.width / xDomain.length
+      rectHeight = @chart.options.height / yDomain.length
 
-      color = d3.scale.category20c()
+      color = d3.scale.linear()
+        .range(["#00f", "#f00"])
+        .domain(d3.extent data.map (dp) -> dp.v)
       @chart.svg.selectAll(".carpet")
         .data(data)
         .enter().append("rect")

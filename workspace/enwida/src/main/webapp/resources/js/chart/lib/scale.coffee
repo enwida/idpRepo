@@ -103,9 +103,12 @@ define ->
 
   allValues: (key) ->
     allValues = []
+    values = {}
     for lineData in @chart.data
       for dataPoint in lineData
-        allValues.push dataPoint[key]
+        unless values[dataPoint[key]]?
+          allValues.push dataPoint[key]
+          values[dataPoint[key]] = true
     allValues
 
   getBound: (bound, key) ->
