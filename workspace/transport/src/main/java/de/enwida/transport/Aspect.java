@@ -11,7 +11,7 @@ public enum Aspect {
 	CR_POWERPRICE_ACCEPTED,               // rl_geb1
 	CR_POWERPRICE_REJECTED,               // rl_geb1
 	CR_WORKPRICE_ACCEPTED,                // rl_prs1
-	CR_WORKPRICE_REJECRED,                // rl_prs1
+	CR_WORKPRICE_REJECTED,                // rl_prs1
 	CR_POWERPRICE_MIN,                    // rl_prs1
 	CR_POWERPRICE_MID,                    // rl_prs1
 	CR_POWERPRICE_MAX,                    // rl_prs1

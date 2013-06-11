@@ -17,9 +17,9 @@ define ["scale"], (scale) ->
 
       @options = $.extend default_options, options
       @lines = options.lines
-      @xLabel = @options.hAxisLabel ? ""
-      @yLabel = @options.vAxisLabel ? ""
-      @lineLabels = @lines.map (line) -> line.yTitle
+      @xLabel = @options.xLabel ? ""
+      @yLabel = @options.yLabel ? ""
+      @lineLabels = @lines.map (line) -> line.title
 
       # @data is an array of line data
       @data = @lines.map (line) -> line.dataPoints

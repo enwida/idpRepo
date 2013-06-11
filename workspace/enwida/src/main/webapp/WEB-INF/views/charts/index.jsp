@@ -39,20 +39,8 @@
 <h1>Chart Experiments</h1>
 
 <input type="text" id="url" style="width: 80%; padding: 10px; font-size: 13px; margin: 10px;" />
-<div>
-	<h3>Common requests</h3>
-	<ul id="templates">
-		<li><a href="#chart">lines?chartId=0&product=212&startTime=2010-12-30&endTime=2010-12-31&resolution=HOURLY</a></li>
-		<li><a href="#chart">lines?type=rl_ab1&product=211&startTime=2010-12-01&endTime=2010-12-31&resolution=DAILY</a></li>
-		<li><a href="#chart">lines?type=rl_ab2&product=311&startTime=2010-12-20&endTime=2010-12-31&resolution=DAILY</a></li>
-		<li><a href="#chart">lines?type=rl_abg1&product=314&startTime=2009-01-01&endTime=2010-01-01&resolution=WEEKLY</a></li>
-		<li><a href="#chart">lines?type=rl_vol1&product=211&startTime=2008-01-01&endTime=2011-01-01&resolution=MONTHLY</a></li>
-		<!--<li><a href="#">lines?type=rl_geb1&product=211&startTime=2010-12-01&endTime=2010-12-31&resolution=DAILY</a></li>-->
-	</ul>
-</div>
-<div id="chart" data-chart-id="0">
-	<h3></h3>
-</div>
+<div class="chart" data-chart-id="0"></div>
+<div class="chart" data-chart-id="1"></div>
 
 </body>
 </html>
