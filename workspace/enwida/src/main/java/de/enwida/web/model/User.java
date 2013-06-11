@@ -13,11 +13,14 @@ public class User {
 	private String lastName;
 	private String firstName;
 	private String password;
+	private String companyURL;
+	private String contactNo;
 	private boolean enabled;
 	private Date joiningDate;
 	private Date loginCount;
 	private Date lastLogin;
 	private Date groups;
+	private String companyName;
 
 
 	private UserPermissionCollection userPermissionCollection=new UserPermissionCollection();
@@ -136,5 +139,29 @@ public class User {
 
 	public void setGroups(Date groups) {
 		this.groups = groups;
+	}
+
+	public String getCompanyURL() {
+		return companyURL;
+	}
+
+	public void setCompanyURL(String companyURL) {
+		this.companyURL = companyURL;
+	}
+
+	public String getContactNo() {
+		return contactNo;
+	}
+
+	public void setContactNo(String contactNo) {
+		this.contactNo = contactNo;
+	}
+
+	public String getCompanyName() {
+		return companyName;
+	}
+
+	public void setCompanyName(String companyName) {
+		this.companyName = companyName;
 	}
 }
