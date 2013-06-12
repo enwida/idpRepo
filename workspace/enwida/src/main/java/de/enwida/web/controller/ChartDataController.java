@@ -111,13 +111,13 @@ public class ChartDataController {
 	    final ChartNavigationData result = navigationDao.getDefaultNavigation(chartId, locale);
 	    result.addProductTree(new ProductTree(1));
 	    final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-	    final Date from = dateFormat.parse("2010-12-29");
+	    final Date from = dateFormat.parse("2010-01-01");
 	    final Date to = dateFormat.parse("2010-12-31");
 	    final Calendar cFrom = Calendar.getInstance();
 	    final Calendar cTo = Calendar.getInstance();
 	    cFrom.setTime(from);
 	    cTo.setTime(to);
-	    result.setDefaults(new NavigationDefaults(99, DataResolution.HOURLY, 211, new CalendarRange(cFrom, cTo)));
+	    result.setDefaults(new NavigationDefaults(99, DataResolution.MONTHLY, 211, new CalendarRange(cFrom, cTo)));
 	    result.setIsDateScale(true);
 	    result.addTso(99, "Standard");
 	    result.addTso(1, "Test");
@@ -138,7 +138,7 @@ public class ChartDataController {
 	{
 	    final List<IDataLine> result = new ArrayList<IDataLine>();
 
-	    for (final Aspect aspect : Arrays.asList(new Aspect[] { Aspect.CR_VOL_ACTIVATION })) {
+	    for (final Aspect aspect : Arrays.asList(new Aspect[] { Aspect.CR_POWERPRICE_MIN, Aspect.CR_POWERPRICE_MID, Aspect.CR_POWERPRICE_MAX })) {
 	        final LineRequest req = new LineRequest(aspect, product, tso, startTime, endTime, resolution, locale);
 	        try {
                 result.add(lineManager.getLine(req));

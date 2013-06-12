@@ -84,7 +84,7 @@ define ["line_chart", "bar_chart", "carpet_chart", "navigation", "spreadsheet"],
         $(@element).find("svg").remove()
         chart = @getChart data, @type
         chart.draw()
-        $("circle").tipsy(gravity: "s")
+        $("circle").tipsy(gravity: "sw", html: true, opacity: 0.95)
         @spreadsheet.draw data
 
       getChart: (data, type="line") ->
