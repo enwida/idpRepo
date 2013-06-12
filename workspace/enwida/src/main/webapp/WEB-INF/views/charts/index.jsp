@@ -3,10 +3,8 @@
 <html>
 <head>
 	<title>Enwida Home Page</title>
-	<link rel="stylesheet" href="/enwida/resources/css/bootstrap.css" >
-	<link rel="stylesheet" href="/enwida/resources/css/datepicker.css" >
-	<link rel="stylesheet" href="/enwida/resources/css/tipsy.css" >
-	<link rel="stylesheet" href="/enwida/resources/css/chart.css" >
+	<link rel="stylesheet" href="/enwida/resources/css/chart/assets.css" >
+	<link rel="stylesheet" href="/enwida/resources/css/chart/chart.css" >
     <script src="/enwida/resources/js/chart/assets.js"></script>
     <script src="/enwida/resources/js/chart/charts.js"></script>
     

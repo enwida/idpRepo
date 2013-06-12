@@ -138,8 +138,6 @@ public class ChartDataController {
 	{
 	    final List<IDataLine> result = new ArrayList<IDataLine>();
 
-	    System.out.println(startTime.get(Calendar.YEAR) + "-" + startTime.get(Calendar.MONTH) + "-" + startTime.get(Calendar.DATE));
-
 	    for (final Aspect aspect : Arrays.asList(new Aspect[] { Aspect.CR_VOL_ACTIVATION })) {
 	        final LineRequest req = new LineRequest(aspect, product, tso, startTime, endTime, resolution, locale);
 	        try {
