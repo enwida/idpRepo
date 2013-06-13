@@ -1,5 +1,8 @@
 ASSETS_DIR=assets
 ASSETS=$(ASSETS_DIR)/jquery-1.9.1.min.js \
+       $(ASSETS_DIR)/es5-sham.min.js \
+       $(ASSETS_DIR)/es5-shim.min.js \
+       $(ASSETS_DIR)/flight.js \
        $(ASSETS_DIR)/tipsy.js \
        $(ASSETS_DIR)/d3.v3.min.js \
        $(ASSETS_DIR)/d3-legend.js \

@@ -32,20 +32,18 @@ body {
 .dot2 {
   fill: green;
 }
-.tooltip {
-  display: none;
-  z-index: 1000;
-  border:solid 1px #bdbdbd;
-  border-radius: 2px;
-  background-color: white;
-  position: absolute;
-  box-shadow: 0px 2px 2px 0px rgba(204, 204, 204, 0.6);
-  font-size: 12px;
-  padding: 10px 20px;
-  -moz-box-shadow: 0px 2px 2px 0px rgba(204, 204, 204, 0.6);
-  -webkit-box-shadow: 0px 2px 2px 0px rgba(204, 204, 204, 0.6);
-}
-
 .spreadsheet {
 	display: none;
+}
+.tipsy h6 {
+  text-align: left;
+}
+.tooltip0 {
+  color: steelblue;
+}
+.tooltip1 {
+  color: red;
+}
+.tooltip2 {
+  color: green;
 }

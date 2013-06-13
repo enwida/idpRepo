@@ -1,10 +1,11 @@
 require.config
   baseUrl: "/enwida/resources/js/chart/lib"
 
-require ["line_chart", "bar_chart", "carpet_chart", "chart_manager"],
-  (LineChart, BarChart, CarpetChart, ChartManager) ->
+require ["chart_manager", "navigation"],
+  (ChartManager, Navigation) ->
 
     $(document).ready ->
       $(".chart").each ->
-        manager = new ChartManager $(@)
-        manager.draw()
+        id = $(@).attr "data-chart-id"
+        ChartManager.attachTo $(@), id: id
+

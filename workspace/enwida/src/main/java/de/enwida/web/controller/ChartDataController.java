@@ -120,7 +120,7 @@ public class ChartDataController {
 	    result.setDefaults(new NavigationDefaults(99, DataResolution.MONTHLY, 211, new CalendarRange(cFrom, cTo)));
 	    result.setIsDateScale(true);
 	    result.addTso(99, "Standard");
-	    result.addTso(1, "Test");
+//	    result.addTso(1, "Test");
 	    return result;
 	}
 	
