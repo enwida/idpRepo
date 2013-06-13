@@ -1,5 +1,5 @@
-define ["navigation", "spreadsheet", "visual"],
-  (Navigation, Spreadsheet, Visual) ->
+define ["navigation", "spreadsheet", "visual", "lines"],
+  (Navigation, Spreadsheet, Visual, Lines) ->
 
     flight.component ->
 
@@ -20,20 +20,22 @@ define ["navigation", "spreadsheet", "visual"],
         @getLines opts, (err, data) =>
           throw err if err?
           @trigger @select("visual"), "draw", data: data
+          @trigger @select("lines"), "updateLines", lines: data
+
+      @toggleLine = (_, opts) ->
+        @$node.find("path.line#{opts.lineId}").toggle()
+        @$node.find(".dot#{opts.lineId}").toggle()
 
       @defaultAttrs
         navigation: ".navigation"
         visual: ".visual"
+        lines: ".lines"
 
       @after "initialize", ->
         @on "getLines", @onGetLines
         @on "updateNavigation", (_, opts) ->
           @trigger @select("visual"), "navigationData", opts
-
-        # Add navigation
-        navigation = $("<div>").addClass "navigation"
-        @$node.append navigation
-        Navigation.attachTo navigation, id: @attr.id
+        @on "toggleLine", @toggleLine
 
         # Add visual
         visual = $("<div>").addClass "visual"
@@ -41,3 +43,14 @@ define ["navigation", "spreadsheet", "visual"],
         Visual.attachTo visual,
           id: @attr.id
           type: @$node.attr("data-chart-type") ? "line"
+
+        # Add lines
+        lines = $("<div>").addClass "lines"
+        @$node.append lines
+        Lines.attachTo lines
+
+        # Add navigation
+        navigation = $("<div>").addClass "navigation"
+        @$node.append navigation
+        Navigation.attachTo navigation, id: @attr.id
+

@@ -16,12 +16,15 @@ body {
 }
 .line0 {
   stroke: steelblue;
+  color: steelblue;
 }
 .line1 {
   stroke: red;
+  color: red;
 }
 .line2 {
   stroke: green;
+  color: green;
 }
 .dot0 {
 	fill: steelblue;
@@ -46,4 +49,22 @@ body {
 }
 .tooltip2 {
   color: green;
+}
+.lines {
+  padding: 20px;
+}
+.lines li {
+  display: inline;
+  padding: 10px 20px;
+  margin-right: 10px;
+  border: 1px solid #444;
+  cursor: pointer;
+}
+
+.lines li.hidden {
+  color: #888888;
+}
+
+.lines li.selected {
+  background-color: #e0e0e0;
 }
