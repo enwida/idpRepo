@@ -4,7 +4,7 @@
 
 -- Dumped from database version 9.2.3
 -- Dumped by pg_dump version 9.2.3
--- Started on 2013-06-11 19:28:43
+-- Started on 2013-06-14 11:03:02
 
 SET statement_timeout = 0;
 SET client_encoding = 'UTF8';
@@ -12,313 +12,11 @@ SET standard_conforming_strings = on;
 SET check_function_bodies = false;
 SET client_min_messages = warning;
 
---
--- TOC entry 193 (class 3079 OID 11727)
--- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: 
---
-
-CREATE EXTENSION IF NOT EXISTS plpgsql WITH SCHEMA pg_catalog;
-
-
---
--- TOC entry 2044 (class 0 OID 0)
--- Dependencies: 193
--- Name: EXTENSION plpgsql; Type: COMMENT; Schema: -; Owner: 
---
-
-COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
-
-
 SET search_path = public, pg_catalog;
 
 SET default_tablespace = '';
 
 SET default_with_oids = false;
-
---
--- TOC entry 168 (class 1259 OID 82027)
--- Name: activation; Type: TABLE; Schema: public; Owner: enwida; Tablespace: 
---
-
-CREATE TABLE activation (
-    "time" timestamp with time zone NOT NULL,
-    duration integer,
-    tso smallint,
-    product smallint NOT NULL,
-    activation real,
-    only_saldo boolean,
-    comment_id integer NOT NULL
-);
-
-
-ALTER TABLE public.activation OWNER TO enwida;
-
---
--- TOC entry 169 (class 1259 OID 82030)
--- Name: analysis; Type: TABLE; Schema: public; Owner: enwida; Tablespace: 
---
-
-CREATE TABLE analysis (
-    "time" timestamp with time zone NOT NULL,
-    product smallint NOT NULL,
-    durationdelivery bigint,
-    pp_min real,
-    pp_mid real,
-    pp_max real,
-    wp_accmin real,
-    wp_accmid real,
-    wp_accmax real,
-    wp_margmid real,
-    wp_margmax real,
-    vol_activation real,
-    vol_auction real,
-    vol_offered real,
-    vol_accepted real,
-    comment_id integer NOT NULL
-);
-
-
-ALTER TABLE public.analysis OWNER TO enwida;
-
---
--- TOC entry 170 (class 1259 OID 82033)
--- Name: analysis_15min; Type: TABLE; Schema: public; Owner: enwida; Tablespace: 
---
-
-CREATE TABLE analysis_15min (
-    "time" timestamp with time zone NOT NULL,
-    product smallint NOT NULL,
-    durationdelivery bigint,
-    pp_min real,
-    pp_mid real,
-    pp_max real,
-    wp_accmin real,
-    wp_accmid real,
-    wp_accmax real,
-    wp_margmid real,
-    wp_margmax real,
-    vol_activation real,
-    vol_auction real,
-    vol_offered real,
-    vol_accepted real,
-    comment_id integer NOT NULL
-);
-
-
-ALTER TABLE public.analysis_15min OWNER TO enwida;
-
---
--- TOC entry 171 (class 1259 OID 82036)
--- Name: analysis_1a; Type: TABLE; Schema: public; Owner: enwida; Tablespace: 
---
-
-CREATE TABLE analysis_1a (
-    "time" timestamp with time zone NOT NULL,
-    product smallint NOT NULL,
-    durationdelivery bigint,
-    pp_min real,
-    pp_mid real,
-    pp_max real,
-    wp_accmin real,
-    wp_accmid real,
-    wp_accmax real,
-    wp_margmid real,
-    wp_margmax real,
-    vol_activation real,
-    vol_auction real,
-    vol_offered real,
-    vol_accepted real,
-    comment_id integer NOT NULL
-);
-
-
-ALTER TABLE public.analysis_1a OWNER TO enwida;
-
---
--- TOC entry 172 (class 1259 OID 82039)
--- Name: analysis_1d; Type: TABLE; Schema: public; Owner: enwida; Tablespace: 
---
-
-CREATE TABLE analysis_1d (
-    "time" timestamp with time zone NOT NULL,
-    product smallint NOT NULL,
-    durationdelivery bigint,
-    pp_min real,
-    pp_mid real,
-    pp_max real,
-    wp_accmin real,
-    wp_accmid real,
-    wp_accmax real,
-    wp_margmid real,
-    wp_margmax real,
-    vol_activation real,
-    vol_auction real,
-    vol_offered real,
-    vol_accepted real,
-    comment_id integer NOT NULL
-);
-
-
-ALTER TABLE public.analysis_1d OWNER TO enwida;
-
---
--- TOC entry 173 (class 1259 OID 82042)
--- Name: analysis_1h; Type: TABLE; Schema: public; Owner: enwida; Tablespace: 
---
-
-CREATE TABLE analysis_1h (
-    "time" timestamp with time zone NOT NULL,
-    product smallint NOT NULL,
-    durationdelivery bigint,
-    pp_min real,
-    pp_mid real,
-    pp_max real,
-    wp_accmin real,
-    wp_accmid real,
-    wp_accmax real,
-    wp_margmid real,
-    wp_margmax real,
-    vol_activation real,
-    vol_auction real,
-    vol_offered real,
-    vol_accepted real,
-    comment_id integer NOT NULL
-);
-
-
-ALTER TABLE public.analysis_1h OWNER TO enwida;
-
---
--- TOC entry 174 (class 1259 OID 82045)
--- Name: analysis_1m; Type: TABLE; Schema: public; Owner: enwida; Tablespace: 
---
-
-CREATE TABLE analysis_1m (
-    "time" timestamp with time zone NOT NULL,
-    product smallint NOT NULL,
-    durationdelivery bigint,
-    pp_min real,
-    pp_mid real,
-    pp_max real,
-    wp_accmin real,
-    wp_accmid real,
-    wp_accmax real,
-    wp_margmid real,
-    wp_margmax real,
-    vol_activation real,
-    vol_auction real,
-    vol_offered real,
-    vol_accepted real,
-    comment_id integer NOT NULL
-);
-
-
-ALTER TABLE public.analysis_1m OWNER TO enwida;
-
---
--- TOC entry 175 (class 1259 OID 82048)
--- Name: analysis_1w; Type: TABLE; Schema: public; Owner: enwida; Tablespace: 
---
-
-CREATE TABLE analysis_1w (
-    "time" timestamp with time zone NOT NULL,
-    product smallint NOT NULL,
-    durationdelivery bigint,
-    pp_min real,
-    pp_mid real,
-    pp_max real,
-    wp_accmin real,
-    wp_accmid real,
-    wp_accmax real,
-    wp_margmid real,
-    wp_margmax real,
-    vol_activation real,
-    vol_auction real,
-    vol_offered real,
-    vol_accepted real,
-    comment_id integer NOT NULL
-);
-
-
-ALTER TABLE public.analysis_1w OWNER TO enwida;
-
---
--- TOC entry 176 (class 1259 OID 82051)
--- Name: auction_results; Type: TABLE; Schema: public; Owner: enwida; Tablespace: 
---
-
-CREATE TABLE auction_results (
-    "time" timestamp with time zone,
-    durationauction bigint,
-    durationdelivery bigint,
-    product smallint,
-    powerprice real,
-    workprice real,
-    volume real,
-    acceptance boolean,
-    tso smallint,
-    comment_id integer
-);
-
-
-ALTER TABLE public.auction_results OWNER TO enwida;
-
---
--- TOC entry 177 (class 1259 OID 82054)
--- Name: availability; Type: TABLE; Schema: public; Owner: enwida; Tablespace: 
---
-
-CREATE TABLE availability (
-    tablename character(50) NOT NULL,
-    product smallint NOT NULL,
-    timefrom timestamp with time zone,
-    timeto timestamp with time zone,
-    nrows integer
-);
-
-
-ALTER TABLE public.availability OWNER TO enwida;
-
---
--- TOC entry 178 (class 1259 OID 82057)
--- Name: cal_daytypes; Type: TABLE; Schema: public; Owner: enwida; Tablespace: 
---
-
-CREATE TABLE cal_daytypes (
-    daytype integer NOT NULL,
-    name character(50)
-);
-
-
-ALTER TABLE public.cal_daytypes OWNER TO enwida;
-
---
--- TOC entry 179 (class 1259 OID 82060)
--- Name: comment; Type: TABLE; Schema: public; Owner: enwida; Tablespace: 
---
-
-CREATE TABLE comment (
-    id integer NOT NULL,
-    name character(50)
-);
-
-
-ALTER TABLE public.comment OWNER TO enwida;
-
---
--- TOC entry 180 (class 1259 OID 82063)
--- Name: energy_market; Type: TABLE; Schema: public; Owner: enwida; Tablespace: 
---
-
-CREATE TABLE energy_market (
-    "time" timestamp with time zone NOT NULL,
-    product smallint NOT NULL,
-    workprice real,
-    volume real
-);
-
-
-ALTER TABLE public.energy_market OWNER TO enwida;
 
 --
 -- TOC entry 191 (class 1259 OID 90332)
@@ -350,39 +48,13 @@ CREATE SEQUENCE groups_group_id_seq
 ALTER TABLE public.groups_group_id_seq OWNER TO enwida;
 
 --
--- TOC entry 2045 (class 0 OID 0)
+-- TOC entry 1993 (class 0 OID 0)
 -- Dependencies: 192
 -- Name: groups_group_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: enwida
 --
 
 ALTER SEQUENCE groups_group_id_seq OWNED BY groups.group_id;
 
-
---
--- TOC entry 181 (class 1259 OID 82066)
--- Name: product; Type: TABLE; Schema: public; Owner: enwida; Tablespace: 
---
-
-CREATE TABLE product (
-    id smallint,
-    name character(50)
-);
-
-
-ALTER TABLE public.product OWNER TO enwida;
-
---
--- TOC entry 182 (class 1259 OID 82069)
--- Name: rc_calendar; Type: TABLE; Schema: public; Owner: enwida; Tablespace: 
---
-
-CREATE TABLE rc_calendar (
-    "time" timestamp with time zone NOT NULL,
-    daytype integer NOT NULL
-);
-
-
-ALTER TABLE public.rc_calendar OWNER TO enwida;
 
 --
 -- TOC entry 184 (class 1259 OID 82119)
@@ -410,7 +82,7 @@ ALTER TABLE public.rights OWNER TO enwida;
 
 CREATE TABLE roles (
     role_id integer NOT NULL,
-    name character varying(45),
+    role_name character varying(45),
     description character varying(45)
 );
 
@@ -433,28 +105,13 @@ CREATE SEQUENCE roles_role_id_seq
 ALTER TABLE public.roles_role_id_seq OWNER TO enwida;
 
 --
--- TOC entry 2046 (class 0 OID 0)
+-- TOC entry 1994 (class 0 OID 0)
 -- Dependencies: 189
 -- Name: roles_role_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: enwida
 --
 
 ALTER SEQUENCE roles_role_id_seq OWNED BY roles.role_id;
 
-
---
--- TOC entry 183 (class 1259 OID 82072)
--- Name: tso; Type: TABLE; Schema: public; Owner: enwida; Tablespace: 
---
-
-CREATE TABLE tso (
-    id smallint,
-    name4download character(50),
-    name4auctionresults character(50),
-    description character(50)
-);
-
-
-ALTER TABLE public.tso OWNER TO enwida;
 
 --
 -- TOC entry 190 (class 1259 OID 90329)
@@ -494,7 +151,8 @@ CREATE TABLE users (
     first_name character varying(45) NOT NULL,
     last_name character varying(45) NOT NULL,
     enabled boolean NOT NULL,
-    joining_date date NOT NULL
+    joining_date date NOT NULL,
+    tel character varying(45)
 );
 
 
@@ -516,7 +174,7 @@ CREATE SEQUENCE users_user_id_seq
 ALTER TABLE public.users_user_id_seq OWNER TO enwida;
 
 --
--- TOC entry 2047 (class 0 OID 0)
+-- TOC entry 1995 (class 0 OID 0)
 -- Dependencies: 186
 -- Name: users_user_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: enwida
 --
@@ -525,7 +183,7 @@ ALTER SEQUENCE users_user_id_seq OWNED BY users.user_id;
 
 
 --
--- TOC entry 2006 (class 2604 OID 98508)
+-- TOC entry 1984 (class 2604 OID 98508)
 -- Name: group_id; Type: DEFAULT; Schema: public; Owner: enwida
 --
 
@@ -533,7 +191,7 @@ ALTER TABLE ONLY groups ALTER COLUMN group_id SET DEFAULT nextval('groups_group_
 
 
 --
--- TOC entry 2005 (class 2604 OID 90325)
+-- TOC entry 1983 (class 2604 OID 90325)
 -- Name: role_id; Type: DEFAULT; Schema: public; Owner: enwida
 --
 
@@ -541,7 +199,7 @@ ALTER TABLE ONLY roles ALTER COLUMN role_id SET DEFAULT nextval('roles_role_id_s
 
 
 --
--- TOC entry 2004 (class 2604 OID 82146)
+-- TOC entry 1982 (class 2604 OID 82146)
 -- Name: user_id; Type: DEFAULT; Schema: public; Owner: enwida
 --
 
@@ -549,124 +207,7 @@ ALTER TABLE ONLY users ALTER COLUMN user_id SET DEFAULT nextval('users_user_id_s
 
 
 --
--- TOC entry 2008 (class 2606 OID 82076)
--- Name: activation_pkey; Type: CONSTRAINT; Schema: public; Owner: enwida; Tablespace: 
---
-
-ALTER TABLE ONLY activation
-    ADD CONSTRAINT activation_pkey PRIMARY KEY ("time", product, comment_id);
-
-
---
--- TOC entry 2012 (class 2606 OID 82078)
--- Name: analysis_15min_pkey; Type: CONSTRAINT; Schema: public; Owner: enwida; Tablespace: 
---
-
-ALTER TABLE ONLY analysis_15min
-    ADD CONSTRAINT analysis_15min_pkey PRIMARY KEY ("time", product, comment_id);
-
-
---
--- TOC entry 2014 (class 2606 OID 82080)
--- Name: analysis_1a_pkey; Type: CONSTRAINT; Schema: public; Owner: enwida; Tablespace: 
---
-
-ALTER TABLE ONLY analysis_1a
-    ADD CONSTRAINT analysis_1a_pkey PRIMARY KEY ("time", product, comment_id);
-
-
---
--- TOC entry 2016 (class 2606 OID 82082)
--- Name: analysis_1d_pkey; Type: CONSTRAINT; Schema: public; Owner: enwida; Tablespace: 
---
-
-ALTER TABLE ONLY analysis_1d
-    ADD CONSTRAINT analysis_1d_pkey PRIMARY KEY ("time", product, comment_id);
-
-
---
--- TOC entry 2018 (class 2606 OID 82084)
--- Name: analysis_1h_pkey; Type: CONSTRAINT; Schema: public; Owner: enwida; Tablespace: 
---
-
-ALTER TABLE ONLY analysis_1h
-    ADD CONSTRAINT analysis_1h_pkey PRIMARY KEY ("time", product, comment_id);
-
-
---
--- TOC entry 2020 (class 2606 OID 82086)
--- Name: analysis_1m_pkey; Type: CONSTRAINT; Schema: public; Owner: enwida; Tablespace: 
---
-
-ALTER TABLE ONLY analysis_1m
-    ADD CONSTRAINT analysis_1m_pkey PRIMARY KEY ("time", product, comment_id);
-
-
---
--- TOC entry 2022 (class 2606 OID 82088)
--- Name: analysis_1w_pkey; Type: CONSTRAINT; Schema: public; Owner: enwida; Tablespace: 
---
-
-ALTER TABLE ONLY analysis_1w
-    ADD CONSTRAINT analysis_1w_pkey PRIMARY KEY ("time", product, comment_id);
-
-
---
--- TOC entry 2010 (class 2606 OID 82090)
--- Name: analysis_pkey; Type: CONSTRAINT; Schema: public; Owner: enwida; Tablespace: 
---
-
-ALTER TABLE ONLY analysis
-    ADD CONSTRAINT analysis_pkey PRIMARY KEY ("time", product, comment_id);
-
-
---
--- TOC entry 2024 (class 2606 OID 82092)
--- Name: availability_pkey; Type: CONSTRAINT; Schema: public; Owner: enwida; Tablespace: 
---
-
-ALTER TABLE ONLY availability
-    ADD CONSTRAINT availability_pkey PRIMARY KEY (tablename, product);
-
-
---
--- TOC entry 2026 (class 2606 OID 82094)
--- Name: cal_daytypes_pkey; Type: CONSTRAINT; Schema: public; Owner: enwida; Tablespace: 
---
-
-ALTER TABLE ONLY cal_daytypes
-    ADD CONSTRAINT cal_daytypes_pkey PRIMARY KEY (daytype);
-
-
---
--- TOC entry 2028 (class 2606 OID 82096)
--- Name: comment_pkey; Type: CONSTRAINT; Schema: public; Owner: enwida; Tablespace: 
---
-
-ALTER TABLE ONLY comment
-    ADD CONSTRAINT comment_pkey PRIMARY KEY (id);
-
-
---
--- TOC entry 2030 (class 2606 OID 82098)
--- Name: energy_market_pkey; Type: CONSTRAINT; Schema: public; Owner: enwida; Tablespace: 
---
-
-ALTER TABLE ONLY energy_market
-    ADD CONSTRAINT energy_market_pkey PRIMARY KEY ("time", product);
-
-
---
--- TOC entry 2032 (class 2606 OID 82100)
--- Name: rc_calendar_pkey; Type: CONSTRAINT; Schema: public; Owner: enwida; Tablespace: 
---
-
-ALTER TABLE ONLY rc_calendar
-    ADD CONSTRAINT rc_calendar_pkey PRIMARY KEY ("time", daytype);
-
-
---
--- TOC entry 2034 (class 2606 OID 82148)
+-- TOC entry 1986 (class 2606 OID 82148)
 -- Name: user_pkey; Type: CONSTRAINT; Schema: public; Owner: enwida; Tablespace: 
 --
 
@@ -675,7 +216,7 @@ ALTER TABLE ONLY users
 
 
 --
--- TOC entry 2036 (class 2606 OID 82150)
+-- TOC entry 1988 (class 2606 OID 82150)
 -- Name: username_unique; Type: CONSTRAINT; Schema: public; Owner: enwida; Tablespace: 
 --
 
@@ -683,19 +224,7 @@ ALTER TABLE ONLY users
     ADD CONSTRAINT username_unique UNIQUE (user_name);
 
 
---
--- TOC entry 2043 (class 0 OID 0)
--- Dependencies: 6
--- Name: public; Type: ACL; Schema: -; Owner: postgres
---
-
-REVOKE ALL ON SCHEMA public FROM PUBLIC;
-REVOKE ALL ON SCHEMA public FROM postgres;
-GRANT ALL ON SCHEMA public TO postgres;
-GRANT ALL ON SCHEMA public TO PUBLIC;
-
-
--- Completed on 2013-06-11 19:28:44
+-- Completed on 2013-06-14 11:03:03
 
 --
 -- PostgreSQL database dump complete
