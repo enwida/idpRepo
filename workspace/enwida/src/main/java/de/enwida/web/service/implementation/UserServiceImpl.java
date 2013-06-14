@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import de.enwida.web.dao.interfaces.IUserDao;
 import de.enwida.web.dto.UserDTO;
+import de.enwida.web.model.AspectRight;
 import de.enwida.web.model.Group;
 import de.enwida.web.model.Role;
 import de.enwida.web.model.User;

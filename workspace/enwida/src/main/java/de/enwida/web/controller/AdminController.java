@@ -2,25 +2,23 @@ package de.enwida.web.controller;
 
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.http.HttpRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 
-import de.enwida.web.dto.UserDTO;
+import de.enwida.web.model.AspectRight;
 import de.enwida.web.model.Group;
 import de.enwida.web.model.Role;
 import de.enwida.web.model.User;
+import de.enwida.web.service.implementation.AspectServiceImpl;
+import de.enwida.web.service.interfaces.AspectService;
 import de.enwida.web.service.interfaces.UserService;
 import de.enwida.web.validator.UserValidator;
 
@@ -34,6 +32,9 @@ public class AdminController {
 	@Autowired
 	private UserService userService;
 	
+    @Autowired
+    private AspectService aspectService;
+	
 	@Autowired
 	private DriverManagerDataSource datasource;
 	
@@ -42,7 +43,11 @@ public class AdminController {
 	
 	
 	@RequestMapping(value="/editAspect", method = RequestMethod.GET)
-	public String editAspect(Model model) {
+	public String editAspect(Model model,long roleID) {
+	    
+	    List<AspectRight> aspectRights= aspectService.getAllAspects(roleID);
+        model.addAttribute("aspectRights", aspectRights);
+	    
 		model.addAttribute("content", "editAspect");
 		return "user/admin/master";
 	}

@@ -20,7 +20,7 @@
 				<td>${role.description}</td>
 				<td><c:forEach var="group" items="${role.assignedGroups}">${group.groupName},</c:forEach></td>
 				<td>
-					<a href='editAspect?groupID=${role.roleID}'> Details</a>
+					<a href='editAspect?roleID=${role.roleID}'> Details</a>
 				</td>
 			<tr>
 		</c:forEach>

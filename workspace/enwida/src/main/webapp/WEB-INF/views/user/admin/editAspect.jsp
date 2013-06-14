@@ -20,15 +20,15 @@
 		<tr>
 	<thead>
 	<tbody>
-		<c:forEach var="group" items="${aspects}">
+		<c:forEach var="right" items="${aspectRights}">
 			<tr>
-				<td>${group.aspectName}</td>
-				<td>${group.product}</td>
-				<td>${group.t1}</td>
-				<td>${group.t2}</td>
-				<td>${group.res}</td>
-				<td>${group.tso}</td>
-				<td><input type="checkbox"/></td>
+				<td>${right.aspectName}</td>
+				<td>${right.product}</td>
+				<td>${right.t1}</td>
+				<td>${right.t2}</td>
+				<td>${right.resolution}</td>
+				<td>${right.tso}</td>
+				<td><input type="checkbox" checked="${right.enabled}"/></td>
 			<tr>
 		</c:forEach>
 	</tbody>
