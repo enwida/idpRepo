@@ -2,13 +2,22 @@ package de.enwida.web.controller;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
+import org.apache.http.HttpRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import de.enwida.web.dto.UserDTO;
 import de.enwida.web.model.Group;
 import de.enwida.web.model.Role;
 import de.enwida.web.model.User;
@@ -33,7 +42,7 @@ public class AdminController {
 	
 	
 	@RequestMapping(value="/editAspect", method = RequestMethod.GET)
-	public String aspect(Model model) {
+	public String editAspect(Model model) {
 		model.addAttribute("content", "editAspect");
 		return "user/admin/master";
 	}
@@ -62,26 +71,18 @@ public class AdminController {
 		model.addAttribute("content", "userList");
 		return "user/admin/master";
 	}
-	
-    @RequestMapping(value="/user", method = RequestMethod.GET)
-    public String user(Model model,long userID) {
-        
-        User users= userService.getUser(userID);
-        model.addAttribute("user", users);
-        model.addAttribute("content", "user");
-        return "user/admin/master";
-    }
     
     @RequestMapping(value="/editGroup", method = RequestMethod.GET)
     public String editGroup(Model model) {
-//      User user = userService.getUser(userID);
-//      model.addAttribute("username", user.getUserName());
-//      
+ 
         List<Group> groups= userService.getAllGroups();
         model.addAttribute("groups", groups);
-//  
-//      List<Group> assignedGroups= userService.getUserGroups(userID);
-//      model.addAttribute("assignedGroups", assignedGroups);
+        
+        List<Group> groupsWithUsers= userService.getAllGroupsWithUsers();
+        model.addAttribute("groupsWithUsers", groupsWithUsers);
+        
+        List<User> users= userService.getUsers();
+        model.addAttribute("users", users);
         
         model.addAttribute("content", "editGroup");
         return "user/admin/master";
@@ -124,5 +125,62 @@ public class AdminController {
             userService.saveRole(role);
         }
         return editRole(model);
+    }
+    
+    
+    @RequestMapping(value="/user", method = RequestMethod.GET)
+    public String user(Model model,long userID,HttpSession session) {
+        
+        User user= userService.getUser(userID);
+        model.addAttribute("user", user);
+        model.addAttribute("content", "user");
+        session.setAttribute("userID", userID);
+        return "user/admin/master";
+    }
+    
+    @RequestMapping(value="/user",method=RequestMethod.POST, params = "save")
+    public String processForm(@ModelAttribute(value="USER")User user,long userID,HttpSession session, ModelMap model)
+    {
+        model.addAttribute("user", user);
+        model.addAttribute("content", "user");
+        User newUser=userService.getUser(userID);
+        newUser.setFirstName(user.getFirstName());
+        newUser.setLastName(user.getLastName());
+        newUser.setTel(user.getTel());
+        userService.updateUser(newUser);
+        return "user/admin/master";
+    }
+    
+    @RequestMapping(value="/user",method=RequestMethod.POST, params = "resetPassword")
+    public String reset(ModelMap model,long userID)
+    {
+        System.out.println("ResetPassword");
+        userService.resetPassword(userID);
+        model.addAttribute("content", "user");
+        return "user/admin/master";
+    }
+    
+    
+    @RequestMapping(value="/user",method=RequestMethod.POST, params = "delete")
+    public String deleteUser(Model model,long userID)
+    {
+        System.out.println("DeleteUser");
+        User user=userService.getUser(userID);
+        userService.deleteUser(user);
+        return userList(model);
+    }
+    
+    @RequestMapping(value="/editGroup",method=RequestMethod.POST, params = "assign")
+    public String assignUserToGroup(Model model,int selectedUser,int selectedGroup)
+    {
+        userService.assignUserToGroup(selectedUser,selectedGroup);
+        return editGroup(model);
+    }
+    
+    @RequestMapping(value="/editGroup",method=RequestMethod.POST, params = "deassign")
+    public String deassignUserToGroup(Model model,int selectedUser,int selectedGroup)
+    {
+        userService.deassignUserToGroup(selectedUser,selectedGroup);
+        return editGroup(model);
     }
 }

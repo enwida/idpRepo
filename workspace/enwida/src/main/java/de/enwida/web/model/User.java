@@ -1,9 +1,5 @@
 package de.enwida.web.model;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
-import de.enwida.web.dao.implementation.UserDao;
-
 import java.sql.Date;
 
 public class User {
@@ -11,9 +7,10 @@ public class User {
 	private Long userID;
 	private String userName;
 	private String lastName;
-	private String firstName;
+    private String firstName;
+    private String email;
 	private String password;
-	private String companyURL;
+	private String company;
 	private String contactNo;
 	private boolean enabled;
 	private Date joiningDate;
@@ -21,6 +18,8 @@ public class User {
 	private Date lastLogin;
 	private Date groups;
 	private String companyName;
+    private String joinDate;
+    private String tel;
 
 
 	private UserPermissionCollection userPermissionCollection=new UserPermissionCollection();
@@ -141,14 +140,6 @@ public class User {
 		this.groups = groups;
 	}
 
-	public String getCompanyURL() {
-		return companyURL;
-	}
-
-	public void setCompanyURL(String companyURL) {
-		this.companyURL = companyURL;
-	}
-
 	public String getContactNo() {
 		return contactNo;
 	}
@@ -164,4 +155,36 @@ public class User {
 	public void setCompanyName(String companyName) {
 		this.companyName = companyName;
 	}
+
+    public String getJoinDate() {
+        return joinDate;
+    }
+
+    public void setJoinDate(String joinDate) {
+        this.joinDate = joinDate;
+    }
+
+    public String getCompany() {
+        return company;
+    }
+
+    public void setCompany(String company) {
+        this.company = company;
+    }
+
+    public String getTel() {
+        return tel;
+    }
+
+    public void setTel(String tel) {
+        this.tel = tel;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
 }

@@ -1,15 +1,21 @@
 package de.enwida.web.service.implementation;
 
+import java.math.BigInteger;
+import java.security.SecureRandom;
 import java.sql.Date;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+
+import javax.mail.MessagingException;
+import javax.mail.internet.AddressException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import de.enwida.web.dao.interfaces.IUserDao;
+import de.enwida.web.dto.UserDTO;
 import de.enwida.web.model.Group;
 import de.enwida.web.model.Role;
 import de.enwida.web.model.User;
@@ -29,8 +35,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	public List<User> getUsers() {
-		// TODO Auto-generated method stub
-		return null;
+		return userDao.findAllUsersWithPermissions();
 	}
 
 
@@ -94,5 +99,43 @@ public class UserServiceImpl implements UserService {
 
     public List<Role> getAllRoles() {
         return userDao.getAllRoles();
+    }
+
+    public boolean updateUser(User user) {
+        return userDao.updateUser(user);
+    }
+
+    public User getUser(String userName) {
+        return userDao.getUser(userName);
+    }
+
+    public boolean resetPassword(long userID) {
+        SecureRandom random = new SecureRandom();
+        String newPassword=new BigInteger(130, random).toString(32);
+        User user=userDao.getUser(userID);
+        user.setPassword(newPassword);
+        userDao.updateUser(user);
+        try {
+            Mail.SendEmail(user.getUserName(),"New Password","Your new Password:"+newPassword);
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
+    }
+
+    public void deleteUser(User user) {
+        userDao.deleteUser(user);
+    }
+
+    public void assignUserToGroup(int userID, int groupID) {
+        userDao.assignUserToGroup(userID,groupID);
+    }
+
+    public void deassignUserToGroup(int userID, int groupID) {
+        userDao.deassignUserToGroup(userID,groupID);
+    }
+
+    public List<Group> getAllGroupsWithUsers() {
+        return userDao.getAllGroupsWithUsers();
     }
 }

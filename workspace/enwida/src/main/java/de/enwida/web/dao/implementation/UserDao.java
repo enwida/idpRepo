@@ -136,7 +136,7 @@ public class UserDao extends BaseDao<User> implements IUserDao {
 
 	public User loadUserFromDB(User user) {
 		
-		String sql = "SELECT users.user_id,user_name,user_password,enabled,string_agg(roles.name, ', ')as permissions" +
+		String sql = "SELECT users.user_id,user_name,user_password,enabled,string_agg(roles.role_name, ', ')as permissions" +
 				" FROM users  INNER JOIN user_roles ON users.user_id=user_roles.user_id" +
 				" INNER JOIN roles ON roles.role_id=user_roles.role_id " +
 				" where users.user_name=? group by users.user_id,user_name,user_password,enabled";
@@ -391,6 +391,7 @@ public class UserDao extends BaseDao<User> implements IUserDao {
                 user.setLastName(rs.getString("last_name"));
                 user.setLastName(rs.getString("last_name"));
                 user.setJoinDate(rs.getString("joining_date"));
+                user.setTel(rs.getString("tel"));
 			}
 			rs.close();
 			ps.close();
@@ -465,8 +466,11 @@ public class UserDao extends BaseDao<User> implements IUserDao {
 		return groups;
 	}
 
-	public List<Group> getAllGroups() {
-		String sql = "select * FROM groups";
+	public List<Group> getAllGroupsWithUsers() {
+		String sql = "SELECT groups.group_id,groups.group_name,groups.auto_pass, array_to_string(array_agg(users.user_id), ',')  as users" +
+				"  FROM groups INNER JOIN user_group ON user_group.group_id=groups.group_id" +
+				"        INNER JOIN users ON user_group.user_ID=users.user_ID" +
+				" GROUP BY groups.group_id,groups.group_name,groups.auto_pass;";
 		Connection conn = null;
 		ArrayList<Group> groups = new ArrayList<Group>();
 		try {
@@ -476,7 +480,15 @@ public class UserDao extends BaseDao<User> implements IUserDao {
 			while (rs.next()) {
 				Group group = new Group();
 				group.setGroupID(rs.getLong("group_id"));
-				group.setGroupName(rs.getString("group_name"));
+                group.setGroupName(rs.getString("group_name"));
+                group.setAutoPass(rs.getBoolean("auto_pass"));
+                String[] userIDs=rs.getString("users").split(",");
+                for (String userID : userIDs) {
+                    if(userID!=null){
+                        User user=getUser(Long.parseLong(userID));
+                        group.addAssignedUsers(user);
+                    }
+                }
 				groups.add(group);
 			}
 			rs.close();
@@ -493,6 +505,34 @@ public class UserDao extends BaseDao<User> implements IUserDao {
 		return groups;
 	}
 
+	public List<Group> getAllGroups() {
+        String sql = "SELECT * FROM groups";
+        Connection conn = null;
+        ArrayList<Group> groups = new ArrayList<Group>();
+        try {
+            conn = datasource.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Group group = new Group();
+                group.setGroupID(rs.getLong("group_id"));
+                group.setGroupName(rs.getString("group_name"));
+                group.setAutoPass(rs.getBoolean("auto_pass"));
+                groups.add(group);
+            }
+            rs.close();
+            ps.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            if (conn != null) {
+                try {
+                conn.close();
+                } catch (SQLException e) {}
+            }
+        }
+        return groups;
+    }
     public void addGroup(Group newGroup) {
         if(newGroup.getGroupName().isEmpty()){
             return;
@@ -573,5 +613,124 @@ public class UserDao extends BaseDao<User> implements IUserDao {
             }
         }
         return roles;
+    }
+
+    public boolean updateUser(User user) {
+        String sql = "UPDATE users SET first_name=?,last_name=?,tel=?,user_password=? WHERE user_id=?";
+        
+        Connection conn = null;
+ 
+        try {
+            conn = datasource.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, user.getFirstName());
+            ps.setString(2, user.getLastName());
+            ps.setString(3, user.getTel());
+            ps.setString(4, user.getPassword());
+            ps.setLong(5, user.getUserID());
+            ps.executeUpdate();
+            ps.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            if (conn != null) {
+                try {
+                conn.close();
+                } catch (SQLException e) {}
+            }
+        }
+        return true;
+    }
+
+    public User getUser(String userName) {
+        String sql = "SELECT * FROM users WHERE user_name=?";
+        Connection conn = null;
+        User user = null;
+        try {
+            conn = datasource.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, userName);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                user = new User();
+                user.setUserID(rs.getLong("user_id"));
+                user.setUserName(rs.getString("user_name"));
+                user.setPassword(rs.getString("user_password"));
+                user.setEnabled(rs.getBoolean("enabled"));
+                user.setFirstName(rs.getString("first_name"));
+                user.setLastName(rs.getString("last_name"));
+                user.setLastName(rs.getString("last_name"));
+                user.setJoinDate(rs.getString("joining_date"));
+                user.setTel(rs.getString("tel"));
+            }
+            rs.close();
+            ps.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            if (conn != null) {
+                try {
+                conn.close();
+                } catch (SQLException e) {}
+            }
+        }
+
+        return user;
+    }
+
+    public boolean assignUserToGroup(int userID, int groupID) {
+        if(userID==0){
+            return false;
+        }
+        
+        
+        String sql = "INSERT INTO user_group VALUES (?, ?)";
+         
+        Connection conn = null;
+ 
+        try {
+            conn = datasource.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setLong(1, userID);
+            ps.setLong(2, groupID);
+            ps.executeUpdate();
+            ps.close();
+        } catch (SQLException e) {
+            return false;
+        } finally {
+            if (conn != null) {
+                try {
+                conn.close();
+                } catch (SQLException e) {}
+            }
+        }
+        return true;
+    }
+
+    public boolean deassignUserToGroup(int userID, int groupID) {
+        if(userID==0){
+            return false;
+        }
+        
+        String sql = "DELETE FROM user_group WHERE (user_id=? and group_id=?)";
+        Connection conn = null;
+ 
+        try {
+            conn = datasource.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setLong(1, userID);
+            ps.setLong(2, groupID);
+            ps.executeUpdate();
+            ps.close();
+        } catch (SQLException e) {
+            return true;
+        } finally {
+            if (conn != null) {
+                try {
+                conn.close();
+                } catch (SQLException e) {}
+            }
+        }       
+        return false;
     }
 }
