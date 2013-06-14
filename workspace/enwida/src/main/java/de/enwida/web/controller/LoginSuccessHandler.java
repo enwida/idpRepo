@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.AuthorityUtils;
@@ -25,6 +26,7 @@ public final class LoginSuccessHandler implements AuthenticationSuccessHandler
     @Autowired
     private UserService userService;
     
+    private static org.apache.log4j.Logger log = Logger.getLogger(LoginSuccessHandler.class);
     
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException
     {
@@ -37,5 +39,6 @@ public final class LoginSuccessHandler implements AuthenticationSuccessHandler
         SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//dd/MM/yyyy
         Date now = new Date();
         user.setLastLogin(sdfDate.format(now));
+        log.debug("Some string to print out");
     }
 }

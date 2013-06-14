@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.stereotype.Controller;
@@ -41,6 +42,9 @@ public class AdminController {
 	@Autowired
 	private UserValidator userValidator;
 	
+
+    private static org.apache.log4j.Logger log = Logger.getLogger(AdminController.class);
+	
 	
 	@RequestMapping(value="/editAspect", method = RequestMethod.GET)
 	public String editAspect(Model model,long roleID) {
@@ -53,10 +57,9 @@ public class AdminController {
 	}
 	@RequestMapping(value="/userList", method = RequestMethod.GET)
 	public String userList(Model model) {
-		
+	    log.debug("test");
 		List<User> users= userService.findAllUsers();
 		model.addAttribute("users", users);
-
 		List<Group> groups= userService.getAllGroups();
 		model.addAttribute("groups", groups);
 		model.addAttribute("content", "userList");
