@@ -34,7 +34,14 @@
 </table>
 
 <form name='f' method='POST'>
-	<table>
+	<table  id="tblGroupMap" class="tablesorter">
+		<thead>
+			<tr>
+				<th>Group Name</th>
+				<th>User</th>
+			<tr>
+		<thead>
+		<tbody>
 		<tr>
 			<td>
 				<select name="selectedGroup">
@@ -51,6 +58,7 @@
 				</select>
 			</td>
 		</tr>
+		<tbody>
 		<tr>
 			<td></td>
 			<td>

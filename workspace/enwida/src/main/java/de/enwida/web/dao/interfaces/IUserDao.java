@@ -30,4 +30,7 @@ public interface IUserDao {
     public boolean assignUserToGroup(int userID, int groupID);
     public boolean deassignUserToGroup(int userID, int groupID);
     public List<Group> getAllGroupsWithUsers();
+    public boolean assignRoleToGroup(int roleID, int groupID);
+    public boolean deassignRoleToGroup(int roleID, int groupID);
+    public List<Role> getAllRolesWithGroups();
 }

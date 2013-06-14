@@ -138,4 +138,16 @@ public class UserServiceImpl implements UserService {
     public List<Group> getAllGroupsWithUsers() {
         return userDao.getAllGroupsWithUsers();
     }
+
+    public void assignRoleToGroup(int roleID, int groupID) {
+        userDao.assignRoleToGroup(roleID,groupID);
+    }
+
+    public void deassignRoleToGroup(int roleID, int groupID) {
+        userDao.deassignRoleToGroup(roleID,groupID);
+    }
+
+    public List<Role> getAllRolesWithGroups() {
+        return userDao.getAllRolesWithGroups();
+    }
 }

@@ -29,4 +29,7 @@ public interface UserService {
     public void assignUserToGroup(int userID, int groupID);
     public void deassignUserToGroup(int userID, int groupID);
     public List<Group> getAllGroupsWithUsers();
+    public void assignRoleToGroup(int selectedRole, int selectedGroup);
+    public void deassignRoleToGroup(int selectedRole, int selectedGroup);
+    public List<Role> getAllRolesWithGroups();
 }

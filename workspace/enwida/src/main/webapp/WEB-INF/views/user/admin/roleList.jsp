@@ -3,22 +3,6 @@
 
 
 <form name='f' method='POST'>
-	<table>
-		<tr>
-			<td>Role Name:</td>
-			<td><input name="newRole" type='text' /></td>
-		</tr>
-		<tr>
-			<td>Description:</td>
-			<td><input name=roleDescription type='text' /></td>
-		</tr>
-		<tr>
-			<td></td>
-			<td><input type="submit" value="Add" /></td>
-		</tr>
-	</table>
-
-</form>
 <br>
 <table id="tblRoles" class="tablesorter">
 	<thead>
@@ -30,14 +14,50 @@
 		<tr>
 	<thead>
 	<tbody>
-		<c:forEach var="role" items="${roles}">
+		<c:forEach var="role" items="${rolesWithGroups}">
 			<tr>
-				<td>${role.name}</td>
+				<td>${role.roleName}</td>
 				<td>${role.description}</td>
-				<td></td>
-				<td><a href='editRole?groupID=${role.roleID}'> Edit Roles</a>
-					| <a href="">delete</a></td>
+				<td><c:forEach var="group" items="${role.assignedGroups}">${group.groupName},</c:forEach></td>
+				<td>
+					<a href='editAspect?groupID=${role.roleID}'> Details</a>
+				</td>
 			<tr>
 		</c:forEach>
 	</tbody>
 </table>
+
+	<table  id="tblRoleMap" class="tablesorter">
+		<thead>
+			<tr>
+				<th>Group Name</th>
+				<th>Role Name</th>
+			<tr>
+		<thead>
+		<tbody>
+		<tr>
+			<td>
+				<select name="selectedGroup">
+						<c:forEach var="group" items="${groups}">
+							<option value="${group.groupID}">${group.groupName}</option>
+						</c:forEach>
+				</select>
+			</td>
+			<td>
+					<select name="selectedRole">
+						<c:forEach var="role" items="${roles}">
+							<option value="${role.roleID}">${role.roleName}</option>
+						</c:forEach>
+				</select>
+			</td>
+		</tr>
+		<tbody>
+		<tr>
+			<td></td>
+			<td>
+				<input type="submit" name="assign" value="assign"/>
+				<input type="submit" name="deassign" value="deassign"/>
+			</td>
+		</tr>
+	</table>
+</form>

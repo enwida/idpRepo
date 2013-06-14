@@ -46,20 +46,6 @@ public class AdminController {
 		model.addAttribute("content", "editAspect");
 		return "user/admin/master";
 	}
-	
-	@RequestMapping(value="/editRole", method = RequestMethod.GET)
-	public String editRole(Model model,long groupID) {
-		
-//		List<Role> availableRoles= userService.getAvailableRolesForGroup(groupID);
-//		model.addAttribute("availableGroups", availableRoles);
-//	
-//		List<Role> assignedGroups= userService.getGroupRoles(groupID);
-//		model.addAttribute("assignedGroups", assignedGroups);
-		
-		model.addAttribute("content", "editRole");
-		return "user/admin/master";
-	}
-	
 	@RequestMapping(value="/userList", method = RequestMethod.GET)
 	public String userList(Model model) {
 		
@@ -104,27 +90,19 @@ public class AdminController {
     
     
     @RequestMapping(value="/roleList", method = RequestMethod.GET)
-    public String editRole(Model model) {
+    public String roleList(Model model) {
         
         List<Role> roles= userService.getAllRoles();
         model.addAttribute("roles", roles);
         
+        List<Role> rolesWithGroups= userService.getAllRolesWithGroups();
+        model.addAttribute("rolesWithGroups", rolesWithGroups);
+        
+        List<Group> groups= userService.getAllGroups();
+        model.addAttribute("groups", groups);
+        
         model.addAttribute("content", "roleList");
         return "user/admin/master";
-    }
-    
-    @RequestMapping(value="/roleList",method=RequestMethod.POST)
-    public String addRole(Model model,String newRole,String roleDescription){
-        if(newRole.isEmpty()){
-            model.addAttribute("error", "Role name is not valid");
-        }
-        else{
-            Role role= new Role();
-            role.setName(newRole);
-            role.setDescription(roleDescription);
-            userService.saveRole(role);
-        }
-        return editRole(model);
     }
     
     
@@ -182,5 +160,19 @@ public class AdminController {
     {
         userService.deassignUserToGroup(selectedUser,selectedGroup);
         return editGroup(model);
+    }
+    
+    @RequestMapping(value="/roleList",method=RequestMethod.POST, params = "assign")
+    public String assignRoleToGroup(Model model,int selectedRole,int selectedGroup)
+    {
+        userService.assignRoleToGroup(selectedRole,selectedGroup);
+        return roleList(model);
+    }
+    
+    @RequestMapping(value="/roleList",method=RequestMethod.POST, params = "deassign")
+    public String deassignRoleToGroup(Model model,int selectedRole,int selectedGroup)
+    {
+        userService.deassignRoleToGroup(selectedRole,selectedGroup);
+        return roleList(model);
     }
 }

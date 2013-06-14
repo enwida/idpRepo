@@ -407,6 +407,36 @@ public class UserDao extends BaseDao<User> implements IUserDao {
 
 		return user;
 	}
+	
+	public Group getGroup(Long id) {
+        String sql = "SELECT * FROM groups WHERE group_id=?";
+        Connection conn = null;
+        Group group = null;
+        try {
+            conn = datasource.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setLong(1, id);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                group = new Group();
+                group.setGroupID(rs.getLong("group_id"));
+                group.setGroupName(rs.getString("group_name"));
+                group.setAutoPass(rs.getBoolean("auto_pass"));
+            }
+            rs.close();
+            ps.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            if (conn != null) {
+                try {
+                conn.close();
+                } catch (SQLException e) {}
+            }
+        }
+
+        return group;
+    }
 
 	public ArrayList<Group> getAvailableGroupsForUser(long userID) {
 		String sql = "select * FROM groups";
@@ -560,7 +590,7 @@ public class UserDao extends BaseDao<User> implements IUserDao {
     }
 
     public void addRole(Role role) {
-        if(role.getName().isEmpty()){
+        if(role.getRoleName().isEmpty()){
             return;
         }
                 
@@ -571,7 +601,7 @@ public class UserDao extends BaseDao<User> implements IUserDao {
         try {
             conn = datasource.getConnection();
             PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setString(1, role.getName());
+            ps.setString(1, role.getRoleName());
             ps.setString(2, role.getDescription());
             ps.executeUpdate();
             ps.close();
@@ -597,7 +627,7 @@ public class UserDao extends BaseDao<User> implements IUserDao {
             while (rs.next()) {
                 Role role = new Role();
                 role.setRoleID(rs.getLong("role_id"));
-                role.setName(rs.getString("name"));
+                role.setRoleName(rs.getString("role_name"));
                 role.setDescription(rs.getString("description"));
                 roles.add(role);
             }
@@ -723,7 +753,7 @@ public class UserDao extends BaseDao<User> implements IUserDao {
             ps.executeUpdate();
             ps.close();
         } catch (SQLException e) {
-            return true;
+            return false;
         } finally {
             if (conn != null) {
                 try {
@@ -731,6 +761,101 @@ public class UserDao extends BaseDao<User> implements IUserDao {
                 } catch (SQLException e) {}
             }
         }       
-        return false;
+        return true;
+    }
+
+    public boolean assignRoleToGroup(int roleID, int groupID) {
+        if(roleID==0){
+            return false;
+        }
+        
+        
+        String sql = "INSERT INTO group_role VALUES (?, ?)";
+         
+        Connection conn = null;
+ 
+        try {
+            conn = datasource.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setLong(1, groupID);
+            ps.setLong(2, roleID);
+            ps.executeUpdate();
+            ps.close();
+        } catch (SQLException e) {
+            return false;
+        } finally {
+            if (conn != null) {
+                try {
+                conn.close();
+                } catch (SQLException e) {}
+            }
+        }
+        return true; 
+    }
+
+    public boolean deassignRoleToGroup(int roleID, int groupID) {
+        if(roleID==0){
+            return false;
+        }
+        
+        String sql = "DELETE FROM group_roles WHERE (group_id=? and role_id=?)";
+        Connection conn = null;
+ 
+        try {
+            conn = datasource.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setLong(1, groupID);
+            ps.setLong(2, roleID);
+            ps.executeUpdate();
+            ps.close();
+        } catch (SQLException e) {
+            return false;
+        } finally {
+            if (conn != null) {
+                try {
+                conn.close();
+                } catch (SQLException e) {}
+            }
+        }       
+        return true;
+    }
+
+    public List<Role> getAllRolesWithGroups() {
+        String sql = "SELECT roles.role_id,roles.role_name,roles.description, array_to_string(array_agg(groups.group_id), ',') as groups FROM roles " +
+        		"INNER JOIN group_role ON roles.role_id=group_role.role_id" +
+        		" INNER JOIN groups ON group_role.group_ID=groups.group_ID" +
+        		" GROUP BY roles.role_name,roles.role_id,roles.description";
+        Connection conn = null;
+        ArrayList<Role> roles = new ArrayList<Role>();
+        try {
+            conn = datasource.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Role role = new Role();
+                role.setRoleID(rs.getLong("role_id"));
+                role.setRoleName(rs.getString("role_name"));
+                role.setDescription(rs.getString("description"));
+                String[] groups=rs.getString("groups").split(",");
+                for (String groupID : groups) {
+                    if(groupID!=null){
+                        Group group=getGroup(Long.parseLong(groupID));
+                        role.addAssignedGroups(group);
+                    }
+                }
+                roles.add(role);
+            }
+            rs.close();
+            ps.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            if (conn != null) {
+                try {
+                conn.close();
+                } catch (SQLException e) {}
+            }
+        }
+        return roles;
     }
 }
