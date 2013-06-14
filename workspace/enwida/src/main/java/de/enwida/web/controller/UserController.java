@@ -164,15 +164,6 @@ public class UserController {
 		return "user/forgotPassword";
 	}
 	
-	@RequestMapping(value="/admin", method = RequestMethod.GET)
-	public String manageUsers(ModelMap model) {
-		
-		List<User> users= userService.findAllUsersWithPermissions();
-
-		model.addAttribute("users", users);
-		return "user/admin";
-	}
-	
 	@RequestMapping(value="/updateRole", method = RequestMethod.GET)
 	@ResponseBody
 	public String updateRole(HttpServletRequest request) {

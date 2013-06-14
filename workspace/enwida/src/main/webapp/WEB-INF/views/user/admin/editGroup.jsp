@@ -33,6 +33,12 @@
 	<tfoot>
 </table>
 
+<script>
+$(function() {
+	$('#selectedUser option[value='+QueryString.userID+']').attr('selected','selected');
+});
+</script>
+
 <form name='f' method='POST'>
 	<table  id="tblGroupMap" class="tablesorter">
 		<thead>
@@ -51,7 +57,7 @@
 				</select>
 			</td>
 			<td>
-				<select name="selectedUser">
+				<select id="selectedUser" name="selectedUser">
 						<c:forEach var="user" items="${users}">
 							<option value="${user.userID}">${user.userName}</option>
 						</c:forEach>

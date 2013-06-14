@@ -36,7 +36,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	public List<User> getUsers() {
-		return userDao.findAllUsersWithPermissions();
+		return userDao.findAllUsers();
 	}
 
 
@@ -64,10 +64,6 @@ public class UserServiceImpl implements UserService {
 
 	public String getPassword(String email) {
 		return userDao.getPassword(email);
-	}
-
-	public List<User> findAllUsersWithPermissions(){
-		return userDao.findAllUsersWithPermissions();
 	}
 	
 
@@ -128,27 +124,31 @@ public class UserServiceImpl implements UserService {
         userDao.deleteUser(user);
     }
 
-    public void assignUserToGroup(int userID, int groupID) {
-        userDao.assignUserToGroup(userID,groupID);
+    public String assignUserToGroup(int userID, int groupID) {
+        return userDao.assignUserToGroup(userID,groupID);
     }
 
-    public void deassignUserToGroup(int userID, int groupID) {
-        userDao.deassignUserToGroup(userID,groupID);
+    public String deassignUserToGroup(int userID, int groupID) {
+        return userDao.deassignUserToGroup(userID,groupID);
     }
 
     public List<Group> getAllGroupsWithUsers() {
         return userDao.getAllGroupsWithUsers();
     }
 
-    public void assignRoleToGroup(int roleID, int groupID) {
-        userDao.assignRoleToGroup(roleID,groupID);
+    public String assignRoleToGroup(int roleID, int groupID) {
+        return  userDao.assignRoleToGroup(roleID,groupID);
     }
 
-    public void deassignRoleToGroup(int roleID, int groupID) {
-        userDao.deassignRoleToGroup(roleID,groupID);
+    public String deassignRoleToGroup(int roleID, int groupID) {
+        return userDao.deassignRoleToGroup(roleID,groupID);
     }
 
     public List<Role> getAllRolesWithGroups() {
         return userDao.getAllRolesWithGroups();
+    }
+
+    public List<User> findAllUsers() {
+        return userDao.findAllUsers();
     }
 }

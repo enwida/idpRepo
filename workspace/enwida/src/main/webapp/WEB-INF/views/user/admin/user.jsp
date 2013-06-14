@@ -48,11 +48,11 @@
 			</tr>
 			<tr>
 				<td>Groups</td>
-				<td></td>
+				<td>${user.groups}</td>
 			</tr>
 			<tr>
 				<td>Roles</td>
-				<td></td>
+				<td>${user.roles}</td>
 			</tr>
 		</table>
 		<input type="submit" name="delete" value="Delete" />

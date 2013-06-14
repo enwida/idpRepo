@@ -14,7 +14,6 @@ public interface IUserDao {
 	public int save(User user);
 	public void setUserRoles(int userId, HashMap roles);
 	public String getPassword(String email) ;
-    public List<User> findAllUsersWithPermissions();
     public List<User> findAllUsers();
 	public void addPermission(int userID, int roleID);
 	public void removePermission(int userID, int roleID);
@@ -24,14 +23,14 @@ public interface IUserDao {
     public boolean updateUser(User user);
     public User getUser(String userName);
     public boolean deleteUser(User user);
-    public boolean assignUserToGroup(int userID, int groupID);
-    public boolean deassignUserToGroup(int userID, int groupID);
+    public String assignUserToGroup(int userID, int groupID);
+    public String deassignUserToGroup(int userID, int groupID);
     
 	public List<Group> getAllGroups();
     public void addGroup(Group newGroup);
     public List<Group> getAllGroupsWithUsers();
-    public boolean assignRoleToGroup(int roleID, int groupID);
-    public boolean deassignRoleToGroup(int roleID, int groupID);
+    public String assignRoleToGroup(int roleID, int groupID);
+    public String deassignRoleToGroup(int roleID, int groupID);
     
     public void addRole(Role role);
     public List<Role> getAllRoles();

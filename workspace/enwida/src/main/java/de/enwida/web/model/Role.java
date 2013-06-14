@@ -43,6 +43,10 @@ public class Role {
     public void setAssignedGroups(List<Group> assignedGroups) {
         this.assignedGroups = assignedGroups;
     }
-
+    
+    @Override
+    public String toString() {
+        return getRoleName();
+    }
 
 }

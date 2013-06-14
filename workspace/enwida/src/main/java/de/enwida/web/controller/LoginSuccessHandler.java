@@ -3,6 +3,7 @@ package de.enwida.web.controller;
 
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Set;
 
@@ -24,13 +25,17 @@ public final class LoginSuccessHandler implements AuthenticationSuccessHandler
     @Autowired
     private UserService userService;
     
+    
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException
     {
         Set<String> roles = AuthorityUtils.authorityListToSet(authentication.getAuthorities());
         String userName = authentication.getName();
         HttpSession session = request.getSession();
-//        User user = userService.findByLogin(userName);
-//        Date date = new Date();
-//        user.setLastLogin(date.toString());
+        User user = userService.getUser(userName);
+        Date date = new Date();
+        
+        SimpleDateFormat sdfDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//dd/MM/yyyy
+        Date now = new Date();
+        user.setLastLogin(sdfDate.format(now));
     }
 }

@@ -54,9 +54,9 @@ public class AdminController {
 	@RequestMapping(value="/userList", method = RequestMethod.GET)
 	public String userList(Model model) {
 		
-		List<User> users= userService.findAllUsersWithPermissions();
+		List<User> users= userService.findAllUsers();
 		model.addAttribute("users", users);
-		
+
 		List<Group> groups= userService.getAllGroups();
 		model.addAttribute("groups", groups);
 		model.addAttribute("content", "userList");
@@ -156,28 +156,32 @@ public class AdminController {
     @RequestMapping(value="/editGroup",method=RequestMethod.POST, params = "assign")
     public String assignUserToGroup(Model model,int selectedUser,int selectedGroup)
     {
-        userService.assignUserToGroup(selectedUser,selectedGroup);
+        String result= userService.assignUserToGroup(selectedUser,selectedGroup);
+        model.addAttribute("info", result);
         return editGroup(model);
     }
     
     @RequestMapping(value="/editGroup",method=RequestMethod.POST, params = "deassign")
     public String deassignUserToGroup(Model model,int selectedUser,int selectedGroup)
     {
-        userService.deassignUserToGroup(selectedUser,selectedGroup);
+        String result= userService.deassignUserToGroup(selectedUser,selectedGroup);
+        model.addAttribute("info", result);
         return editGroup(model);
     }
     
     @RequestMapping(value="/roleList",method=RequestMethod.POST, params = "assign")
     public String assignRoleToGroup(Model model,int selectedRole,int selectedGroup)
     {
-        userService.assignRoleToGroup(selectedRole,selectedGroup);
+        String result=  userService.assignRoleToGroup(selectedRole,selectedGroup);
+        model.addAttribute("info", result);
         return roleList(model);
     }
     
     @RequestMapping(value="/roleList",method=RequestMethod.POST, params = "deassign")
     public String deassignRoleToGroup(Model model,int selectedRole,int selectedGroup)
     {
-        userService.deassignRoleToGroup(selectedRole,selectedGroup);
+        String result= userService.deassignRoleToGroup(selectedRole,selectedGroup);
+        model.addAttribute("info", result);
         return roleList(model);
     }
 }

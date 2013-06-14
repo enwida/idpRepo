@@ -48,4 +48,9 @@ public class Group {
     public void setAutoPass(boolean autoPass) {
         this.autoPass = autoPass;
     }
+    
+    @Override
+    public String toString() {
+        return getGroupName();
+    }
 }

@@ -1,6 +1,7 @@
 package de.enwida.web.model;
 
 import java.sql.Date;
+import java.util.List;
 
 public class User {
  
@@ -15,8 +16,9 @@ public class User {
 	private boolean enabled;
 	private Date joiningDate;
 	private Date loginCount;
-	private Date lastLogin;
-	private Date groups;
+	private String lastLogin;
+    private List<Group> groups;
+    private List<Role> roles;
 	private String companyName;
     private String joinDate;
     private String tel;
@@ -124,20 +126,12 @@ public class User {
 		this.loginCount = loginCount;
 	}
 
-	public Date getLastLogin() {
+	public String getLastLogin() {
 		return lastLogin;
 	}
 
-	public void setLastLogin(Date lastLogin) {
+	public void setLastLogin(String lastLogin) {
 		this.lastLogin = lastLogin;
-	}
-
-	public Date getGroups() {
-		return groups;
-	}
-
-	public void setGroups(Date groups) {
-		this.groups = groups;
 	}
 
 	public String getContactNo() {
@@ -186,5 +180,21 @@ public class User {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public List<Group> getGroups() {
+        return groups;
+    }
+
+    public void setGroups(List<Group> groups) {
+        this.groups = groups;
+    }
+
+    public List<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(List<Role> roles) {
+        this.roles = roles;
     }
 }
