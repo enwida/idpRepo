@@ -108,6 +108,13 @@ public class UserController {
 		return "user/download";
 	}
 	
+	@RequestMapping(value="/userAvailability", method=RequestMethod.GET)
+	public @ResponseBody boolean userAvailability(HttpServletRequest request, String email){
+		boolean available = this.userService.checkEmailAvailability(email);
+        //model.addAttribute("USER", user);
+        return available;
+    }
+
 	@RequestMapping(value="/register",method=RequestMethod.GET)
     public String showForm(ModelMap model){
 		UserDTO user = new UserDTO();
@@ -206,7 +213,9 @@ public class UserController {
 		user.setPassword(userDTO.getPassword());
 		user.setFirstName(userDTO.getFirstName());
 		user.setLastName(userDTO.getLastName());
-		
+		user.setCompanyName(userDTO.getCompanyName());
+		user.setCompanyURL(userDTO.getCompanyURL());
+		user.setContactNo(userDTO.getTelephone());
 		return user;
 	}
 }

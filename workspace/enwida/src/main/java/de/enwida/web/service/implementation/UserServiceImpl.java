@@ -40,14 +40,34 @@ public class UserServiceImpl implements UserService {
 		Date date = new Date(Calendar.getInstance().getTimeInMillis());
 		user.setJoiningDate(date);
 		user.setEnabled(false);
-		int userId = userDao.save(user);
-		
+		long userId = userDao.save(user);
 		// If successfully saved, than assign default roles to user and save userId in user_roles table
 		if(userId != -1)
 		{
-			HashMap userRoles = new HashMap(); 
-			userRoles.put(Constants.ANONYMOUS_ROLE, 3);
-			userDao.setUserRoles(userId, userRoles);
+			Group group = userDao.getGroupByGroupName(user.getCompanyName());
+
+			if(group == null)
+			{
+				group = new Group();
+				group.setGroupName(user.getCompanyName());
+				group = this.addGroup(group);
+				userDao.saveUserInGroup(userId, group.getGroupID());
+				userDao.addPermission(userId, 3); // Assumed for the moment that anonymous has id 3
+			}
+			else
+			{
+				userDao.saveUserInGroup(userId, group.getGroupID());
+				if(group.isStatus())
+				{
+					long roleId = userDao.getRoleIdOfGroup(group.getGroupID());
+					userDao.addPermission(userId, roleId);
+				}
+				else
+				{
+					userDao.addPermission(userId, 3);
+				}
+			}
+			
 			return true;
 		}
 		else
@@ -84,8 +104,9 @@ public class UserServiceImpl implements UserService {
 		return userDao.getAllGroups();
 	}
 
-    public void addGroup(Group newGroup) {
-        userDao.addGroup(newGroup);
+    public Group addGroup(Group newGroup) {
+    	newGroup.setStatus(false);
+        return userDao.addGroup(newGroup);
     }
 
     public void saveRole(Role role) {
@@ -95,4 +116,8 @@ public class UserServiceImpl implements UserService {
     public List<Role> getAllRoles() {
         return userDao.getAllRoles();
     }
+    
+	public boolean checkEmailAvailability(String email) {	
+		return userDao.checkEmailAvailability(email);
+	}
 }

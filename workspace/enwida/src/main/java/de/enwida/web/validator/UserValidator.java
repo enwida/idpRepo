@@ -61,6 +61,7 @@ public class UserValidator implements Validator {
 		{
 			errors.rejectValue("lastName", "de.enwida.field.inavlidChar");
 		}
+		
 	}
 
 }

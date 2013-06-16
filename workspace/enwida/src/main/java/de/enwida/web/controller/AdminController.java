@@ -93,9 +93,9 @@ public class AdminController {
         if(newGroup.isEmpty()){
             model.addAttribute("error", "Group name is not valid");
         }
-        else{
-            Group group=new Group();
-            group.setGroupName(newGroup);            
+        else{     
+        	Group group = new Group();
+        	group.setGroupName(newGroup);
             userService.addGroup(group);
         }
         return editGroup(model);

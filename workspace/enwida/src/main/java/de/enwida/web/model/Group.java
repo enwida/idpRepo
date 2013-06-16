@@ -7,7 +7,8 @@ public class Group {
 
 	private Long groupID;
 	private String groupName;
-	public List<User> assignedUsers;
+	private List<User> assignedUsers;
+	private boolean status;
 	
 	public Long getGroupID() {
 		return groupID;
@@ -26,5 +27,11 @@ public class Group {
 	}
 	public void setAssignedUsers(List<User> assignedUsers) {
 		this.assignedUsers = assignedUsers;
+	}
+	public boolean isStatus() {
+		return status;
+	}
+	public void setStatus(boolean status) {
+		this.status = status;
 	}
 }

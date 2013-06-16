@@ -7,12 +7,33 @@
 <meta http-equiv="Content-Type"
 	content="text/html; charset=windows-1251">
 
-	<script type="text/javascript" charset="utf-8">
-		function getCompanyName() {
-			var compName = document.getElementById("userName").value;
-			var domain = compName.substring(compName.indexOf("@") + 1,
-					(compName.length));
-			document.getElementById("compName").value = domain;
+	<script src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
+	<script type="text/javascript">
+	
+		function checkEmailAvailability() {
+			var email = document.getElementById("userName").value;
+			alert(email);
+			$
+					.ajax({
+						type : "GET",
+						url : "/enwida/user/userAvailability?email=" + email,
+						success : function(response) {
+							if (response == false) {
+								getCompanyName(email);
+								return true;
+							} else {
+								document.getElementById("userNameErrorField").value = "Username already in use.";
+								return false;
+							}
+						}
+					});
+		}
+
+		function getCompanyName(email) {
+			var domain = email.substring(email.indexOf("@") + 1,
+					(email.length));
+			alert(domain + email);
+			document.getElementById("companyName").value = domain;
 		}
 	</script>
 </head>
@@ -23,50 +44,9 @@
 		<table>
 			<tr>
 				<td>Mail Address(*) :</td>
-				<td><form:input path="userName" />
-					<form:errors path="userName" cssStyle="color : red;" /></td>
-			</tr>
-			<tr>
-				<td>First Name(*) :</td>
-				<td><form:input path="firstName" />
-					<form:errors path="firstName" cssStyle="color : red;" /></td>
-			</tr>
-			<tr>
-				<td>Last Name(*) :</td>
-				<td><form:input path="lastName" />
-					<form:errors path="lastName" cssStyle="color : red;" /></td>
-			</tr>
-			<tr>
-				<td>Password(*) :</td>
-				<td><form:input path="password" />
-					<form:errors path="password" cssStyle="color : red;" /></td>
-			</tr>
-			<tr>
-				<td>Password(*)(Repeat) :</td>
-				<td><form:input path="confirmPassword" />
-					<form:errors path="confirmPassword" cssStyle="color : red;" /></td>
-			</tr>
-			<tr>
-				<td>Tel :</td>
-				<td><form:input path="" /></td>
-			</tr>
-			<tr>
-				<td>Company :</td>
-				<td><form:input path="" /></td>
-			</tr>
-			<tr>
-				<td>Logo :</td>
-				<td><form:input path="" /></td>
-			</tr>
-			<tr>
-				<td><input type="reset" value="Reset" /></td>
-				<td><input type="submit" value="Save Changes" /></td>
-			</tr>
-			<tr>
-				<td>Mail Address(*) :</td>
 				<td><form:input path="userName" id="userName"
-						onchange="getCompanyName()" /> <form:errors path="userName"
-						cssStyle="color : red;" /></td>
+						onchange="checkEmailAvailability()" /> <form:errors
+						id="userNameErrorField" path="userName" cssStyle="color : red;" /></td>
 			</tr>
 			<tr>
 				<td>First Name(*) :</td>
@@ -89,18 +69,22 @@
 						path="confirmPassword" cssStyle="color : red;" /></td>
 			</tr>
 			<tr>
-				<td>Company Name :</td>
-				<td><form:input path="companyName" id="compName" /> <form:errors
-						path="companyName" cssStyle="color : red;" /></td>
-			</tr>
-			<tr>
-				<td>Contact No :</td>
+				<td>Tel :</td>
 				<td><form:input path="telephone" /> <form:errors
 						path="telephone" cssStyle="color : red;" /></td>
 			</tr>
 			<tr>
+				<td>Company :</td>
+				<td><form:input path="companyName" /> <form:errors
+						path="companyName" cssStyle="color : red;" /></td>
+			</tr>
+			<tr>
+				<td>Logo :</td>
+				<td><form:input path="" /></td>
+			</tr>
+			<tr>
 				<td><input type="reset" value="Reset" /></td>
-				<td><input type="submit" value="Save Changes" /></td>
+				<td><input type="submit" value="Save Changes" onsubmit="checkEmailAvailability()"/></td>
 			</tr>
 		</table>
 	</form:form>
