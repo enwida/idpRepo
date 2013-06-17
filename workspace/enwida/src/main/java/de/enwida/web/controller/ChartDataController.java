@@ -1,6 +1,5 @@
 package de.enwida.web.controller;
 
-import java.io.IOException;
 import java.security.Principal;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -12,9 +11,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import org.codehaus.jackson.JsonParseException;
-import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
@@ -111,16 +107,16 @@ public class ChartDataController {
 	    final ChartNavigationData result = navigationDao.getDefaultNavigation(chartId, locale);
 	    result.addProductTree(new ProductTree(1));
 	    final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-	    final Date from = dateFormat.parse("2010-12-29");
+	    final Date from = dateFormat.parse("2010-01-01");
 	    final Date to = dateFormat.parse("2010-12-31");
 	    final Calendar cFrom = Calendar.getInstance();
 	    final Calendar cTo = Calendar.getInstance();
 	    cFrom.setTime(from);
 	    cTo.setTime(to);
-	    result.setDefaults(new NavigationDefaults(99, DataResolution.HOURLY, 211, new CalendarRange(cFrom, cTo)));
+	    result.setDefaults(new NavigationDefaults(99, DataResolution.MONTHLY, 211, new CalendarRange(cFrom, cTo)));
 	    result.setIsDateScale(true);
 	    result.addTso(99, "Standard");
-	    result.addTso(1, "Test");
+//	    result.addTso(1, "Test");
 	    return result;
 	}
 	
@@ -138,9 +134,7 @@ public class ChartDataController {
 	{
 	    final List<IDataLine> result = new ArrayList<IDataLine>();
 
-	    System.out.println(startTime.get(Calendar.YEAR) + "-" + startTime.get(Calendar.MONTH) + "-" + startTime.get(Calendar.DATE));
-
-	    for (final Aspect aspect : Arrays.asList(new Aspect[] { Aspect.CR_VOL_ACTIVATION })) {
+	    for (final Aspect aspect : Arrays.asList(new Aspect[] { Aspect.CR_POWERPRICE_MIN, Aspect.CR_POWERPRICE_MID, Aspect.CR_POWERPRICE_MAX })) {
 	        final LineRequest req = new LineRequest(aspect, product, tso, startTime, endTime, resolution, locale);
 	        try {
                 result.add(lineManager.getLine(req));

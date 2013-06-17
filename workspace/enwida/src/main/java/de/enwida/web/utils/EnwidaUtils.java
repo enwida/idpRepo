@@ -8,27 +8,27 @@ public class EnwidaUtils {
 	public static DataResolution getDataResolution(String legacyDataResolution) {
 		
 		DataResolution dR = null;		
-		switch (legacyDataResolution) {
-		case "15min":
-			dR = DataResolution.QUATER_HOURLY;
-			break;
-		case "1h":
-			dR = DataResolution.HOURLY;
-			break;
-		case "1d":
-			dR = DataResolution.DAILY;
-			break;
-		case "1w":
-			dR = DataResolution.WEEKLY;
-			break;
-		case "1m":
-			dR = DataResolution.MONTHLY;
-			break;
-		case "1a":
-			dR = DataResolution.YEARLY;
-			break;		
-		}
-		
+//		switch (legacyDataResolution) {
+//		case "15min":
+//			dR = DataResolution.QUATER_HOURLY;
+//			break;
+//		case "1h":
+//			dR = DataResolution.HOURLY;
+//			break;
+//		case "1d":
+//			dR = DataResolution.DAILY;
+//			break;
+//		case "1w":
+//			dR = DataResolution.WEEKLY;
+//			break;
+//		case "1m":
+//			dR = DataResolution.MONTHLY;
+//			break;
+//		case "1a":
+//			dR = DataResolution.YEARLY;
+//			break;		
+//		}
+//		
 		return dR;
 	}
 	

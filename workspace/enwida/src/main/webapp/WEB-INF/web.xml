@@ -37,6 +37,17 @@
 		</init-param>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
+	
+	<servlet> 
+     <servlet-name>log4j-init</servlet-name>
+     <servlet-class>de.enwida.web.servlet.Log4jInit</servlet-class> 
+     <init-param>
+       <param-name>log4j-init-file</param-name>
+       <param-value>WEB-INF/classes/log4j.properties</param-value>
+     </init-param>
+     <load-on-startup>1</load-on-startup>
+	</servlet> 
+	
 	<servlet-mapping>
 		<servlet-name>appServlet</servlet-name>
 		<url-pattern>/</url-pattern>

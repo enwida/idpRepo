@@ -1,26 +1,27 @@
 package de.enwida.web.model;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
-import de.enwida.web.dao.implementation.UserDao;
-
 import java.sql.Date;
+import java.util.List;
 
 public class User {
  
 	private Long userID;
 	private String userName;
 	private String lastName;
-	private String firstName;
+    private String firstName;
+    private String email;
 	private String password;
-	private String companyURL;
+	private String company;
 	private String contactNo;
 	private boolean enabled;
 	private Date joiningDate;
 	private Date loginCount;
-	private Date lastLogin;
-	private Date groups;
+	private String lastLogin;
+    private List<Group> groups;
+    private List<Role> roles;
 	private String companyName;
+    private String joinDate;
+    private String tel;
 
 
 	private UserPermissionCollection userPermissionCollection=new UserPermissionCollection();
@@ -125,28 +126,12 @@ public class User {
 		this.loginCount = loginCount;
 	}
 
-	public Date getLastLogin() {
+	public String getLastLogin() {
 		return lastLogin;
 	}
 
-	public void setLastLogin(Date lastLogin) {
+	public void setLastLogin(String lastLogin) {
 		this.lastLogin = lastLogin;
-	}
-
-	public Date getGroups() {
-		return groups;
-	}
-
-	public void setGroups(Date groups) {
-		this.groups = groups;
-	}
-
-	public String getCompanyURL() {
-		return companyURL;
-	}
-
-	public void setCompanyURL(String companyURL) {
-		this.companyURL = companyURL;
 	}
 
 	public String getContactNo() {
@@ -164,4 +149,52 @@ public class User {
 	public void setCompanyName(String companyName) {
 		this.companyName = companyName;
 	}
+
+    public String getJoinDate() {
+        return joinDate;
+    }
+
+    public void setJoinDate(String joinDate) {
+        this.joinDate = joinDate;
+    }
+
+    public String getCompany() {
+        return company;
+    }
+
+    public void setCompany(String company) {
+        this.company = company;
+    }
+
+    public String getTel() {
+        return tel;
+    }
+
+    public void setTel(String tel) {
+        this.tel = tel;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public List<Group> getGroups() {
+        return groups;
+    }
+
+    public void setGroups(List<Group> groups) {
+        this.groups = groups;
+    }
+
+    public List<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(List<Role> roles) {
+        this.roles = roles;
+    }
 }

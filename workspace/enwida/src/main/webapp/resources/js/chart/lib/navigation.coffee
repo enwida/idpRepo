@@ -1,144 +1,140 @@
 define ->
 
-  class Navigation
+  flight.component ->
 
-    productParts: ["type", "posneg", "timeslot"]
-    treeParts: ["type", "timeslot", "posneg"]
-    dateFormat: d3.time.format "%Y-%m-%d"
-    datePickerFormat: "yyyy-mm-dd"
+    @productParts     = ["type", "posneg", "timeslot"]
+    @treeParts        = ["type", "timeslot", "posneg"]
+    @dateFormat       = d3.time.format "%Y-%m-%d"
+    @datePickerFormat = "yyyy-mm-dd"
 
-    constructor: (@element) ->
-      @chartId = $(@element).attr "data-chart-id"
-      return throw "No chart ID given" unless @chartId
 
-    draw: (parent=@element, callback) ->
-      @getNavigationData (err, data) =>
-        return callback err if err?
-        parent.append @getNavigationElements data
-        defaults = @navigationData.defaults
-        @setProduct defaults.tsoId, defaults.product
-        @element.find(".resolutions").val defaults.resolution
-        @setTimeRange defaults.timeRange
-        callback? null, data
+    @createElements = ->
+      productSelect =
+        $("<div>").addClass("productSelect")
+          .append($("<select>").addClass("tso")
+            .change => @trigger "updateProducts")
 
-    getNavigationData: (callback) ->
+      product = $("<div>").addClass("product").css("display", "inline")
+      for name in @productParts
+        product.append($("<select>").addClass(name)
+          .change => @trigger "updateProducts")
+      productSelect.append product
+
+      timeSelect =
+        $("<div>").addClass("timeselect")
+          .append($("<input>").attr("type", "input").addClass("from"))
+          .append($("<input>").attr("type", "input").addClass("to"))
+          .append($("<select>").addClass("resolution"))
+
+      @$node.append productSelect
+      @$node.append timeSelect
+
+    @getNavigationData = (callback) ->
       $.ajax "navigation.test",
-        data: chartId: @chartId
+        data: chartId: @attr.id
         success: (data) =>
           @navigationData = data
           callback null, data
         error: (err) -> callback err
 
-    getNavigationElements: (navigationData) ->
-      console.log navigationData
-      root = $ "<div class='navigation'>"
-      productSelection = $ "<div class='productselect'>"
-      timeSelection = $ "<div class='timeselect'>"
-      timeSelection.append @getTimeElement navigationData.timeRangeMax, "from"
-      timeSelection.append @getTimeElement navigationData.timeRangeMax, "to"
-      productSelection.append @getTsoElement navigationData.tsos
-      productSelection.append @getProductElements navigationData.productTrees[0]
-      timeSelection.append @getResolutionElement navigationData.allResolutions
-      root.append productSelection
-      root.append timeSelection
-      root
+    @refresh = ->
+      @getNavigationData (err, data) =>
+        throw err if err?
+        @fillTso()
+        @fillProduct()
+        @fillResolutions()
+        @fillTimeRange()
+        @setDefaults data.defaults
+        @trigger "updateNavigation", data: data
+        @triggerGetLines()
 
-    getTimeElement: (timeRange, klass="time") ->
-      result = $("<input type='text' class='#{klass}'>")
-      result.datepicker
+    @fillTso = ->
+      element = @select("tso")
+      element.empty()
+
+      tsos = @navigationData.tsos
+      for key of @navigationData.tsos
+        element.append($("<option>").val(key).text(tsos[key]))
+
+    @fillProduct = ->
+      @setProduct 111
+
+    @fillResolutions = ->
+      element = @select "resolution"
+      element.empty()
+      for r in @navigationData.allResolutions
+        element.append($("<option>").val(r).text(r))
+
+    @fillTimeRange = ->
+      @select("from").datepicker
         format: @datePickerFormat
-      result.on "changeDate", (e) =>
-        @timeRange[klass] = e.date
-      result
+      @select("to").datepicker
+        format: @datePickerFormat
 
-    getTsoElement: (tsos) ->
-      result = $("<select class='tsos'>")
-      for key of tsos
-        option = $ "<option value='#{key}'>"
-        option.text tsos[key]
-        result.append option
-      result.change => @updateSelections()
-      result
+    @setDefaults = (defaults) ->
+      @select("tso").val defaults.tso
+      @setProduct defaults.product
+      @select("resolution").val defaults.resolution
+      @select("from").datepicker "setValue", new Date defaults.timeRange.from
+      @select("to").datepicker "setValue", new Date defaults.timeRange.to
 
-    getProductElements: (productTree) ->
-      result = $ "<div class='product'>"
-      result.css "display", "inline"
-      depth = @getTreeDepth productTree.root
-      for name in @productParts
-        select = $ "<select class='product-#{name}'>"
-        select.change => @updateSelections()
-        result.append select
-      result
+    @getProductTree = ->
+      tso = parseInt @select("tso").val()
+      _.find @navigationData.productTrees, (t) -> t.tso is tso
 
-    getResolutionElement: (resolutions) ->
-      result = $ "<select class='resolutions'>"
-      for resolution in resolutions
-        option = $ "<option value='#{resolution}'>"
-        option.text resolution
-        result.append option
-      result.select @navigationData.defaults.resolution
-      result
-
-    getTreeDepth: (root) ->
-      result = 0
-      node = root
-      while node.children.length > 0
-        result += 1
-        node = node.children[0]
-      result
-
-    setProduct: (tso, product) ->
-      tsoElement = @element.find ".tsos"
-      tsoElement.val tso
-      productTree = _.find @navigationData.productTrees, (t) -> t.tso is tso
-      product = "" + product
-      node = productTree.root
-
-      selections = {}
-      for i in [0...product.length]
+    @setProduct = (product) ->
+      product = "" + product # convert to string
+      values = {}
+      for i in [0...@productParts.length]
         id = parseInt product.substring i, i + 1
-        name = @productParts[i]
-        selections[name] = id
+        values[@productParts[i]] = id
 
-      nextNode = null
-      for i in [0...product.length]
-        nextNode = null
-        name = @treeParts[i]
-        select = @element.find ".product-#{name}"
-        select.empty()
+      node = @getProductTree().root
+      for name in @treeParts
+        element = @select("product").find ".#{name}"
+        element.empty()
         for child in node.children
-          option = $ "<option value='#{child.id}'>"
-          option.text child.name
-          if child.id is selections[name]
-            option.attr "selected", true
-            nextNode = child
-          select.append option
-        node = nextNode ? node.children[0]
+          element.append $("<option>").val(child.id).text(child.name)
 
-    setTimeRange: (timeRange) ->
-      @timeRange = timeRange
-      @element.find(".from").datepicker "setValue", new Date timeRange.from
-      @element.find(".to").datepicker "setValue", new Date timeRange.to
+        id = values[name]
+        element.val id
+        node = (_.find node.children, (c) -> c.id is id) ? node.children[0]
 
-    getProduct: ->
+    @getProduct = ->
       result = ""
       for name in @productParts
-        result += $(@element).find(".product-#{name}").val()
-      console.log result
+        element = @select("product").find(".#{name}")
+        result += element.val()
       result
 
-    getTso: ->
-      @element.find(".tsos").val()
+    @updateProducts = ->
+      @setProduct @getProduct()
 
-    getResolution: ->
-      @element.find(".resolutions").val()
+    @triggerGetLines = ->
+      @trigger "getLines",
+        tso: @select("tso").val()
+        product: @getProduct()
+        timeRange:
+          from: @select("from").val()
+          to:   @select("to").val()
+        resolution: @select("resolution").val()
 
-    getTimeRange: ->
-      console.log @timeRange
-      @timeRange
+    @setupEvents = ->
+      @$node.select("select").change => @triggerGetLines()
+      @select("from").on "changeDate", => @triggerGetLines()
+      @select("to").on "changeDate", => @triggerGetLines()
 
-    updateSelections: ->
-      @setProduct parseInt(@getTso()), @getProduct()
+    @defaultAttrs
+      tso: ".tso"
+      product: ".product"
+      resolution: ".resolution"
+      from: ".from"
+      to: ".to"
 
-    isDateScale: ->
-      @navigationData.isDateScale
+    @after "initialize", ->
+      @on "refresh", @refresh
+      @on "updateProducts", @updateProducts
+
+      @createElements()
+      @refresh()
+      @setupEvents()

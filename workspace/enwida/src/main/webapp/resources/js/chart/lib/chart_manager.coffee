@@ -1,116 +1,56 @@
-define ["line_chart", "bar_chart", "carpet_chart", "navigation", "spreadsheet"],
-  (LineChart, BarChart, CarpetChart, Navigation, Spreadsheet) ->
+define ["navigation", "spreadsheet", "visual", "lines"],
+  (Navigation, Spreadsheet, Visual, Lines) ->
 
-    class ChartManager
+    flight.component ->
 
-      chartOptions: {}
-
-      constructor: (@element) ->
-        @chartId = $(@element).attr "data-chart-id"
-        @type = $(@element).attr "data-chart-type" ? "line"
-        throw "No ID given!" unless @chartId
-
-      draw: ->
-        $(@element).empty()
-        metaElement = $ "<div class='chartmeta'>"
-        spreadsheetElement = $ "<div class='spreadsheet'>"
-        @element.append $ "<div class='visual'>"
-        @element.append metaElement
-        @element.append spreadsheetElement
-        @spreadsheet = new Spreadsheet spreadsheetElement
-
-        @navigation = new Navigation @element
-        @navigation.draw metaElement, (err, data) =>
-          throw err if err?
-          # Draw the heading
-          heading = $ "<h2>"
-          heading.text data.title
-          @element.prepend heading
-
-          # Event handlers
-          @element.find(".navigation select").change => @drawLines()
-          @element.find(".from").on "changeDate", => @drawLines()
-          @element.find(".to").on "changeDate", => @drawLines()
-
-          # Add spreadsheet toggle button
-          @spreadsheet.isDateScale = data.isDateScale
-          spreadsheetToggle = $ "<input type='button' value='Show data'>"
-          spreadsheetToggle.click => @element.find(".spreadsheet").toggle()
-          @element.append spreadsheetToggle
-
-          @chartOptions.xLabel = data.xAxisLabel
-          @chartOptions.yLabel = data.yAxisLabel
-          @drawDefaultChart data
-
-      drawDefaultChart: (navigationData) ->
-        defaults = navigationData.defaults
-        @getLines defaults.product,
-                  defaults.tsoId,
-                  defaults.timeRange.from,
-                  defaults.timeRange.to,
-                  defaults.resolution,
-                  (err, data) =>
-                    return console.log err if err?
-                    console.log data
-                    @drawData data
-
-      getLines: (product, tso, from, to, resolution, callback) ->
+      @getLines = (options, callback) ->
         format = d3.time.format "%Y-%m-%d"
         $.ajax "lines.test",
           data:
-            chartId: @chartId
-            product: product
-            tso: tso
-            startTime: format new Date from
-            endTime: format new Date to
-            resolution: resolution
+            chartId: @attr.id
+            product: options.product
+            tso: options.tso
+            startTime: format new Date options.timeRange.from
+            endTime: format new Date options.timeRange.to
+            resolution: options.resolution
           success: (data) -> callback null, data
           error: (err) -> callback err
 
-      drawLines: (callback) ->
-        timeRange = @navigation.getTimeRange()
-        @getLines @navigation.getProduct(),
-                  @navigation.getTso(),
-                  timeRange.from,
-                  timeRange.to,
-                  @navigation.getResolution()
-                  (err, data) =>
-                    throw err if err?
-                    @drawData data
-                    callback?()
+      @onGetLines = (a, opts) ->
+        @getLines opts, (err, data) =>
+          throw err if err?
+          @trigger @select("visual"), "draw", data: data
+          @trigger @select("lines"), "updateLines", lines: data
 
-      drawData: (data) ->
-        console.log data
-        $(@element).find("svg").remove()
-        chart = @getChart data, @type
-        chart.draw()
-        $("circle").tipsy(gravity: "s")
-        @spreadsheet.draw data
+      @toggleLine = (_, opts) ->
+        @$node.find("path.line#{opts.lineId}").toggle()
+        @$node.find(".dot#{opts.lineId}").toggle()
 
-      getChart: (data, type="line") ->
-        @chartOptions.parent = ".chart[data-chart-id='#{@chartId}'] .visual"
-        @chartOptions.lines = data
-        switch type
-          when "line"
-            @chartOptions.scale = x: type: if @navigation.isDateScale() then "date" else "linear"
-            LineChart.init @chartOptions
-          when "carpet"
-            @chartOptions.scale =
-              x:
-                type: "ordinal"
-                padding: 0
-            @chartOptions.lines = @toCarpet data
-            CarpetChart.init @chartOptions
+      @defaultAttrs
+        navigation: ".navigation"
+        visual: ".visual"
+        lines: ".lines"
 
-      toCarpet: (data) ->
-        data[0].dataPoints.map (dp) ->
-          day = new Date dp.x
-          day = day.getMonth() + "/" + day.getDate()
-          hour = new Date dp.x
-          hour = hour.getHours()
-          value = dp.y
-          dp.x = day
-          dp.y = hour
-          dp.v = value
-          dp
-        data
+      @after "initialize", ->
+        @on "getLines", @onGetLines
+        @on "updateNavigation", (_, opts) ->
+          @trigger @select("visual"), "navigationData", opts
+        @on "toggleLine", @toggleLine
+
+        # Add visual
+        visual = $("<div>").addClass "visual"
+        @$node.append visual
+        Visual.attachTo visual,
+          id: @attr.id
+          type: @$node.attr("data-chart-type") ? "line"
+
+        # Add lines
+        lines = $("<div>").addClass "lines"
+        @$node.append lines
+        Lines.attachTo lines
+
+        # Add navigation
+        navigation = $("<div>").addClass "navigation"
+        @$node.append navigation
+        Navigation.attachTo navigation, id: @attr.id
+

@@ -62,7 +62,7 @@ public class UserManagementTest {
 	@Test
 	public void SpringSecurtyAuthoritySQLCheck() {
 		
-	    String sql = "select user_name, authority from users INNER JOIN user_roles ON users.user_id=user_roles.user_id INNER JOIN roles ON roles.role_id=user_roles.role_id WHERE user_name='test'";
+	    String sql = "select user_name, role_name from users INNER JOIN user_roles ON users.user_id=user_roles.user_id INNER JOIN roles ON roles.role_id=user_roles.role_id WHERE user_name='test'";
 		 
 		Connection conn = null;
  

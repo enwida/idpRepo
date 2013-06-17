@@ -68,6 +68,7 @@ define ["scale"], (scale) ->
           .text("#{@yLabel}")
 
     drawLegend: ->
+      return # Disable in-chart legend
       @legend = @svg.append("g")
         .attr("class","legend")
         .attr("transform","translate(50,30)")

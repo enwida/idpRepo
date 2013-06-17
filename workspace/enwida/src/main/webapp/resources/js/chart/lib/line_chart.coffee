@@ -30,7 +30,17 @@ define ["generic_chart"], (generic_chart) ->
             x = d.x
             if @chart.options?.scale?.x?.type is "date"
               x = d3.time.format("%Y-%m-%d %H:%M") new Date x
-            "#{@chart.xLabel}: #{x} #{@chart.yLabel}: #{d.y}"
+
+            $("<div>")
+              .append($("<h6>").addClass("tooltip#{id}").text @chart.lines[id].title)
+              .append($("<table cellpadding='2'>")
+                .append($("<tr>")
+                  .append($("<td align='left'>").text @chart.xLabel)
+                  .append($("<td align='left'>").append($("<b>").text x)))
+                .append($("<tr>")
+                  .append($("<td align='left'>").text @chart.yLabel)
+                  .append($("<td align='left'>").append($("<b>").text d.y)))
+            ).html()
           )
 
     draw: ->
