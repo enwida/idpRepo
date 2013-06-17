@@ -11,6 +11,7 @@ public class DataAuthorization {
 	private String resolution;
 	private Date timeFrom;
 	private Date timeTo;
+	private boolean enabled;
 	
 	public int getRole() {
 		return role;
@@ -66,5 +67,13 @@ public class DataAuthorization {
 
 	public void setTimeTo(Date timeto) {
 		this.timeTo = timeto;
+	}
+
+	public boolean isEnabled() {
+		return enabled;
+	}
+
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
 	}	
 }

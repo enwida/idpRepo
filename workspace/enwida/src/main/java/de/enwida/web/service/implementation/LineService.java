@@ -79,6 +79,7 @@ public class LineService implements ILineService {
         result.setTimeFrom(request.getStartTime().getTime());
         result.setTimeTo(request.getEndTime().getTime());
         result.setResolution(request.getResolution().toString());
+        result.setEnabled(true);
 
         return result;
     }
