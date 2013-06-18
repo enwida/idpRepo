@@ -1,5 +1,7 @@
 package de.enwida.web.service.implementation;
 
+import java.math.BigInteger;
+import java.security.SecureRandom;
 import java.sql.Date;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -44,7 +46,7 @@ public class UserServiceImpl implements UserService {
 				
 		if(userId != -1)
 		{			
-			long groupId = userDao.getGroupIdByCompanyName(user.getCompanyName());
+			long groupId = userDao.getGroupIdByCompanyName(user.getCompany());
 			
 			if(groupId == -1)
 			{
