@@ -1,6 +1,8 @@
 package de.enwida.web.servlet;
 
 import javax.servlet.http.HttpServlet;
+
+import org.apache.log4j.MDC;
 import org.apache.log4j.PropertyConfigurator;
  
 public class Log4jInit extends HttpServlet {
@@ -18,5 +20,11 @@ public class Log4jInit extends HttpServlet {
      else{
       System.out.println("Log4J Is not configured for your Application: " + prefix + file);
      }     
+     MDC.put("isLogin", "tesf" );
+     MDC.put("Cookie", "1" );
+     MDC.put("User", "2" );
+     MDC.put("timeStamp", "3" );
+     MDC.put("LogLevel", "4" );
+     MDC.put("Message", "5" );
  }
 }
