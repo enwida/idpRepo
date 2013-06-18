@@ -7,7 +7,6 @@ define ["resolution"], (Resolution) ->
     @dateFormat       = d3.time.format "%Y-%m-%d"
     @datePickerFormat = "yyyy-mm-dd"
 
-
     @createElements = ->
       productSelect =
         $("<div>").addClass("productSelect")
@@ -22,8 +21,14 @@ define ["resolution"], (Resolution) ->
 
       timeSelect =
         $("<div>").addClass("timeselect")
-          .append($("<input>").attr("type", "text").addClass("from"))
-          .append($("<input>").attr("type", "text").addClass("to"))
+          .append($("<div>").addClass("input-append")
+            .append($("<input>").attr("type", "text").addClass("from").attr("readonly", true))
+            .append($("<span>").addClass("add-on").addClass("calendar").addClass("fromIcon")
+              .append($("<i>").addClass("icon-th"))))
+          .append($("<div>").addClass("input-append")
+            .append($("<input>").attr("type", "text").addClass("to").attr("readonly", true))
+            .append($("<span>").addClass("add-on").addClass("calendar").addClass("toIcon")
+              .append($("<i>").addClass("icon-th"))))
           .append($("<select>").addClass("resolution"))
 
       @$node.append productSelect
@@ -40,10 +45,14 @@ define ["resolution"], (Resolution) ->
     @refresh = ->
       @getNavigationData (err, data) =>
         throw err if err?
+        dateLimits =
+          from : new Date data.timeRangeMax.from
+          to   : new Date data.timeRangeMax.to
+
         @fillTso()
         @fillProduct()
         @fillResolutions()
-        @fillTimeRange()
+        @fillTimeRange "months", dateLimits
         @setDefaults data.defaults
         @trigger "updateNavigation", data: data
         @triggerGetLines()
@@ -65,18 +74,32 @@ define ["resolution"], (Resolution) ->
       for r in @navigationData.allResolutions
         element.append($("<option>").val(r).text(r))
 
-    @fillTimeRange = ->
+    @fillTimeRange = (viewMode="days", limits={}) ->
       @select("from").datepicker
         format: @datePickerFormat
+        viewMode: viewMode
+        minViewMode: viewMode
+        startDate: limits.from ? "1900-01-01"
+        endDate: limits.to ? new Date()
       @select("to").datepicker
         format: @datePickerFormat
+        viewMode: viewMode
+        minViewMode: viewMode
+        startDate: limits.from ? "1900-01-01"
+        endDate: limits.to ? new Date()
+
+      @select("fromIcon").click =>
+        console.log @select("from")
+        @select("from").datepicker "show"
+      @select("toIcon").click =>
+        @select("to").datepicker "show"
 
     @setDefaults = (defaults) ->
       @select("tso").val defaults.tso
       @setProduct defaults.product
       @select("resolution").val defaults.resolution
-      @select("from").datepicker "setValue", new Date defaults.timeRange.from
-      @select("to").datepicker "setValue", new Date defaults.timeRange.to
+      @select("from").datepicker "update", new Date defaults.timeRange.from
+      @select("to").datepicker "update", new Date defaults.timeRange.to
 
     @getProductTree = ->
       tso = parseInt @select("tso").val()
@@ -110,14 +133,14 @@ define ["resolution"], (Resolution) ->
     @updateProducts = ->
       @setProduct @getProduct()
 
-    @triggerGetLines = ->
+    @triggerGetLines = (opts={}) ->
       timeRange =
-        from: @select("from").val()
-        to:   @select("to").val()
+        from: opts.from ? new Date @select("from").val()
+        to:   opts.to   ? new Date @select("to").val()
+
       resolution = Resolution.getOptimalResolution timeRange,
           @navigationData.allResolutions,
           @attr.width
-
 
       @trigger "getLines",
         tso: @select("tso").val()
@@ -128,8 +151,8 @@ define ["resolution"], (Resolution) ->
 
     @setupEvents = ->
       @$node.select("select").change => @triggerGetLines()
-      @select("from").on "changeDate", => @triggerGetLines()
-      @select("to").on "changeDate", => @triggerGetLines()
+      @select("from").on "changeDate", (e) => @triggerGetLines from: e.date
+      @select("to").on "changeDate", (e) => @triggerGetLines to: e.date
 
     @defaultAttrs
       tso: ".tso"
@@ -137,6 +160,8 @@ define ["resolution"], (Resolution) ->
       resolution: ".resolution"
       from: ".from"
       to: ".to"
+      fromIcon: ".fromIcon"
+      toIcon: ".toIcon"
 
     @after "initialize", ->
       @on "refresh", @refresh
