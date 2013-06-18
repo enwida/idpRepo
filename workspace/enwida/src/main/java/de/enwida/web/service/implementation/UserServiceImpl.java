@@ -7,23 +7,18 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.mail.MessagingException;
-import javax.mail.internet.AddressException;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import de.enwida.web.dao.interfaces.IUserDao;
-import de.enwida.web.dto.UserDTO;
-import de.enwida.web.model.AspectRight;
 import de.enwida.web.model.Group;
 import de.enwida.web.model.Role;
 import de.enwida.web.model.User;
 import de.enwida.web.service.interfaces.UserService;
 import de.enwida.web.utils.Constants;
 
-@Service("UserService")
+@Service
 @Transactional
 public class UserServiceImpl implements UserService {
 
