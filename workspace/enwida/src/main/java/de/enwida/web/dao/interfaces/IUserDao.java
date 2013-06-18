@@ -30,4 +30,22 @@ public interface IUserDao {
     public boolean saveUserInAnonymousGroup(final long userId);
     public long getAnonymousGroupId();
     
+
+    public User getUser(String userName);
+
+    public String assignUserToGroup(int userID, int groupID);
+
+    public String deassignUserToGroup(int userID, int groupID);
+
+    public String assignRoleToGroup(int roleID, int groupID);
+
+    public String deassignRoleToGroup(int roleID, int groupID);
+
+    public List<Role> getAllRolesWithGroups();
+    
+    public boolean deleteUser(User user);
+    
+    public boolean updateUser(User user);
+    public List<User> findAllUsers();
+    public List<Group> getAllGroupsWithUsers();
 }
