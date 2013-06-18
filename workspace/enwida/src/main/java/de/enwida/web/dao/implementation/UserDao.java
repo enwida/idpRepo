@@ -297,7 +297,7 @@ public class UserDao extends BaseDao<User> implements IUserDao {
 				            ps.setBoolean(5, user.isEnabled());
 				            ps.setDate(6, user.getJoiningDate());
 				            ps.setString(7, user.getContactNo());
-				            ps.setString(8, user.getCompany());
+				            ps.setString(8, user.getCompanyName());
 				            return ps;
 				        }
 				    },
@@ -624,7 +624,7 @@ public List<Group> getAllGroups() {
             while (rs.next()) {
                 Role role = new Role();
                 role.setRoleID(rs.getLong("role_id"));
-                role.setRoleName(rs.getString("name"));
+                role.setRoleName(rs.getString("role_name"));
                 role.setDescription(rs.getString("description"));
                 roles.add(role);
             }
