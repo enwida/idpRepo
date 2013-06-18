@@ -58,6 +58,7 @@ public class TestController {
 		da.setTimeFrom(new Date(cal.getTimeInMillis()));
 		cal.set(2011, 00, 01, 00, 00, 00);
 		da.setTimeTo(new Date(cal.getTimeInMillis()));	
+		da.setEnabled(true);
 		
 		boolean isAuthorized = securityService.isAllowed(da);
 		

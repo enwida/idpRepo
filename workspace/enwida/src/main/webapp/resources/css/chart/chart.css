@@ -16,15 +16,26 @@ body {
 }
 .line0 {
   stroke: steelblue;
-  color: steelblue;
 }
 .line1 {
   stroke: red;
-  color: red;
 }
 .line2 {
   stroke: green;
-  color: green;
+}
+.linesquare {
+	width: 20px;
+	height: 20px;
+	margin-right: 10px;
+}
+.line0 .linesquare {
+	background-color: steelblue;
+}
+.line1 .linesquare {
+	background-color: red;
+}
+.line2 .linesquare {
+	background-color: green;
 }
 .dot0 {
 	fill: steelblue;
@@ -51,20 +62,59 @@ body {
   color: green;
 }
 .lines {
-  padding: 20px;
+  padding: 10px 0;
+  margin-left: 50px;
+  border-bottom: 1px solid #e0e0e0;
+}
+.lines ul {
+	margin: 0;
+	padding: 0;
 }
 .lines li {
-  display: inline;
-  padding: 10px 20px;
-  margin-right: 10px;
-  border: 1px solid #444;
+  display: inline-block;
+  padding: 0;
+  margin: 0;
+  margin-right: 30px;
   cursor: pointer;
-}
-
-.lines li.hidden {
-  color: #888888;
+  border-radius: 2px;
 }
 
 .lines li.selected {
-  background-color: #e0e0e0;
+	color: black;
+}
+.lines li.hidden div {
+	background-color: #888888;
+}
+.lines li.selected:not(.hidden) div {
+	background-color: #888888;
+}
+.lines li.line0.hidden.selected div {
+	background-color: steelblue;
+}
+.lines li.line1.hidden.selected div {
+	background-color: red;
+}
+.lines li.line2.hidden.selected div {
+	background-color: green;
+}
+
+.navigation {
+	padding: 10px;
+	margin-left: 40px;
+}
+
+.navigation select {
+	width: 0;
+	min-width: 150px;
+	margin-right: 10px;
+}
+
+.navigation input {
+	width: 0;
+	min-width: 136px;
+	margin-right: 10px;
+}
+
+.resolution {
+	display: none;
 }

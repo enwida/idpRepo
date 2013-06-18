@@ -1,4 +1,4 @@
-define ->
+define ["resolution"], (Resolution) ->
 
   flight.component ->
 
@@ -22,8 +22,8 @@ define ->
 
       timeSelect =
         $("<div>").addClass("timeselect")
-          .append($("<input>").attr("type", "input").addClass("from"))
-          .append($("<input>").attr("type", "input").addClass("to"))
+          .append($("<input>").attr("type", "text").addClass("from"))
+          .append($("<input>").attr("type", "text").addClass("to"))
           .append($("<select>").addClass("resolution"))
 
       @$node.append productSelect
@@ -111,13 +111,17 @@ define ->
       @setProduct @getProduct()
 
     @triggerGetLines = ->
+      timeRange =
+          from: @select("from").val()
+          to:   @select("to").val()
+      resolution = Resolution.getOptimalResolution timeRange, @navigationData.allResolutions
+
       @trigger "getLines",
         tso: @select("tso").val()
         product: @getProduct()
-        timeRange:
-          from: @select("from").val()
-          to:   @select("to").val()
-        resolution: @select("resolution").val()
+        timeRange: timeRange
+        resolution: resolution
+        # resolution: @select("resolution").val()
 
     @setupEvents = ->
       @$node.select("select").change => @triggerGetLines()

@@ -34,6 +34,7 @@ public class SecurityService implements ISecurityService {
 		dataAuthorization.setProductId(productId);
 		dataAuthorization.setAspect(aspect.name());
 		dataAuthorization.setTso(tso);
+		dataAuthorization.setEnabled(true);
 		
 		ProductRestriction pR = new ProductRestriction();
 		List<DataAuthorization> dataAuthorizationResult = dataAuthorizationDao.getListByExample(dataAuthorization); 
@@ -42,5 +43,17 @@ public class SecurityService implements ISecurityService {
 			pR.setTimeRange(new CalendarRange(dA.getTimeFrom(), dA.getTimeTo()));
 		}		
 		return pR;
-    }	
+    }
+
+	public void authorizeDataLine(int productId, int tso, Aspect aspect, int role, boolean enable) {
+		
+		DataAuthorization dataAuthorization = new DataAuthorization();
+		dataAuthorization.setRole(role);
+		dataAuthorization.setProductId(productId);
+		dataAuthorization.setAspect(aspect.name());
+		dataAuthorization.setTso(tso);
+		dataAuthorization.setEnabled(enable);
+		
+		dataAuthorizationDao.enableLine(dataAuthorization); 
+	}	
 }
