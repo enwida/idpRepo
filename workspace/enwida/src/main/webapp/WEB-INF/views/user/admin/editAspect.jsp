@@ -2,10 +2,13 @@
 <%@ page session="false" %>
 <div>
 	<h1>
-		Role: <select>
-			<option value="enwida">admin</option>
-		</select>
-
+	<form action="editAspect" method="GET">
+		Role: <select name="roleID" id="myselect" onchange="this.form.submit()">
+						<c:forEach var="role" items="${roles}">
+							<option value="${role.roleID}">${role.roleName}</option>
+						</c:forEach>
+					</select>
+	</form>
 	</h1>
 	<table id="tblAspects" class="tablesorter">
 	<thead>

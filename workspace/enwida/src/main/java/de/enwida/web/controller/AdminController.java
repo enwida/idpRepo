@@ -51,6 +51,9 @@ public class AdminController {
 	    
 	    List<AspectRight> aspectRights= aspectService.getAllAspects(roleID);
         model.addAttribute("aspectRights", aspectRights);
+        
+        List<Role> roles= userService.getAllRoles();
+        model.addAttribute("roles", roles);
 	    
 		model.addAttribute("content", "editAspect");
 		return "user/admin/master";
