@@ -8,9 +8,13 @@ define ->
     "MONTHLY"       : 60*60*24*30  # roundabout
     "YEARLY"        : 60*60*24*365 # roundabout
 
-  optimalDataPointCount = 30
+  optimalDensity = 20
+  maximumDensity = 10
 
-  getOptimalResolution: (timeRange, filters) ->
+  getOptimalResolution: (timeRange, filters, width) ->
+    optimalDataPointCount = width / optimalDensity
+    maximumDataPointCount = width / maximumDensity
+
     # Sanatize time range
     timeRange.from = new Date timeRange.from unless typeof timeRange.from is "object"
     timeRange.to = new Date timeRange.to unless typeof timeRange.to is "object"
@@ -24,7 +28,12 @@ define ->
     for i in [1...counts.length]
       bestDiff = Math.abs(best[1] - optimalDataPointCount)
       currentDiff = Math.abs(counts[i][1] - optimalDataPointCount)
-      if currentDiff < bestDiff
-        best = counts[i]
+
+      if best[1] > maximumDataPointCount
+        # Current best doesn't obey maximum restriction
+        if counts[i][1] <= maximumDataPointCount or currentDiff < bestDiff
+          best = counts[i]
+      else if currentDiff < bestDiff and counts[i][1] < maximumDataPointCount
+          best = counts[i]
 
     best[0]
