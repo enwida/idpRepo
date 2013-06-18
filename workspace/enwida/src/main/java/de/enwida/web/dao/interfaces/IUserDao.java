@@ -27,7 +27,7 @@ public interface IUserDao {
     public String deassignUserToGroup(int userID, int groupID);
     
 	public List<Group> getAllGroups();
-    public void addGroup(Group newGroup);
+    public Group addGroup(final Group newGroup);
     public List<Group> getAllGroupsWithUsers();
     public String assignRoleToGroup(int roleID, int groupID);
     public String deassignRoleToGroup(int roleID, int groupID);
@@ -35,5 +35,12 @@ public interface IUserDao {
     public void addRole(Role role);
     public List<Role> getAllRoles();
     public List<Role> getAllRolesWithGroups();
+    
+    public boolean checkEmailAvailability(String email) ;
+    public boolean saveUserInGroup(final long userId, final long groupId);
+    public long getRoleIdOfGroup(final long groupId);
+    public int getGroupIdByCompanyName(final String companyName);
+    public Group getGroupByGroupId(long groupId);
+    public boolean saveUserInAnonymousGroup(final long userId);
 
 }
