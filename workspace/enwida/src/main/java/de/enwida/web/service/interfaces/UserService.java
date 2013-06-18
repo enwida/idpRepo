@@ -19,7 +19,7 @@ public interface UserService {
 	public List<Group> getAvailableGroupsForUser(long userID);
 	public List<Group> getUserGroups(long userID);
 	public List<Group> getAllGroups();
-    public void addGroup(Group newGroup);
+    public Group addGroup(Group newGroup);
     public void saveRole(Role role);
     public List<Role> getAllRoles();
     public boolean updateUser(User user);
