@@ -5,15 +5,15 @@ import java.util.List;
 
 public class Group {
 
-	private Long groupID;
+	private long groupID;
 	private String groupName;
 	private List<User> assignedUsers;
 	private boolean status;
 	
-	public Long getGroupID() {
+	public long getGroupID() {
 		return groupID;
 	}
-	public void setGroupID(Long groupID) {
+	public void setGroupID(long groupID) {
 		this.groupID = groupID;
 	}
 	public String getGroupName() {

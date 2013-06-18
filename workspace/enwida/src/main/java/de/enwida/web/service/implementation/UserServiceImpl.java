@@ -44,27 +44,24 @@ public class UserServiceImpl implements UserService {
 		// If successfully saved, than assign default roles to user and save userId in user_roles table
 		if(userId != -1)
 		{
-			Group group = userDao.getGroupByGroupName(user.getCompanyName());
-
-			if(group == null)
+			
+			int groupId = userDao.getGroupIdByCompanyName(user.getCompanyName());
+			
+			if(groupId == -1)
 			{
-				group = new Group();
-				group.setGroupName(user.getCompanyName());
-				group = this.addGroup(group);
-				userDao.saveUserInGroup(userId, group.getGroupID());
-				userDao.addPermission(userId, 3); // Assumed for the moment that anonymous has id 3
+				userDao.saveUserInAnonymousGroup(userId);
 			}
 			else
 			{
-				userDao.saveUserInGroup(userId, group.getGroupID());
+				Group group = userDao.getGroupByGroupId(groupId);
+				
 				if(group.isStatus())
 				{
-					long roleId = userDao.getRoleIdOfGroup(group.getGroupID());
-					userDao.addPermission(userId, roleId);
+					userDao.saveUserInGroup(userId, groupId);
 				}
 				else
 				{
-					userDao.addPermission(userId, 3);
+					userDao.saveUserInAnonymousGroup(userId);
 				}
 			}
 			

@@ -23,7 +23,9 @@ public interface IUserDao {
     public void addRole(Role role);
     public List<Role> getAllRoles();
     public boolean checkEmailAvailability(String email) ;
-    public Group getGroupByGroupName(final String groupName);
     public boolean saveUserInGroup(final long userId, final long groupId);
     public long getRoleIdOfGroup(final long groupId);
+    public int getGroupIdByCompanyName(final String companyName);
+    public Group getGroupByGroupId(long groupId);
+    public boolean saveUserInAnonymousGroup(final long userId);
 }

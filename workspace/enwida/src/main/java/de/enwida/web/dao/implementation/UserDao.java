@@ -287,7 +287,7 @@ public class UserDao extends BaseDao<User> implements IUserDao {
 
 		try 
 		{
-			final String sql = "INSERT INTO \"users\" ( user_name, user_password, first_name, last_name, enabled, joining_date, telephone ) VALUES ( ?, ?, ?, ?, ?, ?, ?)";	    			
+			final String sql = "INSERT INTO \"users\" ( user_name, user_password, first_name, last_name, enabled, joining_date, telephone, company_name ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?)";	    			
 			this.jdbcTemplate.update(
 				    new PreparedStatementCreator() {
 				        public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
@@ -299,6 +299,7 @@ public class UserDao extends BaseDao<User> implements IUserDao {
 				            ps.setBoolean(5, user.isEnabled());
 				            ps.setDate(6, user.getJoiningDate());
 				            ps.setString(7, user.getContactNo());
+				            ps.setString(8, user.getCompanyName());
 				            return ps;
 				        }
 				    },
@@ -336,6 +337,7 @@ public class UserDao extends BaseDao<User> implements IUserDao {
                 user.setLastName(rs.getString("last_name"));
                 user.setLastName(rs.getString("last_name"));
                 user.setJoiningDate(rs.getDate("joining_date"));
+                user.setCompanyName(rs.getString("company_name"));
 			}
 			rs.close();
 			ps.close();
@@ -573,25 +575,21 @@ public class UserDao extends BaseDao<User> implements IUserDao {
 		return false;
 	}
 	
-	public Group getGroupByGroupName(final String groupName)
+	public int getGroupIdByCompanyName(final String companyName)
 	{
-		Group group = null;
-		String sql = "SELECT * FROM groups where group_name=?";
+		String sql = "select group_id FROM user_group INNER JOIN users ON user_group.user_id=user.user_id where users.company_name=?";
 		Connection conn = null;
 		
 		try 
 		{
 			conn = datasource.getConnection();
 			PreparedStatement ps = conn.prepareStatement(sql);
-			ps.setString(1, groupName);
+			ps.setString(1, companyName);
 			ResultSet rs = ps.executeQuery();
 			
 			if (rs.next()) 
 			{
-				group = new Group();
-				group.setGroupName(groupName);
-				group.setGroupID( rs.getLong("group_id") );
-				group.setStatus(  rs.getBoolean("auto_pass") );
+				return rs.getInt(1);
 			}
 			
 			rs.close();
@@ -599,7 +597,7 @@ public class UserDao extends BaseDao<User> implements IUserDao {
 		} 
 		catch (SQLException e) 
 		{			
-			return null;
+			return -1;
 		} 
 		finally 
 		{
@@ -611,12 +609,12 @@ public class UserDao extends BaseDao<User> implements IUserDao {
 				} 
 				catch (SQLException e) 
 				{
-					return null;
+					return -1;
 				}
 			}
 		}
 		
-		return group;
+		return -1;
 	}
 
 	public boolean saveUserInGroup(final long userId, final long groupId)
@@ -687,4 +685,121 @@ public class UserDao extends BaseDao<User> implements IUserDao {
 		return -1;
 		
 	}
+	
+	public Group getGroupByGroupId(long groupId) 
+	{
+		Group group = null;
+		
+		String sql = "select * from groups where group_id=?";
+		Connection conn = null;
+		
+		try 
+		{
+			conn = datasource.getConnection();
+			PreparedStatement ps = conn.prepareStatement(sql);
+			ps.setLong(1, groupId);
+			ResultSet rs = ps.executeQuery();
+			
+			if (rs.next()) 
+			{
+				group = new Group();
+				group.setGroupID(groupId);
+				group.setGroupName(rs.getString("group_name"));
+				group.setStatus(rs.getBoolean("auto_pass"));
+			}
+			
+			rs.close();
+			ps.close();
+		} 
+		catch (SQLException e) 
+		{			
+			return null;
+		} 
+		finally 
+		{
+			if (conn != null) 
+			{
+				try 
+				{
+					conn.close();
+				} 
+				catch (SQLException e) 
+				{
+					return null;
+				}
+			}
+		}
+		
+		return group;
+		
+	}
+	
+	public int getRoleIdByCompanyName(final String companyName)
+	{
+		Group group = null;
+		String sql = "select role_id FROM user_roles INNER JOIN users ON user_roles.user_id=user.user_id where users.company_name=?";
+		Connection conn = null;
+		
+		try 
+		{
+			conn = datasource.getConnection();
+			PreparedStatement ps = conn.prepareStatement(sql);
+			ps.setString(1, companyName);
+			ResultSet rs = ps.executeQuery();
+			
+			if (rs.next()) 
+			{
+				return rs.getInt(1);
+			}
+			
+			rs.close();
+			ps.close();
+		} 
+		catch (SQLException e) 
+		{			
+			return -1;
+		} 
+		finally 
+		{
+			if (conn != null) 
+			{
+				try 
+				{
+					conn.close();
+				} 
+				catch (SQLException e) 
+				{
+					return -1;
+				}
+			}
+		}
+		
+		return -1;
+	}
+	
+	public boolean saveUserInAnonymousGroup(final long userId)
+	{
+		final String sql = "INSERT INTO user_group(user_id, group_id) VALUES (?, (select group_id from groups where group_name='anonymous'));";        
+ 
+        try 
+        {
+			this.jdbcTemplate.update(
+				    new PreparedStatementCreator() {
+				        public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
+				            PreparedStatement ps = connection.prepareStatement(sql, new String[] {"group_id"});
+				            ps.setLong(1, userId);
+				            return ps;
+				        }
+				    });
+				
+        } 
+        catch (Exception e) 
+        {
+            return false;
+        } 
+        
+        return true;
+
+	}
+
 }
