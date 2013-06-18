@@ -529,32 +529,7 @@ public class UserDao extends BaseDao<User> implements IUserDao {
         }
         return groups;
     }
-    public void addGroup(Group newGroup) {
-        if(newGroup.getGroupName().isEmpty()){
-            return;
-        }
-                
-        String sql = "INSERT INTO groups(group_name) VALUES (?);";
-         
-        Connection conn = null;
- 
-        try {
-            conn = datasource.getConnection();
-            PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setString(1, newGroup.getGroupName());
-            ps.executeUpdate();
-            ps.close();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        } finally {
-            if (conn != null) {
-                try {
-                conn.close();
-                } catch (SQLException e) {}
-            }
-        }
-    }
-
+  
     public void addRole(Role role) {
         if(role.getRoleName().isEmpty()){
             return;
@@ -827,5 +802,302 @@ public class UserDao extends BaseDao<User> implements IUserDao {
             }
         }
         return roles;
+    }
+    
+    public long getRoleIdOfGroup(long groupId) 
+    {
+        String sql = "select role_id FROM user_roles INNER JOIN user_group ON user_roles.user_id=user_group.user_id where user_group.group_id=?";
+        Connection conn = null;
+        
+        try 
+        {
+            conn = datasource.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setLong(1, groupId);
+            ResultSet rs = ps.executeQuery();
+            
+            if (rs.next()) 
+            {
+                return rs.getLong(1);
+            }
+            
+            rs.close();
+            ps.close();
+        } 
+        catch (SQLException e) 
+        {           
+            return -1;
+        } 
+        finally 
+        {
+            if (conn != null) 
+            {
+                try 
+                {
+                    conn.close();
+                } 
+                catch (SQLException e) 
+                {
+                    return -1;
+                }
+            }
+        }
+        
+        return -1;
+        
+    }
+    
+    public Group getGroupByGroupId(long groupId) 
+    {
+        Group group = null;
+        
+        String sql = "select * from groups where group_id=?";
+        Connection conn = null;
+        
+        try 
+        {
+            conn = datasource.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setLong(1, groupId);
+            ResultSet rs = ps.executeQuery();
+            
+            if (rs.next()) 
+            {
+                group = new Group();
+                group.setGroupID(groupId);
+                group.setGroupName(rs.getString("group_name"));
+                group.setAutoPass(rs.getBoolean("auto_pass"));
+            }
+            
+            rs.close();
+            ps.close();
+        } 
+        catch (SQLException e) 
+        {           
+            return null;
+        } 
+        finally 
+        {
+            if (conn != null) 
+            {
+                try 
+                {
+                    conn.close();
+                } 
+                catch (SQLException e) 
+                {
+                    return null;
+                }
+            }
+        }
+        
+        return group;
+        
+    }
+    
+    
+    public boolean checkEmailAvailability(String email) {
+        
+        String sql = "SELECT * FROM users where user_name=?";
+        Connection conn = null;
+ 
+        try {
+            conn = datasource.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, email);
+            ResultSet rs = ps.executeQuery();
+        
+            if (rs.next()) {
+                return true;
+            }
+            
+            rs.close();
+            ps.close();
+        } 
+        catch (SQLException e) 
+        {
+            throw new RuntimeException(e);
+        } 
+        finally 
+        {
+            if (conn != null) 
+            {
+                try 
+                {
+                    conn.close();
+                } 
+                catch (SQLException e) {}
+            }
+        }       
+        return false;
+    }
+    
+    public int getGroupIdByCompanyName(final String companyName)
+    {
+        String sql = "select group_id FROM user_group INNER JOIN users ON user_group.user_id=user.user_id where users.company_name=?";
+        Connection conn = null;
+        
+        try 
+        {
+            conn = datasource.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, companyName);
+            ResultSet rs = ps.executeQuery();
+            
+            if (rs.next()) 
+            {
+                return rs.getInt(1);
+            }
+            
+            rs.close();
+            ps.close();
+        } 
+        catch (SQLException e) 
+        {           
+            return -1;
+        } 
+        finally 
+        {
+            if (conn != null) 
+            {
+                try 
+                {
+                    conn.close();
+                } 
+                catch (SQLException e) 
+                {
+                    return -1;
+                }
+            }
+        }
+        
+        return -1;
+    }
+
+    public boolean saveUserInGroup(final long userId, final long groupId)
+    {
+        final String sql = "INSERT INTO user_group(user_id, group_id) VALUES (?, ?);";        
+        Connection conn = null;
+ 
+        try 
+        {
+            this.jdbcTemplate.update(
+                    new PreparedStatementCreator() {
+                        public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
+                            PreparedStatement ps = connection.prepareStatement(sql, new String[] {"group_id"});
+                            ps.setLong(1, userId);
+                            ps.setLong(2, groupId);
+                            return ps;
+                        }
+                    });
+                
+        } 
+        catch (Exception e) 
+        {
+            return false;
+        } 
+        
+        return true;
+    }
+    
+    public Group addGroup(final Group newGroup) 
+    {
+        KeyHolder keyHolder = new GeneratedKeyHolder(); 
+        Number id = -1;
+
+        final String sql = "INSERT INTO groups(group_name, auto_pass) VALUES (?, ?);";        
+        Connection conn = null;
+ 
+        try 
+        {
+            this.jdbcTemplate.update(
+                    new PreparedStatementCreator() {
+                        public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
+                            PreparedStatement ps = connection.prepareStatement(sql, new String[] {"group_id"});
+                            ps.setString(1, newGroup.getGroupName());
+                            ps.setBoolean(2, newGroup.isAutoPass());
+                            return ps;
+                        }
+                    },
+                    keyHolder);
+                
+            id = keyHolder.getKey();
+        } 
+        catch (Exception e) 
+        {
+            return null;
+        } 
+        
+        newGroup.setGroupID(id.longValue());
+        
+        return newGroup;
+    }
+    
+    public int getRoleIdByCompanyName(final String companyName)
+    {
+        Group group = null;
+        String sql = "select role_id FROM user_roles INNER JOIN users ON user_roles.user_id=user.user_id where users.company_name=?";
+        Connection conn = null;
+        
+        try 
+        {
+            conn = datasource.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, companyName);
+            ResultSet rs = ps.executeQuery();
+            
+            if (rs.next()) 
+            {
+                return rs.getInt(1);
+            }
+            
+            rs.close();
+            ps.close();
+        } 
+        catch (SQLException e) 
+        {           
+            return -1;
+        } 
+        finally 
+        {
+            if (conn != null) 
+            {
+                try 
+                {
+                    conn.close();
+                } 
+                catch (SQLException e) 
+                {
+                    return -1;
+                }
+            }
+        }
+        
+        return -1;
+    }
+    
+    public boolean saveUserInAnonymousGroup(final long userId)
+    {
+        final String sql = "INSERT INTO user_group(user_id, group_id) VALUES (?, (select group_id from groups where group_name='anonymous'));";        
+ 
+        try 
+        {
+            this.jdbcTemplate.update(
+                    new PreparedStatementCreator() {
+                        public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
+                            PreparedStatement ps = connection.prepareStatement(sql, new String[] {"group_id"});
+                            ps.setLong(1, userId);
+                            return ps;
+                        }
+                    });
+                
+        } 
+        catch (Exception e) 
+        {
+            return false;
+        } 
+        
+        return true;
+
     }
 }

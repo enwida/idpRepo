@@ -48,7 +48,7 @@
 						<c:forEach var="role" items="${roles}">
 							<option value="${role.roleID}">${role.roleName}</option>
 						</c:forEach>
-				</select>
+					</select>
 			</td>
 		</tr>
 		<tbody>

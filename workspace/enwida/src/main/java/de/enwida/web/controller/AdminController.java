@@ -5,6 +5,7 @@ import java.util.List;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
+import org.apache.log4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.stereotype.Controller;
@@ -51,13 +52,15 @@ public class AdminController {
 	    
 	    List<AspectRight> aspectRights= aspectService.getAllAspects(roleID);
         model.addAttribute("aspectRights", aspectRights);
+        
+        List<Role> roles= userService.getAllRoles();
+        model.addAttribute("roles", roles);
 	    
 		model.addAttribute("content", "editAspect");
 		return "user/admin/master";
 	}
 	@RequestMapping(value="/userList", method = RequestMethod.GET)
 	public String userList(Model model) {
-	    log.debug("test");
 		List<User> users= userService.findAllUsers();
 		model.addAttribute("users", users);
 		List<Group> groups= userService.getAllGroups();
