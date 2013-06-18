@@ -135,7 +135,7 @@ public class AdminController {
         User newUser=userService.getUser(userID);
         newUser.setFirstName(user.getFirstName());
         newUser.setLastName(user.getLastName());
-        newUser.setTel(user.getTel());
+        newUser.setTelephone(user.getTelephone());
         userService.updateUser(newUser);
         return "user/admin/master";
     }
