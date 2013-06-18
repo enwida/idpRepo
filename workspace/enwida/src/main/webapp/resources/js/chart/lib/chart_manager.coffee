@@ -45,7 +45,8 @@ define ["navigation", "spreadsheet", "visual", "lines"],
           type: @$node.attr("data-chart-type") ? "line"
 
         # Add lines
-        lines = $("<div>").addClass "lines"
+        lines = $("<div>").addClass("lines")
+          .css("width", @$node.attr("data-width") ? "100%")
         @$node.append lines
         Lines.attachTo lines
 

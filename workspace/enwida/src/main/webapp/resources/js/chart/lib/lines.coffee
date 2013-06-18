@@ -9,7 +9,11 @@ define ->
       [0...opts.lines.length].forEach (i) =>
         line = opts.lines[i]
         li = $("<li>").addClass("line#{i}")
-          .append($("<span>").text(line.title))
+          .append($("<table>").attr("cellpadding", "3")
+            .append($("<tr>")
+              .append($("<td>")
+                .append($("<div>").addClass("linesquare")))
+              .append($("<td>").text(line.title))))
         li.click =>
             li.toggleClass "hidden"
             @trigger "toggleLine", lineId: i
