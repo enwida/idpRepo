@@ -11,8 +11,8 @@ define ["navigation", "spreadsheet", "visual", "lines"],
             chartId: @attr.id
             product: options.product
             tso: options.tso
-            startTime: format new Date options.timeRange.from
-            endTime: format new Date options.timeRange.to
+            startTime: format options.timeRange.from
+            endTime: format options.timeRange.to
             resolution: options.resolution
           success: (data) =>
             @select("visual").fadeIn 100
@@ -27,8 +27,8 @@ define ["navigation", "spreadsheet", "visual", "lines"],
           @trigger @select("lines"), "updateLines", lines: data
 
       @toggleLine = (_, opts) ->
-        @$node.find("path.line#{opts.lineId}").toggle()
-        @$node.find(".dot#{opts.lineId}").toggle()
+        @$node.find("path.line#{opts.lineId}").toggle(200)
+        @$node.find(".dot#{opts.lineId}").toggle(200)
 
       @defaultAttrs
         navigation: ".navigation"

@@ -8,16 +8,12 @@ define ->
     "MONTHLY"       : 60*60*24*30  # roundabout
     "YEARLY"        : 60*60*24*365 # roundabout
 
-  optimalDensity = 20
-  maximumDensity = 10
+  optimalDensity = 25
+  maximumDensity = 15
 
   getOptimalResolution: (timeRange, filters, width) ->
     optimalDataPointCount = width / optimalDensity
     maximumDataPointCount = width / maximumDensity
-
-    # Sanatize time range
-    timeRange.from = new Date timeRange.from unless typeof timeRange.from is "object"
-    timeRange.to = new Date timeRange.to unless typeof timeRange.to is "object"
 
     diffSeconds = (timeRange.to - timeRange.from) / 1000
     validKeys = _(_(resolutions).keys()).filter (res) -> _(filters).contains res
