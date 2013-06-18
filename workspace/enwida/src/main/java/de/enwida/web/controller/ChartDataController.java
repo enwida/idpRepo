@@ -107,7 +107,7 @@ public class ChartDataController {
 	    final ChartNavigationData result = navigationDao.getDefaultNavigation(chartId, locale);
 	    result.addProductTree(new ProductTree(1));
 	    final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-	    final Date from = dateFormat.parse("2010-01-01");
+	    final Date from = dateFormat.parse("2010-07-01");
 	    final Date to = dateFormat.parse("2010-12-31");
 	    final Calendar cFrom = Calendar.getInstance();
 	    final Calendar cTo = Calendar.getInstance();

@@ -4,6 +4,7 @@ define ["navigation", "spreadsheet", "visual", "lines"],
     flight.component ->
 
       @getLines = (options, callback) ->
+        @select("visual").fadeOut 100
         format = d3.time.format "%Y-%m-%d"
         $.ajax "lines.test",
           data:
@@ -13,8 +14,11 @@ define ["navigation", "spreadsheet", "visual", "lines"],
             startTime: format new Date options.timeRange.from
             endTime: format new Date options.timeRange.to
             resolution: options.resolution
-          success: (data) -> callback null, data
-          error: (err) -> callback err
+          success: (data) =>
+            @select("visual").fadeIn 100
+            callback null, data
+          error: (err) =>
+            callback err
 
       @onGetLines = (a, opts) ->
         @getLines opts, (err, data) =>
@@ -37,21 +41,25 @@ define ["navigation", "spreadsheet", "visual", "lines"],
           @trigger @select("visual"), "navigationData", opts
         @on "toggleLine", @toggleLine
 
+        @attr.width = @$node.attr("data-width") ? "800"
+
         # Add visual
         visual = $("<div>").addClass "visual"
         @$node.append visual
         Visual.attachTo visual,
           id: @attr.id
           type: @$node.attr("data-chart-type") ? "line"
+          width: @attr.width
 
         # Add lines
-        lines = $("<div>").addClass("lines")
-          .css("width", @$node.attr("data-width") ? "100%")
+        lines = $("<div>").addClass("lines").css("width", "#{@attr.width}px")
         @$node.append lines
         Lines.attachTo lines
 
         # Add navigation
         navigation = $("<div>").addClass "navigation"
         @$node.append navigation
-        Navigation.attachTo navigation, id: @attr.id
+        Navigation.attachTo navigation,
+          id: @attr.id
+          width: @attr.width
 

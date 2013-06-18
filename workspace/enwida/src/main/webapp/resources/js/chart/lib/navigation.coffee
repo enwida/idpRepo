@@ -112,9 +112,12 @@ define ["resolution"], (Resolution) ->
 
     @triggerGetLines = ->
       timeRange =
-          from: @select("from").val()
-          to:   @select("to").val()
-      resolution = Resolution.getOptimalResolution timeRange, @navigationData.allResolutions
+        from: @select("from").val()
+        to:   @select("to").val()
+      resolution = Resolution.getOptimalResolution timeRange,
+          @navigationData.allResolutions,
+          @attr.width
+
 
       @trigger "getLines",
         tso: @select("tso").val()
