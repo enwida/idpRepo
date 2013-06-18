@@ -9,7 +9,6 @@ public class User {
 	private String userName;
 	private String lastName;
     private String firstName;
-    private String email;
 	private String password;
 	private String company;
 	private String contactNo;
@@ -19,9 +18,7 @@ public class User {
 	private String lastLogin;
     private List<Group> groups;
     private List<Role> roles;
-	private String companyName;
-    private String joinDate;
-    private String tel;
+    private String telephone;
 
 
 	private UserPermissionCollection userPermissionCollection=new UserPermissionCollection();
@@ -142,22 +139,6 @@ public class User {
 		this.contactNo = contactNo;
 	}
 
-	public String getCompanyName() {
-		return companyName;
-	}
-
-	public void setCompanyName(String companyName) {
-		this.companyName = companyName;
-	}
-
-    public String getJoinDate() {
-        return joinDate;
-    }
-
-    public void setJoinDate(String joinDate) {
-        this.joinDate = joinDate;
-    }
-
     public String getCompany() {
         return company;
     }
@@ -166,22 +147,14 @@ public class User {
         this.company = company;
     }
 
-    public String getTel() {
-        return tel;
+    public String getTelephone() {
+        return telephone;
     }
 
-    public void setTel(String tel) {
-        this.tel = tel;
+    public void setTelephone(String telephone) {
+        this.telephone = telephone;
     }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
+    
     public List<Group> getGroups() {
         return groups;
     }

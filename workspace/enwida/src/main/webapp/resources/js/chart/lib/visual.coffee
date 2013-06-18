@@ -48,3 +48,4 @@ define ["line_chart", "carpet_chart"], (LineChart, CarpetChart) ->
 
       @attr.chartOptions =
         parent: ".chart[data-chart-id='#{@attr.id}'] .visual"
+        width: @attr.width

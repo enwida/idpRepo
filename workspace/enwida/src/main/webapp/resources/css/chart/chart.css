@@ -37,6 +37,12 @@ body {
 .line2 .linesquare {
 	background-color: green;
 }
+.line.selected {
+	stroke: #888888;
+}
+.dot.selected {
+	fill: #888888;
+}
 .dot0 {
 	fill: steelblue;
 }
@@ -111,10 +117,19 @@ body {
 
 .navigation input {
 	width: 0;
-	min-width: 136px;
-	margin-right: 10px;
+	min-width: 110px;
 }
 
 .resolution {
 	display: none;
+}
+
+input.from,
+input.to {
+	cursor: pointer;
+}
+
+.calendar {
+	margin-right: 10px;
+	cursor: pointer;
 }

@@ -39,6 +39,7 @@ public class DataAvailibilityDao extends BaseDao<DataAvailibility> implements ID
 		return dAvailability;
 	}
 
+
 	public List<DataAvailibility> getListByExample(DataAvailibility dataAvailibility) {
 		String SELECT_QUERY = "SELECT * FROM availability WHERE product = ? AND tso = ? AND tablename SIMILAR TO ?;";
 		
