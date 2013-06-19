@@ -10,7 +10,7 @@ public class User {
 	private String lastName;
     private String firstName;
 	private String password;
-	private String company;
+	private String companyName;
 	private String contactNo;
 	private boolean enabled;
 	private Date joiningDate;
@@ -139,12 +139,12 @@ public class User {
 		this.contactNo = contactNo;
 	}
 
-    public String getCompany() {
-        return company;
+    public String getCompanyName() {
+        return companyName;
     }
 
-    public void setCompany(String company) {
-        this.company = company;
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
     }
 
     public String getTelephone() {

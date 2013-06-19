@@ -46,7 +46,7 @@ public class UserServiceImpl implements UserService {
 				
 		if(userId != -1)
 		{			
-			long groupId = userDao.getGroupIdByCompanyName(user.getCompany());
+			long groupId = userDao.getGroupIdByCompanyName(user.getCompanyName());
 			
 			if(groupId == -1)
 			{

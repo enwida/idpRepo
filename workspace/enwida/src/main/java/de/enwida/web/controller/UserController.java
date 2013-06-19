@@ -197,6 +197,8 @@ public class UserController {
 		user.setPassword(userDTO.getPassword());
 		user.setFirstName(userDTO.getFirstName());
 		user.setLastName(userDTO.getLastName());
+		user.setCompanyName(userDTO.getCompanyName());
+		user.setContactNo(userDTO.getTelephone());
 		
 		return user;
 	}
