@@ -1206,5 +1206,30 @@ public List<Group> getAllGroups() {
 		return groups;
 	}
 
+    @Override
+    public boolean enableDisableUser(int userID, boolean enabled) {
+        String sql = "UPDATE users SET enabled=? WHERE user_id=?";
+        
+        Connection conn = null;
+ 
+        try {
+            conn = datasource.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setBoolean(1, enabled);
+            ps.setLong(2, userID);
+            ps.executeUpdate();
+            ps.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            if (conn != null) {
+                try {
+                conn.close();
+                } catch (SQLException e) {}
+            }
+        }
+        return true;
+    }
+
 
 }

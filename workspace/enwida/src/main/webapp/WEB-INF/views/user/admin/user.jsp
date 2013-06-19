@@ -16,19 +16,15 @@
 			</tr>
 			<tr>
 				<td>Join date:</td>
-				<td>${user.joinDate}</td>
-			</tr>
-			<tr>
-				<td>Email:</td>
-				<td>${user.email}</td>
+				<td>${user.joiningDate}</td>
 			</tr>
 			<tr>
 				<td>Company:</td>
-				<td>${user.company}</td>
+				<td>${user.companyName}</td>
 			</tr>
 			<tr>
 				<td>Tel:</td>
-				<td><form:input path="tel" value="${user.tel}" /></td>
+				<td><form:input path="telephone" value="${user.telephone}" /></td>
 			</tr>
 			<tr>
 				<td>Login Info</td>

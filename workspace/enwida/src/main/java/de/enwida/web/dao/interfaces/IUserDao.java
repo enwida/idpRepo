@@ -48,4 +48,5 @@ public interface IUserDao {
     public boolean updateUser(User user);
     public List<User> findAllUsers();
     public List<Group> getAllGroupsWithUsers();
+    public boolean enableDisableUser(int userID, boolean enabled);
 }

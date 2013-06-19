@@ -2,6 +2,7 @@ package de.enwida.web.controller;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
@@ -14,8 +15,10 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import de.enwida.web.model.AspectRight;
+import de.enwida.web.model.ChartNavigationData;
 import de.enwida.web.model.Group;
 import de.enwida.web.model.Role;
 import de.enwida.web.model.User;
@@ -127,6 +130,20 @@ public class AdminController {
         return "user/admin/master";
     }
     
+    @RequestMapping(value="/", method = RequestMethod.GET)
+    public String admin(Model model) {
+       
+        model.addAttribute("content", "admin");
+        return "user/admin/master";
+    }
+    
+    
+    @RequestMapping(value = "/enableDisableUser", method = RequestMethod.GET)
+    @ResponseBody
+    public boolean enableDisableUser(int userID,boolean enabled) {
+        return userService.enableDisableUser(userID,enabled);
+    }   
+    
     @RequestMapping(value="/user",method=RequestMethod.POST, params = "save")
     public String processForm(@ModelAttribute(value="USER")User user,long userID,HttpSession session, ModelMap model)
     {
@@ -172,6 +189,17 @@ public class AdminController {
     {
         String result= userService.deassignUserToGroup(selectedUser,selectedGroup);
         model.addAttribute("info", result);
+        return editGroup(model);
+    }
+    
+    @RequestMapping(value="/editGroup",method=RequestMethod.POST, params = "addGroup")
+    public String addGroup(Model model,String newGroup,boolean autoPass)
+    {
+        System.out.println("test");
+        Group group=new Group();
+        group.setGroupName(newGroup);
+        group.setAutoPass(autoPass);
+        userService.addGroup(group);
         return editGroup(model);
     }
     

@@ -31,8 +31,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	public List<User> getUsers() {
-		// TODO Auto-generated method stub
-		return null;
+	    return userDao.findAllUsers();
 	}
 
 
@@ -171,5 +170,10 @@ public class UserServiceImpl implements UserService {
 
     public List<User> findAllUsers() {
         return userDao.findAllUsers();
+    }
+
+    @Override
+    public boolean enableDisableUser(int userID, boolean enabled) {
+        return userDao.enableDisableUser(userID,enabled);
     }
 }

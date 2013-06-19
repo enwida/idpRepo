@@ -18,7 +18,7 @@
 			<tr>
 				<td><a href='user?userID=${user.userID}'>${user.userName}</a></td>
 				<td><input type="checkbox"
-					onclick="updateRole(${user.userID},0,this);"
+					onclick="enableDisableUser(${user.userID},this.checked);"
 					${user.enabled == 'true' ? 'checked' : ''}></td>
 				<td>${user.firstName} ${user.lastName}</td>
 				<td>${user.loginCount+user.lastLogin}</td>
@@ -30,3 +30,11 @@
 		</c:forEach>
 	</tbody>
 </table>
+
+<script>
+	function enableDisableUser(userID,checked){
+		$.ajax({
+	     	  url: "enableDisableUser?userID="+userID+"&enabled="+checked
+	    });
+	}
+</script>

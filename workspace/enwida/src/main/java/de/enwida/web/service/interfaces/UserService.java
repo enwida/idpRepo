@@ -31,4 +31,5 @@ public interface UserService {
     public String assignRoleToGroup(int selectedRole, int selectedGroup);
     public String deassignRoleToGroup(int selectedRole, int selectedGroup);
     public List<Role> getAllRolesWithGroups();
+    public boolean enableDisableUser(int userID, boolean enabled);
 }
