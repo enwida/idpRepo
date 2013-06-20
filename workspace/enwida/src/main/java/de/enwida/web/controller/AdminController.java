@@ -25,6 +25,7 @@ import de.enwida.web.model.User;
 import de.enwida.web.service.implementation.AspectServiceImpl;
 import de.enwida.web.service.interfaces.AspectService;
 import de.enwida.web.service.interfaces.UserService;
+import de.enwida.web.servlet.CustomLogger;
 import de.enwida.web.validator.UserValidator;
 
 /**
@@ -47,7 +48,7 @@ public class AdminController {
 	private UserValidator userValidator;
 	
 
-    private static org.apache.log4j.Logger log = Logger.getLogger(AdminController.class);
+    private static org.apache.log4j.Logger logger = Logger.getLogger(AdminController.class);
 	
 	
 	@RequestMapping(value="/editAspect", method = RequestMethod.GET)
@@ -64,16 +65,28 @@ public class AdminController {
 	}
 	@RequestMapping(value="/userList", method = RequestMethod.GET)
 	public String userList(Model model) {
+
+        CustomLogger.infoLogin(logger, "test", "olcay", "1233.33", "nulll");  
+        
 		List<User> users= userService.findAllUsers();
 		model.addAttribute("users", users);
 		List<Group> groups= userService.getAllGroups();
 		model.addAttribute("groups", groups);
 		model.addAttribute("content", "userList");
+		
+		ThreadContext.put("id", UUID.randomUUID().toString(); // Add the fishtag;
+		ThreadContext.put("ipAddress", request.getRemoteAddr());
+		ThreadContext.put("loginId", session.getAttribute("loginId"));
+		ThreadContext.put("hostName", request.getServerName());
+		logger.debug("Message 1");
+		logger.debug("Message 2");
+		ThreadContext.clear();
+		
 		return "user/admin/master";
 	}
     
     @RequestMapping(value="/editGroup", method = RequestMethod.GET)
-    public String editGroup(Model model) {
+    public String editGroup(Model model) {    
  
         List<Group> groups= userService.getAllGroups();
         model.addAttribute("groups", groups);
