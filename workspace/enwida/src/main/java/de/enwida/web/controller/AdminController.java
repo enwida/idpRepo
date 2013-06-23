@@ -75,17 +75,21 @@ public class AdminController {
     
     @RequestMapping(value="/editGroup", method = RequestMethod.GET)
     public String editGroup(Model model,String action,Integer groupID,String newGroup) {    
- 
-        if( action!=null){
-            switch(action){
-                case "delete":
-                    userService.removeGroup(groupID);
-                    break;
-                case "add":
-                    Group group=new Group();
-                    group.setGroupName(newGroup);            
-                    userService.addGroup(group);
+        try {
+            if( action!=null){
+                switch(action){
+                    case "delete":
+                        userService.removeGroup(groupID);
+                        break;
+                    case "add":
+                        Group group=new Group();
+                        group.setGroupName(newGroup);            
+                        userService.addGroup(group);
+                }
+                model.addAttribute("info", "OK");
             }
+        } catch (Exception e) {
+            model.addAttribute("error", e.getMessage());
         }
         
         List<Group> groups= userService.getAllGroups();

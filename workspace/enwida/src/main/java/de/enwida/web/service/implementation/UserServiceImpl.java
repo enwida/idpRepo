@@ -178,7 +178,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void removeGroup(int groupID) {
+    public void removeGroup(int groupID) throws Exception {
         userDao.removeGroup(groupID);
     }
 }

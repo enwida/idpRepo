@@ -18,7 +18,7 @@
 			<tr>
 				<td>${role.roleName}</td>
 				<td>${role.description}</td>
-				<td><c:forEach var="group" items="${role.assignedGroups}">${group.groupName},</c:forEach></td>
+				<td><c:forEach var="group" items="${role.assignedGroups}"><a href="editGroup">${group.groupName}</a>,</c:forEach></td>
 				<td>
 					<a href='editAspect?roleID=${role.roleID}'> Details</a>
 				</td>

@@ -85,11 +85,13 @@ public class UserDao extends BaseDao<User> implements IUserDao {
 					rs.getLong("user_id"),
 					rs.getString("user_name"), 
 					rs.getString("user_password"), 
-					rs.getBoolean("enabled")
+                    rs.getBoolean("enabled")
 				);
 				;
                 user.setFirstName(rs.getString("first_name"));
                 user.setLastName(rs.getString("last_name"));
+                user.setTelephone(rs.getString("telephone"));
+                user.setCompanyName(rs.getString("company_name"));
                 ArrayList<Group> groups = getUserGroups(user.getUserID());
                 user.setGroups(groups);
                 ArrayList<Role> roles = getUserRoles(user.getUserID());
@@ -1237,24 +1239,16 @@ public List<Group> getAllGroups() {
     }
 
     @Override
-    public void removeGroup(int groupID) {
+    public void removeGroup(int groupID) throws Exception {
         String sql = "delete FROM groups where group_id=?";
         Connection conn = null;
-        try {
-            conn = datasource.getConnection();
-            PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setInt(1, groupID);
-            ps.executeUpdate();
-            ps.close();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        } finally {
-            if (conn != null) {
-                try {
-                conn.close();
-                } catch (SQLException e) {}
-            }
-        }
+        
+        conn = datasource.getConnection();
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setInt(1, groupID);
+        ps.executeUpdate();
+        ps.close();
+
     }
 
 }

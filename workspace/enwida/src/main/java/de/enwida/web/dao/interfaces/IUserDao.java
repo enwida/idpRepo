@@ -49,5 +49,5 @@ public interface IUserDao {
     public List<User> findAllUsers();
     public List<Group> getAllGroupsWithUsers();
     public boolean enableDisableUser(int userID, boolean enabled);
-    public void removeGroup(int groupID);
+    public void removeGroup(int groupID) throws Exception;
 }
