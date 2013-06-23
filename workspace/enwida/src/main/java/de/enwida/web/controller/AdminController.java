@@ -1,13 +1,14 @@
 package de.enwida.web.controller;
 
+import java.io.File;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
+import javax.mail.Session;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
-import org.apache.log4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,14 +19,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import de.enwida.web.model.AspectRight;
-import de.enwida.web.model.ChartNavigationData;
 import de.enwida.web.model.Group;
 import de.enwida.web.model.Role;
 import de.enwida.web.model.User;
-import de.enwida.web.service.implementation.AspectServiceImpl;
 import de.enwida.web.service.interfaces.AspectService;
 import de.enwida.web.service.interfaces.UserService;
-import de.enwida.web.servlet.CustomLogger;
 import de.enwida.web.validator.UserValidator;
 
 /**
@@ -65,8 +63,6 @@ public class AdminController {
 	}
 	@RequestMapping(value="/userList", method = RequestMethod.GET)
 	public String userList(Model model) {
-
-        CustomLogger.infoLogin(logger, "test", "olcay", "1233.33", "nulll");  
         
 		List<User> users= userService.findAllUsers();
 		model.addAttribute("users", users);
@@ -74,20 +70,24 @@ public class AdminController {
 		model.addAttribute("groups", groups);
 		model.addAttribute("content", "userList");
 		
-		ThreadContext.put("id", UUID.randomUUID().toString(); // Add the fishtag;
-		ThreadContext.put("ipAddress", request.getRemoteAddr());
-		ThreadContext.put("loginId", session.getAttribute("loginId"));
-		ThreadContext.put("hostName", request.getServerName());
-		logger.debug("Message 1");
-		logger.debug("Message 2");
-		ThreadContext.clear();
-		
 		return "user/admin/master";
 	}
     
     @RequestMapping(value="/editGroup", method = RequestMethod.GET)
-    public String editGroup(Model model) {    
+    public String editGroup(Model model,String action,Integer groupID,String newGroup) {    
  
+        if( action!=null){
+            switch(action){
+                case "delete":
+                    userService.removeGroup(groupID);
+                    break;
+                case "add":
+                    Group group=new Group();
+                    group.setGroupName(newGroup);            
+                    userService.addGroup(group);
+            }
+        }
+        
         List<Group> groups= userService.getAllGroups();
         model.addAttribute("groups", groups);
         
@@ -100,21 +100,7 @@ public class AdminController {
         model.addAttribute("content", "editGroup");
         return "user/admin/master";
     }
-    
-    @RequestMapping(value="/editGroup",method=RequestMethod.POST)
-    public String addGroup(Model model,String newGroup){
-        System.out.println(newGroup+" is added");
-        if(newGroup.isEmpty()){
-            model.addAttribute("error", "Group name is not valid");
-        }
-        else{
-            Group group=new Group();
-            group.setGroupName(newGroup);            
-            userService.addGroup(group);
-        }
-        return editGroup(model);
-    }
-    
+       
     
     @RequestMapping(value="/roleList", method = RequestMethod.GET)
     public String roleList(Model model) {
@@ -150,6 +136,13 @@ public class AdminController {
         return "user/admin/master";
     }
     
+    @RequestMapping(value="/userLog", method = RequestMethod.GET)
+    @ResponseBody
+    public FileSystemResource  userLog(Model model,String user) {
+        File file=new File("C:/logs/"+user+".log");
+        return new FileSystemResource(file);
+    }
+    
     
     @RequestMapping(value = "/enableDisableUser", method = RequestMethod.GET)
     @ResponseBody
@@ -160,13 +153,13 @@ public class AdminController {
     @RequestMapping(value="/user",method=RequestMethod.POST, params = "save")
     public String processForm(@ModelAttribute(value="USER")User user,long userID,HttpSession session, ModelMap model)
     {
-        model.addAttribute("user", user);
-        model.addAttribute("content", "user");
         User newUser=userService.getUser(userID);
         newUser.setFirstName(user.getFirstName());
         newUser.setLastName(user.getLastName());
         newUser.setTelephone(user.getTelephone());
         userService.updateUser(newUser);
+        model.addAttribute("user", newUser);
+        model.addAttribute("content", "user");
         return "user/admin/master";
     }
     
@@ -194,7 +187,7 @@ public class AdminController {
     {
         String result= userService.assignUserToGroup(selectedUser,selectedGroup);
         model.addAttribute("info", result);
-        return editGroup(model);
+        return editGroup(model,null,0,null);
     }
     
     @RequestMapping(value="/editGroup",method=RequestMethod.POST, params = "deassign")
@@ -202,18 +195,17 @@ public class AdminController {
     {
         String result= userService.deassignUserToGroup(selectedUser,selectedGroup);
         model.addAttribute("info", result);
-        return editGroup(model);
+        return editGroup(model,null,0,null);
     }
     
     @RequestMapping(value="/editGroup",method=RequestMethod.POST, params = "addGroup")
     public String addGroup(Model model,String newGroup,boolean autoPass)
     {
-        System.out.println("test");
         Group group=new Group();
         group.setGroupName(newGroup);
         group.setAutoPass(autoPass);
         userService.addGroup(group);
-        return editGroup(model);
+        return editGroup(model,null,0,null);
     }
     
     @RequestMapping(value="/roleList",method=RequestMethod.POST, params = "assign")

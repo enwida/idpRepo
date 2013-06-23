@@ -176,4 +176,9 @@ public class UserServiceImpl implements UserService {
     public boolean enableDisableUser(int userID, boolean enabled) {
         return userDao.enableDisableUser(userID,enabled);
     }
+
+    @Override
+    public void removeGroup(int groupID) {
+        userDao.removeGroup(groupID);
+    }
 }

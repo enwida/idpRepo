@@ -17,16 +17,16 @@
 			<c:forEach var="group" items="${groupsWithUsers}">
 				<tr>
 					<td>${group.groupName}</td>
-					<td><c:forEach var="user" items="${group.assignedUsers}">${user.userName},</c:forEach>
+					<td><c:forEach var="user" items="${group.assignedUsers}"><a href='user?userID=${user.userID}'>${user.userName}</a>,</c:forEach>
 					</td>
 					<td><input type="checkbox" checked="${group.autoPass}"/></td>
-					<td><a href='editRole?groupID=${group.groupID}'> delete</a></td>
+					<td><a href='editGroup?groupID=${group.groupID}&action=delete'> delete</a></td>
 				<tr>
 			</c:forEach>
 		</tbody>
 		<tfoot>
 			<tr>
-				<td><input name="newGroup" type='text' value="new Group" /></td>
+				<td><input name="newGroup" type='text' placeholder="Add group" /></td>
 				<td></td>
 				<td><input name="autoPass" type='checkbox' /></td>
 				<td><input type="submit" name="addGroup" value="Add"/></td>

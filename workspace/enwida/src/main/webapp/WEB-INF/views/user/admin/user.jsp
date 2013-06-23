@@ -40,7 +40,7 @@
 			</tr>
 			<tr>
 				<td></td>
-				<td><a href="">more</a></td>
+				<td><a href="userLog?user=${user.userName}">more</a></td>
 			</tr>
 			<tr>
 				<td>Groups</td>

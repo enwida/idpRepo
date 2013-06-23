@@ -43,8 +43,8 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler
 //        user.setLastLogin(sdfDate.format(now));
         //log.debug("Some string to print out");
         
-        MDC.put("Version", "test");
-        Logger log = Logger.getLogger("some.log");        
-        log.info("Hello");
+//        MDC.put("Version", "test");
+//        Logger log = Logger.getLogger("some.log");        
+//        log.info("Hello");
     }
 }

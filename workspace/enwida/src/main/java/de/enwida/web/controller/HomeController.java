@@ -40,6 +40,12 @@ public class HomeController {
 		return "index";
 	}
 	
+   @RequestMapping(value = "/j_spring_security_check", method = RequestMethod.POST)
+    public String login(Locale locale) {
+    
+        return "index";
+    }
+	
 	@RequestMapping(value = "/init.json", method = RequestMethod.GET)
 	@ResponseBody
 	public ChartNavigationData initData(HttpServletRequest request) {
