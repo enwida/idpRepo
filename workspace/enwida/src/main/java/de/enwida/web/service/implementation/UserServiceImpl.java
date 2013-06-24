@@ -35,7 +35,7 @@ public class UserServiceImpl implements UserService {
 		return null;
 	}
 
-
+	@Transactional
 	public boolean saveUser(User user) 
 	{
 		// Saving user in the user table

@@ -29,13 +29,19 @@
 				{
 					if (xmlhttp.readyState == 4 && xmlhttp.status == 200) 
 					{			
-						alert(xmlhttp.responseText);
-						if(!xmlhttp.responseText)
+						var avail = xmlhttp.responseText;
+						if(avail == "true")
 						{
+							document.getElementById("userError").innerHTML = "This email is already in use by some other user.";
+							document.getElementById("companyName").value = "";
+						}
+						else
+						{							
+							document.getElementById("userError").innerHTML = "";
 						 	getCompany(email);
 						}
 					}
-				}
+				};
 				
 				xmlhttp.open("GET", "checkEmail?email=" + email, true);
 				xmlhttp.send();
@@ -48,7 +54,7 @@
 		<h1>Registration Form</h1><br />
 		<form:form commandName="USER">
 		<table>
-			<tr><td>Mail Address(*) : </td><td><form:input path="userName" onchange="checkEmail(this.value)" />${emailAvailabilityError}<form:errors id="userError" path="userName" cssStyle="color : red;"/></td></tr>
+			<tr><td>Mail Address(*) : </td><td><form:input path="userName" onchange="checkEmail(this.value)" /><label id="userError">${emailAvailabilityError}</label> <form:errors  path="userName" cssStyle="color : red;"/></td></tr>
 			<tr><td>First Name(*) : </td><td><form:input path="firstName" /><form:errors path="firstName" cssStyle="color : red;"/></td></tr>
 			<tr><td>Last Name(*) : </td><td><form:input path="lastName" /><form:errors path="lastName" cssStyle="color : red;"/></td></tr>
 			<tr><td>Password(*) : </td><td><form:password path="password" /><form:errors path="password" cssStyle="color : red;"/></td></tr>

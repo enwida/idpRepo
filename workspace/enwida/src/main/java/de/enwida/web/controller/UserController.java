@@ -150,7 +150,7 @@ public class UserController {
 	}
 	
 	@RequestMapping(value="/checkEmail",method=RequestMethod.GET)
-	public @ResponseBody boolean checkEmail(ModelMap model,String email){
+	public @ResponseBody String checkEmail(ModelMap model,String email){
 		
 		boolean availabilityCheck = userService.usernameAvailablility(email);
 		
@@ -159,7 +159,7 @@ public class UserController {
 			model.addAttribute("emailAvailabilityError", "This email is already in use by some other user.");
 		}
 		
-		return availabilityCheck;
+		return availabilityCheck + "";
 	}
 	
 	@RequestMapping(value="/forgotPassword",method=RequestMethod.GET)
