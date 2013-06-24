@@ -11,6 +11,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
@@ -28,9 +32,12 @@ import de.enwida.web.dao.interfaces.INavigationDao;
 import de.enwida.web.model.ChartLinesRequest;
 import de.enwida.web.model.ChartNavigationData;
 import de.enwida.web.model.ProductTree;
+import de.enwida.web.model.User;
+import de.enwida.web.service.implementation.CookieSecurityService;
 import de.enwida.web.service.implementation.LineService;
 import de.enwida.web.service.interfaces.INavigationService;
 import de.enwida.web.utils.CalendarRange;
+import de.enwida.web.utils.Constants;
 import de.enwida.web.utils.NavigationDefaults;
 
 /**
@@ -46,6 +53,9 @@ public class ChartDataController {
 	@Autowired
 	private INavigationService navigationService;
 	
+	@Autowired
+	private CookieSecurityService cookieSecurityService;
+
 	@RequestMapping(value="/lines", method = RequestMethod.GET)
 	@ResponseBody
 	public List<IDataLine> getLines (
@@ -145,4 +155,51 @@ public class ChartDataController {
 	    return result;
 	}
 	
+	/**
+	 * This method is used to set the chart settings of user in a {@link Cookie}
+	 * 
+	 * @param user
+	 *            User which is used for setting user name in cookie data
+	 * @param response
+	 *            {@link HttpServletResponse}
+	 */
+	public void setUserSettingsInCookie(final User user,
+			final HttpServletResponse response) {
+
+		final String usersettingsjson = "";
+		final String encryptedData = cookieSecurityService
+				.encryptJsonString(usersettingsjson);
+		final Cookie chartcookie = new Cookie(Constants.ENWIDA_CHART_COOKIE,
+				encryptedData);
+		// works only for SSL connection
+		// chartcookie.setSecure(true);
+		chartcookie.setMaxAge(Constants.ENWIDA_CHART_COOKIE_EXPIRY_TIME);
+		response.addCookie(chartcookie);
+	}
+
+	/**
+	 * This method is used to get the chart settings of user in a {@link Cookie}
+	 * 
+	 * @param user
+	 *            User which is used for setting user name in cookie data
+	 * @param response
+	 *            {@link HttpServletResponse}
+	 */
+	public String getUserSettingsFromCookie(HttpServletRequest request) {
+		String decryptString = null;
+		final Cookie[] cookies = request.getCookies();
+		for (final Cookie cookie : cookies) {
+			// System.out.println(cookie.getValue());
+			if (((cookie.getName() != null) && cookie.getName().equals(
+					Constants.ENWIDA_CHART_COOKIE))
+					&& (cookie.getValue() != null)) {
+				decryptString = cookieSecurityService.dycryptJsonString(cookie
+						.getValue());
+			}
+
+		}
+		return decryptString;
+
+	}
+
 }
