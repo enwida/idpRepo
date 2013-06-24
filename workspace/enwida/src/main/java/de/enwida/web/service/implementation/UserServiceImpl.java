@@ -172,4 +172,9 @@ public class UserServiceImpl implements UserService {
     public List<User> findAllUsers() {
         return userDao.findAllUsers();
     }
+
+	@Override
+	public boolean usernameAvailablility(String username) {
+		return userDao.usernameAvailablility(username);
+	}
 }

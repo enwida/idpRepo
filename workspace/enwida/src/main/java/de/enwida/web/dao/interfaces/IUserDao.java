@@ -48,4 +48,6 @@ public interface IUserDao {
     public boolean updateUser(User user);
     public List<User> findAllUsers();
     public List<Group> getAllGroupsWithUsers();
+    
+    public boolean usernameAvailablility(final String username);
 }

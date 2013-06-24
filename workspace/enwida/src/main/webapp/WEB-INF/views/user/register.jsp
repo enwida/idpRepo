@@ -13,6 +13,38 @@
 				document.getElementById("companyName").value = company;
 			}
 			
+			function checkEmail (email)
+			{
+				if (email == "") 
+				{					
+					return;
+				}
+				
+				if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
+					xmlhttp = new XMLHttpRequest();
+				} else {// code for IE6, IE5
+					xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+				}
+				xmlhttp.onreadystatechange = function() 
+				{
+					if (xmlhttp.readyState == 4 && xmlhttp.status == 200) 
+					{					
+						if(xmlhttp.responseText == true)
+						{
+							alert("true");
+							document.getElementById("userError").value = "Email already in use.";
+						}
+						else
+						{
+						 	getCompany(email);
+						}
+					}
+				}
+				
+				xmlhttp.open("GET", "checkEmail?email=" + email, true);
+				xmlhttp.send();
+			}
+			
 		</script>
 		
 	</head>
@@ -20,7 +52,7 @@
 		<h1>Registration Form</h1><br />
 		<form:form commandName="USER">
 		<table>
-			<tr><td>Mail Address(*) : </td><td><form:input path="userName" onchange="getCompany(this.value)" /><form:errors path="userName" cssStyle="color : red;"/></td></tr>
+			<tr><td>Mail Address(*) : </td><td><form:input path="userName" onchange="checkEmail(this.value)" />${emailAvailabilityError}<form:errors id="userError" path="userName" cssStyle="color : red;"/></td></tr>
 			<tr><td>First Name(*) : </td><td><form:input path="firstName" /><form:errors path="firstName" cssStyle="color : red;"/></td></tr>
 			<tr><td>Last Name(*) : </td><td><form:input path="lastName" /><form:errors path="lastName" cssStyle="color : red;"/></td></tr>
 			<tr><td>Password(*) : </td><td><form:password path="password" /><form:errors path="password" cssStyle="color : red;"/></td></tr>
