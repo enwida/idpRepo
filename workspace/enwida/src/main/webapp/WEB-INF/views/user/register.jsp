@@ -28,13 +28,9 @@
 				xmlhttp.onreadystatechange = function() 
 				{
 					if (xmlhttp.readyState == 4 && xmlhttp.status == 200) 
-					{					
-						if(xmlhttp.responseText == true)
-						{
-							alert("true");
-							document.getElementById("userError").value = "Email already in use.";
-						}
-						else
+					{			
+						alert(xmlhttp.responseText);
+						if(!xmlhttp.responseText)
 						{
 						 	getCompany(email);
 						}

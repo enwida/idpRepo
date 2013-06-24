@@ -1208,7 +1208,7 @@ public List<Group> getAllGroups() {
 
 	@Override
 	public boolean usernameAvailablility(String username) {
-
+		boolean availablity = false;
 		String sql = "select user_id from users where user_name=?";
 		Connection conn = null;
 		
@@ -1221,7 +1221,7 @@ public List<Group> getAllGroups() {
 			
 			if (rs.next()) 
 			{
-				return true;
+				availablity = true;
 			}
 			
 			rs.close();
@@ -1229,7 +1229,7 @@ public List<Group> getAllGroups() {
 		} 
 		catch (SQLException e) 
 		{			
-			return false;
+			availablity = false;
 		} 
 		finally 
 		{
@@ -1241,12 +1241,12 @@ public List<Group> getAllGroups() {
 				} 
 				catch (SQLException e) 
 				{
-					return false;
+					availablity = false;
 				}
 			}
 		}
 		
-		return false;
+		return availablity;
 		
 	}
 
