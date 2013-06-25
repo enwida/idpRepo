@@ -1,0 +1,27 @@
+{
+   "@type":"de.enwida.web.model.ChartNavigationData",
+   "chartTitle":"Durchschnittlicher Regelleistungsabruf ",
+   "defaults":null,
+   "productTrees":{
+      "@type":"java.util.ArrayList",
+      "@items":[
+         {
+            "@type":"de.enwida.web.model.ProductTree",
+            "root":{
+               "id":0,
+               "name":"root",
+               "children":{
+                  "@type":"java.util.ArrayList"
+               }
+            },
+            "tso":99
+         }
+      ]
+   },
+   "tsos":{
+      "@type":"java.util.HashMap"
+   },
+   "xAxisLabel":"Zeit",
+   "yAxisLabel":"Regelleistung [MW]",
+   "isDateScale":false
+}

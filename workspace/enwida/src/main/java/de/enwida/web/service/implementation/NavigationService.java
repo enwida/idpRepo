@@ -3,13 +3,22 @@
  */
 package de.enwida.web.service.implementation;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Locale;
+
+import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.cedarsoftware.util.io.JsonReader;
+import com.cedarsoftware.util.io.JsonWriter;
 
 import de.enwida.transport.Aspect;
 import de.enwida.web.dao.interfaces.IAspectsDao;
@@ -18,8 +27,9 @@ import de.enwida.web.model.ChartNavigationData;
 import de.enwida.web.model.ProductTree;
 import de.enwida.web.model.ProductTree.ProductAttributes;
 import de.enwida.web.service.interfaces.IAvailibilityService;
-import de.enwida.web.service.interfaces.ISecurityService;
 import de.enwida.web.service.interfaces.INavigationService;
+import de.enwida.web.service.interfaces.ISecurityService;
+import de.enwida.web.utils.EnwidaUtils;
 import de.enwida.web.utils.ProductLeaf;
 import de.enwida.web.utils.ProductRestriction;
 
@@ -38,6 +48,15 @@ public class NavigationService implements INavigationService {
 	
 	@Autowired
 	private IAspectsDao aspectsDao;
+	
+	private Hashtable<Integer, ChartNavigationData> defaultNavigationData =  new Hashtable<Integer, ChartNavigationData>();
+	
+	@PostConstruct
+	public void init() throws IOException {
+	     for (int i = 1; i <= 1; i++) {
+	    	 defaultNavigationData.put(i, getNavigationDataFromJsonFile(i));
+		}
+	}
 
     public ChartNavigationData getNavigationData(int chartId, int role, Locale locale) {
         final ChartNavigationData navigationData = navigationDao.getDefaultNavigation(chartId, locale);
@@ -100,4 +119,24 @@ public class NavigationService implements INavigationService {
     private void addDefaults(ChartNavigationData navigationData) {
         // TODO: stub
     }
+    
+    @Override
+	public void putNavigationDataToJsonFile(int chartId, ChartNavigationData chartNavigationData) throws IOException {
+		String json = JsonWriter.objectToJson(chartNavigationData);
+		System.out.println(json);
+		//TODO: Complete the Implementation
+	}
+
+	@Override
+	public ChartNavigationData getNavigationDataFromJsonFile(int chartId) throws IOException {
+		
+		InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream( chartId + ".json");
+		String json = EnwidaUtils.getStringFromInputStream(in);
+		
+		JsonReader jr = new JsonReader(new ByteArrayInputStream(json.getBytes()));		
+		ChartNavigationData chartNavigationDataDeSerialized = (ChartNavigationData) jr.readObject();
+		jr.close();	
+        
+        return chartNavigationDataDeSerialized;
+	}
 }
