@@ -18,7 +18,7 @@ import de.enwida.web.model.User;
 import de.enwida.web.service.interfaces.UserService;
 import de.enwida.web.utils.Constants;
 
-@Service
+@Service("UserService")
 @Transactional
 public class UserServiceImpl implements UserService {
 
@@ -31,24 +31,41 @@ public class UserServiceImpl implements UserService {
 	}
 
 	public List<User> getUsers() {
-		return userDao.findAllUsers();
+		// TODO Auto-generated method stub
+		return null;
 	}
 
-
+	@Transactional
 	public boolean saveUser(User user) 
 	{
 		// Saving user in the user table
 		Date date = new Date(Calendar.getInstance().getTimeInMillis());
 		user.setJoiningDate(date);
 		user.setEnabled(false);
-		int userId = userDao.save(user);
-		
-		// If successfully saved, than assign default roles to user and save userId in user_roles table
+		long userId = userDao.save(user);
+				
 		if(userId != -1)
-		{
-			HashMap userRoles = new HashMap(); 
-			userRoles.put(Constants.ANONYMOUS_ROLE, 3);
-			userDao.setUserRoles(userId, userRoles);
+		{			
+			long groupId = userDao.getGroupIdByCompanyName(user.getCompanyName());
+			
+			if(groupId == -1)
+			{
+				userDao.saveUserInAnonymousGroup(userId);
+			}
+			else
+			{
+				Group group = userDao.getGroupByGroupId(groupId);
+				
+				if(group.isAutoPass())
+				{
+					userDao.saveUserInGroup(userId, groupId);
+				}
+				else
+				{
+					userDao.saveUserInAnonymousGroup(userId);
+				}
+			}
+			
 			return true;
 		}
 		else
@@ -59,6 +76,10 @@ public class UserServiceImpl implements UserService {
 
 	public String getPassword(String email) {
 		return userDao.getPassword(email);
+	}
+
+	public List<User> findAllUsersWithPermissions(){
+		return userDao.findAllUsersWithPermissions();
 	}
 	
 
@@ -81,8 +102,9 @@ public class UserServiceImpl implements UserService {
 		return userDao.getAllGroups();
 	}
 
-    public void addGroup(Group newGroup) {
-        userDao.addGroup(newGroup);
+    public Group addGroup(Group newGroup) {
+    	newGroup.setAutoPass(false);
+        return userDao.addGroup(newGroup);
     }
 
     public void saveRole(Role role) {
@@ -92,7 +114,11 @@ public class UserServiceImpl implements UserService {
     public List<Role> getAllRoles() {
         return userDao.getAllRoles();
     }
-
+    
+	public boolean checkEmailAvailability(String email) {	
+		return userDao.checkEmailAvailability(email);
+	}
+	
     public boolean updateUser(User user) {
         return userDao.updateUser(user);
     }
@@ -146,4 +172,9 @@ public class UserServiceImpl implements UserService {
     public List<User> findAllUsers() {
         return userDao.findAllUsers();
     }
+
+	@Override
+	public boolean usernameAvailablility(String username) {
+		return userDao.usernameAvailablility(username);
+	}
 }

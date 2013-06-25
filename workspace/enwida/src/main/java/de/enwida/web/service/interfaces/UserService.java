@@ -19,7 +19,7 @@ public interface UserService {
 	public List<Group> getAvailableGroupsForUser(long userID);
 	public List<Group> getUserGroups(long userID);
 	public List<Group> getAllGroups();
-    public void addGroup(Group newGroup);
+    public Group addGroup(Group newGroup);
     public void saveRole(Role role);
     public List<Role> getAllRoles();
     public boolean updateUser(User user);
@@ -31,4 +31,5 @@ public interface UserService {
     public String assignRoleToGroup(int selectedRole, int selectedGroup);
     public String deassignRoleToGroup(int selectedRole, int selectedGroup);
     public List<Role> getAllRolesWithGroups();
+    public boolean usernameAvailablility(String username);
 }
