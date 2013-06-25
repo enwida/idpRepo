@@ -181,4 +181,9 @@ public class UserServiceImpl implements UserService {
     public void removeGroup(int groupID) throws Exception {
         userDao.removeGroup(groupID);
     }
+    
+    @Override
+    public boolean usernameAvailablility(String username) {
+        return userDao.usernameAvailablility(username);
+    }
 }

@@ -33,4 +33,5 @@ public interface UserService {
     public List<Role> getAllRolesWithGroups();
     public boolean enableDisableUser(int userID, boolean enabled);
     public void removeGroup(int groupID) throws Exception;
+    public boolean usernameAvailablility(final String username);
 }

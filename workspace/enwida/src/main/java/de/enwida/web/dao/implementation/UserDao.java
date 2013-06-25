@@ -1250,5 +1250,48 @@ public List<Group> getAllGroups() {
         ps.close();
 
     }
+    
+    @Override
+    public boolean usernameAvailablility(String username) {
 
+        String sql = "select user_id from users where user_name=?";
+        Connection conn = null;
+        
+        try 
+        {
+            conn = datasource.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, username);
+            ResultSet rs = ps.executeQuery();
+            
+            if (rs.next()) 
+            {
+                return true;
+            }
+            
+            rs.close();
+            ps.close();
+        } 
+        catch (SQLException e) 
+        {           
+            return false;
+        } 
+        finally 
+        {
+            if (conn != null) 
+            {
+                try 
+                {
+                    conn.close();
+                } 
+                catch (SQLException e) 
+                {
+                    return false;
+                }
+            }
+        }
+        
+        return false;
+        
+    }
 }
