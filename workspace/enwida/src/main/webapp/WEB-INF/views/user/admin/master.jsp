@@ -17,6 +17,7 @@ $(function() {
     $(".tablesorter").tablesorter(); 
   });
 </script>
+	<img src="../../resources/images/banner2.jpg">
 	<div>
 		<div id="nav">
 			<a href="userList">UserList</a>
@@ -24,8 +25,6 @@ $(function() {
 			 <a	href="roleList">roleList</a>
 		</div>
 	</div>
-	<br>
-	<br>
 	<div>
 		<a Style="color : red;">${error}</a><br>
 		<a Style="color : blue;">${info}</a><br>

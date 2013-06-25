@@ -25,7 +25,9 @@
 	   </authentication-provider>
 	</authentication-manager>
 	
-	 <beans:bean id="loginSuccessHandler" class="de.enwida.web.controller.LoginSuccessHandler"/>
+	 <beans:bean id="loginSuccessHandler" class="de.enwida.web.controller.LoginSuccessHandler">
+		 <beans:property name="defaultTargetUrl" value="/user/  "/>
+	 </beans:bean>
 	
 
     <http use-expressions="true" auto-config="true" >
@@ -35,7 +37,7 @@
 	    <intercept-url pattern="/j_spring_security_check" access="hasRole('ROLE USER')"/>
 <!-- 	    <intercept-url pattern="/user/admin/*" access="hasRole('admin')" /> -->
 	    
-	    <form-login  login-page="/login.html" default-target-url="/index" authentication-failure-url="/loginFailed" login-processing-url="/j_spring_security_check"  authentication-success-handler-ref="loginSuccessHandler"/>        
+	    <form-login  login-page="/login.html"  authentication-failure-url="/loginFailed" login-processing-url="/j_spring_security_check"  authentication-success-handler-ref="loginSuccessHandler"/>        
 	    <logout logout-success-url="/" logout-url="/j_spring_security_logout" />
 	    <access-denied-handler error-page="/403.html"/>
     </http>

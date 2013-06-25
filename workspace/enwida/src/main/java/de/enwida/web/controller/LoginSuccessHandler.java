@@ -32,6 +32,7 @@ public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException
     {
+        super.onAuthenticationSuccess(request, response, authentication);
         Set<String> roles = AuthorityUtils.authorityListToSet(authentication.getAuthorities());
         String userName = authentication.getName();
         HttpSession session = request.getSession();
