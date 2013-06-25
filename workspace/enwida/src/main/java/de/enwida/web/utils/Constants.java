@@ -14,6 +14,7 @@ public class Constants {
 	// DB constants
 
 	// Cookie Constants
-	public static final String ENWIDA_CHART_COOKIE = "enwida_chart_cookie";
-	public static final int ENWIDA_CHART_COOKIE_EXPIRY_TIME = 32000;
+	public static final String ENWIDA_CHART_COOKIE_ANONYMOUS = "enwida_chart_cookie_anonymous";
+	public static final String ENWIDA_CHART_COOKIE_USER = "enwida_chart_cookie_user";
+	public static final int ENWIDA_CHART_COOKIE_EXPIRY_TIME = -1;
 }
