@@ -767,28 +767,16 @@ public List<Group> getAllGroups() {
 			
 			rs.close();
 			ps.close();
-		} 
-		catch (SQLException e) 
-		{			
-			return -1;
-		} 
-		finally 
-		{
-			if (conn != null) 
-			{
-				try 
-				{
-					conn.close();
-				} 
-				catch (SQLException e) 
-				{
-					return -1;
-				}
-			}
-		}
-		
-		return -1;
-		
+    	} catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            if (conn != null) {
+                try {
+                conn.close();
+                } catch (SQLException e) {}
+            }
+        }
+        return -1;  
 	}
 	
 	public Group getGroupByGroupId(long groupId) 
@@ -815,25 +803,15 @@ public List<Group> getAllGroups() {
 			
 			rs.close();
 			ps.close();
-		} 
-		catch (SQLException e) 
-		{			
-			return null;
-		} 
-		finally 
-		{
-			if (conn != null) 
-			{
-				try 
-				{
-					conn.close();
-				} 
-				catch (SQLException e) 
-				{
-					return null;
-				}
-			}
-		}
+    	} catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            if (conn != null) {
+                try {
+                conn.close();
+                } catch (SQLException e) {}
+            }
+        }
 		
 		return group;
 		
@@ -859,25 +837,15 @@ public List<Group> getAllGroups() {
 			
 			rs.close();
 			ps.close();
-		} 
-		catch (SQLException e) 
-		{			
-			return -1;
-		} 
-		finally 
-		{
-			if (conn != null) 
-			{
-				try 
-				{
-					conn.close();
-				} 
-				catch (SQLException e) 
-				{
-					return -1;
-				}
-			}
-		}
+    	} catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            if (conn != null) {
+                try {
+                conn.close();
+                } catch (SQLException e) {}
+            }
+        }
 		
 		return -1;
 	}
@@ -900,7 +868,7 @@ public List<Group> getAllGroups() {
         } 
         catch (Exception e) 
         {
-            return false;
+            throw new RuntimeException(e);
         } 
         
         return true;
@@ -925,25 +893,15 @@ public List<Group> getAllGroups() {
 			
 			rs.close();
 			ps.close();
-		} 
-		catch (SQLException e) 
-		{			
-			return -1;
-		} 
-		finally 
-		{
-			if (conn != null) 
-			{
-				try 
-				{
-					conn.close();
-				} 
-				catch (SQLException e) 
-				{
-					return -1;
-				}
-			}
-		}
+    	} catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            if (conn != null) {
+                try {
+                conn.close();
+                } catch (SQLException e) {}
+            }
+        }
 		
 		return -1;
 		
@@ -1240,15 +1198,25 @@ public List<Group> getAllGroups() {
 
     @Override
     public void removeGroup(int groupID) throws Exception {
+
         String sql = "delete FROM groups where group_id=?";
         Connection conn = null;
-        
-        conn = datasource.getConnection();
-        PreparedStatement ps = conn.prepareStatement(sql);
-        ps.setInt(1, groupID);
-        ps.executeUpdate();
-        ps.close();
-
+        try {
+            conn = datasource.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setInt(1, groupID);
+            ps.executeUpdate();
+            ps.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            if (conn != null) {
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                }
+            }
+        }
     }
     
     @Override
@@ -1271,26 +1239,15 @@ public List<Group> getAllGroups() {
             
             rs.close();
             ps.close();
-        } 
-        catch (SQLException e) 
-        {           
-            return false;
-        } 
-        finally 
-        {
-            if (conn != null) 
-            {
-                try 
-                {
-                    conn.close();
-                } 
-                catch (SQLException e) 
-                {
-                    return false;
-                }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            if (conn != null) {
+                try {
+                conn.close();
+                } catch (SQLException e) {}
             }
         }
-        
         return false;
         
     }
