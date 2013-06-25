@@ -6,6 +6,12 @@ define ["resolution"], (Resolution) ->
     @treeParts        = ["type", "timeslot", "posneg"]
     @dateFormat       = d3.time.format "%Y-%m-%d"
     @datePickerFormat = "yyyy-mm-dd"
+    @timeRanges       = ["Day", "Week", "Month", "Year"]
+    @viewModes        =
+      Day: "days"
+      Week: "days"
+      Month: "months"
+      Year: "years"
 
     @createElements = ->
       productSelect =
@@ -25,11 +31,7 @@ define ["resolution"], (Resolution) ->
             .append($("<input>").attr("type", "text").addClass("from").attr("readonly", true))
             .append($("<span>").addClass("add-on").addClass("calendar").addClass("fromIcon")
               .append($("<i>").addClass("icon-th"))))
-          .append($("<div>").addClass("input-append")
-            .append($("<input>").attr("type", "text").addClass("to").attr("readonly", true))
-            .append($("<span>").addClass("add-on").addClass("calendar").addClass("toIcon")
-              .append($("<i>").addClass("icon-th"))))
-          .append($("<select>").addClass("resolution"))
+          .append($("<select>").addClass("timerange")).change => @refreshDatepicker()
 
       @$node.append productSelect
       @$node.append timeSelect
@@ -83,25 +85,39 @@ define ["resolution"], (Resolution) ->
         minViewMode: viewMode
         startDate: limits.from ? "1900-01-01"
         endDate: limits.to ? new Date()
-      @select("to").datepicker
-        format: @datePickerFormat
-        viewMode: viewMode
-        minViewMode: viewMode
-        startDate: limits.from ? "1900-01-01"
-        endDate: limits.to ? new Date()
 
       @select("fromIcon").click =>
-        console.log @select("from")
         @select("from").datepicker "show"
-      @select("toIcon").click =>
-        @select("to").datepicker "show"
+
+      timeRange = @select("timeRange")
+      for tr in @timeRanges
+        # TODO: locale
+        timeRange.append($("<option>").val(tr).text(tr))
+
+    @refreshDatepicker = ->
+      switch @select("timeRange").val()
+        when "Day"
+          @setDateRangeViewMode 0
+        when "Week"
+          @setDateRangeViewMode 0
+        when "Month"
+          @setDateRangeViewMode 1
+        when "Year"
+          @setDateRangeViewMode 2
+
+    @setDateRangeViewMode = (mode) ->
+      console.log "Settings mode to #{mode}"
+      @select("from").data("datepicker").minViewMode = mode
+      @select("from").data("datepicker").startViewMode = mode
+      @select("from").data("datepicker").viewMode = mode
+      @select("from").datepicker("show")
+      @select("from").datepicker("hide")
 
     @setDefaults = (defaults) ->
       @select("tso").val defaults.tso
       @setProduct defaults.product
       @select("resolution").val defaults.resolution
       @select("from").datepicker "update", new Date defaults.timeRange.from
-      @select("to").datepicker "update", new Date defaults.timeRange.to
 
     @getProductTree = ->
       tso = parseInt @select("tso").val()
@@ -135,10 +151,24 @@ define ["resolution"], (Resolution) ->
     @updateProducts = ->
       @setProduct @getProduct()
 
+    @getDateTo = (from) ->
+      result = new Date from
+      switch @select("timeRange").val()
+        when "Day"
+          result.setDate(result.getDate() + 1)
+        when "Week"
+          result.setDate(result.getDate() + 7)
+        when "Month"
+          result.setMonth(result.getMonth() + 1)
+        when "Year"
+          result.setFullYear(result.getFullYear() + 1)
+      result
+
     @triggerGetLines = (opts={}) ->
+      from = opts.from ? new Date @select("from").val()
       timeRange =
-        from: opts.from ? new Date @select("from").val()
-        to:   opts.to   ? new Date @select("to").val()
+        from: from
+        to:   @getDateTo from
 
       resolution = Resolution.getOptimalResolution timeRange,
           @navigationData.allResolutions,
@@ -160,9 +190,8 @@ define ["resolution"], (Resolution) ->
       product: ".product"
       resolution: ".resolution"
       from: ".from"
-      to: ".to"
       fromIcon: ".fromIcon"
-      toIcon: ".toIcon"
+      timeRange: ".timerange"
 
     @after "initialize", ->
       @on "refresh", @refresh
