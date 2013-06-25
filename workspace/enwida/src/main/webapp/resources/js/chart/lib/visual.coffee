@@ -1,4 +1,4 @@
-define ["line_chart", "carpet_chart"], (LineChart, CarpetChart) ->
+define ["line_chart", "bar_chart", "carpet_chart"], (LineChart, BarChart, CarpetChart) ->
 
   flight.component ->
 
@@ -27,17 +27,26 @@ define ["line_chart", "carpet_chart"], (LineChart, CarpetChart) ->
       switch @attr.type
         when "line"
           LineChart.init @attr.chartOptions
+        when "bar"
+          BarChart.init @attr.chartOptions
         when "carpet"
           @attr.chartOptions.lines = [@toCarpet(lines)[0]]
           @attr.chartOptions.scale.x.type = "ordinal"
           @attr.chartOptions.scale.x.padding = 0
           CarpetChart.init @attr.chartOptions
+        else
+          console.log "Unknown chart type: '#{@attr.type}'"
 
     @draw = (_, opts) ->
       @$node.empty()
       chart = @getChart opts.data
       chart.draw()
-      @$node.find("circle").tipsy(gravity: "sw", html: true, opacity: 0.95)
+
+      switch @attr.type
+        when "line"
+          @$node.find("circle").tipsy(gravity: "sw", html: true, opacity: 0.95)
+        when "bar"
+          @$node.find("rect").tipsy(gravity: "sw", html: true, opacity: 0.95)
 
     @defaultAttrs
       ChartClass: LineChart
@@ -48,3 +57,4 @@ define ["line_chart", "carpet_chart"], (LineChart, CarpetChart) ->
 
       @attr.chartOptions =
         parent: ".chart[data-chart-id='#{@attr.id}'] .visual"
+        width: @attr.width

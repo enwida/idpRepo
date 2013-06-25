@@ -3,43 +3,41 @@
 <%@ page session="false"%>
 
 <br>
-<table id="tblGroups" class="tablesorter">
-	<thead>
-		<tr>
-			<th>Group Name</th>
-			<th>Users</th>
-			<th>AutoPass</th>
-			<th>Operation</th>
-		<tr>
-	<thead>
-	<tbody>
-		<c:forEach var="group" items="${groupsWithUsers}">
+<form name='f' method='POST'>
+	<table id="tblGroups" class="tablesorter">
+		<thead>
 			<tr>
-				<td>${group.groupName}</td>
-				<td><c:forEach var="user" items="${group.assignedUsers}">${user.userName},</c:forEach>
-				</td>
-				<td><input type="checkbox" checked="${group.autoPass}"/></td>
-				<td><a href='editRole?groupID=${group.groupID}'> delete</a></td>
+				<th>Group Name</th>
+				<th>Users</th>
+				<th>AutoPass</th>
+				<th>Operation</th>
 			<tr>
-		</c:forEach>
-	</tbody>
-	<tfoot>
-		<tr>
-			<td><input name="newGroup" type='text' value="new Group" /></td>
-			<td></td>
-			<td><input name="autoPass" type='checkbox' /></td>
-			<td><a href="">Add</a></td>
-		<tr>
-	<tfoot>
-</table>
-
+		<thead>
+		<tbody>
+			<c:forEach var="group" items="${groupsWithUsers}">
+				<tr>
+					<td>${group.groupName}</td>
+					<td><c:forEach var="user" items="${group.assignedUsers}"><a href='user?userID=${user.userID}'>${user.userName}</a>,</c:forEach>
+					</td>
+					<td><input type="checkbox" checked="${group.autoPass}"/></td>
+					<td><a href='editGroup?groupID=${group.groupID}&action=delete'> delete</a></td>
+				<tr>
+			</c:forEach>
+		</tbody>
+		<tfoot>
+			<tr>
+				<td><input name="newGroup" type='text' placeholder="Add group" /></td>
+				<td></td>
+				<td><input name="autoPass" type='checkbox' /></td>
+				<td><input type="submit" name="addGroup" value="Add"/></td>
+			<tr>
+		<tfoot>
+	</table>
 <script>
 $(function() {
 	$('#selectedUser option[value='+QueryString.userID+']').attr('selected','selected');
 });
 </script>
-
-<form name='f' method='POST'>
 	<table  id="tblGroupMap" class="tablesorter">
 		<thead>
 			<tr>

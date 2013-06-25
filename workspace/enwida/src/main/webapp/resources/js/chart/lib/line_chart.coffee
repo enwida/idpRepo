@@ -14,7 +14,7 @@ define ["generic_chart"], (generic_chart) ->
       line = @generateLine()
       @chart.svg.append("path")
         .datum(data)
-        .attr("class", "line line#{id}")
+        .attr("class", "line line#{id} visual#{id}")
         .attr("data-legend", @chart.lineLabels[id])
         .attr("d", line)
 
@@ -22,7 +22,7 @@ define ["generic_chart"], (generic_chart) ->
       @chart.svg.selectAll("dot")
         .data(data)
           .enter().append("circle")
-          .attr("class", "dot dot#{id}")
+          .attr("class", "dot dot#{id} visual#{id}")
           .attr("r", 4.5)
           .attr("cx", (d) => @chart.xScale(d.x))
           .attr("cy", (d) => @chart.yScale(d.y))

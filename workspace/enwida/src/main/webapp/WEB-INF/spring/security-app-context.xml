@@ -15,26 +15,29 @@
 		      from users where user_name=?" 
  
 		   authorities-by-username-query="     
-				select user_name, authority 
-				from users INNER JOIN user_roles ON users.user_id=user_roles.user_id
-				 INNER JOIN roles ON roles.role_id=user_roles.role_id
-				  WHERE user_name=?" 
+				SELECT users.user_name, roles.role_name FROM users
+	    		 INNER JOIN user_group ON user_group.user_id=users.user_id 
+	    		 INNER JOIN group_role ON group_role.group_id=user_group.group_id
+	    		 INNER JOIN roles ON roles.role_ID=group_role.role_id
+	    		 WHERE user_name=?" 
  
 		/>
 	   </authentication-provider>
 	</authentication-manager>
 	
-	 <beans:bean id="loginSuccessHandler" class="de.enwida.web.controller.LoginSuccessHandler"/>
+	 <beans:bean id="loginSuccessHandler" class="de.enwida.web.controller.LoginSuccessHandler">
+		 <beans:property name="defaultTargetUrl" value="/user/  "/>
+	 </beans:bean>
 	
 
-    <http use-expressions="true">
+    <http use-expressions="true" auto-config="true" >
 <!--  		<intercept-url pattern="/dashboard" access="hasRole('ROLE USER')"/> -->
 	    <intercept-url pattern="/" access="permitAll" />
 	    <intercept-url pattern="/*" access="permitAll" />
-	    <intercept-url pattern="/user/" access="permitAll"/>
-	    <intercept-url pattern="/user/login.htm" access="IS_AUTHENTICATED_ANONYMOUSLY" />
+	    <intercept-url pattern="/j_spring_security_check" access="hasRole('ROLE USER')"/>
+<!-- 	    <intercept-url pattern="/user/admin/*" access="hasRole('admin')" /> -->
 	    
-	    <form-login  login-page="/user/login.html" default-target-url="/user/" authentication-failure-url="/user/loginFailed"  authentication-success-handler-ref="loginSuccessHandler"/>        
+	    <form-login  login-page="/login.html"  authentication-failure-url="/loginFailed" login-processing-url="/j_spring_security_check"  authentication-success-handler-ref="loginSuccessHandler"/>        
 	    <logout logout-success-url="/" logout-url="/j_spring_security_logout" />
 	    <access-denied-handler error-page="/403.html"/>
     </http>

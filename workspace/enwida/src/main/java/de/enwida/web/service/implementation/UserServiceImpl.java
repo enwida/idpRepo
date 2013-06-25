@@ -7,16 +7,11 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.mail.MessagingException;
-import javax.mail.internet.AddressException;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import de.enwida.web.dao.interfaces.IUserDao;
-import de.enwida.web.dto.UserDTO;
-import de.enwida.web.model.AspectRight;
 import de.enwida.web.model.Group;
 import de.enwida.web.model.Role;
 import de.enwida.web.model.User;
@@ -36,7 +31,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	public List<User> getUsers() {
-		return userDao.findAllUsers();
+	    return userDao.findAllUsers();
 	}
 
 
@@ -46,14 +41,30 @@ public class UserServiceImpl implements UserService {
 		Date date = new Date(Calendar.getInstance().getTimeInMillis());
 		user.setJoiningDate(date);
 		user.setEnabled(false);
-		int userId = userDao.save(user);
-		
-		// If successfully saved, than assign default roles to user and save userId in user_roles table
+		long userId = userDao.save(user);
+				
 		if(userId != -1)
-		{
-			HashMap userRoles = new HashMap(); 
-			userRoles.put(Constants.ANONYMOUS_ROLE, 3);
-			userDao.setUserRoles(userId, userRoles);
+		{			
+			long groupId = userDao.getGroupIdByCompanyName(user.getCompanyName());
+			
+			if(groupId == -1)
+			{
+				userDao.saveUserInAnonymousGroup(userId);
+			}
+			else
+			{
+				Group group = userDao.getGroupByGroupId(groupId);
+				
+				if(group.isAutoPass())
+				{
+					userDao.saveUserInGroup(userId, groupId);
+				}
+				else
+				{
+					userDao.saveUserInAnonymousGroup(userId);
+				}
+			}
+			
 			return true;
 		}
 		else
@@ -64,6 +75,10 @@ public class UserServiceImpl implements UserService {
 
 	public String getPassword(String email) {
 		return userDao.getPassword(email);
+	}
+
+	public List<User> findAllUsersWithPermissions(){
+		return userDao.findAllUsersWithPermissions();
 	}
 	
 
@@ -86,8 +101,9 @@ public class UserServiceImpl implements UserService {
 		return userDao.getAllGroups();
 	}
 
-    public void addGroup(Group newGroup) {
-        userDao.addGroup(newGroup);
+    public Group addGroup(Group newGroup) {
+    	newGroup.setAutoPass(false);
+        return userDao.addGroup(newGroup);
     }
 
     public void saveRole(Role role) {
@@ -97,7 +113,11 @@ public class UserServiceImpl implements UserService {
     public List<Role> getAllRoles() {
         return userDao.getAllRoles();
     }
-
+    
+	public boolean checkEmailAvailability(String email) {	
+		return userDao.checkEmailAvailability(email);
+	}
+	
     public boolean updateUser(User user) {
         return userDao.updateUser(user);
     }
@@ -150,5 +170,20 @@ public class UserServiceImpl implements UserService {
 
     public List<User> findAllUsers() {
         return userDao.findAllUsers();
+    }
+
+    @Override
+    public boolean enableDisableUser(int userID, boolean enabled) {
+        return userDao.enableDisableUser(userID,enabled);
+    }
+
+    @Override
+    public void removeGroup(int groupID) throws Exception {
+        userDao.removeGroup(groupID);
+    }
+    
+    @Override
+    public boolean usernameAvailablility(String username) {
+        return userDao.usernameAvailablility(username);
     }
 }

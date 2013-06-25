@@ -1,4 +1,4 @@
-define ->
+define ["resolution"], (Resolution) ->
 
   flight.component ->
 
@@ -6,7 +6,12 @@ define ->
     @treeParts        = ["type", "timeslot", "posneg"]
     @dateFormat       = d3.time.format "%Y-%m-%d"
     @datePickerFormat = "yyyy-mm-dd"
-
+    @timeRanges       = ["Day", "Week", "Month", "Year"]
+    @viewModes        =
+      Day: "days"
+      Week: "days"
+      Month: "months"
+      Year: "years"
 
     @createElements = ->
       productSelect =
@@ -22,9 +27,11 @@ define ->
 
       timeSelect =
         $("<div>").addClass("timeselect")
-          .append($("<input>").attr("type", "input").addClass("from"))
-          .append($("<input>").attr("type", "input").addClass("to"))
-          .append($("<select>").addClass("resolution"))
+          .append($("<div>").addClass("input-append")
+            .append($("<input>").attr("type", "text").addClass("from").attr("readonly", true))
+            .append($("<span>").addClass("add-on").addClass("calendar").addClass("fromIcon")
+              .append($("<i>").addClass("icon-th"))))
+          .append($("<select>").addClass("timerange")).change => @refreshDatepicker()
 
       @$node.append productSelect
       @$node.append timeSelect
@@ -40,10 +47,16 @@ define ->
     @refresh = ->
       @getNavigationData (err, data) =>
         throw err if err?
+        dateLimits =
+          from : new Date data.timeRangeMax.from
+          to   : new Date data.timeRangeMax.to
+
+        viewMode = data.datepickerViewMode ? "months"
+
         @fillTso()
         @fillProduct()
         @fillResolutions()
-        @fillTimeRange()
+        @fillTimeRange viewMode, dateLimits
         @setDefaults data.defaults
         @trigger "updateNavigation", data: data
         @triggerGetLines()
@@ -65,18 +78,46 @@ define ->
       for r in @navigationData.allResolutions
         element.append($("<option>").val(r).text(r))
 
-    @fillTimeRange = ->
+    @fillTimeRange = (viewMode="days", limits={}) ->
       @select("from").datepicker
         format: @datePickerFormat
-      @select("to").datepicker
-        format: @datePickerFormat
+        viewMode: viewMode
+        minViewMode: viewMode
+        startDate: limits.from ? "1900-01-01"
+        endDate: limits.to ? new Date()
+
+      @select("fromIcon").click =>
+        @select("from").datepicker "show"
+
+      timeRange = @select("timeRange")
+      for tr in @timeRanges
+        # TODO: locale
+        timeRange.append($("<option>").val(tr).text(tr))
+
+    @refreshDatepicker = ->
+      switch @select("timeRange").val()
+        when "Day"
+          @setDateRangeViewMode 0
+        when "Week"
+          @setDateRangeViewMode 0
+        when "Month"
+          @setDateRangeViewMode 1
+        when "Year"
+          @setDateRangeViewMode 2
+
+    @setDateRangeViewMode = (mode) ->
+      console.log "Settings mode to #{mode}"
+      @select("from").data("datepicker").minViewMode = mode
+      @select("from").data("datepicker").startViewMode = mode
+      @select("from").data("datepicker").viewMode = mode
+      @select("from").datepicker("show")
+      @select("from").datepicker("hide")
 
     @setDefaults = (defaults) ->
       @select("tso").val defaults.tso
       @setProduct defaults.product
       @select("resolution").val defaults.resolution
-      @select("from").datepicker "setValue", new Date defaults.timeRange.from
-      @select("to").datepicker "setValue", new Date defaults.timeRange.to
+      @select("from").datepicker "update", new Date defaults.timeRange.from
 
     @getProductTree = ->
       tso = parseInt @select("tso").val()
@@ -110,26 +151,47 @@ define ->
     @updateProducts = ->
       @setProduct @getProduct()
 
-    @triggerGetLines = ->
+    @getDateTo = (from) ->
+      result = new Date from
+      switch @select("timeRange").val()
+        when "Day"
+          result.setDate(result.getDate() + 1)
+        when "Week"
+          result.setDate(result.getDate() + 7)
+        when "Month"
+          result.setMonth(result.getMonth() + 1)
+        when "Year"
+          result.setFullYear(result.getFullYear() + 1)
+      result
+
+    @triggerGetLines = (opts={}) ->
+      from = opts.from ? new Date @select("from").val()
+      timeRange =
+        from: from
+        to:   @getDateTo from
+
+      resolution = Resolution.getOptimalResolution timeRange,
+          @navigationData.allResolutions,
+          @attr.width
+
       @trigger "getLines",
         tso: @select("tso").val()
         product: @getProduct()
-        timeRange:
-          from: @select("from").val()
-          to:   @select("to").val()
-        resolution: @select("resolution").val()
+        timeRange: timeRange
+        resolution: resolution
+        # resolution: @select("resolution").val()
 
     @setupEvents = ->
-      @$node.select("select").change => @triggerGetLines()
-      @select("from").on "changeDate", => @triggerGetLines()
-      @select("to").on "changeDate", => @triggerGetLines()
+      @$node.on "change", (e) =>
+        @triggerGetLines()
 
     @defaultAttrs
       tso: ".tso"
       product: ".product"
       resolution: ".resolution"
       from: ".from"
-      to: ".to"
+      fromIcon: ".fromIcon"
+      timeRange: ".timerange"
 
     @after "initialize", ->
       @on "refresh", @refresh

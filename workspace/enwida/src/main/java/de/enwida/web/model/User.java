@@ -9,9 +9,8 @@ public class User {
 	private String userName;
 	private String lastName;
     private String firstName;
-    private String email;
 	private String password;
-	private String company;
+	private String companyName;
 	private String contactNo;
 	private boolean enabled;
 	private Date joiningDate;
@@ -19,9 +18,7 @@ public class User {
 	private String lastLogin;
     private List<Group> groups;
     private List<Role> roles;
-	private String companyName;
-    private String joinDate;
-    private String tel;
+    private String telephone;
 
 
 	private UserPermissionCollection userPermissionCollection=new UserPermissionCollection();
@@ -142,46 +139,22 @@ public class User {
 		this.contactNo = contactNo;
 	}
 
-	public String getCompanyName() {
-		return companyName;
-	}
-
-	public void setCompanyName(String companyName) {
-		this.companyName = companyName;
-	}
-
-    public String getJoinDate() {
-        return joinDate;
+    public String getCompanyName() {
+        return companyName;
     }
 
-    public void setJoinDate(String joinDate) {
-        this.joinDate = joinDate;
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
     }
 
-    public String getCompany() {
-        return company;
+    public String getTelephone() {
+        return telephone;
     }
 
-    public void setCompany(String company) {
-        this.company = company;
+    public void setTelephone(String telephone) {
+        this.telephone = telephone;
     }
-
-    public String getTel() {
-        return tel;
-    }
-
-    public void setTel(String tel) {
-        this.tel = tel;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
+    
     public List<Group> getGroups() {
         return groups;
     }

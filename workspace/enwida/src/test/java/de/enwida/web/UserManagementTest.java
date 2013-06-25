@@ -30,8 +30,8 @@ public class UserManagementTest {
 
 	@Test
 	public void AddUser() {
-		/*User user=new User(100,"test","test","test","test",false);
-		userDao.createUser(user);*/
+//		User user=new User(100,"test","test","test","test",false);
+//		userDao.createUser(user);
 		
 	}
 
@@ -62,7 +62,11 @@ public class UserManagementTest {
 	@Test
 	public void SpringSecurtyAuthoritySQLCheck() {
 		
-	    String sql = "select user_name, role_name from users INNER JOIN user_roles ON users.user_id=user_roles.user_id INNER JOIN roles ON roles.role_id=user_roles.role_id WHERE user_name='test'";
+	    String sql = "SELECT users.user_name, roles.role_name FROM users" +
+	    		" INNER JOIN user_group ON user_group.user_id=users.user_id " +
+	    		" INNER JOIN group_role ON group_role.group_id=user_group.group_id" +
+	    		" INNER JOIN roles ON roles.role_ID=group_role.role_id" +
+	    		" WHERE user_name='test'";
 		 
 		Connection conn = null;
  
@@ -84,33 +88,10 @@ public class UserManagementTest {
 
 	@Test
 	public void GetAllUser() {
-		List<User> users= userDao.findAllUsers();
-		assertEquals(true,!users.isEmpty());
+//		List<User> users= userDao.findAllUsers();
+//		assertEquals(true,!users.isEmpty());
 	}
-	
 
-	@Test
-	public void GetAllUserFromDBWithPermissions() {
-		List<User> users= userDao.findAllUsersWithPermissions();
-		assertEquals(true,!users.isEmpty());
-	}
-	
-	@Test
-	public void LoadUserFromDB() {
-		User user=new User(100,"test","test","test","test",false);
-		User u=userDao.loadUserFromDB(user);
-		assertEquals(true,u.getLastName()!=null);
-	}
-	
-	@Test
-	public void AddPermission() {
-		userDao.addPermission(1, 1);
-	}
-	
-	@Test
-	public void removePermission() {
-		userDao.removePermission(1, 1);
-	}
 	
 	@Test
 	public void enableUser() {

@@ -37,10 +37,8 @@
 <body>
 
 <h1>Chart Experiments</h1>
-
-<input type="text" id="url" style="width: 80%; padding: 10px; font-size: 13px; margin: 10px;" />
-<div class="chart" data-chart-id="0"></div>
-<div class="chart" data-chart-id="1" data-chart-type="carpet"></div>
+<div class="chart" data-chart-id="0" data-width="960" data-chart-type="line"></div>
+<!--  <div class="chart" data-chart-id="1" data-chart-type="carpet"></div> -->
 
 </body>
 </html>

@@ -2,8 +2,6 @@ package de.enwida.web.service.interfaces;
 
 import java.util.List;
 
-import de.enwida.web.dto.UserDTO;
-import de.enwida.web.model.AspectRight;
 import de.enwida.web.model.Group;
 import de.enwida.web.model.Role;
 import de.enwida.web.model.User;
@@ -21,7 +19,7 @@ public interface UserService {
 	public List<Group> getAvailableGroupsForUser(long userID);
 	public List<Group> getUserGroups(long userID);
 	public List<Group> getAllGroups();
-    public void addGroup(Group newGroup);
+    public Group addGroup(Group newGroup);
     public void saveRole(Role role);
     public List<Role> getAllRoles();
     public boolean updateUser(User user);
@@ -33,4 +31,7 @@ public interface UserService {
     public String assignRoleToGroup(int selectedRole, int selectedGroup);
     public String deassignRoleToGroup(int selectedRole, int selectedGroup);
     public List<Role> getAllRolesWithGroups();
+    public boolean enableDisableUser(int userID, boolean enabled);
+    public void removeGroup(int groupID) throws Exception;
+    public boolean usernameAvailablility(final String username);
 }
