@@ -40,6 +40,9 @@ body {
 .line.selected {
 	stroke: #888888;
 }
+.bar.line.selected {
+	fill: #888888;
+}
 .dot.selected {
 	fill: #888888;
 }
@@ -50,6 +53,15 @@ body {
 	fill: red;
 }
 .dot2 {
+  fill: green;
+}
+.bar0 {
+  fill: steelblue;
+}
+.bar1 {
+  fill: red;
+}
+.bar2 {
   fill: green;
 }
 .spreadsheet {
@@ -107,6 +119,7 @@ body {
 .navigation {
 	padding: 10px;
 	margin-left: 40px;
+	margin-top: 5px;
 }
 
 .navigation select {
