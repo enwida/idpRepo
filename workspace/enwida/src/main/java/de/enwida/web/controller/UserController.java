@@ -1,12 +1,9 @@
 package de.enwida.web.controller;
 
 import java.security.Principal;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.mail.MessagingException;
-import javax.mail.internet.AddressException;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +16,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+
 import de.enwida.web.dto.UserDTO;
 import de.enwida.web.model.User;
 import de.enwida.web.service.implementation.Mail;
@@ -69,6 +67,25 @@ public class UserController {
 		return "master";
 	}
 	
+	   @RequestMapping(value = "/index", method = RequestMethod.GET)
+	    public String index(ModelMap model, Principal principal) {
+	        String name,userStatus,userStatusURL;
+	        
+	        if(principal!=null){
+	            name = principal.getName();
+	            userStatus="logout";
+	            userStatusURL="../j_spring_security_logout";
+	        }else{
+	            name="anonymous";
+	            userStatusURL=userStatus="login";
+	        }
+	        model.addAttribute("username", name);
+	        model.addAttribute("userStatus", userStatus);
+	        model.addAttribute("userStatusURL", userStatusURL);
+	        model.addAttribute("content", "user/index");
+	        return "master";
+	    }
+	
 	@RequestMapping(value = "/test", method = RequestMethod.GET)
 	public String test(ModelMap model, Principal principal) {
 		String name,userStatus,userStatusURL;
@@ -99,9 +116,9 @@ public class UserController {
 	
 	@RequestMapping(value="/loginFailed", method = RequestMethod.GET)
 	public String loginFailed(ModelMap model) {
-		return "user/loginFailed";
+	    model.addAttribute("error", "true");
+		return "user/login";
 	}
-	
 	
 	@RequestMapping(value="/download", method = RequestMethod.GET)
 	public String download(ModelMap model) {

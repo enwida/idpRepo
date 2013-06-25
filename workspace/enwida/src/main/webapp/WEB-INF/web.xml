@@ -43,7 +43,7 @@
      <servlet-class>de.enwida.web.servlet.Log4jInit</servlet-class> 
      <init-param>
        <param-name>log4j-init-file</param-name>
-       <param-value>WEB-INF/classes/log4j.properties</param-value>
+       <param-value>WEB-INF/configProperties/log4j.properties</param-value>
      </init-param>
      <load-on-startup>1</load-on-startup>
 	</servlet> 

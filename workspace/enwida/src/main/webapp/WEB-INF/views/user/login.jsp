@@ -35,8 +35,9 @@
 				<td><input type='password' name='j_password' /></td>
 			</tr>
 			<tr>
-				<td colspan='2'><input name="submit" type="submit"
+				<td><input name="submit" type="submit"
 					value="submit" /></td>
+				<td><a href="register">Register</a></td>
 			</tr>
 			<tr>
 				<td><a href="forgotPassword">Forgot Your Password?</a></td>

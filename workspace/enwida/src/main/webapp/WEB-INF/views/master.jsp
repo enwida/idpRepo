@@ -11,6 +11,7 @@
 	<link rel="stylesheet" href="../resources/css/table.css" />
 </head>
 <body>
+	<img src="./resources/images/banner2.jsp">
 	<jsp:include page="${content}.jsp"></jsp:include>
 </body>
 </html>

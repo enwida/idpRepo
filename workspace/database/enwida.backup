@@ -4,7 +4,7 @@
 
 -- Dumped from database version 9.2.3
 -- Dumped by pg_dump version 9.2.3
--- Started on 2013-06-14 11:03:02
+-- Started on 2013-06-19 16:51:31
 
 SET statement_timeout = 0;
 SET client_encoding = 'UTF8';
@@ -19,13 +19,26 @@ SET default_tablespace = '';
 SET default_with_oids = false;
 
 --
--- TOC entry 191 (class 1259 OID 90332)
+-- TOC entry 184 (class 1259 OID 82125)
+-- Name: group_role; Type: TABLE; Schema: public; Owner: enwida; Tablespace: 
+--
+
+CREATE TABLE group_role (
+    group_id integer NOT NULL,
+    role_id integer
+);
+
+
+ALTER TABLE public.group_role OWNER TO enwida;
+
+--
+-- TOC entry 186 (class 1259 OID 123084)
 -- Name: groups; Type: TABLE; Schema: public; Owner: enwida; Tablespace: 
 --
 
 CREATE TABLE groups (
-    group_name character varying(45),
     group_id integer NOT NULL,
+    group_name character varying(45) NOT NULL,
     auto_pass boolean NOT NULL
 );
 
@@ -33,7 +46,7 @@ CREATE TABLE groups (
 ALTER TABLE public.groups OWNER TO enwida;
 
 --
--- TOC entry 192 (class 1259 OID 98506)
+-- TOC entry 185 (class 1259 OID 123082)
 -- Name: groups_group_id_seq; Type: SEQUENCE; Schema: public; Owner: enwida
 --
 
@@ -48,8 +61,8 @@ CREATE SEQUENCE groups_group_id_seq
 ALTER TABLE public.groups_group_id_seq OWNER TO enwida;
 
 --
--- TOC entry 1993 (class 0 OID 0)
--- Dependencies: 192
+-- TOC entry 2023 (class 0 OID 0)
+-- Dependencies: 185
 -- Name: groups_group_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: enwida
 --
 
@@ -57,26 +70,51 @@ ALTER SEQUENCE groups_group_id_seq OWNED BY groups.group_id;
 
 
 --
--- TOC entry 184 (class 1259 OID 82119)
+-- TOC entry 188 (class 1259 OID 123092)
 -- Name: rights; Type: TABLE; Schema: public; Owner: enwida; Tablespace: 
 --
 
 CREATE TABLE rights (
-    right_id integer,
+    right_id integer NOT NULL,
     role_id integer,
     tso integer,
     product integer,
     resolution character(50),
     time1 character(50),
     time2 character(50),
-    aspect_id integer
+    aspect_id integer,
+    enabled boolean NOT NULL
 );
 
 
 ALTER TABLE public.rights OWNER TO enwida;
 
 --
--- TOC entry 188 (class 1259 OID 90314)
+-- TOC entry 187 (class 1259 OID 123090)
+-- Name: rights_right_id_seq; Type: SEQUENCE; Schema: public; Owner: enwida
+--
+
+CREATE SEQUENCE rights_right_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.rights_right_id_seq OWNER TO enwida;
+
+--
+-- TOC entry 2024 (class 0 OID 0)
+-- Dependencies: 187
+-- Name: rights_right_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: enwida
+--
+
+ALTER SEQUENCE rights_right_id_seq OWNED BY rights.right_id;
+
+
+--
+-- TOC entry 190 (class 1259 OID 123098)
 -- Name: roles; Type: TABLE; Schema: public; Owner: enwida; Tablespace: 
 --
 
@@ -90,7 +128,7 @@ CREATE TABLE roles (
 ALTER TABLE public.roles OWNER TO enwida;
 
 --
--- TOC entry 189 (class 1259 OID 90323)
+-- TOC entry 189 (class 1259 OID 123096)
 -- Name: roles_role_id_seq; Type: SEQUENCE; Schema: public; Owner: enwida
 --
 
@@ -105,7 +143,7 @@ CREATE SEQUENCE roles_role_id_seq
 ALTER TABLE public.roles_role_id_seq OWNER TO enwida;
 
 --
--- TOC entry 1994 (class 0 OID 0)
+-- TOC entry 2025 (class 0 OID 0)
 -- Dependencies: 189
 -- Name: roles_role_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: enwida
 --
@@ -114,33 +152,20 @@ ALTER SEQUENCE roles_role_id_seq OWNED BY roles.role_id;
 
 
 --
--- TOC entry 190 (class 1259 OID 90329)
+-- TOC entry 191 (class 1259 OID 123104)
 -- Name: user_group; Type: TABLE; Schema: public; Owner: enwida; Tablespace: 
 --
 
 CREATE TABLE user_group (
-    user_id integer,
-    group_id integer
+    user_id integer NOT NULL,
+    group_id integer NOT NULL
 );
 
 
 ALTER TABLE public.user_group OWNER TO enwida;
 
 --
--- TOC entry 185 (class 1259 OID 82125)
--- Name: user_roles; Type: TABLE; Schema: public; Owner: enwida; Tablespace: 
---
-
-CREATE TABLE user_roles (
-    user_id integer NOT NULL,
-    role_id integer
-);
-
-
-ALTER TABLE public.user_roles OWNER TO enwida;
-
---
--- TOC entry 187 (class 1259 OID 82143)
+-- TOC entry 193 (class 1259 OID 123111)
 -- Name: users; Type: TABLE; Schema: public; Owner: enwida; Tablespace: 
 --
 
@@ -152,14 +177,15 @@ CREATE TABLE users (
     last_name character varying(45) NOT NULL,
     enabled boolean NOT NULL,
     joining_date date NOT NULL,
-    tel character varying(45)
+    telephone character varying(20),
+    company_name character varying(45) NOT NULL
 );
 
 
 ALTER TABLE public.users OWNER TO enwida;
 
 --
--- TOC entry 186 (class 1259 OID 82141)
+-- TOC entry 192 (class 1259 OID 123109)
 -- Name: users_user_id_seq; Type: SEQUENCE; Schema: public; Owner: enwida
 --
 
@@ -174,8 +200,8 @@ CREATE SEQUENCE users_user_id_seq
 ALTER TABLE public.users_user_id_seq OWNER TO enwida;
 
 --
--- TOC entry 1995 (class 0 OID 0)
--- Dependencies: 186
+-- TOC entry 2026 (class 0 OID 0)
+-- Dependencies: 192
 -- Name: users_user_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: enwida
 --
 
@@ -183,7 +209,7 @@ ALTER SEQUENCE users_user_id_seq OWNED BY users.user_id;
 
 
 --
--- TOC entry 1984 (class 2604 OID 98508)
+-- TOC entry 1984 (class 2604 OID 123087)
 -- Name: group_id; Type: DEFAULT; Schema: public; Owner: enwida
 --
 
@@ -191,7 +217,15 @@ ALTER TABLE ONLY groups ALTER COLUMN group_id SET DEFAULT nextval('groups_group_
 
 
 --
--- TOC entry 1983 (class 2604 OID 90325)
+-- TOC entry 1985 (class 2604 OID 123095)
+-- Name: right_id; Type: DEFAULT; Schema: public; Owner: enwida
+--
+
+ALTER TABLE ONLY rights ALTER COLUMN right_id SET DEFAULT nextval('rights_right_id_seq'::regclass);
+
+
+--
+-- TOC entry 1986 (class 2604 OID 123101)
 -- Name: role_id; Type: DEFAULT; Schema: public; Owner: enwida
 --
 
@@ -199,7 +233,7 @@ ALTER TABLE ONLY roles ALTER COLUMN role_id SET DEFAULT nextval('roles_role_id_s
 
 
 --
--- TOC entry 1982 (class 2604 OID 82146)
+-- TOC entry 1987 (class 2604 OID 123114)
 -- Name: user_id; Type: DEFAULT; Schema: public; Owner: enwida
 --
 
@@ -207,7 +241,134 @@ ALTER TABLE ONLY users ALTER COLUMN user_id SET DEFAULT nextval('users_user_id_s
 
 
 --
--- TOC entry 1986 (class 2606 OID 82148)
+-- TOC entry 2009 (class 0 OID 82125)
+-- Dependencies: 184
+-- Data for Name: group_role; Type: TABLE DATA; Schema: public; Owner: enwida
+--
+
+INSERT INTO group_role VALUES (1, 2);
+
+
+--
+-- TOC entry 2011 (class 0 OID 123084)
+-- Dependencies: 186
+-- Data for Name: groups; Type: TABLE DATA; Schema: public; Owner: enwida
+--
+
+INSERT INTO groups VALUES (1, 'enwida', true);
+INSERT INTO groups VALUES (10, 'new Group', false);
+
+
+--
+-- TOC entry 2027 (class 0 OID 0)
+-- Dependencies: 185
+-- Name: groups_group_id_seq; Type: SEQUENCE SET; Schema: public; Owner: enwida
+--
+
+SELECT pg_catalog.setval('groups_group_id_seq', 11, true);
+
+
+--
+-- TOC entry 2013 (class 0 OID 123092)
+-- Dependencies: 188
+-- Data for Name: rights; Type: TABLE DATA; Schema: public; Owner: enwida
+--
+
+
+
+--
+-- TOC entry 2028 (class 0 OID 0)
+-- Dependencies: 187
+-- Name: rights_right_id_seq; Type: SEQUENCE SET; Schema: public; Owner: enwida
+--
+
+SELECT pg_catalog.setval('rights_right_id_seq', 1, false);
+
+
+--
+-- TOC entry 2015 (class 0 OID 123098)
+-- Dependencies: 190
+-- Data for Name: roles; Type: TABLE DATA; Schema: public; Owner: enwida
+--
+
+INSERT INTO roles VALUES (1, 'admin', 'administrator');
+INSERT INTO roles VALUES (2, 'test', 'test user');
+
+
+--
+-- TOC entry 2029 (class 0 OID 0)
+-- Dependencies: 189
+-- Name: roles_role_id_seq; Type: SEQUENCE SET; Schema: public; Owner: enwida
+--
+
+SELECT pg_catalog.setval('roles_role_id_seq', 2, true);
+
+
+--
+-- TOC entry 2016 (class 0 OID 123104)
+-- Dependencies: 191
+-- Data for Name: user_group; Type: TABLE DATA; Schema: public; Owner: enwida
+--
+
+INSERT INTO user_group VALUES (2, 1);
+
+
+--
+-- TOC entry 2018 (class 0 OID 123111)
+-- Dependencies: 193
+-- Data for Name: users; Type: TABLE DATA; Schema: public; Owner: enwida
+--
+
+INSERT INTO users VALUES (2, 'olcay@example.de', '123456', 'olcay', 'tarazan', false, '2013-06-19', '0552064590', 'example.de');
+
+
+--
+-- TOC entry 2030 (class 0 OID 0)
+-- Dependencies: 192
+-- Name: users_user_id_seq; Type: SEQUENCE SET; Schema: public; Owner: enwida
+--
+
+SELECT pg_catalog.setval('users_user_id_seq', 2, true);
+
+
+--
+-- TOC entry 1991 (class 2606 OID 123089)
+-- Name: group_pkey; Type: CONSTRAINT; Schema: public; Owner: enwida; Tablespace: 
+--
+
+ALTER TABLE ONLY groups
+    ADD CONSTRAINT group_pkey PRIMARY KEY (group_id);
+
+
+--
+-- TOC entry 1993 (class 2606 OID 131314)
+-- Name: groups_group_name_key; Type: CONSTRAINT; Schema: public; Owner: enwida; Tablespace: 
+--
+
+ALTER TABLE ONLY groups
+    ADD CONSTRAINT groups_group_name_key UNIQUE (group_name);
+
+
+--
+-- TOC entry 1996 (class 2606 OID 123103)
+-- Name: roles_pkey; Type: CONSTRAINT; Schema: public; Owner: enwida; Tablespace: 
+--
+
+ALTER TABLE ONLY roles
+    ADD CONSTRAINT roles_pkey PRIMARY KEY (role_id);
+
+
+--
+-- TOC entry 1999 (class 2606 OID 123108)
+-- Name: user_group_pkey; Type: CONSTRAINT; Schema: public; Owner: enwida; Tablespace: 
+--
+
+ALTER TABLE ONLY user_group
+    ADD CONSTRAINT user_group_pkey PRIMARY KEY (user_id, group_id);
+
+
+--
+-- TOC entry 2001 (class 2606 OID 123116)
 -- Name: user_pkey; Type: CONSTRAINT; Schema: public; Owner: enwida; Tablespace: 
 --
 
@@ -216,7 +377,7 @@ ALTER TABLE ONLY users
 
 
 --
--- TOC entry 1988 (class 2606 OID 82150)
+-- TOC entry 2003 (class 2606 OID 123118)
 -- Name: username_unique; Type: CONSTRAINT; Schema: public; Owner: enwida; Tablespace: 
 --
 
@@ -224,7 +385,84 @@ ALTER TABLE ONLY users
     ADD CONSTRAINT username_unique UNIQUE (user_name);
 
 
--- Completed on 2013-06-14 11:03:03
+--
+-- TOC entry 1988 (class 1259 OID 131300)
+-- Name: FKI_group_grouprole; Type: INDEX; Schema: public; Owner: enwida; Tablespace: 
+--
+
+CREATE INDEX "FKI_group_grouprole" ON group_role USING btree (group_id);
+
+
+--
+-- TOC entry 1997 (class 1259 OID 131289)
+-- Name: FKI_group_usergroup; Type: INDEX; Schema: public; Owner: enwida; Tablespace: 
+--
+
+CREATE INDEX "FKI_group_usergroup" ON user_group USING btree (group_id);
+
+
+--
+-- TOC entry 1989 (class 1259 OID 131306)
+-- Name: FKI_role_grouprole; Type: INDEX; Schema: public; Owner: enwida; Tablespace: 
+--
+
+CREATE INDEX "FKI_role_grouprole" ON group_role USING btree (role_id);
+
+
+--
+-- TOC entry 1994 (class 1259 OID 131312)
+-- Name: FKI_roles_rights; Type: INDEX; Schema: public; Owner: enwida; Tablespace: 
+--
+
+CREATE INDEX "FKI_roles_rights" ON rights USING btree (role_id);
+
+
+--
+-- TOC entry 2004 (class 2606 OID 131295)
+-- Name: FK_group_grouprole; Type: FK CONSTRAINT; Schema: public; Owner: enwida
+--
+
+ALTER TABLE ONLY group_role
+    ADD CONSTRAINT "FK_group_grouprole" FOREIGN KEY (group_id) REFERENCES groups(group_id);
+
+
+--
+-- TOC entry 2008 (class 2606 OID 131284)
+-- Name: FK_group_usergroup; Type: FK CONSTRAINT; Schema: public; Owner: enwida
+--
+
+ALTER TABLE ONLY user_group
+    ADD CONSTRAINT "FK_group_usergroup" FOREIGN KEY (group_id) REFERENCES groups(group_id);
+
+
+--
+-- TOC entry 2005 (class 2606 OID 131301)
+-- Name: FK_role_grouprole; Type: FK CONSTRAINT; Schema: public; Owner: enwida
+--
+
+ALTER TABLE ONLY group_role
+    ADD CONSTRAINT "FK_role_grouprole" FOREIGN KEY (role_id) REFERENCES roles(role_id);
+
+
+--
+-- TOC entry 2006 (class 2606 OID 131307)
+-- Name: FK_roles_rights; Type: FK CONSTRAINT; Schema: public; Owner: enwida
+--
+
+ALTER TABLE ONLY rights
+    ADD CONSTRAINT "FK_roles_rights" FOREIGN KEY (role_id) REFERENCES roles(role_id);
+
+
+--
+-- TOC entry 2007 (class 2606 OID 131274)
+-- Name: FK_user_usergroup; Type: FK CONSTRAINT; Schema: public; Owner: enwida
+--
+
+ALTER TABLE ONLY user_group
+    ADD CONSTRAINT "FK_user_usergroup" FOREIGN KEY (user_id) REFERENCES users(user_id);
+
+
+-- Completed on 2013-06-19 16:51:32
 
 --
 -- PostgreSQL database dump complete

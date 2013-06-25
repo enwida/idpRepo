@@ -33,24 +33,7 @@
         	  <option value="4">1 year</option>
         </select>
         <br>
-          <select id="rl_ab1_selProduct1"  onchange="load('rl_ab1')">
-        	  <option value="1">SCR</option>
-        	  <option value="2">TCR</option>
-        </select>
-        <select id="rl_ab1_selProduct2"  onchange="load('rl_ab1')">
-        	  <option value="1">pos</option>
-        	  <option value="2">neg</option>
-        </select>
-        <select id="rl_ab1_selProduct3"  onchange="load('rl_ab1')">
-        	  <option value="1">PT</option>
-        	  <option value="2">OPT</option>
-        </select>
-        <select id="rl_ab1_selRange" onChange="chgRange('rl_ab1',this.selectedIndex);">
-        	  <option value="1">1 day</option>
-        	  <option value="2">1 week</option>
-        	  <option value="3">1 month</option>
-        	  <option value="4">1 year</option>
-        </select>
+        
         <h3>Preview:</h3>
         
         <br>

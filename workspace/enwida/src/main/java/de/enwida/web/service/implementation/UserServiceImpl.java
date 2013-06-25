@@ -31,11 +31,10 @@ public class UserServiceImpl implements UserService {
 	}
 
 	public List<User> getUsers() {
-		// TODO Auto-generated method stub
-		return null;
+	    return userDao.findAllUsers();
 	}
 
-	@Transactional
+
 	public boolean saveUser(User user) 
 	{
 		// Saving user in the user table
@@ -173,8 +172,13 @@ public class UserServiceImpl implements UserService {
         return userDao.findAllUsers();
     }
 
-	@Override
-	public boolean usernameAvailablility(String username) {
-		return userDao.usernameAvailablility(username);
-	}
+    @Override
+    public boolean enableDisableUser(int userID, boolean enabled) {
+        return userDao.enableDisableUser(userID,enabled);
+    }
+
+    @Override
+    public void removeGroup(int groupID) throws Exception {
+        userDao.removeGroup(groupID);
+    }
 }

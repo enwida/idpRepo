@@ -85,11 +85,13 @@ public class UserDao extends BaseDao<User> implements IUserDao {
 					rs.getLong("user_id"),
 					rs.getString("user_name"), 
 					rs.getString("user_password"), 
-					rs.getBoolean("enabled")
+                    rs.getBoolean("enabled")
 				);
 				;
                 user.setFirstName(rs.getString("first_name"));
                 user.setLastName(rs.getString("last_name"));
+                user.setTelephone(rs.getString("telephone"));
+                user.setCompanyName(rs.getString("company_name"));
                 ArrayList<Group> groups = getUserGroups(user.getUserID());
                 user.setGroups(groups);
                 ArrayList<Role> roles = getUserRoles(user.getUserID());
@@ -1171,7 +1173,9 @@ public List<Group> getAllGroups() {
 		String sql = "SELECT groups.group_id,groups.group_name,groups.auto_pass, array_to_string(array_agg(users.user_id), ',')  as users" +
 				"  FROM groups INNER JOIN user_group ON user_group.group_id=groups.group_id" +
 				"        INNER JOIN users ON user_group.user_ID=users.user_ID" +
-				" GROUP BY groups.group_id,groups.group_name,groups.auto_pass;";
+				" GROUP BY groups.group_id,groups.group_name,groups.auto_pass "+
+				" UNION SELECT groups.group_id,groups.group_name,groups.auto_pass, NULL as users from groups"+
+				" WHERE groups.group_id NOT IN (SELECT group_id FROM user_group)";
 		Connection conn = null;
 		ArrayList<Group> groups = new ArrayList<Group>();
 		try {
@@ -1183,11 +1187,14 @@ public List<Group> getAllGroups() {
 				group.setGroupID(rs.getLong("group_id"));
                 group.setGroupName(rs.getString("group_name"));
                 group.setAutoPass(rs.getBoolean("auto_pass"));
-                String[] userIDs=rs.getString("users").split(",");
-                for (String userID : userIDs) {
-                    if(userID!=null){
-                        User user=getUser(Long.parseLong(userID));
-                        group.addAssignedUsers(user);
+                String users=rs.getString("users");
+                if(users!=null){
+                    String[] userIDs=users.split(",");
+                    for (String userID : userIDs) {
+                        if(userID!=null){
+                            User user=getUser(Long.parseLong(userID));
+                            group.addAssignedUsers(user);
+                        }
                     }
                 }
 				groups.add(group);
@@ -1206,49 +1213,42 @@ public List<Group> getAllGroups() {
 		return groups;
 	}
 
-	@Override
-	public boolean usernameAvailablility(String username) {
-		boolean availablity = false;
-		String sql = "select user_id from users where user_name=?";
-		Connection conn = null;
-		
-		try 
-		{
-			conn = datasource.getConnection();
-			PreparedStatement ps = conn.prepareStatement(sql);
-			ps.setString(1, username);
-			ResultSet rs = ps.executeQuery();
-			
-			if (rs.next()) 
-			{
-				availablity = true;
-			}
-			
-			rs.close();
-			ps.close();
-		} 
-		catch (SQLException e) 
-		{			
-			availablity = false;
-		} 
-		finally 
-		{
-			if (conn != null) 
-			{
-				try 
-				{
-					conn.close();
-				} 
-				catch (SQLException e) 
-				{
-					availablity = false;
-				}
-			}
-		}
-		
-		return availablity;
-		
-	}
+    @Override
+    public boolean enableDisableUser(int userID, boolean enabled) {
+        String sql = "UPDATE users SET enabled=? WHERE user_id=?";
+        
+        Connection conn = null;
+ 
+        try {
+            conn = datasource.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setBoolean(1, enabled);
+            ps.setLong(2, userID);
+            ps.executeUpdate();
+            ps.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            if (conn != null) {
+                try {
+                conn.close();
+                } catch (SQLException e) {}
+            }
+        }
+        return true;
+    }
 
+    @Override
+    public void removeGroup(int groupID) throws Exception {
+        String sql = "delete FROM groups where group_id=?";
+        Connection conn = null;
+        
+        conn = datasource.getConnection();
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setInt(1, groupID);
+        ps.executeUpdate();
+        ps.close();
+
+    }
 
 }
