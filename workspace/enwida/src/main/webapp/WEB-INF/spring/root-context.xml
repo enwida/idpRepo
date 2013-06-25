@@ -21,4 +21,6 @@
 		</property>
 	</bean>	
 	
+	<bean scope="singleton" name="cookieSecurityService" class="de.enwida.web.service.implementation.CookieSecurityService"></bean>
+	
 </beans>

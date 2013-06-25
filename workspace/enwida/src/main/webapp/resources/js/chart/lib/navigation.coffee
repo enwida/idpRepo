@@ -49,10 +49,12 @@ define ["resolution"], (Resolution) ->
           from : new Date data.timeRangeMax.from
           to   : new Date data.timeRangeMax.to
 
+        viewMode = data.datepickerViewMode ? "months"
+
         @fillTso()
         @fillProduct()
         @fillResolutions()
-        @fillTimeRange "months", dateLimits
+        @fillTimeRange viewMode, dateLimits
         @setDefaults data.defaults
         @trigger "updateNavigation", data: data
         @triggerGetLines()
@@ -150,9 +152,8 @@ define ["resolution"], (Resolution) ->
         # resolution: @select("resolution").val()
 
     @setupEvents = ->
-      @$node.select("select").change => @triggerGetLines()
-      @select("from").on "changeDate", (e) => @triggerGetLines from: e.date
-      @select("to").on "changeDate", (e) => @triggerGetLines to: e.date
+      @$node.on "change", (e) =>
+        @triggerGetLines()
 
     @defaultAttrs
       tso: ".tso"
