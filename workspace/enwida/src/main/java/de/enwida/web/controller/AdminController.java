@@ -6,6 +6,7 @@ import java.util.List;
 import javax.mail.Session;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
@@ -141,14 +142,16 @@ public class AdminController {
     }
     
     @RequestMapping(value="/userLog", method = RequestMethod.GET)
-    @ResponseBody
-    public FileSystemResource  userLog(Model model,String user) {
+    public String  userLog(Model model,String user) {
+        File file;
         try {
-            File file=new File(System.getenv("ENWIDA_HOME")+"/log/"+user+".log");
-            return new FileSystemResource(file);
+            file=new File(System.getenv("ENWIDA_HOME")+"/log/"+user+".log");
+            model.addAttribute("userLog",  FileUtils.readFileToString(file));
         } catch (Exception e) {
-            return null;
-        }   
+            model.addAttribute("error", "File can not be read");
+        } 
+        model.addAttribute("content", "userLog");
+        return "user/admin/master";
     }
     
     
@@ -170,7 +173,7 @@ public class AdminController {
         model.addAttribute("content", "user");
         return "user/admin/master";
     }
-    
+
     @RequestMapping(value="/user",method=RequestMethod.POST, params = "resetPassword")
     public String reset(ModelMap model,long userID)
     {

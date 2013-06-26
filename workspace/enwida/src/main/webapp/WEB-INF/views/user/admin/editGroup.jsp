@@ -20,7 +20,14 @@
 					<td><c:forEach var="user" items="${group.assignedUsers}"><a href='user?userID=${user.userID}'>${user.userName}</a>,</c:forEach>
 					</td>
 					<td><input type="checkbox" checked="${group.autoPass}"/></td>
-					<td><a href='editGroup?groupID=${group.groupID}&action=delete'> delete</a></td>
+					<td>
+					<c:if test="${group.assignedUsers!=null}">
+						remove users to delete group
+					</c:if>
+					<c:if test="${group.assignedUsers==null}">
+						<a href='editGroup?groupID=${group.groupID}&action=delete'> delete</a>
+					</c:if>	
+					</td>
 				<tr>
 			</c:forEach>
 		</tbody>

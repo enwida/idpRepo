@@ -22,8 +22,11 @@ import de.enwida.web.utils.Constants;
 @Transactional
 public class UserServiceImpl implements UserService {
 
-	@Autowired
-	private IUserDao userDao;
+    @Autowired
+    private IUserDao userDao;
+
+    @Autowired
+    private Mail mail;
 	
     public User getUser(Long id) {
 		
@@ -133,7 +136,7 @@ public class UserServiceImpl implements UserService {
         user.setPassword(newPassword);
         userDao.updateUser(user);
         try {
-            Mail.SendEmail(user.getUserName(),"New Password","Your new Password:"+newPassword);
+            mail.SendEmail(user.getUserName(),"New Password","Your new Password:"+newPassword);
         } catch (Exception e) {
             return false;
         }
