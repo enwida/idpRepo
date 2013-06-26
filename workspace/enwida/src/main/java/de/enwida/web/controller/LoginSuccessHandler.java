@@ -1,8 +1,6 @@
 package de.enwida.web.controller;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Set;
 
 import javax.servlet.ServletException;
@@ -11,17 +9,16 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
-import org.apache.log4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-import de.enwida.web.model.User;
 import de.enwida.web.service.interfaces.UserService;
 
-@Component
+@Service("loginSuccessHandler")
 public class LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHandler
 {
     @Autowired
