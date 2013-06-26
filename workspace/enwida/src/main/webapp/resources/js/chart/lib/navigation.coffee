@@ -39,7 +39,15 @@ define ["resolution"], (Resolution) ->
           .append($("<span>").addClass("add-on").addClass("calendar").addClass("fromIcon")
             .append($("<i>").addClass("icon-th"))).hide())
 
+      timeSelect.append($("<div>").addClass("prevPeriode")
+        .append($("<i>").addClass("icon-chevron-left"))
+        .click => @prevPeriode())
+
       timeSelect.append($("<select>").addClass("timerange")).change => @refreshDatepicker()
+
+      timeSelect.append($("<div>").addClass("nextPeriode")
+        .append($("<i>").addClass("icon-chevron-right"))
+        .click => @nextPeriode())
 
       @$node.append productSelect
       @$node.append timeSelect
@@ -221,6 +229,9 @@ define ["resolution"], (Resolution) ->
     @getVisibleFromDate = ->
       new Date @$node.find(".datepicker-generic:visible .from").data("datepicker").date
 
+    @setVisibleFromDate = (date) ->
+      @$node.find(".datepicker-generic:visible .from").datepicker "setDate", date
+
     @getTimeRange = (timeRange) ->
       diff = timeRange.to - timeRange.from
       if diff < 1000*60*60*24*7 then "Day"
@@ -231,6 +242,25 @@ define ["resolution"], (Resolution) ->
     @forEachDatepicker = (f) ->
       for timeRange in @timeRanges
         f @getDatepickerElement(timeRange)
+
+    @prevPeriode = ->
+      date = new Date @getVisibleFromDate()
+      switch @select("timeRange").val()
+        when "Day"
+          date.setDate(date.getDate() - 1)
+        when "Week"
+          date.setDate(date.getDate() - 7)
+        when "Month"
+          date.setMonth(date.getMonth() - 1)
+        when "Year"
+          date.setFullYear(date.getFullYear() - 1)
+
+      @setVisibleFromDate date
+      @triggerGetLines()
+
+    @nextPeriode = ->
+      @setVisibleFromDate @getDateTo @getVisibleFromDate()
+      @triggerGetLines()
 
     @triggerGetLines = (opts={}) ->
       from = @getDateFrom(opts.from ? @getVisibleFromDate())
