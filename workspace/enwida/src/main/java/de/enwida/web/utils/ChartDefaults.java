@@ -1,0 +1,21 @@
+package de.enwida.web.utils;
+
+import java.util.Hashtable;
+
+public class ChartDefaults {
+    
+    private Hashtable<Integer, NavigationDefaults> chartDefaults;
+    
+    public ChartDefaults() {
+        this.chartDefaults = new Hashtable<>();
+    }
+    
+    public void set(int id, NavigationDefaults defaults) {
+        chartDefaults.put(id, defaults);
+    }
+    
+    public NavigationDefaults get(int id) {
+        return chartDefaults.get(id);
+    }
+
+}

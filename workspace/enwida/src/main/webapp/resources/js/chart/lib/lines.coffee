@@ -25,8 +25,15 @@ define ->
                 .append($("<div>").addClass("linesquare")))
               .append($("<td>").text(line.title))))
         li.click =>
-            li.toggleClass "hidden"
-            @trigger "toggleLine", lineId: i
+          # _ holds the event...
+          _ = window._
+          if _.contains @attr.disabledLines, i
+            @attr.disabledLines = _.without @attr.disabledLines, i
+          else
+            @attr.disabledLines.push i
+
+          li.toggleClass "hidden"
+          @trigger "toggleLine", lineId: i
         li.hover (=>
           # toggleClass does not work with SVG elements
           @$node.closest(".chart").find(".line#{i}").each ->
@@ -42,5 +49,11 @@ define ->
         )
         ul.append li
 
+      for i in @attr.disabledLines
+        console.log "Disable line #{i}"
+        @$node.find("li.line#{i}").addClass "hidden"
+        @trigger "toggleLine", lineId: i, duration: 0
+
     @after "initialize", ->
+      @attr.disabledLines = []
       @on "updateLines", @updateLines

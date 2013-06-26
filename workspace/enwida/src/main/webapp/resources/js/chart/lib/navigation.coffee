@@ -12,6 +12,11 @@ define ["resolution"], (Resolution) ->
       Week: "days"
       Month: "months"
       Year: "years"
+    @datePickerFormats =
+      Day: "yyyy-mm-dd"
+      Week: "yyyy-mm-dd"
+      Month: "yyyy-mm"
+      Year: "yyyy"
 
     @createElements = ->
       productSelect =
@@ -25,13 +30,16 @@ define ["resolution"], (Resolution) ->
           .change => @trigger "updateProducts")
       productSelect.append product
 
-      timeSelect =
-        $("<div>").addClass("timeselect")
-          .append($("<div>").addClass("input-append")
-            .append($("<input>").attr("type", "text").addClass("from").attr("readonly", true))
-            .append($("<span>").addClass("add-on").addClass("calendar").addClass("fromIcon")
-              .append($("<i>").addClass("icon-th"))))
-          .append($("<select>").addClass("timerange")).change => @refreshDatepicker()
+      timeSelect = $("<div>").addClass("timeselect")
+
+      for timeRange in @timeRanges
+        timeSelect.append($("<div>").addClass("input-append")
+          .addClass("datepicker-generic").addClass("datepicker-#{timeRange}")
+          .append($("<input>").attr("type", "text").addClass("from").attr("readonly", true))
+          .append($("<span>").addClass("add-on").addClass("calendar").addClass("fromIcon")
+            .append($("<i>").addClass("icon-th"))).hide())
+
+      timeSelect.append($("<select>").addClass("timerange")).change => @refreshDatepicker()
 
       @$node.append productSelect
       @$node.append timeSelect
@@ -51,12 +59,10 @@ define ["resolution"], (Resolution) ->
           from : new Date data.timeRangeMax.from
           to   : new Date data.timeRangeMax.to
 
-        viewMode = data.datepickerViewMode ? "months"
-
         @fillTso()
         @fillProduct()
         @fillResolutions()
-        @fillTimeRange viewMode, dateLimits
+        @fillTimeRange dateLimits
         @setDefaults data.defaults
         @trigger "updateNavigation", data: data
         @triggerGetLines()
@@ -78,46 +84,71 @@ define ["resolution"], (Resolution) ->
       for r in @navigationData.allResolutions
         element.append($("<option>").val(r).text(r))
 
-    @fillTimeRange = (viewMode="days", limits={}) ->
-      @select("from").datepicker
-        format: @datePickerFormat
-        viewMode: viewMode
-        minViewMode: viewMode
-        startDate: limits.from ? "1900-01-01"
-        endDate: limits.to ? new Date()
+    @fillTimeRange = (limits={}) ->
+      @timeRanges.forEach (timeRange) =>
+        element = @getDatepickerElement timeRange
 
-      @select("fromIcon").click =>
-        @select("from").datepicker "show"
+        element.datepicker
+          format: @datePickerFormats[timeRange]
+          weekStart: 1
+          viewMode: @viewModes[timeRange]
+          minViewMode: @viewModes[timeRange]
+          startDate: limits.from ? "1900-01-01"
+          endDate: limits.to ? new Date()
+
+        element.closest(".datepicker-generic").find(".fromIcon").click (e) =>
+          $(e.target).closest(".datepicker-generic").find(".from").datepicker "show"
+
+        # Keep dates in sync
+        element.on "changeDate", (e) =>
+          @updateDatepickers e.date, timeRange
 
       timeRange = @select("timeRange")
       for tr in @timeRanges
         # TODO: locale
         timeRange.append($("<option>").val(tr).text(tr))
 
-    @refreshDatepicker = ->
-      switch @select("timeRange").val()
-        when "Day"
-          @setDateRangeViewMode 0
-        when "Week"
-          @setDateRangeViewMode 0
-        when "Month"
-          @setDateRangeViewMode 1
-        when "Year"
-          @setDateRangeViewMode 2
+      @refreshDatepicker()
 
-    @setDateRangeViewMode = (mode) ->
-      console.log "Settings mode to #{mode}"
-      @select("from").data("datepicker").minViewMode = mode
-      @select("from").data("datepicker").startViewMode = mode
-      @select("from").data("datepicker").viewMode = mode
-      @select("from").datepicker("show")
-      @select("from").datepicker("hide")
+    @refreshDatepicker = ->
+      timeRange = @select("timeRange").val()
+      @$node.find(".datepicker-generic").hide()
+      @$node.find(".datepicker-#{timeRange}").show()
+
+    @updateDatepickers = (date, sender) ->
+      for timeRange in @timeRanges
+        continue if timeRange is sender
+        element = @getDatepickerElement timeRange
+        newDate = switch sender
+          when "Day"
+            if timeRange is "Week"
+              @getWeekStart date
+            else
+              date
+          when "Week"
+            result = new Date element.data("datepicker").date
+            result.setMonth date.getMonth()
+            result.setFullYear date.getFullYear()
+            result
+          when "Month"
+            result = new Date element.data("datepicker").date
+            result.setMonth date.getMonth()
+            result.setFullYear date.getFullYear()
+            result
+          when "Year"
+            result = new Date element.data("datepicker").date
+            result.setFullYear date.getFullYear()
+            result
+        element.datepicker "setDate", newDate
 
     @setDefaults = (defaults) ->
       @select("tso").val defaults.tso
       @setProduct defaults.product
       @select("resolution").val defaults.resolution
-      @select("from").datepicker "update", new Date defaults.timeRange.from
+      @select("timeRange").val @getTimeRange defaults.timeRange
+      @refreshDatepicker()
+      @forEachDatepicker (picker) ->
+        picker.datepicker "setDate", new Date defaults.timeRange.from
 
     @getProductTree = ->
       tso = parseInt @select("tso").val()
@@ -151,6 +182,18 @@ define ["resolution"], (Resolution) ->
     @updateProducts = ->
       @setProduct @getProduct()
 
+    @getDateFrom = (from) ->
+      result = new Date from
+      switch @select("timeRange").val()
+        when "Week"
+          result = @getWeekStart result
+        when "Month"
+          result.setDate 1
+        when "Year"
+          result.setMonth 0
+          result.setDate 1
+      result
+
     @getDateTo = (from) ->
       result = new Date from
       switch @select("timeRange").val()
@@ -164,8 +207,31 @@ define ["resolution"], (Resolution) ->
           result.setFullYear(result.getFullYear() + 1)
       result
 
+    @getWeekStart = (date) ->
+      result = new Date date
+      while result.getDay() isnt 1
+        result.setDate (result.getDate() - 1)
+      result
+
+    @getDatepickerElement = (timeRange) ->
+      @$node.find(".datepicker-#{timeRange} .from")
+
+    @getVisibleFromDate = ->
+      new Date @$node.find(".datepicker-generic:visible .from").data("datepicker").date
+
+    @getTimeRange = (timeRange) ->
+      diff = timeRange.to - timeRange.from
+      if diff < 1000*60*60*24*7 then "Day"
+      else if diff < 1000*60*60*24*28 then "Week"
+      else if diff < 1000*60*60*24*365 then "Month"
+      else "Year"
+
+    @forEachDatepicker = (f) ->
+      for timeRange in @timeRanges
+        f @getDatepickerElement(timeRange)
+
     @triggerGetLines = (opts={}) ->
-      from = opts.from ? new Date @select("from").val()
+      from = @getDateFrom(opts.from ? @getVisibleFromDate())
       timeRange =
         from: from
         to:   @getDateTo from
@@ -189,8 +255,6 @@ define ["resolution"], (Resolution) ->
       tso: ".tso"
       product: ".product"
       resolution: ".resolution"
-      from: ".from"
-      fromIcon: ".fromIcon"
       timeRange: ".timerange"
 
     @after "initialize", ->
