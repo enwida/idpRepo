@@ -33,18 +33,21 @@ define ->
 
   setupXScaleDate: ->
     @chart.xScale = d3.time.scale().range [0, @chart.options.width]
-    @chart.xScale.tickFormat = (count) =>
-      formats = @options?.x?.dateFormats ? [
-        ["%Y", "%Y-%m-%d"]
-        ["%m", "%b"]
-        ["%d", "%d"]
-        ["%H:%M", "%H:%M"]
-      ]
+    formats = @options?.x?.dateFormats ? [
+      ["%Y", "%Y-%m-%d"]
+      ["%m", "%b"]
+      ["%d", "%d"]
+      ["%H:%M", "%H:%M"]
+    ]
+    @chart.xScale.tickFormat = @getTickFormater formats
 
+  getTickFormater: (formats) =>
+    (count) =>
       # Closure variable containing the last tick
       last = null
 
-      (date) ->
+      (date) =>
+
         # Helper function
         take = (format) ->
           last = date

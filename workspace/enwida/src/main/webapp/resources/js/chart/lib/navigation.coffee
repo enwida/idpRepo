@@ -238,9 +238,10 @@ define ["resolution"], (Resolution) ->
         from: from
         to:   @getDateTo from
 
-      resolution = Resolution.getOptimalResolution timeRange,
-          @navigationData.allResolutions,
-          @attr.width
+      resolution = Resolution.getOptimalResolution @attr.type,
+        timeRange,
+        @navigationData.allResolutions,
+        @attr.width
 
       @trigger "getLines",
         tso: @select("tso").val()
@@ -258,6 +259,7 @@ define ["resolution"], (Resolution) ->
       product: ".product"
       resolution: ".resolution"
       timeRange: ".timerange"
+      type: "line"
 
     @after "initialize", ->
       @on "refresh", @refresh

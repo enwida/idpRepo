@@ -63,4 +63,5 @@ define ["navigation", "spreadsheet", "visual", "lines"],
         Navigation.attachTo navigation,
           id: @attr.id
           width: @attr.width
+          type: @$node.attr("data-chart-type") ? "line"
 

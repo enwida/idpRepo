@@ -4,16 +4,24 @@ define ->
     "QUATER_HOURLY" : 60*15
     "HOURLY"        : 60*60
     "DAILY"         : 60*60*24
-    "WEEKLY"        : 60*60*24*7   # roundabout
+    "WEEKLY"        : 60*60*24*7
     "MONTHLY"       : 60*60*24*30  # roundabout
     "YEARLY"        : 60*60*24*365 # roundabout
 
-  optimalDensity = 25
-  maximumDensity = 15
+  densities =
+    "line":
+      optimalDensity: 25
+      maximumDensity: 15
+    "bar":
+      optimalDensity: 50
+      maximumDensity: 40
+    "carpet":
+      optimalDensity: 25
+      maximumDensity: 15
 
-  getOptimalResolution: (timeRange, filters, width) ->
-    optimalDataPointCount = width / optimalDensity
-    maximumDataPointCount = width / maximumDensity
+  getOptimalResolution: (type, timeRange, filters, width) ->
+    optimalDataPointCount = width / densities[type].optimalDensity
+    maximumDataPointCount = width / densities[type].maximumDensity
 
     diffSeconds = (timeRange.to - timeRange.from) / 1000
     validKeys = _(_(resolutions).keys()).filter (res) -> _(filters).contains res

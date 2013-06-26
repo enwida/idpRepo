@@ -1,4 +1,4 @@
-define ["generic_chart"], (generic_chart) ->
+define ["generic_chart", "scale"], (generic_chart, scale) ->
 
   class BarChart
 
@@ -6,12 +6,27 @@ define ["generic_chart"], (generic_chart) ->
       # Deep clone the options object
       options = $.extend true, {}, options
 
-      @makeDateScale options.lines if options.scale.x.type is "date"
+      if options.scale.x.type is "date"
+        for line in @chart.data
+          for dp in line.dataPoints
+            dp.x = new Date dp.x
+
+      # Change the x scale type temporarily when then scales
+      # are initialized
+      tmp = options.scale.x.type
       options.scale.x.type = "ordinal"
       @chart = generic_chart.init options
+      options.scale.x.type = tmp
+
+      formats = @options?.x?.dateFormats ? [
+        ["%Y", "%Y-%m-%d"]
+        ["%m", "%b"]
+        ["%d", "%d"]
+        ["%H:%M", "%H:%M"]
+      ]
+      @chart.xScale.tickFormat = scale.getTickFormater formats
 
     drawBars: (data, id=0) ->
-      console.log id
       barWidth = @chart.xScale.rangeBand() / data.length
       barOffset = 0
 
@@ -50,22 +65,6 @@ define ["generic_chart"], (generic_chart) ->
         lastValue = currentValue
         i += 1
       result
-
-    makeDateScale: (data) ->
-      lastformat = d3.time.format "%m"
-      for line in data
-        for dp, i in line.dataPoints
-          next = line.dataPoints[i+1]
-          if next?
-            diff = Math.abs(next.x - dp.x)
-            if diff <= 1000*60*60*24*28
-              lastformat = d3.time.format "%d"
-            else if diff <= 1000*60*60*24*356*3
-              lastformat = d3.time.format "%m"
-            else
-              lastformat = d3.time.format "%Y"
-
-          dp.x = lastformat new Date dp.x
 
     draw: ->
       @chart.drawSvg()
