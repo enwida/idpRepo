@@ -3,6 +3,6 @@
 <%@ page session="false"%>
 
 User Details
-    <textarea name="user_eingabe" cols="50" rows="10">    
+    <textarea name="user_eingabe" cols="500" rows="100">    
     	<c:out value="${userLog}" />
     </textarea>

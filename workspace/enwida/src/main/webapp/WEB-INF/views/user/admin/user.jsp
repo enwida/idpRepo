@@ -36,7 +36,7 @@
 			</tr>
 			<tr>
 				<td>Last Login Information</td>
-				<td>............</td>
+				<td>${user.joiningDate}</td>
 			</tr>
 			<tr>
 				<td></td>
