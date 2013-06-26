@@ -6,25 +6,12 @@ define ["generic_chart", "scale"], (generic_chart, scale) ->
       # Deep clone the options object
       options = $.extend true, {}, options
 
-      if options.scale.x.type is "date"
-        for line in options.lines
-          for dp in line.dataPoints
-            dp.x = new Date dp.x
-
       # Change the x scale type temporarily when then scales
       # are initialized
       tmp = options.scale.x.type
       options.scale.x.type = "ordinal"
       @chart = generic_chart.init options
       options.scale.x.type = tmp
-
-      formats = @options?.x?.dateFormats ? [
-        ["%Y", "%Y-%m-%d"]
-        ["%m", "%b"]
-        ["%d", "%d"]
-        ["%H:%M", "%H:%M"]
-      ]
-      @chart.xScale.tickFormat = scale.getTickFormater formats
 
     drawBars: (data, id=0) ->
       barWidth = @chart.xScale.rangeBand() / data.length

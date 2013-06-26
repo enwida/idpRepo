@@ -33,13 +33,8 @@ define ->
 
   setupXScaleDate: ->
     @chart.xScale = d3.time.scale().range [0, @chart.options.width]
-    formats = @options?.x?.dateFormats ? [
-      ["%Y", "%Y-%m-%d"]
-      ["%m", "%b"]
-      ["%d", "%d"]
-      ["%H:%M", "%H:%M"]
-    ]
-    @chart.xScale.tickFormat = @getTickFormater formats
+    @chart.xScale.tickFormat = (count) -> (date) ->
+      date.getTime()
 
   getTickFormater: (formats) =>
     (count) =>
