@@ -91,6 +91,8 @@ define ["resolution"], (Resolution) ->
         element.datepicker
           format: @datePickerFormats[timeRange]
           weekStart: 1
+          calendarWeeks: timeRange is "Week"
+          weekselect: timeRange is "Week"
           viewMode: @viewModes[timeRange]
           minViewMode: @viewModes[timeRange]
           startDate: limits.from ? "1900-01-01"

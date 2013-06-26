@@ -50,7 +50,6 @@ define ->
         ul.append li
 
       for i in @attr.disabledLines
-        console.log "Disable line #{i}"
         @$node.find("li.line#{i}").addClass "hidden"
         @trigger "toggleLine", lineId: i, duration: 0
 

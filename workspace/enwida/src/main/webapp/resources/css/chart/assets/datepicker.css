@@ -81,7 +81,9 @@
 .table-striped .datepicker table tr th {
   background-color: transparent;
 }
-.datepicker table tr td.day:hover {
+.datepicker table tr td.day:hover,
+.datepicker table tr.weekselect:hover,
+.datepicker table tr.weekselect.active:hover {
   background: #eeeeee;
   cursor: pointer;
 }
@@ -145,6 +147,10 @@
 .datepicker table tr td.today.disabled:hover.active {
   background-color: #fbf069 \9;
 }
+.datepicker table tr.weekselect.active,
+.datepicker table tr.weekselect.active:hover,
+.datepicker table tr.weekselect.active td:hover,
+.datepicker table tr.weekselect.active td.active,
 .datepicker table tr td.active,
 .datepicker table tr td.active:hover,
 .datepicker table tr td.active.disabled,
