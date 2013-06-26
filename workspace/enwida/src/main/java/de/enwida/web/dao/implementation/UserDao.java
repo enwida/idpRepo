@@ -71,7 +71,7 @@ public class UserDao extends BaseDao<User> implements IUserDao {
 	
 	public List<User> findAllUsers(){
 		ArrayList<User> users = new ArrayList<User>();
-		String sql = "SELECT * FROM users";
+		String sql = "SELECT * FROM users.users";
 		 
 		Connection conn = null;
  
@@ -114,10 +114,10 @@ public class UserDao extends BaseDao<User> implements IUserDao {
 	}
 	
 	private ArrayList<Role> getUserRoles(Long userID) {
-	    String sql = "select DISTINCT ON (role_id) roles.role_id,roles.role_name FROM roles " +
-	    		"INNER JOIN group_role ON group_role.role_id=roles.role_id " +
-	    		"INNER JOIN user_group ON user_group.group_id=group_role.group_id " +
-	    		" where user_group.user_id=?";
+	    String sql = "select DISTINCT ON (role_id) roles.role_id,roles.role_name FROM users.roles " +
+	    		"INNER JOIN users.group_role ON group_role.role_id=roles.role_id " +
+	    		"INNER JOIN users.user_group ON user_group.group_id=group_role.group_id " +
+	    		" where users.user_group.user_id=?";
         Connection conn = null;
         ArrayList<Role> roles = new ArrayList<Role>();
         try {
@@ -147,7 +147,7 @@ public class UserDao extends BaseDao<User> implements IUserDao {
 	
 	public void addPermission(final long userID, final long roleID) 
 	{				
-		String sql = "INSERT INTO user_roles VALUES (?, ?)";
+		String sql = "INSERT INTO users.user_roles VALUES (?, ?)";
 		 
 		Connection conn = null;
  
@@ -182,7 +182,7 @@ public class UserDao extends BaseDao<User> implements IUserDao {
 		}
 		
 		
-		String sql = "DELETE FROM user_roles WHERE (user_id=? and role_id=?)";
+		String sql = "DELETE FROM users.user_roles WHERE (user_id=? and role_id=?)";
 		Connection conn = null;
  
 		try {
@@ -204,7 +204,7 @@ public class UserDao extends BaseDao<User> implements IUserDao {
 	}
 
 	public boolean enableDisableUser(boolean enable,int userID) {
-		String sql = "UPDATE users SET enabled=? WHERE user_id=?";
+		String sql = "UPDATE users.users SET users.enabled=? WHERE users.user_id=?";
 		 
 		Connection conn = null;
  
@@ -229,7 +229,7 @@ public class UserDao extends BaseDao<User> implements IUserDao {
 	}
 
 	public boolean deleteUser(User user) {
-		String sql = "DELETE FROM users WHERE user_name=?";
+		String sql = "DELETE FROM users.users WHERE users.user_name=?";
 		 
 		Connection conn = null;
  
@@ -253,8 +253,7 @@ public class UserDao extends BaseDao<User> implements IUserDao {
 	}
 	
 	public String getPassword(String email) {
-		// TODO Auto-generated method stub
-		String sql = "SELECT * FROM users where user_name=?";
+		String sql = "SELECT * FROM users.users where users.user_name=?";
 		String password=null;
 		Connection conn = null;
  
@@ -287,7 +286,7 @@ public class UserDao extends BaseDao<User> implements IUserDao {
 
 		try 
 		{
-			final String sql = "INSERT INTO \"users\" ( user_name, user_password, first_name, last_name, enabled, joining_date, telephone, company_name ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?)";	    			
+			final String sql = "INSERT INTO users.users ( user_name, user_password, first_name, last_name, enabled, joining_date, telephone, company_name ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?)";	    			
 			this.jdbcTemplate.update(
 				    new PreparedStatementCreator() {
 				        public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
@@ -328,7 +327,7 @@ public class UserDao extends BaseDao<User> implements IUserDao {
 			while(i.hasNext()) 
 			{
 				final Map.Entry entry = (Map.Entry)i.next();
-				final String sql = "INSERT INTO user_roles (role_id, user_id, authority) VALUES ( ?, ?, ?)";
+				final String sql = "INSERT INTO users.user_roles (role_id, user_id, authority) VALUES ( ?, ?, ?)";
 				this.jdbcTemplate.update(
 						new PreparedStatementCreator() {
 							public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
@@ -349,7 +348,7 @@ public class UserDao extends BaseDao<User> implements IUserDao {
 	}
 
 	public User getUser(Long id) {
-		String sql = "SELECT * FROM users WHERE user_id=?";
+		String sql = "SELECT * FROM users.users WHERE users.user_id=?";
 		Connection conn = null;
 		User user = null;
 		try {
@@ -398,7 +397,7 @@ public class UserDao extends BaseDao<User> implements IUserDao {
 	}
 	
 	public Group getGroup(Long id) {
-        String sql = "SELECT * FROM groups WHERE group_id=?";
+        String sql = "SELECT * FROM users.groups WHERE users.groups.group_id=?";
         Connection conn = null;
         Group group = null;
         try {
@@ -429,7 +428,7 @@ public class UserDao extends BaseDao<User> implements IUserDao {
 
 	public ArrayList<Group> getAvailableGroupsForUser(long userID) 
 	{
-		String sql = "select * FROM groups";
+		String sql = "select * FROM users.groups";
 		Connection conn = null;
 		ArrayList<Group> groups = new ArrayList<Group>();
 		try {
@@ -458,7 +457,7 @@ public class UserDao extends BaseDao<User> implements IUserDao {
 	}
 	
 	public ArrayList<Group> getUserGroups(long userID) {
-		String sql = "select * FROM groups INNER JOIN user_group ON user_group.group_id=groups.group_id where user_group.user_id=?";
+		String sql = "select * FROM users.groups INNER JOIN users.user_group ON users.user_group.group_id=groups.group_id where user_group.user_id=?";
 		Connection conn = null;
 		ArrayList<Group> groups = new ArrayList<Group>();
 		
@@ -488,47 +487,9 @@ public class UserDao extends BaseDao<User> implements IUserDao {
 		return groups;
 	}
 
-	
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-public List<Group> getAllGroups() {
-		String sql = "select * FROM groups";
+	public List<Group> getAllGroups() {
+		String sql = "select * FROM users.groups";
 		Connection conn = null;
 		ArrayList<Group> groups = new ArrayList<Group>();
 		try {
@@ -560,7 +521,7 @@ public List<Group> getAllGroups() {
 		KeyHolder keyHolder = new GeneratedKeyHolder();	
 		Number id = -1;
 
-		final String sql = "INSERT INTO groups(group_name, auto_pass) VALUES (?, ?);";        
+		final String sql = "INSERT INTO users.groups(group_name, auto_pass) VALUES (?, ?);";        
         Connection conn = null;
  
         try 
@@ -593,7 +554,7 @@ public List<Group> getAllGroups() {
             return;
         }
                 
-        String sql = "INSERT INTO roles(name,description) VALUES (?,?);";
+        String sql = "INSERT INTO users.roles(name,description) VALUES (?,?);";
          
         Connection conn = null;
  
@@ -616,7 +577,7 @@ public List<Group> getAllGroups() {
     }
 
     public List<Role> getAllRoles() {
-        String sql = "select * FROM roles";
+        String sql = "select * FROM users.roles";
         Connection conn = null;
         ArrayList<Role> roles = new ArrayList<Role>();
         try {
@@ -646,7 +607,7 @@ public List<Group> getAllGroups() {
     
 	public boolean checkEmailAvailability(String email) {
 		
-		String sql = "SELECT * FROM users where user_name=?";
+		String sql = "SELECT * FROM users.users where user_name=?";
 		Connection conn = null;
  
 		try {
@@ -682,7 +643,7 @@ public List<Group> getAllGroups() {
 	
 	public long getGroupIdByCompanyName(final String companyName)
 	{
-		String sql = "select group_id FROM user_group INNER JOIN users ON user_group.user_id=users.user_id where users.company_name=?";
+		String sql = "select group_id FROM users.user_group INNER JOIN users ON user_group.user_id=users.user_id where users.company_name=?";
 		Connection conn = null;
 		
 		try 
@@ -724,7 +685,7 @@ public List<Group> getAllGroups() {
 
 	public boolean saveUserInGroup(final long userId, final long groupId)
 	{
-		final String sql = "INSERT INTO user_group(user_id, group_id) VALUES (?, ?);";        
+		final String sql = "INSERT INTO users.user_group(user_id, group_id) VALUES (?, ?);";        
         Connection conn = null;
  
         try 
@@ -750,7 +711,7 @@ public List<Group> getAllGroups() {
 
 	public long getRoleIdOfGroup(long groupId) 
 	{
-		String sql = "select role_id FROM user_roles INNER JOIN user_group ON user_roles.user_id=user_group.user_id where user_group.group_id=?";
+		String sql = "select role_id FROM users.user_roles INNER JOIN user_group ON user_roles.user_id=user_group.user_id where user_group.group_id=?";
 		Connection conn = null;
 		
 		try 
@@ -783,7 +744,7 @@ public List<Group> getAllGroups() {
 	{
 		Group group = null;
 		
-		String sql = "select * from groups where group_id=?";
+		String sql = "select * from users.groups where group_id=?";
 		Connection conn = null;
 		
 		try 
@@ -820,7 +781,7 @@ public List<Group> getAllGroups() {
 	public int getRoleIdByCompanyName(final String companyName)
 	{
 		Group group = null;
-		String sql = "select role_id FROM user_roles INNER JOIN users ON user_roles.user_id=user.user_id where users.company_name=?";
+		String sql = "select role_id FROM users.user_roles INNER JOIN users.users ON user_roles.user_id=user.user_id where users.company_name=?";
 		Connection conn = null;
 		
 		try 
@@ -852,7 +813,7 @@ public List<Group> getAllGroups() {
 	
 	public boolean saveUserInAnonymousGroup(final long userId)
 	{
-		final String sql = "INSERT INTO user_group(user_id, group_id) VALUES (?, (select group_id from groups where group_name='anonymous'));";        
+		final String sql = "INSERT INTO users.user_group(user_id, group_id) VALUES (?, (select group_id from users.groups where users.groups.group_name='anonymous'));";        
  
         try 
         {
@@ -877,7 +838,7 @@ public List<Group> getAllGroups() {
 
 	public long getAnonymousGroupId() 
 	{
-		String sql = "select group_id from groups where group_name='anonymous'";
+		String sql = "select group_id from users.groups where group_name='anonymous'";
 		Connection conn = null;
 		
 		try 
@@ -909,7 +870,7 @@ public List<Group> getAllGroups() {
 	
 
     public boolean updateUser(User user) {
-        String sql = "UPDATE users SET first_name=?,last_name=?,telephone=?,user_password=? WHERE user_id=?";
+        String sql = "UPDATE users.users SET first_name=?,last_name=?,telephone=?,user_password=? WHERE user_id=?";
         
         Connection conn = null;
  
@@ -936,7 +897,7 @@ public List<Group> getAllGroups() {
     }
 
     public User getUser(String userName) {
-        String sql = "SELECT * FROM users WHERE user_name=?";
+        String sql = "SELECT * FROM users.users WHERE user_name=?";
         Connection conn = null;
         User user = null;
         try {
@@ -981,7 +942,7 @@ public List<Group> getAllGroups() {
         }
         
         
-        String sql = "INSERT INTO user_group VALUES (?, ?)";
+        String sql = "INSERT INTO users.user_group VALUES (?, ?)";
          
         Connection conn = null;
  
@@ -1009,7 +970,7 @@ public List<Group> getAllGroups() {
             return "Invalid userID  or groupID ";
         }
         
-        String sql = "DELETE FROM user_group WHERE (user_id=? and group_id=?)";
+        String sql = "DELETE FROM users.user_group WHERE (user_id=? and group_id=?)";
         Connection conn = null;
  
         try {
@@ -1037,7 +998,7 @@ public List<Group> getAllGroups() {
         }
         
         
-        String sql = "INSERT INTO group_role VALUES (?, ?)";
+        String sql = "INSERT INTO users.group_role VALUES (?, ?)";
          
         Connection conn = null;
  
@@ -1065,7 +1026,7 @@ public List<Group> getAllGroups() {
             return "Invalid roleID  or groupID ";
         }
         
-        String sql = "DELETE FROM group_roles WHERE (group_id=? and role_id=?)";
+        String sql = "DELETE FROM users.group_role WHERE (group_id=? and role_id=?)";
         Connection conn = null;
  
         try {
@@ -1088,10 +1049,10 @@ public List<Group> getAllGroups() {
     }
 
     public List<Role> getAllRolesWithGroups() {
-        String sql = "SELECT roles.role_id,roles.role_name,roles.description, array_to_string(array_agg(groups.group_id), ',') as groups FROM roles " +
-        		"INNER JOIN group_role ON roles.role_id=group_role.role_id" +
-        		" INNER JOIN groups ON group_role.group_ID=groups.group_ID" +
-        		" GROUP BY roles.role_name,roles.role_id,roles.description";
+        String sql = "SELECT roles.role_id,roles.role_name,roles.description, array_to_string(array_agg(groups.group_id), ',') as groups FROM users.roles " +
+        		"INNER JOIN users.group_role ON roles.role_id=group_role.role_id" +
+        		" INNER JOIN users.groups ON group_role.group_ID=groups.group_ID" +
+        		" GROUP BY users.roles.role_name,roles.role_id,roles.description";
         Connection conn = null;
         ArrayList<Role> roles = new ArrayList<Role>();
         try {
@@ -1129,11 +1090,11 @@ public List<Group> getAllGroups() {
 
 	public List<Group> getAllGroupsWithUsers() {
 		String sql = "SELECT groups.group_id,groups.group_name,groups.auto_pass, array_to_string(array_agg(users.user_id), ',')  as users" +
-				"  FROM groups INNER JOIN user_group ON user_group.group_id=groups.group_id" +
-				"        INNER JOIN users ON user_group.user_ID=users.user_ID" +
-				" GROUP BY groups.group_id,groups.group_name,groups.auto_pass "+
-				" UNION SELECT groups.group_id,groups.group_name,groups.auto_pass, NULL as users from groups"+
-				" WHERE groups.group_id NOT IN (SELECT group_id FROM user_group)";
+				"  FROM users.groups INNER JOIN users.user_group ON user_group.group_id=groups.group_id" +
+				"        INNER JOIN users.users ON user_group.user_ID=users.user_ID" +
+				" GROUP BY users.groups.group_id,groups.group_name,groups.auto_pass "+
+				" UNION SELECT groups.group_id,groups.group_name,groups.auto_pass, NULL as users from users.groups"+
+				" WHERE users.groups.group_id NOT IN (SELECT group_id FROM users.user_group)";
 		Connection conn = null;
 		ArrayList<Group> groups = new ArrayList<Group>();
 		try {
@@ -1173,7 +1134,7 @@ public List<Group> getAllGroups() {
 
     @Override
     public boolean enableDisableUser(int userID, boolean enabled) {
-        String sql = "UPDATE users SET enabled=? WHERE user_id=?";
+        String sql = "UPDATE users.users SET enabled=? WHERE user_id=?";
         
         Connection conn = null;
  
@@ -1199,7 +1160,7 @@ public List<Group> getAllGroups() {
     @Override
     public void removeGroup(int groupID) throws Exception {
 
-        String sql = "delete FROM groups where group_id=?";
+        String sql = "delete FROM users.groups where group_id=?";
         Connection conn = null;
         try {
             conn = datasource.getConnection();
@@ -1222,7 +1183,7 @@ public List<Group> getAllGroups() {
     @Override
     public boolean usernameAvailablility(String username) {
 
-        String sql = "select user_id from users where user_name=?";
+        String sql = "select user_id from users.users where users.user_name=?";
         Connection conn = null;
         
         try 
