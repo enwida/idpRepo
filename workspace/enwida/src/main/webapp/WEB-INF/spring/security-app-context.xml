@@ -35,9 +35,9 @@
 	    <intercept-url pattern="/" access="permitAll" />
 	    <intercept-url pattern="/*" access="permitAll" />
 	    <intercept-url pattern="/j_spring_security_check" access="hasRole('ROLE USER')"/>
-<!-- 	    <intercept-url pattern="/user/admin/*" access="hasRole('admin')" /> -->
+ 	    <intercept-url pattern="/user/admin/*" access="hasRole('admin')" />
 	    
-	    <form-login  login-page="/login.html"  authentication-failure-url="/user/loginFailed" login-processing-url="/j_spring_security_check"  authentication-success-handler-ref="loginSuccessHandler"/>        
+	    <form-login  login-page="/user/login.html"  authentication-failure-url="/user/loginFailed" login-processing-url="/j_spring_security_check"  authentication-success-handler-ref="loginSuccessHandler"/>        
 	    <logout logout-success-url="/" logout-url="/j_spring_security_logout" />
 	    <access-denied-handler error-page="/403.html"/>
     </http>

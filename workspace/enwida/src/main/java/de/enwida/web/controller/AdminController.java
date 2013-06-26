@@ -65,13 +65,7 @@ public class AdminController {
 	@RequestMapping(value="/userList", method = RequestMethod.GET)
 	public String userList(Model model) {
         
-		List<User> users= userService.findAllUsers();
-		model.addAttribute("users", users);
-		List<Group> groups= userService.getAllGroups();
-		model.addAttribute("groups", groups);
-		model.addAttribute("content", "userList");
-		
-		return "user/admin/master";
+		return admin(model);
 	}
     
     @RequestMapping(value="/editGroup", method = RequestMethod.GET)
@@ -136,8 +130,11 @@ public class AdminController {
     
     @RequestMapping(value="/", method = RequestMethod.GET)
     public String admin(Model model) {
-       
-        model.addAttribute("content", "admin");
+        List<User> users= userService.findAllUsers();
+        model.addAttribute("users", users);
+        List<Group> groups= userService.getAllGroups();
+        model.addAttribute("groups", groups);
+        model.addAttribute("content", "userList");
         return "user/admin/master";
     }
     
