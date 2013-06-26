@@ -7,7 +7,7 @@ define ["generic_chart", "scale"], (generic_chart, scale) ->
       options = $.extend true, {}, options
 
       if options.scale.x.type is "date"
-        for line in @chart.data
+        for line in options.lines
           for dp in line.dataPoints
             dp.x = new Date dp.x
 
