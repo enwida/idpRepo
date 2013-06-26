@@ -3,13 +3,6 @@
 <%@ page session="false"%>
 
 User Details
-<table>
-	<tr>
-		<td>isLogin</td>
-		<td>Cookie</td>
-		<td>User</td>
-		<td>timeStamp</td>
-		<td>LogLevel</td>
-		<td>Text(IPAddress)</td>
-	</tr>
-</table>
+    <textarea name="user_eingabe" cols="50" rows="10">    
+    	<c:out value="${userLog}" />
+    </textarea>

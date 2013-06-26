@@ -1160,12 +1160,14 @@ public class UserDao extends BaseDao<User> implements IUserDao {
     @Override
     public void removeGroup(int groupID) throws Exception {
 
-        String sql = "delete FROM users.groups where group_id=?";
+        String sql = "delete FROM users.user_group where group_id=?;" +
+        		"delete FROM users.groups where group_id=?";
         Connection conn = null;
         try {
             conn = datasource.getConnection();
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setInt(1, groupID);
+            ps.setInt(2, groupID);
             ps.executeUpdate();
             ps.close();
         } catch (SQLException e) {

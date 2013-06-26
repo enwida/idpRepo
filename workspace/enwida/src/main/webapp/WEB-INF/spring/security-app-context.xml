@@ -12,13 +12,13 @@
  
 		   users-by-username-query="
 		      select user_name,user_password, enabled 
-		      from users where user_name=?" 
+		      from users.users where user_name=?" 
  
 		   authorities-by-username-query="     
-				SELECT users.user_name, roles.role_name FROM users
-	    		 INNER JOIN user_group ON user_group.user_id=users.user_id 
-	    		 INNER JOIN group_role ON group_role.group_id=user_group.group_id
-	    		 INNER JOIN roles ON roles.role_ID=group_role.role_id
+				SELECT users.user_name, roles.role_name FROM users.users
+	    		 INNER JOIN users.user_group ON user_group.user_id=users.user_id 
+	    		 INNER JOIN users.group_role ON group_role.group_id=user_group.group_id
+	    		 INNER JOIN users.roles ON roles.role_ID=group_role.role_id
 	    		 WHERE user_name=?" 
  
 		/>
@@ -37,7 +37,7 @@
 	    <intercept-url pattern="/j_spring_security_check" access="hasRole('ROLE USER')"/>
 <!-- 	    <intercept-url pattern="/user/admin/*" access="hasRole('admin')" /> -->
 	    
-	    <form-login  login-page="/login.html"  authentication-failure-url="/loginFailed" login-processing-url="/j_spring_security_check"  authentication-success-handler-ref="loginSuccessHandler"/>        
+	    <form-login  login-page="/login.html"  authentication-failure-url="/user/loginFailed" login-processing-url="/j_spring_security_check"  authentication-success-handler-ref="loginSuccessHandler"/>        
 	    <logout logout-success-url="/" logout-url="/j_spring_security_logout" />
 	    <access-denied-handler error-page="/403.html"/>
     </http>

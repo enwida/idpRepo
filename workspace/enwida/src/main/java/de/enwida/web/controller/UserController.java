@@ -38,6 +38,9 @@ public class UserController {
 	
 	@Autowired
 	private UserValidator userValidator;
+ 
+	@Autowired	
+	private Mail mail;
 	
 	@RequestMapping(value="/user", method = RequestMethod.GET)
 	public String displayDashboard(Model model, Locale locale) {
@@ -192,7 +195,7 @@ public class UserController {
 			model.addAttribute("error", "User is not found");
 		}else{
 			try {
-				Mail.SendEmail(email,"Your Password:",password);
+				mail.SendEmail(email,"Your Password:",password);
 			} catch (Exception e) {
 				model.addAttribute("error", "Mailling Error");
 			}
