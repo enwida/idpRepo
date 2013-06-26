@@ -20,37 +20,37 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
  *
  */
 public class UserLog extends HandlerInterceptorAdapter{
-	Logger logger = Logger.getLogger(getClass());	
-	
-	@Override
-	public void postHandle(HttpServletRequest request,HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
-				
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		if (auth!=null){
-			String name=auth.getName();
+    Logger logger = Logger.getLogger(getClass());   
+    
+    @Override
+    public void postHandle(HttpServletRequest request,
+            HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
+                
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth!=null){
+            String name=auth.getName();
 
-			if(Logger.getRootLogger().getAppender(name)==null){ //create FileAppender if necessary
-			  RollingFileAppender fa = new RollingFileAppender();
-			  fa.setName(name);
-			  fa.setFile("c:/logs/"+name+".log");
-			  fa.setLayout(new PatternLayout("%d{ISO8601}: %m%n"));
-			  fa.setThreshold(Level.INFO);
-			  fa.setMaxFileSize("1MB");
-			  fa.activateOptions();
-			  Logger.getRootLogger().addAppender(fa);
-			}
-			FileAppender fa = (FileAppender) Logger.getRootLogger().getAppender(name);
-			boolean isLogin=false;
-			if (name.equals("anonymousUser")){
-			    isLogin=false;
-			}else{
-			    isLogin=true;
-			}
-			logger.info(" isLogin:"+isLogin+" Cookie:No User:"+name+" IP:"+request.getRemoteAddr());			
+            if(Logger.getRootLogger().getAppender(name)==null){ //create FileAppender if necessary
+              RollingFileAppender fa = new RollingFileAppender();
+              fa.setName(name);
+              fa.setFile(System.getenv("ENWIDA_HOME")+"/log/"+name+".log");
+              fa.setLayout(new PatternLayout("%d{ISO8601}: %m%n"));
+              fa.setThreshold(Level.INFO);
+              fa.setMaxFileSize("1MB");
+              fa.activateOptions();
+              Logger.getRootLogger().addAppender(fa);
+            }
+            FileAppender fa = (FileAppender) Logger.getRootLogger().getAppender(name);
+                    
+            if (request.getRequestURL().substring(request.getRequestURL().length()-1).equals("/")){
+                logger.info("IP: "+request.getRemoteAddr()+", USER-AGENT: "+request.getHeader("User-Agent"));
+            }
 
-			 Logger.getRootLogger().removeAppender(fa);
-		}			
-	}
+              
+            logger.info(" isLogin:Yes Cookie:No User:"+name+" IP:"+request.getRemoteAddr());
+            Logger.getRootLogger().removeAppender(fa);
+        }           
+    }
 	
 	public void infoLogin(Logger logger,String message,String IP,String cookie) {
         MDC.put("login", "login"); 

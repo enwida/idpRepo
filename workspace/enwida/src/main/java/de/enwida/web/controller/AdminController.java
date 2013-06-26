@@ -143,8 +143,12 @@ public class AdminController {
     @RequestMapping(value="/userLog", method = RequestMethod.GET)
     @ResponseBody
     public FileSystemResource  userLog(Model model,String user) {
-        File file=new File("C:/logs/"+user+".log");
-        return new FileSystemResource(file);
+        try {
+            File file=new File(System.getenv("ENWIDA_HOME")+"/log/"+user+".log");
+            return new FileSystemResource(file);
+        } catch (Exception e) {
+            return null;
+        }   
     }
     
     
@@ -208,7 +212,13 @@ public class AdminController {
         Group group=new Group();
         group.setGroupName(newGroup);
         group.setAutoPass(autoPass);
-        userService.addGroup(group);
+        try {
+            userService.addGroup(group);
+            
+        } catch (Exception e) {
+            model.addAttribute("error", "Group can not be added");
+            logger.error(e.getMessage());
+        }
         return editGroup(model,null,0,null);
     }
     

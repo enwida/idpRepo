@@ -26,7 +26,7 @@ public class AspectDaoImpl implements IAspectsDao {
     }
 
     public List<AspectRight> getAllAspects(long roleID) {
-        String sql = "select * FROM rights";
+        String sql = "select * FROM users.rights";
         Connection conn = null;
         ArrayList<AspectRight> rights = new ArrayList<AspectRight>();
         try {
