@@ -185,7 +185,7 @@ public class ChartDataController {
 
     	try {
             updateChartDefaultsCookie(chartId, defaults, request, response, principal);
-        } catch (IOException e) {
+        } catch (Exception e) {
             // Don't reply with an error if saving the defaults failed
             e.printStackTrace();
         }
