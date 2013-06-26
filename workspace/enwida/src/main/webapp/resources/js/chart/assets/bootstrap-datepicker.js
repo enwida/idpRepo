@@ -126,6 +126,11 @@
 		this.todayBtn = (options.todayBtn||this.element.data('date-today-btn')||false);
 		this.todayHighlight = (options.todayHighlight||this.element.data('date-today-highlight')||false);
 
+		this.weekselect = false;
+		if ('weekselect' in options) {
+			this.weekselect = options.weekselect;
+		}
+
 		this.calendarWeeks = false;
 		if ('calendarWeeks' in options) {
 			this.calendarWeeks = options.calendarWeeks;
@@ -268,7 +273,11 @@
 		},
 
 		setDate: function(d) {
-			this.setUTCDate(new Date(d.getTime() - (d.getTimezoneOffset()*60000)));
+			var date = new Date(d.getTime() - (d.getTimezoneOffset()*60000));
+			if (this.weekselect) {
+				date = this._getWeekStart(date);
+			}
+			this.setUTCDate(date);
 		},
 
 		setUTCDate: function(d) {
@@ -413,7 +422,15 @@
 			var clsName;
 			while(prevMonth.valueOf() < nextMonth) {
 				if (prevMonth.getUTCDay() == this.weekStart) {
-					html.push('<tr>');
+					if (this.weekselect) {
+						var cls = "";
+						if (currentDate && prevMonth.valueOf() == currentDate) {
+							cls = "active";
+						}
+						html.push('<tr class="weekselect ' + cls + '">');
+					} else {
+						html.push('<tr>');
+					}
 					if(this.calendarWeeks){
 						// ISO 8601: First week contains first thursday.
 						// ISO also states week starts on Monday, but we can be more abstract here.
@@ -618,7 +635,18 @@
 			}
 		},
 
+		_getWeekStart: function(date) {
+			var result = new Date(date);
+			while (result.getDay() != this.weekStart) {
+				result.setDate(result.getDate() - 1);
+			}
+			return result;
+		},
+
 		_setDate: function(date, which){
+			if (this.weekselect) {
+				date = this._getWeekStart(date);
+			}
 			if (!which || which == 'date')
 				this.date = date;
 			if (!which || which  == 'view')
