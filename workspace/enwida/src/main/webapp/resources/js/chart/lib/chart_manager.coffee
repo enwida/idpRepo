@@ -27,8 +27,9 @@ define ["navigation", "spreadsheet", "visual", "lines"],
           @trigger @select("lines"), "updateLines", lines: data
 
       @toggleLine = (_, opts) ->
-        @$node.find(".visual .line#{opts.lineId}").toggle(200)
-        @$node.find(".dot#{opts.lineId}").toggle(200)
+        duration = opts.duration ? 200
+        @$node.find(".visual .line#{opts.lineId}").toggle(duration)
+        @$node.find(".dot#{opts.lineId}").toggle(duration)
 
       @defaultAttrs
         navigation: ".navigation"
