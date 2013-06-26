@@ -41,7 +41,7 @@
 			</tr>
 			<tr>
 				<td><a href="forgotPassword">Forgot Your Password?</a></td>
-				<td><input type="checkbox">Remember</input></td>
+				<td><input id="j_remember" name="_spring_security_remember_me" type="checkbox" />Remember me</td>
 			</tr>
 		</table>
 
