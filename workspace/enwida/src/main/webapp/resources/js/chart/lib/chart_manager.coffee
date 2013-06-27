@@ -24,8 +24,28 @@ define ["navigation", "spreadsheet", "visual", "lines", "loading"],
       @onGetLines = (a, opts) ->
         @getLines opts, (err, data) =>
           throw err if err?
+          data = @preprocessLines data
           @trigger @select("visual"), "draw", data: data
           @trigger @select("lines"), "updateLines", lines: data
+
+      @preprocessLines = (lines) ->
+        switch @attr.type
+          when "minmax"
+            result = []
+            # Add avg line
+            result.push lines[1]
+
+            # Generate min/max line
+            minMaxLine = lines[0]
+            minMaxLine.title += " / #{lines[2].title}"
+            for dp, i in minMaxLine.dataPoints
+              dp.min = dp.y
+              dp.max = lines[2].dataPoints[i].y
+
+            result.push minMaxLine
+            lines = result
+
+        lines
 
       @toggleLine = (_, opts) ->
         duration = opts.duration ? 200
@@ -44,6 +64,7 @@ define ["navigation", "spreadsheet", "visual", "lines", "loading"],
           @trigger @select("visual"), "navigationData", opts
         @on "toggleLine", @toggleLine
 
+        @attr.type = @$node.attr("data-chart-type") ? "line"
         @attr.width = parseInt(@$node.attr("data-width")) ? 800
 
         # Add visual
@@ -51,7 +72,7 @@ define ["navigation", "spreadsheet", "visual", "lines", "loading"],
         @$node.append visual
         Visual.attachTo visual,
           id: @attr.id
-          type: @$node.attr("data-chart-type") ? "line"
+          type: @attr.type
           width: @attr.width
 
         # Add lines
@@ -65,5 +86,5 @@ define ["navigation", "spreadsheet", "visual", "lines", "loading"],
         Navigation.attachTo navigation,
           id: @attr.id
           width: @attr.width
-          type: @$node.attr("data-chart-type") ? "line"
+          type: @attr.type
 

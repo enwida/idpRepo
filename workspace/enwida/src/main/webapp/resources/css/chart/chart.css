@@ -23,6 +23,10 @@ body {
 .line2 {
   stroke: green;
 }
+.chart[data-chart-type="minmax"] .line1 {
+	fill: #FFA340;
+	stroke: none;
+}
 .linesquare {
 	width: 20px;
 	height: 20px;
@@ -36,6 +40,9 @@ body {
 }
 .line2 .linesquare {
 	background-color: green;
+}
+.chart[data-chart-type="minmax"] .line1 .linesquare {
+	background-color: #FFA340
 }
 .line.selected {
 	stroke: #888888;
@@ -101,10 +108,10 @@ body {
 	color: black;
 }
 .lines li.hidden div {
-	background-color: #888888;
+	background-color: #888888 !important;
 }
 .lines li.selected:not(.hidden) div {
-	background-color: #888888;
+	background-color: #888888 !important;
 }
 .lines li.line0.hidden.selected div {
 	background-color: steelblue;
@@ -114,6 +121,9 @@ body {
 }
 .lines li.line2.hidden.selected div {
 	background-color: green;
+}
+.chart[data-chart-type="minmax"] li.line1.hidden.selected div {
+	background-color: #FFA340 !important;
 }
 
 .navigation {

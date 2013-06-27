@@ -46,10 +46,10 @@ define ["scale"], (scale) ->
         .append("g")
           .attr("transform", "translate(#{@options.margin.left},#{@options.margin.top})")
 
-    drawXAxis: (xAxis) ->
+    drawXAxis: (xAxis, dx=0, dy=0) ->
       @svg.append("g")
         .attr("class", "x axis")
-        .attr("transform", "translate(0,#{@options.height})")
+        .attr("transform", "translate(#{dx},#{dy + @options.height})")
         .call(xAxis)
         .append("text")
           .attr("x", @options.width)
@@ -77,8 +77,8 @@ define ["scale"], (scale) ->
         .attr("data-style-padding", 10)
         .call(d3.legend)
 
-    drawAxes: ->
-      @drawXAxis @xAxis
+    drawAxes: (dx=0, dy=0) ->
+      @drawXAxis @xAxis, dx, dy
       @drawYAxis @yAxis
 
     makeDateScale: ->

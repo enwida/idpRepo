@@ -15,6 +15,9 @@ define ->
     "bar":
       optimalDensity: 50
       maximumDensity: 40
+    "minmax":
+      optimalDensity: 25
+      maximumDensity: 15
     "carpet":
       optimalDensity: 25
       maximumDensity: 15
