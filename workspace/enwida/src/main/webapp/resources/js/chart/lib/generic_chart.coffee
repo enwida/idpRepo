@@ -57,6 +57,8 @@ define ["scale"], (scale) ->
           .attr("text-anchor", "end")
           .text("#{@xLabel}")
 
+      @makeDateScale() if @options.scale.x.type is "date"
+
     drawYAxis: (yAxis) ->
       @svg.append("g")
         .attr("class", "y axis")
@@ -78,6 +80,20 @@ define ["scale"], (scale) ->
     drawAxes: ->
       @drawXAxis @xAxis
       @drawYAxis @yAxis
+
+    makeDateScale: ->
+      formats = @options?.x?.dateFormats ? [
+        ["%Y", "%Y-%m-%d"]
+        ["%m", "%b"]
+        ["%d", "%d"]
+        ["%H:%M", "%H:%M"]
+      ]
+      tickFormat = scale.getTickFormater(formats)()
+      for tick in $(@options.parent).find("g.tick text")
+        date = new Date parseInt $(tick).text().replace(/,/g, "")
+        $(tick).text tickFormat date
+        $(tick).attr "original-title", d3.time.format("%Y-%m-%d %H:%M") date
+        $(tick).tipsy()
 
   init: (options) ->
     new Chart options
