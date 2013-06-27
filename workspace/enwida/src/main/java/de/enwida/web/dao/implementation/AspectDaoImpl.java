@@ -36,6 +36,7 @@ public class AspectDaoImpl implements IAspectsDao {
             while (rs.next()) {
                 AspectRight right = new AspectRight();
                 right.setRightID(rs.getLong("right_id"));
+                right.setAspectName(rs.getString("aspect_id"));
                 right.setRoleID(rs.getLong("role_id"));
                 right.setResolution(rs.getString("resolution"));
                 right.setProduct(rs.getString("product"));
