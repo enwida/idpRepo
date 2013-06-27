@@ -20,10 +20,22 @@ define ->
       when "date" then @setupXScaleDate()
 
   setupYScale: ->
-    @setupYScaleLinear()
+    unless @options?.y?.type
+      @setupYScaleLinear()
+      return
+
+    switch @options.y.type
+      when "ordinal" then @setupYScaleOrdinal()
+      else @setupYScaleLinear()
 
   setupXScaleLinear: ->
     @chart.xScale = d3.scale.linear().range [0, @chart.options.width]
+
+  setupYScaleOrdinal: ->
+    # Implies a mapped domain type
+    @options["y"]["domain"] ?= type: "map"
+    padding = @options.y.padding ? 0.1
+    @chart.yScale = d3.scale.ordinal().rangeRoundBands [0, @chart.options.height], padding
 
   setupXScaleOrdinal: ->
     # Implies a mapped domain type

@@ -23,6 +23,8 @@ define ->
       maximumDensity: 15
 
   getOptimalResolution: (type, timeRange, filters, width) ->
+    return "HOURLY" if type is "carpet"
+
     optimalDataPointCount = width / densities[type].optimalDensity
     maximumDataPointCount = width / densities[type].maximumDensity
 

@@ -44,6 +44,21 @@ define ["navigation", "spreadsheet", "visual", "lines", "loading"],
 
             result.push minMaxLine
             lines = result
+          when "carpet"
+            # Use only first line
+            line = lines[0]
+            hourFormat = d3.time.format "%H"
+            for dp in line.dataPoints
+              date = new Date dp.x
+              dp.v = dp.y
+              dp.y = parseInt hourFormat date
+              date.setHours 0
+              date.setMinutes 0
+              date.setSeconds 0
+              date.setMilliseconds 0
+              dp.x = date.getTime()
+            console.log line
+            lines = [line]
 
         lines
 
@@ -76,9 +91,10 @@ define ["navigation", "spreadsheet", "visual", "lines", "loading"],
           width: @attr.width
 
         # Add lines
-        lines = $("<div>").addClass("lines").css("width", "#{@attr.width}px")
-        @$node.append lines
-        Lines.attachTo lines
+        if @attr.type isnt "carpet"
+          lines = $("<div>").addClass("lines").css("width", "#{@attr.width}px")
+          @$node.append lines
+          Lines.attachTo lines
 
         # Add navigation
         navigation = $("<div>").addClass "navigation"
