@@ -56,5 +56,5 @@ define ["line_chart", "bar_chart", "carpet_chart"], (LineChart, BarChart, Carpet
       @on "draw", @draw
 
       @attr.chartOptions =
-        parent: ".chart[data-chart-id='#{@attr.id}'] .visual"
+        parent: @$node
         width: @attr.width

@@ -40,7 +40,7 @@ define ["scale"], (scale) ->
       return if @svg?
       width = @options.width + @options.margin.left + @options.margin.right
       height = @options.height + @options.margin.top + @options.margin.bottom
-      @svg = d3.select(@options.parent).append("svg")
+      @svg = d3.selectAll(@options.parent).append("svg")
         .attr("width", width)
         .attr("height", height)
         .append("g")
