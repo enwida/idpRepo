@@ -1,10 +1,12 @@
-define ["navigation", "spreadsheet", "visual", "lines"],
-  (Navigation, Spreadsheet, Visual, Lines) ->
+define ["navigation", "spreadsheet", "visual", "lines", "loading"],
+  (Navigation, Spreadsheet, Visual, Lines, Loading) ->
 
     flight.component ->
-
       @getLines = (options, callback) ->
-        @select("visual").fadeOut 100
+        Loading.showLoading @select("visual"),
+          @attr.navigationData?.width,
+          @attr.navigationData?.height
+
         format = d3.time.format "%Y-%m-%d"
         $.ajax "lines.test",
           data:
@@ -15,7 +17,6 @@ define ["navigation", "spreadsheet", "visual", "lines"],
             endTime: format options.timeRange.to
             resolution: options.resolution
           success: (data) =>
-            @select("visual").fadeIn 100
             callback null, data
           error: (err) =>
             callback err
@@ -39,10 +40,11 @@ define ["navigation", "spreadsheet", "visual", "lines"],
       @after "initialize", ->
         @on "getLines", @onGetLines
         @on "updateNavigation", (_, opts) ->
+          @attr.navigationData = opts.data
           @trigger @select("visual"), "navigationData", opts
         @on "toggleLine", @toggleLine
 
-        @attr.width = @$node.attr("data-width") ? "800"
+        @attr.width = parseInt(@$node.attr("data-width")) ? 800
 
         # Add visual
         visual = $("<div>").addClass "visual"
