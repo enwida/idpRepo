@@ -10,6 +10,7 @@ public class User {
 	private String lastName;
     private String firstName;
 	private String password;
+    private String confirmPassword;
     private String companyName;
     private String companyLogo;
 	private String contactNo;
@@ -178,5 +179,13 @@ public class User {
 
     public void setCompanyLogo(String companyLogo) {
         this.companyLogo = companyLogo;
+    }
+
+    public String getConfirmPassword() {
+        return confirmPassword;
+    }
+
+    public void setConfirmPassword(String confirmPassword) {
+        this.confirmPassword = confirmPassword;
     }
 }

@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import de.enwida.web.dto.UserDTO;
 import de.enwida.web.model.User;
 import de.enwida.web.service.implementation.Mail;
 import de.enwida.web.service.interfaces.UserService;
@@ -130,14 +129,14 @@ public class UserController {
 	
 	@RequestMapping(value="/register",method=RequestMethod.GET)
     public String showForm(ModelMap model){
-		UserDTO user = new UserDTO();
+		User user = new User();
         model.addAttribute("USER", user);
         model.addAttribute("content", "register");
         return "user/master";
     }
 	
 	@RequestMapping(value="/register",method=RequestMethod.POST)
-	public String processForm(@ModelAttribute(value="USER") UserDTO user, BindingResult result, ModelMap model)
+	public String processForm(@ModelAttribute(value="USER") User user, BindingResult result, ModelMap model)
 	{
 		userValidator.validate(user, result);	    
 
@@ -225,7 +224,7 @@ public class UserController {
 		return "ok";
 	}
 	
-	private User getUserDTO(UserDTO userDTO)
+	private User getUserDTO(User userDTO)
 	{
 		User user = new User();
 		user.setUserName(userDTO.getUserName());

@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
-import de.enwida.web.dto.UserDTO;
+import de.enwida.web.model.User;
 import de.enwida.web.service.interfaces.UserService;
 import de.enwida.web.utils.Constants;
 
@@ -16,11 +16,11 @@ public class UserValidator implements Validator {
     private UserService userService;
 
 	public boolean supports(Class clazz) {
-		return clazz.equals(UserDTO.class);
+		return clazz.equals(User.class);
 	}
 	
 	public void validate(Object target, Errors errors) {
-		UserDTO user = (UserDTO)target;
+		User user = (User)target;
 
 
 		if(user.getUserName().isEmpty())
