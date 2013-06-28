@@ -87,7 +87,7 @@
 	<beans:bean id="dbc" class="de.enwida.rl.controller.DatabaseController">	
 	</beans:bean>	
 
-	<beans:bean id="mail" class="de.enwida.web.service.implementation.Mail">
+	<beans:bean id="mailService" class="de.enwida.web.service.implementation.MailService">
 	     <beans:property name="starttls" value="${mail.smtp.starttls.enable}"/>
 	     <beans:property name="host" value="${mail.smtp.host}"/>
 	     <beans:property name="user" value="${mail.smtp.user}"/>

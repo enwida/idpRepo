@@ -26,7 +26,7 @@ public class UserServiceImpl implements UserService {
     private IUserDao userDao;
 
     @Autowired
-    private Mail mail;
+    private MailService mailService;
 	
     public User getUser(Long id) {
 		

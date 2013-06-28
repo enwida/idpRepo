@@ -12,7 +12,7 @@ import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
-public class Mail {
+public class MailService {
     private Boolean starttls;
     private String host;
     private String user;
