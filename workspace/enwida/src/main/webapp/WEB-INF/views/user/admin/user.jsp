@@ -44,7 +44,9 @@
 			</tr>
 			<tr>
 				<td>Groups</td>
-				<td>${user.groups}</td>
+				<td>${user.groups} 
+					<a href="editGroup?userID=${user.userID}">Edit Group</a>
+				</td>
 			</tr>
 			<tr>
 				<td>Roles</td>
@@ -52,7 +54,6 @@
 			</tr>
 		</table>
 		<input type="submit" name="delete" value="Delete" />
-		<input	type="submit" name="editGroup" value="Edit Group" />
 	     <input	type="submit" name="resetPassword" value="Reset Password" />
 	    <input	type="submit" name="save" value="Save" />
 	</div>

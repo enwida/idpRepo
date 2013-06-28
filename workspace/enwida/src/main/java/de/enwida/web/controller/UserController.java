@@ -197,30 +197,4 @@ public class UserController {
 		}
 		return "user/forgotPassword";
 	}
-	
-	@RequestMapping(value="/updateRole", method = RequestMethod.GET)
-	@ResponseBody
-	public String updateRole(HttpServletRequest request) {
-		String state="";
-		int userID=0;
-		int roleID=0;
-		Map pMap=request.getParameterMap();
-		if (pMap.containsKey("state")){
-			state=((String[]) pMap.get("state"))[0];
-		}
-		if (pMap.containsKey("userID")){
-			userID=Integer.parseInt(((String[]) pMap.get("userID"))[0]);
-		}
-		if (pMap.containsKey("roleID")){
-			roleID=Integer.parseInt(((String[]) pMap.get("roleID"))[0]);
-		}
-		
-		if (state.equals("true")){
-			userService.addPermission(userID,roleID);
-		}
-		else{
-			userService.removePermission(userID,roleID);
-		}
-		return "ok";
-	}
 }

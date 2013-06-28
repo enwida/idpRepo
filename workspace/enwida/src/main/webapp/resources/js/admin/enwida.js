@@ -32,3 +32,9 @@ function enableDisableUser(userID,checked){
      	  url: "enableDisableUser?userID="+userID+"&enabled="+checked
     });
 };
+
+function enableDisableAspect(userID,checked){
+	$.ajax({
+     	  url: "enableDisableAspect?rightID="+userID+"&enabled="+checked
+    });
+};

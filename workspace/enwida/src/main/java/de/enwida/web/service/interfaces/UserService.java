@@ -14,8 +14,6 @@ public interface UserService {
 	public boolean saveUser(User user);
 	public String getPassword(String email);
 	public List<User> findAllUsers();
-	public void addPermission(int userID, int roleID);
-	public void removePermission(int userID, int roleID);
 	public List<Group> getAvailableGroupsForUser(long userID);
 	public List<Group> getUserGroups(long userID);
 	public List<Group> getAllGroups();
@@ -23,7 +21,7 @@ public interface UserService {
     public void saveRole(Role role);
     public List<Role> getAllRoles();
     public boolean updateUser(User user);
-    public boolean resetPassword(long userID);
+    public void resetPassword(long userID);
     public void deleteUser(User user);
     public String assignUserToGroup(int userID, int groupID);
     public String deassignUserToGroup(int userID, int groupID);
@@ -34,4 +32,5 @@ public interface UserService {
     public boolean enableDisableUser(int userID, boolean enabled);
     public void removeGroup(int groupID) throws Exception;
     public boolean usernameAvailablility(final String username);
+    public boolean enableDisableAspect(int rightID, boolean enabled);
 }

@@ -83,14 +83,6 @@ public class UserServiceImpl implements UserService {
 	public List<User> findAllUsersWithPermissions(){
 		return userDao.findAllUsersWithPermissions();
 	}
-	
-
-	public void addPermission(int userID, int roleID){
-		userDao.addPermission(userID, roleID);		
-	}
-	public void removePermission(int userID, int roleID){
-		userDao.removePermission(userID, roleID);	
-	}
 
 	public List<Group> getAvailableGroupsForUser(long userID) {
 		return userDao.getAvailableGroupsForUser(userID);
@@ -129,7 +121,7 @@ public class UserServiceImpl implements UserService {
         return userDao.getUser(userName);
     }
 
-    public boolean resetPassword(long userID) {
+    public void resetPassword(long userID) {
         SecureRandom random = new SecureRandom();
         String newPassword=new BigInteger(130, random).toString(32);
         User user=userDao.getUser(userID);
@@ -138,9 +130,8 @@ public class UserServiceImpl implements UserService {
         try {
             mail.SendEmail(user.getUserName(),"New Password","Your new Password:"+newPassword);
         } catch (Exception e) {
-            return false;
+            throw new RuntimeException(e);
         }
-        return true;
     }
 
     public void deleteUser(User user) {
@@ -188,5 +179,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public boolean usernameAvailablility(String username) {
         return userDao.usernameAvailablility(username);
+    }
+
+    @Override
+    public boolean enableDisableAspect(int rightID, boolean enabled) {
+        return userDao.enableDisableAspect(rightID,enabled);
     }
 }

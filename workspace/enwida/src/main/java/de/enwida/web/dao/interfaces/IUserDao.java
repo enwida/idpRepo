@@ -13,8 +13,6 @@ public interface IUserDao {
 	public long save(User user);
 	public String getPassword(String email) ;
 	public List<User> findAllUsersWithPermissions();
-	public void addPermission(final long userID, final long roleID);
-	public void removePermission(int userID, int roleID);
 	public User getUser(Long id);
 	public ArrayList<Group> getAvailableGroupsForUser(long userID);
 	public ArrayList<Group> getUserGroups(long userID);
@@ -43,7 +41,7 @@ public interface IUserDao {
 
     public List<Role> getAllRolesWithGroups();
     
-    public boolean deleteUser(User user);
+    public void deleteUser(User user);
     
     public boolean updateUser(User user);
     public List<User> findAllUsers();
@@ -51,5 +49,6 @@ public interface IUserDao {
     public boolean enableDisableUser(int userID, boolean enabled);
     public void removeGroup(int groupID) throws Exception;
     public boolean usernameAvailablility(final String username);
+    public boolean enableDisableAspect(int rightID, boolean enabled);
 
 }

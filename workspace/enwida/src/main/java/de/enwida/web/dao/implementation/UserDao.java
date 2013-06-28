@@ -171,63 +171,9 @@ public class UserDao extends BaseDao<User> implements IUserDao {
 			}
 		}
 	}
-	
-	
 
-	public void removePermission(int userID, int roleID) {
-		
-		if(roleID==0){
-			enableDisableUser(false,userID);
-		}
-		
-		
-		String sql = "DELETE FROM users.user_roles WHERE (user_id=? and role_id=?)";
-		Connection conn = null;
- 
-		try {
-			conn = datasource.getConnection();
-			PreparedStatement ps = conn.prepareStatement(sql);
-			ps.setLong(1, userID);
-			ps.setLong(2, roleID);
-			ps.executeUpdate();
-			ps.close();
-		} catch (SQLException e) {
-			throw new RuntimeException(e);
-		} finally {
-			if (conn != null) {
-				try {
-				conn.close();
-				} catch (SQLException e) {}
-			}
-		}		
-	}
 
-	public boolean enableDisableUser(boolean enable,int userID) {
-		String sql = "UPDATE users.users SET users.enabled=? WHERE users.user_id=?";
-		 
-		Connection conn = null;
- 
-		try {
-			conn = datasource.getConnection();
-			PreparedStatement ps = conn.prepareStatement(sql);
-			ps.setBoolean(1, enable);
-			ps.setInt(2, userID);
-			ps.executeUpdate();
-			ps.close();
-		} catch (SQLException e) {
-			throw new RuntimeException(e);
-		} finally {
-			if (conn != null) {
-				try {
-				conn.close();
-				} catch (SQLException e) {}
-			}
-		}
-
-		return true;
-	}
-
-	public boolean deleteUser(User user) {
+	public void deleteUser(User user) {
 		String sql = "DELETE FROM users.users WHERE users.user_name=?";
 		 
 		Connection conn = null;
@@ -247,8 +193,6 @@ public class UserDao extends BaseDao<User> implements IUserDao {
 				} catch (SQLException e) {}
 			}
 		}
-
-		return true;
 	}
 	
 	public String getPassword(String email) {
@@ -1210,5 +1154,30 @@ public class UserDao extends BaseDao<User> implements IUserDao {
         }
         return false;
         
+    }
+
+    @Override
+    public boolean enableDisableAspect(int rightID, boolean enabled) {
+        String sql = "UPDATE users.rights SET enabled=? WHERE right_id=?";
+        
+        Connection conn = null;
+ 
+        try {
+            conn = datasource.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setBoolean(1, enabled);
+            ps.setLong(2, rightID);
+            ps.executeUpdate();
+            ps.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            if (conn != null) {
+                try {
+                conn.close();
+                } catch (SQLException e) {}
+            }
+        }
+        return true;
     }
 }

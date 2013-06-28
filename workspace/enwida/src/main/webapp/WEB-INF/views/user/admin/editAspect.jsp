@@ -31,7 +31,9 @@
 				<td>${right.t2}</td>
 				<td>${right.resolution}</td>
 				<td>${right.tso}</td>
-				<td><input type="checkbox" checked="${right.enabled}"/></td>
+				<td><input type="checkbox"
+					onclick="enableDisableAspect(${right.rightID},this.checked);"
+					${right.enabled == 'true' ? 'checked' : ''}></td>
 			<tr>
 		</c:forEach>
 	</tbody>

@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import de.enwida.web.model.AspectRight;
 import de.enwida.web.model.Group;
@@ -116,16 +118,6 @@ public class AdminController {
     }
     
     
-    @RequestMapping(value="/user", method = RequestMethod.GET)
-    public String user(Model model,long userID,HttpSession session) {
-        
-        User user= userService.getUser(userID);
-        model.addAttribute("user", user);
-        model.addAttribute("content", "user");
-        session.setAttribute("userID", userID);
-        return "user/admin/master";
-    }
-    
     @RequestMapping(value="/", method = RequestMethod.GET)
     public String admin(Model model) {
         List<User> users= userService.findAllUsers();
@@ -156,6 +148,26 @@ public class AdminController {
         return userService.enableDisableUser(userID,enabled);
     }   
     
+    @RequestMapping(value = "/enableDisableAspect", method = RequestMethod.GET)
+    @ResponseBody
+    public boolean enableDisableAspect(int rightID,boolean enabled) {
+        return userService.enableDisableAspect(rightID,enabled);
+    }   
+    
+    @RequestMapping(value="/user", method = RequestMethod.GET)
+    public String user(Model model,long userID) {
+        
+        User user= userService.getUser(userID);
+        model.addAttribute("user", user);
+        model.addAttribute("content", "user");
+        //save userID into session
+        ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
+        HttpSession session = attr.getRequest().getSession(true);
+        
+        session.setAttribute("userID", userID);
+        return "user/admin/master";
+    }
+    
     @RequestMapping(value="/user",method=RequestMethod.POST, params = "save")
     public String processForm(@ModelAttribute(value="USER")User user,long userID,HttpSession session, ModelMap model)
     {
@@ -170,12 +182,16 @@ public class AdminController {
     }
 
     @RequestMapping(value="/user",method=RequestMethod.POST, params = "resetPassword")
-    public String reset(ModelMap model,long userID)
+    public String reset(Model model,long userID)
     {
         System.out.println("ResetPassword");
-        userService.resetPassword(userID);
-        model.addAttribute("content", "user");
-        return "user/admin/master";
+        try {
+            userService.resetPassword(userID);
+            model.addAttribute("info", "OK");
+        } catch (Exception e) {
+            model.addAttribute("error", "e");
+        }
+        return user(model,userID);
     }
     
     
@@ -184,7 +200,13 @@ public class AdminController {
     {
         System.out.println("DeleteUser");
         User user=userService.getUser(userID);
-        userService.deleteUser(user);
+        try {
+            userService.deleteUser(user);
+            
+        } catch (Exception e) {
+            model.addAttribute("error", "Deassign all groups to delete user");
+            return user(model,userID);
+        }
         return userList(model);
     }
     
