@@ -10,7 +10,8 @@ public class UserDTO
 	private String firstName;
 	private String password;
 	private String confirmPassword;
-	private String companyName;
+    private String companyName;
+    private String companyLogo;
 	private String companyURL;
 	private String telephone;
 	private boolean enabled;
@@ -83,4 +84,10 @@ public class UserDTO
 	public void setCompanyName(String companyName) {
 		this.companyName = companyName;
 	}
+    public String getCompanyLogo() {
+        return companyLogo;
+    }
+    public void setCompanyLogo(String companyLogo) {
+        this.companyLogo = companyLogo;
+    }
 }

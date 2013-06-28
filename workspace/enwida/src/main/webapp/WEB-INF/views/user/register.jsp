@@ -12,7 +12,10 @@
 	<tr><td>Password(*)(Repeat) : </td><td><form:password path="confirmPassword" /><form:errors path="confirmPassword" cssStyle="color : red;"/></td></tr>
 	<tr><td>Telephone : </td><td><form:input path="telephone" /><form:errors path="telephone" cssStyle="color : red;"/></td></tr>
 	<tr><td>Company : </td><td><form:input path="companyName" id="companyName"/><form:errors path="companyName" cssStyle="color : red;"/></td></tr>
-	<tr><td>Logo : </td></tr>
+	<tr><td>Logo : </td><td><form:input path="companyLogo" id="companyLogo"/><form:errors path="companyLogo" cssStyle="color : red;"/></td></tr>
 	<tr><td><input type="reset" value="Reset" /></td><td><input type="submit" value="Save Changes" /></td></tr>
 </table>
+<div id="companyImages">
+
+</div>
 </form:form>

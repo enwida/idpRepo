@@ -177,6 +177,12 @@ public class UserController {
 		return "user/forgotPassword";
     }
 	
+   @RequestMapping(value="/checkImages",method=RequestMethod.GET)
+    public @ResponseBody String checkImages(String company){
+       LogoFinder logoFinder=new LogoFinder();
+       return logoFinder.getImages(company);
+    }
+	
 	@RequestMapping(value="/forgotPassword",method=RequestMethod.POST)
 	public String forgotPassword(ModelMap model,String email){
 		

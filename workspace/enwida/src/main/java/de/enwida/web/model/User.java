@@ -10,7 +10,8 @@ public class User {
 	private String lastName;
     private String firstName;
 	private String password;
-	private String companyName;
+    private String companyName;
+    private String companyLogo;
 	private String contactNo;
 	private boolean enabled;
 	private Date joiningDate;
@@ -169,5 +170,13 @@ public class User {
 
     public void setRoles(List<Role> roles) {
         this.roles = roles;
+    }
+
+    public String getCompanyLogo() {
+        return companyLogo;
+    }
+
+    public void setCompanyLogo(String companyLogo) {
+        this.companyLogo = companyLogo;
     }
 }
