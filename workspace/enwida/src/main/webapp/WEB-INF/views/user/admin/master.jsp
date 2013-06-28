@@ -8,6 +8,7 @@
 <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
 <script src="../../resources/js/admin/jquery.tablesorter.js"></script>
 <script src="../../resources/js/admin/admin.js"></script>
+<script src="../../resources/js/admin/enwida.js"></script>
 <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
 <link rel="stylesheet" href="../../resources/css/table.css" />
 </head>

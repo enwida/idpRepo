@@ -23,7 +23,6 @@ import de.enwida.web.dao.interfaces.IUserDao;
 import de.enwida.web.model.Group;
 import de.enwida.web.model.Role;
 import de.enwida.web.model.User;
-import de.enwida.web.model.UserPermission;
 
 @Repository
 public class UserDao extends BaseDao<User> implements IUserDao {
@@ -286,7 +285,8 @@ public class UserDao extends BaseDao<User> implements IUserDao {
 
 		try 
 		{
-			final String sql = "INSERT INTO users.users ( user_name, user_password, first_name, last_name, enabled, joining_date, telephone, company_name ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ?)";	    			
+			final String sql = "INSERT INTO users.users ( user_name, user_password, first_name, last_name, enabled, joining_date, telephone, company_name, company_logo )" +
+					" VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?)";	    			
 			this.jdbcTemplate.update(
 				    new PreparedStatementCreator() {
 				        public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
@@ -297,8 +297,9 @@ public class UserDao extends BaseDao<User> implements IUserDao {
 				            ps.setString(4, user.getLastName());
 				            ps.setBoolean(5, user.isEnabled());
 				            ps.setDate(6, user.getJoiningDate());
-				            ps.setString(7, user.getContactNo());
-				            ps.setString(8, user.getCompanyName());
+				            ps.setString(7, user.getTelephone());
+                            ps.setString(8, user.getCompanyName());
+                            ps.setString(9, user.getCompanyLogo());
 				            return ps;
 				        }
 				    },
@@ -521,9 +522,7 @@ public class UserDao extends BaseDao<User> implements IUserDao {
 		KeyHolder keyHolder = new GeneratedKeyHolder();	
 		Number id = -1;
 
-		final String sql = "INSERT INTO users.groups(group_name, auto_pass) VALUES (?, ?);";        
-        Connection conn = null;
- 
+		final String sql = "INSERT INTO users.groups(group_name, auto_pass) VALUES (?, ?);";         
         try 
         {
 			this.jdbcTemplate.update(
@@ -686,7 +685,6 @@ public class UserDao extends BaseDao<User> implements IUserDao {
 	public boolean saveUserInGroup(final long userId, final long groupId)
 	{
 		final String sql = "INSERT INTO users.user_group(user_id, group_id) VALUES (?, ?);";        
-        Connection conn = null;
  
         try 
         {
@@ -780,7 +778,6 @@ public class UserDao extends BaseDao<User> implements IUserDao {
 	
 	public int getRoleIdByCompanyName(final String companyName)
 	{
-		Group group = null;
 		String sql = "select role_id FROM users.user_roles INNER JOIN users.users ON user_roles.user_id=user.user_id where users.company_name=?";
 		Connection conn = null;
 		

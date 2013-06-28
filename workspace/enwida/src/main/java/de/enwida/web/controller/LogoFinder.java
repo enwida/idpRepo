@@ -15,7 +15,10 @@ public class LogoFinder {
         String companyLink="http://"+companyName+"/";
         String images="";
         try {
-            page = webClient.getPage("http://enwida.de");
+            page = webClient.getPage(companyLink);
+            //if page is not found, we dont want to search
+            if(page.toString().contains("search") || (page.toString().contains("Search")))
+                    return null;
             final DomNodeList<DomElement> div = page.getElementsByTagName("img");
             for (DomElement domElement : div) {
                 String img=domElement.asXml().replace("src=\"", "src=\""+companyLink);
@@ -26,6 +29,7 @@ public class LogoFinder {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+        images.replace("Yahoo", "Enwida");
          return images;
     }
 

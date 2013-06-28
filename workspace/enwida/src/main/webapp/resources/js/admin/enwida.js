@@ -1,10 +1,18 @@
+//sets all sortable tables
+$(function () {
+	$(".tablesorter").tablesorter(); 
+});
+
+//Gets companyname from the mail
 function getCompany(email) {
 	var company = email.substring(email.indexOf('@') + 1, email.length);
 	$("#companyName").val(company);
 	getImages(company);
 }
 
+//Gets logo from the company name
 function getImages(company) {
+	$("#companyImages").empty();
 	if(company!=null){
 		$.ajax({
 			  url: "checkImages?company="+company
@@ -19,29 +27,8 @@ function getImages(company) {
 	}
 }
 
-//function checkEmail(email) {
-//	if (email == "") {
-//		return;
-//	}
-//
-//	if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
-//		xmlhttp = new XMLHttpRequest();
-//	} else {// code for IE6, IE5
-//		xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
-//	}
-//	xmlhttp.onreadystatechange = function() {
-//		if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-//			var avail = xmlhttp.responseText;
-//			if (avail == "true") {
-//				document.getElementById("userError").innerHTML = "This email is already in use by some other user.";
-//				document.getElementById("companyName").value = "";
-//			} else {
-//				document.getElementById("userError").innerHTML = "";
-//				getCompany(email);
-//			}
-//		}
-//	};
-//
-//	xmlhttp.open("GET", "checkEmail?email=" + email, true);
-//	xmlhttp.send();
-//}
+function enableDisableUser(userID,checked){
+	$.ajax({
+     	  url: "enableDisableUser?userID="+userID+"&enabled="+checked
+    });
+};

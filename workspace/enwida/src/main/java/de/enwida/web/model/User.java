@@ -13,7 +13,6 @@ public class User {
     private String confirmPassword;
     private String companyName;
     private String companyLogo;
-	private String contactNo;
 	private boolean enabled;
 	private Date joiningDate;
 	private Date loginCount;
@@ -132,15 +131,7 @@ public class User {
 	public void setLastLogin(String lastLogin) {
 		this.lastLogin = lastLogin;
 	}
-
-	public String getContactNo() {
-		return contactNo;
-	}
-
-	public void setContactNo(String contactNo) {
-		this.contactNo = contactNo;
-	}
-
+	
     public String getCompanyName() {
         return companyName;
     }

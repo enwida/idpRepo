@@ -142,7 +142,7 @@ public class UserController {
 
 		if (!result.hasErrors())
 		{
-	        if(userService.saveUser(getUserDTO(user)))
+	        if(userService.saveUser(user))
 	        {	        		        
         		String name = user.getFirstName() + " " + user.getLastName();
         		String userStatus="logout";
@@ -222,18 +222,5 @@ public class UserController {
 			userService.removePermission(userID,roleID);
 		}
 		return "ok";
-	}
-	
-	private User getUserDTO(User userDTO)
-	{
-		User user = new User();
-		user.setUserName(userDTO.getUserName());
-		user.setPassword(userDTO.getPassword());
-		user.setFirstName(userDTO.getFirstName());
-		user.setLastName(userDTO.getLastName());
-		user.setCompanyName(userDTO.getCompanyName());
-		user.setContactNo(userDTO.getTelephone());
-		
-		return user;
 	}
 }

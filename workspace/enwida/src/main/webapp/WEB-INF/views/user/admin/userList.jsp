@@ -30,11 +30,3 @@
 		</c:forEach>
 	</tbody>
 </table>
-
-<script>
-	function enableDisableUser(userID,checked){
-		$.ajax({
-	     	  url: "enableDisableUser?userID="+userID+"&enabled="+checked
-	    });
-	}
-</script>
