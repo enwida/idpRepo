@@ -1120,4 +1120,33 @@ public class UserDao extends BaseDao<User> implements IUserDao {
         return group;
         
     }
+
+    @Override
+    public List<User> getAllUsers() {
+        String sql = "select * FROM users.users";
+        Connection conn = null;
+        ArrayList<User> users = new ArrayList<User>();
+        try {
+            conn = datasource.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                User user = new User();
+                user.setUserID(rs.getLong("user_id"));
+                user.setUserName(rs.getString("user_name"));
+                users.add(user);
+            }
+            rs.close();
+            ps.close();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            if (conn != null) {
+                try {
+                conn.close();
+                } catch (SQLException e) {}
+            }
+        }
+        return users;
+    }
 }

@@ -27,40 +27,44 @@ public class AdminPanel {
     private User user;
     
     private String webSiteLink="http://localhost:8080/enwida/";
-	
-    @Test
-    public void CheckEditGroup() throws Exception {
-       HtmlPage page;
-       String link=webSiteLink+"user/admin/editGroup";
-
-           page = webClient.getPage(link);
-           System.out.println(page.asXml());
-    }
     
     @Test
-    public void CheckEditRoles() throws Exception {
+    public void CheckAdminLinks() throws Exception {
        HtmlPage page;
-       String link=webSiteLink+"user/admin/editRoles";
-
-           page = webClient.getPage(link);
-           System.out.println(page.asXml());
-    }
-    
-    @Test
-    public void CheckUserList() throws Exception {
-       HtmlPage page;
+       user=userDao.getAllUsers().get(0);
        String link=webSiteLink+"user/admin/userList";
-
-           page = webClient.getPage(link);
-           System.out.println(page.asXml());
+       page = webClient.getPage(link);
+       
+       link=webSiteLink+"user/admin/editGroup?userID="+user.getUserID();       
+       page = webClient.getPage(link);
+       
+       link=webSiteLink+"user/admin/editRoles";
+       page = webClient.getPage(link);
+       
+       link=webSiteLink+"user/admin/editGroup";
+       page = webClient.getPage(link);
+       
+       link=webSiteLink+"user/admin/userID="+user.getUserID();
+       page = webClient.getPage(link);
+       
+       link=webSiteLink+"user/admin/userLog="+user.getUserName();
+       page = webClient.getPage(link);
     }
-    
-    @Test
-    public void CheckUser() throws Exception {
-       HtmlPage page;
-       String link=webSiteLink+"user/admin/editGroup";
 
-           page = webClient.getPage(link);
-           System.out.println(page.asXml());
+    @Test
+    public void CheckUserLinks() throws Exception {
+       HtmlPage page;
+       user=userDao.getAllUsers().get(0);
+       String link=webSiteLink+"user/admin/userList";
+       page = webClient.getPage(link);
+       
+       link=webSiteLink+"user/";     
+       page = webClient.getPage(link);
+       
+       link=webSiteLink+"user/register";     
+       page = webClient.getPage(link);
+       
+       link=webSiteLink+"user/login";     
+       page = webClient.getPage(link);
     }
 }

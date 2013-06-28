@@ -68,10 +68,12 @@ public interface IUserDao {
 
     public int getRoleIdByCompanyName(String companyName);
 
-    void deleteUserGroup(long userID);
+    public void deleteUserGroup(long userID);
 
-    ArrayList<Role> getUserRoles(long userID);
+    public ArrayList<Role> getUserRoles(long userID);
 
-    Group getGroupByName(String groupName);
+    public Group getGroupByName(String groupName);
+
+    public List<User> getAllUsers();
 
 }
