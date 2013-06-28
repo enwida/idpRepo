@@ -8,7 +8,6 @@ define ["generic_chart", "scale"], (generic_chart, scale) ->
 
       # Setup y scale
       yDomain = _(@chart.data[0].map (dp) -> dp.y).uniq().sort (a,b) -> a-b
-      console.log yDomain
       yDomain.push yDomain[yDomain.length - 1] + 1
       @chart.yScale.domain [yDomain[0], yDomain[yDomain.length - 1]]
 

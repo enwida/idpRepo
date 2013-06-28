@@ -123,6 +123,7 @@ public class ChartDataController {
         aspectMap.put(1, minMax);
         aspectMap.put(2, minMax);
         aspectMap.put(3, volume);
+        aspectMap.put(4, minMax);
     }
 
 

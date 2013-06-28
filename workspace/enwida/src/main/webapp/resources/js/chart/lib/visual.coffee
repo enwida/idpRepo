@@ -1,5 +1,5 @@
-define ["line_chart", "bar_chart", "carpet_chart", "min_max_chart"],
-(LineChart, BarChart, CarpetChart, MinMaxChart) ->
+define ["line_chart", "bar_chart", "carpet_chart", "min_max_chart", "pos_neg_chart"],
+(LineChart, BarChart, CarpetChart, MinMaxChart, PosNegChart) ->
 
   flight.component ->
 
@@ -21,6 +21,8 @@ define ["line_chart", "bar_chart", "carpet_chart", "min_max_chart"],
           MinMaxChart.init @attr.chartOptions
         when "carpet"
           CarpetChart.init @attr.chartOptions
+        when "posneg"
+          PosNegChart.init @attr.chartOptions
         else
           console.log "Unknown chart type: '#{@attr.type}'"
 
@@ -38,6 +40,8 @@ define ["line_chart", "bar_chart", "carpet_chart", "min_max_chart"],
           @$node.find("circle").tipsy(gravity: "sw", html: true, opacity: 0.95)
           @$node.find("rect").tipsy(gravity: "sw", html: true, opacity: 0.95)
         when "carpet"
+          @$node.find("rect").tipsy(gravity: "sw", html: true, opacity: 0.95)
+        when "posneg"
           @$node.find("rect").tipsy(gravity: "sw", html: true, opacity: 0.95)
 
     @defaultAttrs
