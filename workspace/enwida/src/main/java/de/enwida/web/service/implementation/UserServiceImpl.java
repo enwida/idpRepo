@@ -128,7 +128,7 @@ public class UserServiceImpl implements UserService {
         user.setPassword(newPassword);
         userDao.updateUser(user);
         try {
-            mail.SendEmail(user.getUserName(),"New Password","Your new Password:"+newPassword);
+            mailService.SendEmail(user.getUserName(),"New Password","Your new Password:"+newPassword);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
