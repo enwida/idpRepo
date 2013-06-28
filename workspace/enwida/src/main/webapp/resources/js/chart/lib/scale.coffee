@@ -127,3 +127,17 @@ define ->
       when "min" then d3.min @chart.data, (d) -> d[key]
       when "max" then d3.max @chart.data, (d) -> d[key]
       else throw new Error "Not a valid bound: #{bound}"
+
+  getMinInterval: (data, key="x") ->
+    result = Infinity
+    for i in [0...data.length-2]
+      diff = Math.abs(data[i+1][key] - data[i][key])
+      if diff > 0 and diff < result
+        result = diff
+    result
+
+  getBarWidth: (data, scale, key="x") ->
+    base = data[0][key]
+    step = @getMinInterval data, key
+    scale(base + step) - scale(base)
+

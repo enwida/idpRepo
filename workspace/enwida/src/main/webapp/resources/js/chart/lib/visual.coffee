@@ -20,8 +20,6 @@ define ["line_chart", "bar_chart", "carpet_chart", "min_max_chart"],
         when "minmax"
           MinMaxChart.init @attr.chartOptions
         when "carpet"
-          @attr.chartOptions.scale.x.type = "ordinal"
-          @attr.chartOptions.scale.x.padding = 0
           CarpetChart.init @attr.chartOptions
         else
           console.log "Unknown chart type: '#{@attr.type}'"

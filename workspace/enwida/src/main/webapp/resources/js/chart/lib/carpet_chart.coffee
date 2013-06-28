@@ -1,4 +1,4 @@
-define ["generic_chart"], (generic_chart) ->
+define ["generic_chart", "scale"], (generic_chart, scale) ->
 
   class CarpetChart
 
@@ -13,8 +13,7 @@ define ["generic_chart"], (generic_chart) ->
       @chart.yScale.domain [yDomain[0], yDomain[yDomain.length - 1]]
 
       # Calculate bar width/height
-      xDomain = @chart.xScale.domain()
-      @rectWidth = @chart.options.width / xDomain.length
+      @rectWidth = scale.getBarWidth @chart.data[0], @chart.xScale, "x"
       @rectHeight = @chart.options.height / (yDomain.length - 1)
 
     drawCarpet: (data, id=0) ->
@@ -50,6 +49,7 @@ define ["generic_chart"], (generic_chart) ->
     drawLegend: ->
       margin = @chart.options.margin
       svg = d3.selectAll(@chart.options.parent).append("svg")
+        .attr("class", "legend")
         .attr("width", 150)
         .attr("height", @chart.options.height + margin.bottom + margin.top + 30)
         .append("g")

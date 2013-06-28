@@ -168,3 +168,7 @@ input.to {
 select.tso {
 	margin-right: 35px;
 }
+
+svg.legend {
+	margin-left: 25px;
+}
