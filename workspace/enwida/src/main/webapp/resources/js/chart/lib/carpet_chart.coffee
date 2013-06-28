@@ -51,7 +51,9 @@ define ["generic_chart"], (generic_chart) ->
       margin = @chart.options.margin
       svg = d3.selectAll(@chart.options.parent).append("svg")
         .attr("width", 150)
-        .attr("height", @chart.options.height + margin.bottom)
+        .attr("height", @chart.options.height + margin.bottom + margin.top + 30)
+        .append("g")
+          .attr("transform", "translate(0,#{margin.top + 30})")
 
       base = @color.domain()[0]
       step = (@color.domain()[1] - base) / 10
@@ -65,23 +67,28 @@ define ["generic_chart"], (generic_chart) ->
           .attr("height", barHeight)
           .attr("fill", @color base + (10-i+1) * step)
 
-      for i in [1..10]
+      for i in [0..10]
+        y = i * barHeight
+        y += 1 if i is 0
+        y -= 1 if i is 10
+
         svg.append("line")
           .attr("x1", 20)
           .attr("x2", 26)
-          .attr("y1", i * barHeight - 1)
-          .attr("y2", i * barHeight - 1)
+          .attr("y1", y)
+          .attr("y2", y)
           .attr("fill", "#000000")
           .attr("stroke", "#000000")
         svg.append("text")
           .attr("x", 30)
           .attr("y", i * barHeight + 3)
-          .text(Math.round(base + (10-i) * step * 1000) / 1000)
+          .text(Math.round((base + (10-i) * step) * 1000) / 1000)
 
       svg.append("text")
-        .attr("x", 30)
-        .attr("y", 20)
+        .attr("x", 0)
+        .attr("y", -25)
         .text(@chart.options.yLabel)
+        .attr("font-weight", "bold")
 
     draw: ->
       @chart.drawSvg()
