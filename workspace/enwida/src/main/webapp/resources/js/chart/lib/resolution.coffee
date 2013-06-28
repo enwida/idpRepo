@@ -18,7 +18,7 @@ define ->
     "minmax":
       optimalDensity: 25
       maximumDensity: 15
-    "carpet":
+    "posneg":
       optimalDensity: 25
       maximumDensity: 15
 

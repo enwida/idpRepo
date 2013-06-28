@@ -57,8 +57,13 @@ define ["navigation", "spreadsheet", "visual", "lines", "loading"],
               date.setSeconds 0
               date.setMilliseconds 0
               dp.x = date.getTime()
-            console.log line
             lines = [line]
+          when "posneg"
+            # Calculate negative line
+            for dp in lines[1].dataPoints
+              dp.y *= -1
+            # Strip remaining lines
+            lines = [lines[0], lines[1]]
 
         lines
 
