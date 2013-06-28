@@ -132,25 +132,17 @@ public class UserController {
     public String showForm(ModelMap model){
 		UserDTO user = new UserDTO();
         model.addAttribute("USER", user);
-        return "user/register";
+        model.addAttribute("content", "register");
+        return "user/master";
     }
 	
 	@RequestMapping(value="/register",method=RequestMethod.POST)
 	public String processForm(@ModelAttribute(value="USER") UserDTO user, BindingResult result, ModelMap model)
 	{
 		userValidator.validate(user, result);	    
-		if(result.hasErrors())
+
+		if (!result.hasErrors())
 		{
-	        return "user/register";
-	    }
-		else
-		{
-			if(userService.usernameAvailablility(user.getUserName()))
-			{
-				model.addAttribute("emailAvailabilityError", "This email is already in use by some other user.");
-				return "user/register";
-			}
-			
 	        if(userService.saveUser(getUserDTO(user)))
 	        {	        		        
         		String name = user.getFirstName() + " " + user.getLastName();
@@ -162,11 +154,9 @@ public class UserController {
         		model.addAttribute("userStatusURL", userStatusURL);
         		return "user/index";        		
 	        }
-	        else
-	        {
-	            return "user/register";
-	        }
 	    }
+	    model.addAttribute("content", "register");
+        return "user/master";
 	}
 	
 	@RequestMapping(value="/checkEmail",method=RequestMethod.GET)

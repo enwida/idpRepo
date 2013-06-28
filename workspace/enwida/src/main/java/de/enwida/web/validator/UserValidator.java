@@ -1,20 +1,27 @@
 package de.enwida.web.validator;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
 import de.enwida.web.dto.UserDTO;
-import de.enwida.web.model.User;
+import de.enwida.web.service.interfaces.UserService;
 import de.enwida.web.utils.Constants;
 
+@Component
 public class UserValidator implements Validator {
+    
+    @Autowired
+    private UserService userService;
 
 	public boolean supports(Class clazz) {
 		return clazz.equals(UserDTO.class);
 	}
-
+	
 	public void validate(Object target, Errors errors) {
 		UserDTO user = (UserDTO)target;
+
 
 		if(user.getUserName().isEmpty())
 		{
@@ -22,8 +29,13 @@ public class UserValidator implements Validator {
 		}
 		else if (!user.getUserName().matches(Constants.EMAIL_REGULAR_EXPRESSION))
 		{
-			errors.rejectValue("userName", "de.enwida.email.inavlid");
+			errors.rejectValue("userName", "de.enwida.email.invalid");
 		}
+		
+		else if(userService.usernameAvailablility(user.getUserName()))
+        {
+            errors.rejectValue("userName", "de.enwida.email.inuse");
+        }
 		
 		// Checking password field
 		if(user.getPassword().isEmpty())
