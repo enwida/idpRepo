@@ -5,7 +5,7 @@
 <h1>Registration Form</h1><br />
 <form:form commandName="USER">
 <table>
-	<tr><td>Mail Address(*) : </td><td><form:input path="userName" onchange="checkEmail(this.value)" /><label id="userError">${emailAvailabilityError}</label> <form:errors  path="userName" cssStyle="color : red;"/></td></tr>
+	<tr><td>Mail Address(*) : </td><td><form:input path="userName" onchange="getCompany(this.value)" /><label id="userError">${emailAvailabilityError}</label> <form:errors  path="userName" cssStyle="color : red;"/></td></tr>
 	<tr><td>First Name(*) : </td><td><form:input path="firstName" /><form:errors path="firstName" cssStyle="color : red;"/></td></tr>
 	<tr><td>Last Name(*) : </td><td><form:input path="lastName" /><form:errors path="lastName" cssStyle="color : red;"/></td></tr>
 	<tr><td>Password(*) : </td><td><form:password path="password" /><form:errors path="password" cssStyle="color : red;"/></td></tr>

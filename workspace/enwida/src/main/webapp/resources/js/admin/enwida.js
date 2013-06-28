@@ -1,5 +1,10 @@
 function getCompany(email) {
 	var company = email.substring(email.indexOf('@') + 1, email.length);
+	$("#companyName").val(company);
+}
+
+function getImages(email) {
+	var company = email.substring(email.indexOf('@') + 1, email.length);
 	document.getElementById("companyName").value = company;
 }
 
