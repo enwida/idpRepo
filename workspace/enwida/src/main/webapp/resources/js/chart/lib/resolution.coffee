@@ -15,11 +15,16 @@ define ->
     "bar":
       optimalDensity: 50
       maximumDensity: 40
+    "minmax":
+      optimalDensity: 25
+      maximumDensity: 15
     "carpet":
       optimalDensity: 25
       maximumDensity: 15
 
   getOptimalResolution: (type, timeRange, filters, width) ->
+    return "HOURLY" if type is "carpet"
+
     optimalDataPointCount = width / densities[type].optimalDensity
     maximumDataPointCount = width / densities[type].maximumDensity
 

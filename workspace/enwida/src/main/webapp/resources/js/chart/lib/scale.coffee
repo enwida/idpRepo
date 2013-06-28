@@ -20,10 +20,22 @@ define ->
       when "date" then @setupXScaleDate()
 
   setupYScale: ->
-    @setupYScaleLinear()
+    unless @options?.y?.type
+      @setupYScaleLinear()
+      return
+
+    switch @options.y.type
+      when "ordinal" then @setupYScaleOrdinal()
+      else @setupYScaleLinear()
 
   setupXScaleLinear: ->
     @chart.xScale = d3.scale.linear().range [0, @chart.options.width]
+
+  setupYScaleOrdinal: ->
+    # Implies a mapped domain type
+    @options["y"]["domain"] ?= type: "map"
+    padding = @options.y.padding ? 0.1
+    @chart.yScale = d3.scale.ordinal().rangeRoundBands [0, @chart.options.height], padding
 
   setupXScaleOrdinal: ->
     # Implies a mapped domain type
@@ -115,3 +127,17 @@ define ->
       when "min" then d3.min @chart.data, (d) -> d[key]
       when "max" then d3.max @chart.data, (d) -> d[key]
       else throw new Error "Not a valid bound: #{bound}"
+
+  getMinInterval: (data, key="x") ->
+    result = Infinity
+    for i in [0...data.length-2]
+      diff = Math.abs(data[i+1][key] - data[i][key])
+      if diff > 0 and diff < result
+        result = diff
+    result
+
+  getBarWidth: (data, scale, key="x") ->
+    base = data[0][key]
+    step = @getMinInterval data, key
+    scale(base + step) - scale(base)
+

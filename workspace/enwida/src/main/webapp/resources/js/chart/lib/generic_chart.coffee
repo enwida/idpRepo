@@ -40,16 +40,16 @@ define ["scale"], (scale) ->
       return if @svg?
       width = @options.width + @options.margin.left + @options.margin.right
       height = @options.height + @options.margin.top + @options.margin.bottom
-      @svg = d3.select(@options.parent).append("svg")
+      @svg = d3.selectAll(@options.parent).append("svg")
         .attr("width", width)
         .attr("height", height)
         .append("g")
           .attr("transform", "translate(#{@options.margin.left},#{@options.margin.top})")
 
-    drawXAxis: (xAxis) ->
+    drawXAxis: (xAxis, dx=0, dy=0) ->
       @svg.append("g")
         .attr("class", "x axis")
-        .attr("transform", "translate(0,#{@options.height})")
+        .attr("transform", "translate(#{dx},#{dy + @options.height})")
         .call(xAxis)
         .append("text")
           .attr("x", @options.width)
@@ -77,8 +77,8 @@ define ["scale"], (scale) ->
         .attr("data-style-padding", 10)
         .call(d3.legend)
 
-    drawAxes: ->
-      @drawXAxis @xAxis
+    drawAxes: (dx=0, dy=0) ->
+      @drawXAxis @xAxis, dx, dy
       @drawYAxis @yAxis
 
     makeDateScale: ->

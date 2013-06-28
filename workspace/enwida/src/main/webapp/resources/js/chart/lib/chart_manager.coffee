@@ -1,10 +1,12 @@
-define ["navigation", "spreadsheet", "visual", "lines"],
-  (Navigation, Spreadsheet, Visual, Lines) ->
+define ["navigation", "spreadsheet", "visual", "lines", "loading"],
+  (Navigation, Spreadsheet, Visual, Lines, Loading) ->
 
     flight.component ->
-
       @getLines = (options, callback) ->
-        @select("visual").fadeOut 100
+        Loading.showLoading @select("visual"),
+          @attr.navigationData?.width,
+          @attr.navigationData?.height
+
         format = d3.time.format "%Y-%m-%d"
         $.ajax "lines.test",
           data:
@@ -15,7 +17,6 @@ define ["navigation", "spreadsheet", "visual", "lines"],
             endTime: format options.timeRange.to
             resolution: options.resolution
           success: (data) =>
-            @select("visual").fadeIn 100
             callback null, data
           error: (err) =>
             callback err
@@ -23,8 +24,43 @@ define ["navigation", "spreadsheet", "visual", "lines"],
       @onGetLines = (a, opts) ->
         @getLines opts, (err, data) =>
           throw err if err?
+          data = @preprocessLines data
           @trigger @select("visual"), "draw", data: data
           @trigger @select("lines"), "updateLines", lines: data
+
+      @preprocessLines = (lines) ->
+        switch @attr.type
+          when "minmax"
+            result = []
+            # Add avg line
+            result.push lines[1]
+
+            # Generate min/max line
+            minMaxLine = lines[0]
+            minMaxLine.title += " / #{lines[2].title}"
+            for dp, i in minMaxLine.dataPoints
+              dp.min = dp.y
+              dp.max = lines[2].dataPoints[i].y
+
+            result.push minMaxLine
+            lines = result
+          when "carpet"
+            # Use only first line
+            line = lines[0]
+            hourFormat = d3.time.format "%H"
+            for dp in line.dataPoints
+              date = new Date dp.x
+              dp.v = dp.y
+              dp.y = parseInt hourFormat date
+              date.setHours 0
+              date.setMinutes 0
+              date.setSeconds 0
+              date.setMilliseconds 0
+              dp.x = date.getTime()
+            console.log line
+            lines = [line]
+
+        lines
 
       @toggleLine = (_, opts) ->
         duration = opts.duration ? 200
@@ -39,23 +75,26 @@ define ["navigation", "spreadsheet", "visual", "lines"],
       @after "initialize", ->
         @on "getLines", @onGetLines
         @on "updateNavigation", (_, opts) ->
+          @attr.navigationData = opts.data
           @trigger @select("visual"), "navigationData", opts
         @on "toggleLine", @toggleLine
 
-        @attr.width = @$node.attr("data-width") ? "800"
+        @attr.type = @$node.attr("data-chart-type") ? "line"
+        @attr.width = parseInt(@$node.attr("data-width")) ? 800
 
         # Add visual
         visual = $("<div>").addClass "visual"
         @$node.append visual
         Visual.attachTo visual,
           id: @attr.id
-          type: @$node.attr("data-chart-type") ? "line"
+          type: @attr.type
           width: @attr.width
 
         # Add lines
-        lines = $("<div>").addClass("lines").css("width", "#{@attr.width}px")
-        @$node.append lines
-        Lines.attachTo lines
+        if @attr.type isnt "carpet"
+          lines = $("<div>").addClass("lines").css("width", "#{@attr.width}px")
+          @$node.append lines
+          Lines.attachTo lines
 
         # Add navigation
         navigation = $("<div>").addClass "navigation"
@@ -63,5 +102,5 @@ define ["navigation", "spreadsheet", "visual", "lines"],
         Navigation.attachTo navigation,
           id: @attr.id
           width: @attr.width
-          type: @$node.attr("data-chart-type") ? "line"
+          type: @attr.type
 

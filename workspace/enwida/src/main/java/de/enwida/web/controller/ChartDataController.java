@@ -10,8 +10,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -109,6 +111,20 @@ public class ChartDataController {
 
     @Autowired
     private INavigationDao navigationDao;
+    
+    private static final Map<Integer, List<Aspect>> aspectMap = new HashMap<Integer, List<Aspect>>();
+    static {
+        final List<Aspect> minMax = Arrays.asList(new Aspect[] {
+            Aspect.CR_POWERPRICE_MIN, Aspect.CR_POWERPRICE_MID,
+            Aspect.CR_POWERPRICE_MAX });
+        final List<Aspect> volume = Arrays.asList(new Aspect[] { Aspect.CR_VOL_ACTIVATION });
+
+        aspectMap.put(0, minMax);
+        aspectMap.put(1, minMax);
+        aspectMap.put(2, minMax);
+        aspectMap.put(3, volume);
+    }
+
 
     @RequestMapping(value = "/navigation.test", method = RequestMethod.GET)
     @ResponseBody
@@ -163,9 +179,7 @@ public class ChartDataController {
 
     	final List<IDataLine> result = new ArrayList<IDataLine>();
     
-    	for (final Aspect aspect : Arrays.asList(new Aspect[] {
-    		Aspect.CR_POWERPRICE_MIN, Aspect.CR_POWERPRICE_MID,
-    		Aspect.CR_POWERPRICE_MAX })) {
+    	for (final Aspect aspect : aspectMap.get(chartId)) {
 
     	    final LineRequest req = new LineRequest(aspect, product, tso,
     		    startTime, endTime, resolution, locale);
