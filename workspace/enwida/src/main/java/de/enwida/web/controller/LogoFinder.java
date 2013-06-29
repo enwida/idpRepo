@@ -21,9 +21,14 @@ public class LogoFinder {
                     return null;
             final DomNodeList<DomElement> div = page.getElementsByTagName("img");
             for (DomElement domElement : div) {
-                String img=domElement.asXml().replace("src=\"", "src=\""+companyLink);
-                img=img.replace("src='", "src='"+companyLink);
-                images+=img;
+                String imgSrc=domElement.asXml();
+                //if this is not an absolute path update it
+                if (!imgSrc.contains("http")){
+                    imgSrc=imgSrc.replace("src=\"", "src=\""+companyLink);
+                    imgSrc=imgSrc.replace("src='", "src='"+companyLink);
+                    
+                }
+                images+=imgSrc;
          }
         } catch ( IOException e) {
             // TODO Auto-generated catch block

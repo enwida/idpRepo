@@ -1,54 +1,79 @@
 package de.enwida.web.dao.interfaces;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import de.enwida.web.model.Group;
 import de.enwida.web.model.Role;
 import de.enwida.web.model.User;
 
-
 public interface IUserDao {
-	public long save(User user);
-	public String getPassword(String email) ;
-	public List<User> findAllUsersWithPermissions();
-	public User getUser(Long id);
-	public ArrayList<Group> getAvailableGroupsForUser(long userID);
-	public ArrayList<Group> getUserGroups(long userID);
-	public List<Group> getAllGroups();
-	public Group addGroup(final Group newGroup);
+    public long save(User user);
+
+    public String getPassword(String email);
+
+    public List<User> findAllUsersWithPermissions();
+
+    public User getUserByID(Long id);
+
+    public ArrayList<Group> getAvailableGroupsForUser(long userID);
+
+    public ArrayList<Group> getUserGroups(long userID);
+
+    public List<Group> getAllGroups();
+
+    public Group addGroup(final Group newGroup);
+
     public void addRole(Role role);
+
     public List<Role> getAllRoles();
-    public boolean checkEmailAvailability(String email) ;
-    public boolean saveUserInGroup(final long userId, final long groupId);
+
+    public boolean checkEmailAvailability(String email);
+
     public long getRoleIdOfGroup(final long groupId);
-    public long getGroupIdByCompanyName(final String companyName);
+
+    public Group getGroupByCompanyName(final String companyName);
+
     public Group getGroupByGroupId(long groupId);
-    public boolean saveUserInAnonymousGroup(final long userId);
+
     public long getAnonymousGroupId();
-    
 
-    public User getUser(String userName);
+    public User getUserByName(String userName);
 
-    public String assignUserToGroup(int userID, int groupID);
+    public String assignUserToGroup(long userID, long groupID);
 
-    public String deassignUserToGroup(int userID, int groupID);
+    public String deassignUserFromGroup(long userID, long groupID);
 
-    public String assignRoleToGroup(int roleID, int groupID);
+    public String assignRoleToGroup(long roleID, long groupID);
 
-    public String deassignRoleToGroup(int roleID, int groupID);
+    public String deassignRoleFromGroup(long roleID, long groupID);
 
     public List<Role> getAllRolesWithGroups();
-    
+
     public void deleteUser(User user);
-    
+
     public boolean updateUser(User user);
+
     public List<User> findAllUsers();
+
     public List<Group> getAllGroupsWithUsers();
-    public boolean enableDisableUser(int userID, boolean enabled);
-    public void removeGroup(int groupID) throws Exception;
+
+    public boolean enableDisableUser(long userID, boolean enabled);
+
+    public void removeGroup(long groupID) throws Exception;
+
     public boolean usernameAvailablility(final String username);
-    public boolean enableDisableAspect(int rightID, boolean enabled);
+
+    public boolean enableDisableAspect(long rightID, boolean enabled);
+
+    public int getRoleIdByCompanyName(String companyName);
+
+    public void deleteUserGroup(long userID);
+
+    public ArrayList<Role> getUserRoles(long userID);
+
+    public Group getGroupByName(String groupName);
+
+    public List<User> getAllUsers();
 
 }

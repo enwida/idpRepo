@@ -3,20 +3,32 @@ package de.enwida.web;
 import static org.junit.Assert.assertEquals;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.Calendar;
 import java.util.List;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathFactory;
+
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
 
 import de.enwida.web.dao.implementation.UserDao;
+import de.enwida.web.model.Group;
 import de.enwida.web.model.User;
-import de.enwida.web.model.UserPermission;
  
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:/root-context-test.xml")
@@ -26,26 +38,50 @@ public class UserManagementTest {
 	private DriverManagerDataSource datasource;
 	
 	@Autowired
-	UserDao userDao;
-
-	@Test
-	public void AddUser() {
-//		User user=new User(100,"test","test","test","test",false);
-//		userDao.createUser(user);
-		
-	}
+	private UserDao userDao;
 
 	
-	/*@Test
-	public void SpringSecurtyLoginSQLCheck() {
+	private User user;
+	
+	@Before
+	public void testUser() {
+	    user=new User(100,"test1","test","test","test",false);
+	    user.setJoiningDate(new Date(Calendar.getInstance().getTimeInMillis()));
+	    user.setCompanyName("enwida.de");
+        User existingUser = userDao.getUserByName(user.getUserName());
+	    if(existingUser==null){
+	        userDao.save(user);
+	    }else{
+	        user=existingUser;
+	    }
+	    userDao.enableDisableUser(user.getUserID(), false);
+	    userDao.enableDisableUser(user.getUserID(), true);
+	    userDao.deleteUser(user);
+	}
+	
+   @Test
+    public void saveUserGroup() {
+       Group group = userDao.getAllGroups().get(0);
+       //save user in any group
+       userDao.assignUserToGroup(user.getUserID(),group.getGroupID());
+       userDao.deassignUserFromGroup(user.getUserID(), group.getGroupID());
+       //save user in anonymous group
+       group =userDao.getGroupByName("anonymous");
+       userDao.assignUserToGroup(user.getUserID(),group.getGroupID());
+       userDao.deassignUserFromGroup(user.getUserID(), group.getGroupID());
+    }
+
+	@Test
+	public void SpringSecurtyLoginSQLCheck() throws Exception {
 		
-	    String sql = "select user_name,user_password, enabled from users where user_name='test'";
-		 
+	    String sql = getSpringSecurityQuery("//authentication-manager/authentication-provider/jdbc-user-service/@users-by-username-query");
+         
 		Connection conn = null;
  
 		try {
 			conn = datasource.getConnection();
 			PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, user.getUserName());
 			ps.executeQuery();
 			ps.close();
 		} catch (SQLException e) {
@@ -60,19 +96,16 @@ public class UserManagementTest {
 	}
 	
 	@Test
-	public void SpringSecurtyAuthoritySQLCheck() {
+	public void SpringSecurtyAuthoritySQLCheck() throws Exception {
 		
-	    String sql = "SELECT users.user_name, roles.role_name FROM users" +
-	    		" INNER JOIN user_group ON user_group.user_id=users.user_id " +
-	    		" INNER JOIN group_role ON group_role.group_id=user_group.group_id" +
-	    		" INNER JOIN roles ON roles.role_ID=group_role.role_id" +
-	    		" WHERE user_name='test'";
+	    String sql = getSpringSecurityQuery("//authentication-manager/authentication-provider/jdbc-user-service/@authorities-by-username-query");
 		 
 		Connection conn = null;
  
 		try {
 			conn = datasource.getConnection();
 			PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, user.getUserName());
 			ps.executeQuery();
 			ps.close();
 		} catch (SQLException e) {
@@ -85,28 +118,21 @@ public class UserManagementTest {
 			}
 		}
 	}
+	
+	private String getSpringSecurityQuery(String xPathInFile) throws Exception{
+	    DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+        Document dDoc = builder.parse("src/main/webapp/WEB-INF/spring/security-app-context.xml");
 
-	@Test
-	public void GetAllUser() {
-//		List<User> users= userDao.findAllUsers();
-//		assertEquals(true,!users.isEmpty());
+        XPath xPath = XPathFactory.newInstance().newXPath();
+        NodeList nodes = (NodeList) xPath.evaluate(xPathInFile, dDoc, XPathConstants.NODESET);
+        return nodes.item(0).getTextContent();
 	}
 
 	
 	@Test
-	public void enableUser() {
-		assertEquals(true,userDao.enableDisableUser(true, 1));
+	public void testEnabledDisableAspect() {
+        userDao.enableDisableAspect(1, true);
+        userDao.enableDisableAspect(1, false);
 	}
-	
-	@Test
-	public void disbleUser() {
-		assertEquals(true,userDao.enableDisableUser(false, 1));
-	}
-	
-	@Test
-	public void DeleteUser() {
-		User user=new User(100,"test","test","test","test",false);
-		user.getUserPermissionCollection().implies(new UserPermission("admin"));
-		assertEquals(true,userDao.deleteUser(user));
-	}*/
+
 }

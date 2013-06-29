@@ -30,7 +30,7 @@ public class UserServiceImpl implements UserService {
 	
     public User getUser(Long id) {
 		
-		return userDao.getUser(id);
+		return userDao.getUserByID(id);
 	}
 
 	public List<User> getUsers() {
@@ -48,24 +48,18 @@ public class UserServiceImpl implements UserService {
 				
 		if(userId != -1)
 		{			
-			long groupId = userDao.getGroupIdByCompanyName(user.getCompanyName());
+			Group group = userDao.getGroupByCompanyName(user.getCompanyName());
 			
-			if(groupId == -1)
+			if(group != null && group.isAutoPass())
 			{
-				userDao.saveUserInAnonymousGroup(userId);
+		        Group newGroup = userDao.getGroupByGroupId(group.getGroupID());
+                userDao.assignUserToGroup(userId, newGroup.getGroupID());
+
 			}
 			else
 			{
-				Group group = userDao.getGroupByGroupId(groupId);
-				
-				if(group.isAutoPass())
-				{
-					userDao.saveUserInGroup(userId, groupId);
-				}
-				else
-				{
-					userDao.saveUserInAnonymousGroup(userId);
-				}
+			    Group anonymousGroup = userDao.getGroupByName("anonymous");
+                userDao.assignUserToGroup(userId, anonymousGroup.getGroupID());
 			}
 			
 			return true;
@@ -118,17 +112,17 @@ public class UserServiceImpl implements UserService {
     }
 
     public User getUser(String userName) {
-        return userDao.getUser(userName);
+        return userDao.getUserByName(userName);
     }
 
     public void resetPassword(long userID) {
         SecureRandom random = new SecureRandom();
         String newPassword=new BigInteger(130, random).toString(32);
-        User user=userDao.getUser(userID);
+        User user=userDao.getUserByID(userID);
         user.setPassword(newPassword);
         userDao.updateUser(user);
         try {
-            mail.SendEmail(user.getUserName(),"New Password","Your new Password:"+newPassword);
+            mailService.SendEmail(user.getUserName(),"New Password","Your new Password:"+newPassword);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -143,7 +137,7 @@ public class UserServiceImpl implements UserService {
     }
 
     public String deassignUserToGroup(int userID, int groupID) {
-        return userDao.deassignUserToGroup(userID,groupID);
+        return userDao.deassignUserFromGroup(userID,groupID);
     }
 
     public List<Group> getAllGroupsWithUsers() {
@@ -155,7 +149,7 @@ public class UserServiceImpl implements UserService {
     }
 
     public String deassignRoleToGroup(int roleID, int groupID) {
-        return userDao.deassignRoleToGroup(roleID,groupID);
+        return userDao.deassignRoleFromGroup(roleID,groupID);
     }
 
     public List<Role> getAllRolesWithGroups() {
