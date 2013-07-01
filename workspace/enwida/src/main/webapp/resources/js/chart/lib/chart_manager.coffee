@@ -2,10 +2,14 @@ define ["navigation", "spreadsheet", "visual", "lines", "loading"],
   (Navigation, Spreadsheet, Visual, Lines, Loading) ->
 
     flight.component ->
-      @getLines = (options, callback) ->
-        Loading.showLoading @select("visual"),
+
+      @getMsg = ->
+        Loading.of @select("visual"),
           @attr.navigationData?.width,
           @attr.navigationData?.height
+
+      @getLines = (options, callback) ->
+        @getMsg().showLoading()
 
         format = d3.time.format "%Y-%m-%d"
         $.ajax "lines.test",
@@ -24,6 +28,9 @@ define ["navigation", "spreadsheet", "visual", "lines", "loading"],
       @onGetLines = (a, opts) ->
         @getLines opts, (err, data) =>
           throw err if err?
+          if data.length is 0
+            return @getMsg().showText "No data"
+
           data = @preprocessLines data
           @trigger @select("visual"), "draw", data: data
           @trigger @select("lines"), "updateLines", lines: data

@@ -1,6 +1,6 @@
 define ->
 
-  showLoading: (element, width=960, height=600) ->
+  showText: (element, text, width=960, height=600) ->
     element = d3.selectAll(element)
     svg = element.select("svg")
 
@@ -18,4 +18,11 @@ define ->
         .append("text")
           .attr("font-size", "24")
           .style("text-anchor", "middle")
-          .text("Loading...")
+          .text(text)
+
+  showLoading: (element, width, height) ->
+    @showText element, "Loading...", width, height
+
+  of: (element, width, height) ->
+    showText: (text) => @showText element, text, width, height
+    showLoading: => @showLoading element, width, height
