@@ -15,7 +15,7 @@
   });
 
   describe("Unit tests", function() {
-    return describe("Resolution calculation", function(desc) {
+    describe("Resolution calculation", function(desc) {
       var Resolution;
 
       Resolution = null;
@@ -185,6 +185,148 @@
           return testSamples(sampleTests);
         });
       });
+    });
+    return describe("Scales", function() {
+      var Scale, chartMock, dataMock, isWithin, optionsMock;
+
+      Scale = null;
+      before(function(done) {
+        return require(["scale"], function(s) {
+          Scale = s;
+          return done();
+        });
+      });
+      dataMock = [
+        [
+          {
+            x: -5,
+            y: -5
+          }, {
+            x: 0,
+            y: 0
+          }, {
+            x: 5,
+            y: 5
+          }
+        ], [
+          {
+            x: 50,
+            y: 30
+          }, {
+            x: -20,
+            y: 0
+          }, {
+            x: 5,
+            y: 12
+          }
+        ]
+      ];
+      optionsMock = {
+        width: 500,
+        height: 500,
+        scale: {
+          x: {
+            type: "linear"
+          },
+          y: {
+            type: "linear"
+          }
+        }
+      };
+      chartMock = {
+        options: optionsMock,
+        data: dataMock
+      };
+      isWithin = function(relativeError, expected, value) {
+        var error;
+
+        error = Math.abs(relativeError * expected);
+        return value >= expected - error && value <= expected + error;
+      };
+      it("Should setup linear scales with the right domain", function() {
+        var chart, maxX, maxY, minX, minY;
+
+        chart = $.extend(true, {}, chartMock);
+        Scale.init(chart);
+        expect(chart.xScale).exists;
+        expect(chart.yScale).exists;
+        expect(chart.xScale.range()).deep.equals([0, optionsMock.width]);
+        expect(chart.yScale.range()).deep.equals([optionsMock.height, 0]);
+        minX = _.chain(dataMock.map(function(dps) {
+          return dps.map(function(dp) {
+            return dp.x;
+          });
+        })).flatten().min().value();
+        maxX = _.chain(dataMock.map(function(dps) {
+          return dps.map(function(dp) {
+            return dp.x;
+          });
+        })).flatten().max().value();
+        expect(chart.xScale.domain()).to.have.length(2);
+        expect(isWithin(1, minX, chart.xScale.domain()[0])).to.be["true"];
+        expect(isWithin(1, maxX, chart.xScale.domain()[1])).to.be["true"];
+        minY = _.chain(dataMock.map(function(dps) {
+          return dps.map(function(dp) {
+            return dp.y;
+          });
+        })).flatten().min().value();
+        maxY = _.chain(dataMock.map(function(dps) {
+          return dps.map(function(dp) {
+            return dp.y;
+          });
+        })).flatten().max().value();
+        expect(chart.yScale.domain()).to.have.length(2);
+        console.log(minY);
+        expect(isWithin(1, minY, chart.yScale.domain()[0])).to.be["true"];
+        return expect(isWithin(1, maxY, chart.yScale.domain()[1])).to.be["true"];
+      });
+      it("Should setup an ordinal x scale with the right domain", function() {
+        var chart, expectedDomain;
+
+        chart = $.extend(true, {}, chartMock);
+        chart.options.scale.x.type = "ordinal";
+        Scale.init(chart);
+        expect(chart.xScale).exists;
+        expectedDomain = _.chain(dataMock.map(function(dps) {
+          return dps.map(function(dp) {
+            return dp.x;
+          });
+        })).flatten().uniq().value();
+        return expect(chart.xScale.domain()).deep.equals(expectedDomain);
+      });
+      return it("Should setup a fixed linear x scale", function() {
+        var chart;
+
+        chart = $.extend(true, {}, chartMock);
+        chart.options.scale.x.type = "linear";
+        chart.options.scale.x.domain = {
+          type: "fixed",
+          low: 10,
+          high: 50
+        };
+        Scale.init(chart);
+        expect(chart.xScale).exists;
+        return expect(chart.xScale.domain()).deep.equals([10, 50]);
+      });
+    });
+  });
+
+  describe("DOM tests", function() {
+    var ChartManager;
+
+    ChartManager = null;
+    before(function(done) {
+      $("body").prepend($("<div>").addClass("chart").attr("data-chart-id", 0));
+      return require(["chart_manager"], function(c) {
+        ChartManager = c;
+        return done();
+      });
+    });
+    return it("Should setup the chart div", function() {
+      var $chart;
+
+      $chart = $(".chart");
+      return expect($chart.length).equals(1);
     });
   });
 

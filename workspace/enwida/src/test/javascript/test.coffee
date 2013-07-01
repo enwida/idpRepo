@@ -137,3 +137,91 @@ describe "Unit tests", ->
 
         testSamples sampleTests
 
+  describe "Scales", ->
+
+    Scale = null
+
+    before (done) ->
+      require ["scale"], (s) ->
+        Scale = s
+        done()
+
+    dataMock = [
+      [{x: -5, y: -5}, {x: 0, y: 0}, {x: 5, y: 5}]
+      [{x: 50, y: 30}, {x: -20, y: 0}, {x: 5, y: 12}]
+    ]
+    optionsMock =
+      width: 500
+      height: 500
+      scale:
+        x:
+          type: "linear"
+        y:
+          type: "linear"
+
+    chartMock =
+      options: optionsMock
+      data: dataMock
+
+    isWithin = (relativeError, expected, value) ->
+      error = Math.abs relativeError * expected
+      value >= expected - error and
+        value <= expected + error
+
+    it "Should setup linear scales with the right domain", ->
+      chart = $.extend true, {}, chartMock
+      Scale.init chart
+      expect(chart.xScale).exists
+      expect(chart.yScale).exists
+
+      expect(chart.xScale.range()).deep.equals [0, optionsMock.width]
+      expect(chart.yScale.range()).deep.equals [optionsMock.height, 0]
+
+      minX = _.chain(dataMock.map (dps) -> dps.map (dp) -> dp.x).flatten().min().value()
+      maxX = _.chain(dataMock.map (dps) -> dps.map (dp) -> dp.x).flatten().max().value()
+      expect(chart.xScale.domain()).to.have.length 2
+      expect(isWithin 1, minX, chart.xScale.domain()[0]).to.be.true
+      expect(isWithin 1, maxX, chart.xScale.domain()[1]).to.be.true
+
+      minY = _.chain(dataMock.map (dps) -> dps.map (dp) -> dp.y).flatten().min().value()
+      maxY = _.chain(dataMock.map (dps) -> dps.map (dp) -> dp.y).flatten().max().value()
+      expect(chart.yScale.domain()).to.have.length 2
+      console.log minY
+      expect(isWithin 1, minY, chart.yScale.domain()[0]).to.be.true
+      expect(isWithin 1, maxY, chart.yScale.domain()[1]).to.be.true
+
+    it "Should setup an ordinal x scale with the right domain", ->
+      chart = $.extend true, {}, chartMock
+      chart.options.scale.x.type = "ordinal"
+      Scale.init chart
+
+      expect(chart.xScale).exists
+      expectedDomain = _.chain(dataMock.map (dps) -> dps.map (dp) -> dp.x).flatten().uniq().value()
+      expect(chart.xScale.domain()).deep.equals expectedDomain
+
+    it "Should setup a fixed linear x scale", ->
+      chart = $.extend true, {}, chartMock
+      chart.options.scale.x.type = "linear"
+      chart.options.scale.x.domain =
+        type: "fixed"
+        low: 10
+        high: 50
+
+      Scale.init chart
+      expect(chart.xScale).exists
+      expect(chart.xScale.domain()).deep.equals [10, 50]
+
+describe "DOM tests", ->
+  ChartManager = null
+
+  before (done) ->
+    $("body").prepend $("<div>").addClass("chart").attr("data-chart-id", 0)
+
+    require ["chart_manager"], (c) ->
+      ChartManager = c
+      done()
+
+
+  it "Should setup the chart div", ->
+    $chart = $(".chart")
+    expect($chart.length).equals 1
