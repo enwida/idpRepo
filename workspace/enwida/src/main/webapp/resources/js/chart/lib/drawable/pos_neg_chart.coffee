@@ -5,6 +5,12 @@ define ["./generic_chart", "util/scale"], (GenericChart, Scale) ->
     constructor: (options) ->
       @chart = GenericChart.init options
 
+      # Make sure we have 0 in the domain
+      yDomain = @chart.yScale.domain()
+      yDomain[0] = Math.min(0, yDomain[0])
+      yDomain[1] = Math.max(0, yDomain[1])
+      @chart.yScale.domain yDomain
+
       @barWidth = Scale.getBarWidth @chart.data[1], @chart.xScale, "x"
       @barOffset = @barWidth / 2
 
