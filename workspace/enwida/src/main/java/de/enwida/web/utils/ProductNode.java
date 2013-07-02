@@ -3,7 +3,7 @@ package de.enwida.web.utils;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProductNode {
+public class ProductNode implements Cloneable {
     
     private int id;
     private String name;
@@ -17,6 +17,14 @@ public class ProductNode {
     
     public ProductNode(int id, String name) {
         this(id, name, new ArrayList<ProductNode>());
+    }
+    
+    public ProductNode clone() {
+        final ProductNode result = new ProductNode(id, name);
+        for (final ProductNode child : children) {
+            result.addChild(child.clone());
+        }
+        return result;
     }
 
     public int getId() {

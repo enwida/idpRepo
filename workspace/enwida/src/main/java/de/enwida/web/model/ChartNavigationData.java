@@ -13,7 +13,7 @@ import de.enwida.web.utils.CalendarRange;
 import de.enwida.web.utils.NavigationDefaults;
 
 
-public class ChartNavigationData {
+public class ChartNavigationData implements Cloneable {
 
 	private String chartTitle;
 	private NavigationDefaults defaults;
@@ -32,6 +32,7 @@ public class ChartNavigationData {
 
 	public ChartNavigationData(String chartTitle, String xAxisLabel, String yAxisLabel,
 	       boolean dateScale, List<ProductTree> productTrees, NavigationDefaults defaults) {
+	    
 		this.chartTitle = chartTitle;
 		this.xAxisLabel = xAxisLabel;
 		this.yAxisLabel = yAxisLabel;
@@ -99,6 +100,18 @@ public class ChartNavigationData {
 	    }
 	    return CalendarRange.getMinimum(ranges);
 	}
+	
+	public ChartNavigationData clone() {
+	    final ChartNavigationData result = new ChartNavigationData(chartTitle, xAxisLabel, yAxisLabel);
+	    result.setIsDateScale(isDateScale);
+	    result.setDefaults(defaults.clone());
+	    result.tsos = new HashMap<>(tsos);
+
+	    for (final ProductTree tree : productTrees) {
+	        result.addProductTree(tree.clone());
+	    }
+	    return result;
+	}
 
 	public String getTitle() {
 		return this.chartTitle;
@@ -143,5 +156,5 @@ public class ChartNavigationData {
     public void setIsDateScale(boolean dateScale) {
         this.isDateScale = dateScale;
     }
-	
+    
 }

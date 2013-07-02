@@ -1,0 +1,276 @@
+{
+  "@type": "de.enwida.web.model.ChartNavigationData",
+  "chartTitle": {
+    "@id": 2,
+    "value": ""
+  },
+  "defaults": {
+    "tsoId": 99,
+    "resolution": {
+      "@id": 48,
+      "name": "MONTHLY",
+      "ordinal": 4
+    },
+    "product": 211,
+    "timeRange": {
+      "from": {
+        "@type": "java.util.GregorianCalendar",
+        "time": "2010-11-01T00:00:00.000+0100",
+        "zone": "Europe\/Berlin"
+      },
+      "to": {
+        "@type": "java.util.GregorianCalendar",
+        "time": "2010-12-01T00:00:00.000+0100",
+        "zone": "Europe\/Berlin"
+      }
+    },
+    "disabledLines": {
+      "@type": "java.util.ArrayList"
+    }
+  },
+  "productTrees": {
+    "@type": "java.util.ArrayList",
+    "@items": [
+      {
+        "@type": "de.enwida.web.model.ProductTree",
+        "root": {
+          "id": 0,
+          "name": "root",
+          "children": {
+            "@type": "java.util.ArrayList",
+            "@items": [
+              {
+                "@type": "de.enwida.web.utils.ProductNode",
+                "id": 2,
+                "name": "SCR",
+                "children": {
+                  "@type": "java.util.ArrayList",
+                  "@items": [
+                    {
+                      "@type": "de.enwida.web.utils.ProductNode",
+                      "id": 1,
+                      "name": "PT",
+                      "children": {
+                        "@type": "java.util.ArrayList",
+                        "@items": [
+                          {
+                            "@id": 63,
+                            "@type": "de.enwida.web.utils.ProductLeaf",
+                            "resolution": {
+                              "@id": 43,
+                              "@type": "java.util.Arrays$ArrayList",
+                              "@items": [
+                                {
+                                  "@type": "de.enwida.transport.DataResolution",
+                                  "name": "QUATER_HOURLY",
+                                  "ordinal": 0
+                                },
+                                {
+                                  "@type": "de.enwida.transport.DataResolution",
+                                  "name": "HOURLY",
+                                  "ordinal": 1
+                                },
+                                {
+                                  "@type": "de.enwida.transport.DataResolution",
+                                  "name": "DAILY",
+                                  "ordinal": 2
+                                },
+                                {
+                                  "@type": "de.enwida.transport.DataResolution",
+                                  "name": "WEEKLY",
+                                  "ordinal": 3
+                                },
+                                {
+                                  "@ref": 48
+                                },
+                                {
+                                  "@type": "de.enwida.transport.DataResolution",
+                                  "name": "YEARLY",
+                                  "ordinal": 5
+                                }
+                              ]
+                            },
+                            "timeRange": {
+                              "from": {
+                                "@type": "java.util.GregorianCalendar",
+                                "time": "1970-01-01T01:00:00.000+0100",
+                                "zone": "Europe\/Berlin"
+                              },
+                              "to": {
+                                "@type": "java.util.GregorianCalendar",
+                                "time": "292278994-08-17T08:12:55.807+0100",
+                                "zone": "Europe\/Berlin"
+                              }
+                            },
+                            "id": 1,
+                            "name": "pos",
+                            "children": null
+                          },
+                          {
+                            "@id": 18,
+                            "@type": "de.enwida.web.utils.ProductLeaf",
+                            "resolution": {
+                              "@ref": 43
+                            },
+                            "timeRange": {
+                              "from": {
+                                "@type": "java.util.GregorianCalendar",
+                                "time": "1970-01-01T01:00:00.000+0100",
+                                "zone": "Europe\/Berlin"
+                              },
+                              "to": {
+                                "@type": "java.util.GregorianCalendar",
+                                "time": "292278994-08-17T08:12:55.807+0100",
+                                "zone": "Europe\/Berlin"
+                              }
+                            },
+                            "id": 2,
+                            "name": "neg",
+                            "children": null
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "@type": "de.enwida.web.utils.ProductNode",
+                      "id": 2,
+                      "name": "OPT",
+                      "children": {
+                        "@type": "java.util.ArrayList",
+                        "@items": [
+                          {
+                            "@ref": 63
+                          },
+                          {
+                            "@ref": 18
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "@type": "de.enwida.web.utils.ProductNode",
+                "id": 3,
+                "name": "TCR",
+                "children": {
+                  "@type": "java.util.ArrayList",
+                  "@items": [
+                    {
+                      "@type": "de.enwida.web.utils.ProductNode",
+                      "id": 1,
+                      "name": "0-4",
+                      "children": {
+                        "@type": "java.util.ArrayList",
+                        "@items": [
+                          {
+                            "@ref": 63
+                          },
+                          {
+                            "@ref": 18
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "@type": "de.enwida.web.utils.ProductNode",
+                      "id": 2,
+                      "name": "4-8",
+                      "children": {
+                        "@type": "java.util.ArrayList",
+                        "@items": [
+                          {
+                            "@ref": 63
+                          },
+                          {
+                            "@ref": 18
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "@type": "de.enwida.web.utils.ProductNode",
+                      "id": 3,
+                      "name": "8-12",
+                      "children": {
+                        "@type": "java.util.ArrayList",
+                        "@items": [
+                          {
+                            "@ref": 63
+                          },
+                          {
+                            "@ref": 18
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "@type": "de.enwida.web.utils.ProductNode",
+                      "id": 4,
+                      "name": "12-16",
+                      "children": {
+                        "@type": "java.util.ArrayList",
+                        "@items": [
+                          {
+                            "@ref": 63
+                          },
+                          {
+                            "@ref": 18
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "@type": "de.enwida.web.utils.ProductNode",
+                      "id": 5,
+                      "name": "16-20",
+                      "children": {
+                        "@type": "java.util.ArrayList",
+                        "@items": [
+                          {
+                            "@ref": 63
+                          },
+                          {
+                            "@ref": 18
+                          }
+                        ]
+                      }
+                    },
+                    {
+                      "@type": "de.enwida.web.utils.ProductNode",
+                      "id": 6,
+                      "name": "20-24",
+                      "children": {
+                        "@type": "java.util.ArrayList",
+                        "@items": [
+                          {
+                            "@ref": 63
+                          },
+                          {
+                            "@ref": 18
+                          }
+                        ]
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        "tso": 99
+      }
+    ]
+  },
+  "tsos": {
+    "@type": "java.util.HashMap"
+  },
+  "xAxisLabel": {
+    "@ref": 2
+  },
+  "yAxisLabel": {
+    "@ref": 2
+  },
+  "isDateScale": true
+}

@@ -90,9 +90,20 @@ public class ChartDataController {
     @RequestMapping(value = "/navigation", method = RequestMethod.GET)
     @ResponseBody
     public ChartNavigationData getNavigationData(@RequestParam int chartId,
-	    Principal principal, Locale locale) {
-	// FIXME: get user / submit correct role
-	return navigationService.getNavigationData(chartId, 0, locale);
+	    HttpServletRequest request, Principal principal, Locale locale) {
+
+    	// FIXME: get user / submit correct role
+    	final ChartNavigationData chartNavigationData = navigationService.getNavigationData(chartId, 0, locale);
+
+    	// Try to set the defaults from the cookie
+    	try {
+        	final NavigationDefaults defaults = getNavigationDefaultsFromCookie(chartId, request, principal);
+        	if (defaults != null) {
+            	chartNavigationData.setDefaults(defaults);
+        	}
+    	} catch (Exception ignored) { }
+
+    	return chartNavigationData;
     }
 
     /*
@@ -206,6 +217,14 @@ public class ChartDataController {
         }
     
     	return result;
+    }
+    
+    private NavigationDefaults getNavigationDefaultsFromCookie(int chartId, HttpServletRequest request, Principal principal) throws IOException {
+	    final String cookieValue = getChartDefaultsCookie(request, principal);
+	    final JsonReader jsonReader = new JsonReader(new ByteArrayInputStream(cookieValue.getBytes()));
+	    final ChartDefaults chartDefaults = (ChartDefaults) jsonReader.readObject();
+	    jsonReader.close();
+	    return chartDefaults.get(chartId);
     }
 
     private void updateChartDefaultsCookie(int chartId, NavigationDefaults defaults, HttpServletRequest request,

@@ -14,6 +14,7 @@ import java.util.Locale;
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -49,22 +50,36 @@ public class NavigationService implements INavigationService {
 	@Autowired
 	private IAspectsDao aspectsDao;
 	
+	@Autowired
+	private MessageSource messageSource;
+	
 	private Hashtable<Integer, ChartNavigationData> defaultNavigationData =  new Hashtable<Integer, ChartNavigationData>();
 	
 	@PostConstruct
 	public void init() throws IOException {
-	     for (int i = 1; i <= 1; i++) {
+	     for (int i = 0; i < 1; i++) {
 	    	 defaultNavigationData.put(i, getNavigationDataFromJsonFile(i));
 		}
 	}
 
     public ChartNavigationData getNavigationData(int chartId, int role, Locale locale) {
-        final ChartNavigationData navigationData = navigationDao.getDefaultNavigation(chartId, locale);
-        final List<Aspect> aspects = aspectsDao.getAspects(chartId);
+        // Get the internationalized properties
+	    final String chartTitle = getChartMessage("title", chartId, locale);
+	    final String xAxisLabel = getChartMessage("xlabel", chartId, locale);
+	    final String yAxisLabel = getChartMessage("ylabel", chartId, locale);
         
+	    // Get basic navigation data from hash table and apply
+	    // internationalized properties
+        final ChartNavigationData navigationData = defaultNavigationData.get(chartId).clone();
+        navigationData.setChartTitle(chartTitle);
+        navigationData.setxAxisLabel(xAxisLabel);
+        navigationData.setyAxisLabel(yAxisLabel);
+        
+        // Fetch the related aspects and shrink the navigation data
+        // under security and availability perspective
+        final List<Aspect> aspects = aspectsDao.getAspects(chartId);
         shrinkNavigationOnSecurity(navigationData, aspects, role);
         shrinkNavigationOnAvailibility(navigationData, aspects, role);
-        addDefaults(navigationData);
         
         return navigationData;
     }
@@ -116,10 +131,6 @@ public class NavigationService implements INavigationService {
         });
     }
 
-    private void addDefaults(ChartNavigationData navigationData) {
-        // TODO: stub
-    }
-    
     @Override
 	public void putNavigationDataToJsonFile(int chartId, ChartNavigationData chartNavigationData) throws IOException {
 		String json = JsonWriter.objectToJson(chartNavigationData);
@@ -136,7 +147,11 @@ public class NavigationService implements INavigationService {
 		JsonReader jr = new JsonReader(new ByteArrayInputStream(json.getBytes()));		
 		ChartNavigationData chartNavigationDataDeSerialized = (ChartNavigationData) jr.readObject();
 		jr.close();	
-        
+
         return chartNavigationDataDeSerialized;
 	}
+	
+    private String getChartMessage(String property, int chartId, Locale locale) {
+	    return messageSource.getMessage("de.enwida.chart." + chartId + "." + property, null, "", locale);
+    }
 }
