@@ -71,24 +71,7 @@ define ["generic_chart"], (generic_chart) ->
           .attr("y", (d) => @chart.yScale(d.max))
           .attr("width", @barWidth)
           .attr("height", (d) => @chart.yScale(d.min) - @chart.yScale(d.max))
-          .attr("original-title", (d) =>
-            x = d.x
-            if @chart.options?.scale?.x?.type is "date"
-              x = d3.time.format("%Y-%m-%d %H:%M") new Date x
-
-            $("<div>")
-              .append($("<h6>")
-                .addClass("minmax")
-                .addClass("tooltip#{id}")
-                .text(@chart.lines[id].title))
-              .append($("<table cellpadding='2'>")
-                .append($("<tr>")
-                  .append($("<td align='left'>").text @chart.xLabel)
-                  .append($("<td align='left'>").append($("<b>").text x)))
-                .append($("<tr>")
-                  .append($("<td align='left'>").text @chart.yLabel)
-                  .append($("<td align='left'>").append($("<b>").text "#{d.min} - #{d.max}")))
-            ).html())
+          .attr("original-title", (d) => @chart.getTooltip d, id, (d) -> "#{d.min} - #{d.max}")
 
     getAllYs: ->
       allValues = []

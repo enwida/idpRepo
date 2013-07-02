@@ -25,21 +25,7 @@ define ["generic_chart", "scale"], (generic_chart, scale) ->
           .attr("y", (d) => @chart.yScale(d.y))
           .attr("width", barWidth)
           .attr("height", (d) => @chart.options.height - @chart.yScale(d.y))
-          .attr("original-title", (d) =>
-            x = d.x
-            if @chart.options?.scale?.x?.type is "date"
-              x = d3.time.format("%Y-%m-%d %H:%M") new Date x
-
-            $("<div>")
-              .append($("<h6>").addClass("tooltip#{id}").text @chart.lines[id].title)
-              .append($("<table cellpadding='2'>")
-                .append($("<tr>")
-                  .append($("<td align='left'>").text @chart.xLabel)
-                  .append($("<td align='left'>").append($("<b>").text x)))
-                .append($("<tr>")
-                  .append($("<td align='left'>").text @chart.yLabel)
-                  .append($("<td align='left'>").append($("<b>").text d.y)))
-            ).html())
+          .attr("original-title", (d) => @chart.getTooltip d, id)
 
     minInterval: (key, id=0) ->
       result = null

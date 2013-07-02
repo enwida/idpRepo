@@ -33,16 +33,12 @@ define ["generic_chart", "scale"], (generic_chart, scale) ->
             date.setHours d.y
             x = d3.time.format("%Y-%m-%d %H:%M") date
 
-            $("<div>")
-              .append($("<h6>").addClass("tooltip#{id}").text @chart.lines[id].title)
-              .append($("<table cellpadding='2'>")
-                .append($("<tr>")
-                  .append($("<td align='left'>").text @chart.xLabel)
-                  .append($("<td align='left'>").append($("<b>").text x)))
-                .append($("<tr>")
-                  .append($("<td align='left'>").text @chart.yLabel)
-                  .append($("<td align='left'>").append($("<b>").text d.v)))
-            ).html()
+            @chart.getTooltipHtml id,
+              @chart.lines[id].title
+              @chart.xLabel
+              @chart.yLabel
+              x
+              d.v
           )
 
     drawLegend: ->
