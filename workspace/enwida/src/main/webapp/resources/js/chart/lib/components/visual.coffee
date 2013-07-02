@@ -1,5 +1,16 @@
-define ["line_chart", "bar_chart", "carpet_chart", "min_max_chart", "pos_neg_chart"],
-(LineChart, BarChart, CarpetChart, MinMaxChart, PosNegChart) ->
+define [ "drawable/line_chart"
+         "drawable/bar_chart"
+         "drawable/carpet_chart"
+         "drawable/min_max_chart"
+         "drawable/pos_neg_chart"
+       ],
+
+  (LineChart
+   BarChart
+   CarpetChart
+   MinMaxChart
+   PosNegChart
+   ) ->
 
   flight.component ->
 

@@ -1,8 +1,7 @@
 require.config
   baseUrl: "/enwida/resources/js/chart/lib"
 
-require ["chart_manager", "navigation"],
-  (ChartManager, Navigation) ->
+require ["components/chart_manager"], (ChartManager) ->
 
     $(document).ready ->
       $(".chart").each ->

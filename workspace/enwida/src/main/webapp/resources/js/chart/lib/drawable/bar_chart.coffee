@@ -1,4 +1,4 @@
-define ["generic_chart", "scale"], (generic_chart, scale) ->
+define ["./generic_chart"], (GenericChart) ->
 
   class BarChart
 
@@ -10,7 +10,7 @@ define ["generic_chart", "scale"], (generic_chart, scale) ->
       # are initialized
       tmp = options.scale.x.type
       options.scale.x.type = "ordinal"
-      @chart = generic_chart.init options
+      @chart = GenericChart.init options
       options.scale.x.type = tmp
 
     drawBars: (data, id=0) ->

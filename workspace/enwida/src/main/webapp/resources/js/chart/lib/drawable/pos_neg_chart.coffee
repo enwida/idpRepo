@@ -1,11 +1,11 @@
-define ["generic_chart", "scale"], (generic_chart, scale) ->
+define ["./generic_chart", "util/scale"], (GenericChart, Scale) ->
 
   class PosNegChart
 
     constructor: (options) ->
-      @chart = generic_chart.init options
+      @chart = GenericChart.init options
 
-      @barWidth = scale.getBarWidth @chart.data[1], @chart.xScale, "x"
+      @barWidth = Scale.getBarWidth @chart.data[1], @chart.xScale, "x"
       @barOffset = @barWidth / 2
 
       # Adjust the x scale range in order to leave space for the first
@@ -13,7 +13,7 @@ define ["generic_chart", "scale"], (generic_chart, scale) ->
       @chart.xScale.range [@barOffset, @chart.options.width - @barOffset]
 
       # Recalculate bar width
-      @barWidth = scale.getBarWidth @chart.data[1], @chart.xScale, "x"
+      @barWidth = Scale.getBarWidth @chart.data[1], @chart.xScale, "x"
       @barWidth *= 0.8 # Add padding
       @barOffset = @barWidth / 2
 

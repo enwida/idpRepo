@@ -1,4 +1,4 @@
-define ["scale"], (scale) ->
+define ["util/scale"], (Scale) ->
 
   class Chart
 
@@ -24,7 +24,7 @@ define ["scale"], (scale) ->
 
       # @data is an array of line data
       @data = @lines.map (line) -> line.dataPoints
-      scale.init @
+      Scale.init @
       @generateAxes()
 
     generateXAxis: ->
@@ -89,7 +89,7 @@ define ["scale"], (scale) ->
         ["%d", "%d"]
         ["%H:%M", "%H:%M"]
       ]
-      tickFormat = scale.getTickFormater(formats)()
+      tickFormat = Scale.getTickFormater(formats)()
       for tick in $(@options.parent).find("g.tick text")
         date = new Date parseInt $(tick).text().replace(/,/g, "")
         $(tick).text tickFormat date

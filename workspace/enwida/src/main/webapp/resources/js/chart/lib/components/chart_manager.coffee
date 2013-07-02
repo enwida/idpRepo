@@ -1,5 +1,16 @@
-define ["navigation", "spreadsheet", "visual", "lines", "loading", "lines_preprocessor"],
-  (Navigation, Spreadsheet, Visual, Lines, Loading, LinesPreprocessor) ->
+define [ "components/navigation"
+         "components/visual"
+         "components/lines"
+         "util/loading"
+         "util/lines_preprocessor"
+        ],
+
+  (Navigation
+   Visual
+   Lines
+   Loading
+   LinesPreprocessor
+  ) ->
 
     flight.component ->
 

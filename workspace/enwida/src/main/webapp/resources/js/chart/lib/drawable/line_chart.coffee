@@ -1,9 +1,9 @@
-define ["generic_chart"], (generic_chart) ->
+define ["./generic_chart"], (GenericChart) ->
 
   class LineChart
 
     constructor: (options) ->
-      @chart = generic_chart.init options
+      @chart = GenericChart.init options
 
     generateLine: ->
       d3.svg.line()

@@ -1,9 +1,9 @@
-define ["generic_chart", "scale"], (generic_chart, scale) ->
+define ["./generic_chart", "util/scale"], (GenericChart, Scale) ->
 
   class CarpetChart
 
     constructor: (options) ->
-      @chart = generic_chart.init options
+      @chart = GenericChart.init options
       @chart.options.scale.x.type = "date"
 
       # Setup y scale
@@ -12,7 +12,7 @@ define ["generic_chart", "scale"], (generic_chart, scale) ->
       @chart.yScale.domain [yDomain[0], yDomain[yDomain.length - 1]]
 
       # Calculate bar width/height
-      @rectWidth = scale.getBarWidth @chart.data[0], @chart.xScale, "x"
+      @rectWidth = Scale.getBarWidth @chart.data[0], @chart.xScale, "x"
       @rectHeight = @chart.options.height / (yDomain.length - 1)
 
     drawCarpet: (data, id=0) ->

@@ -1,4 +1,4 @@
-define ["resolution"], (Resolution) ->
+define ["util/resolution"], (Resolution) ->
 
   flight.component ->
 

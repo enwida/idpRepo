@@ -1,9 +1,9 @@
-define ["generic_chart"], (generic_chart) ->
+define ["./generic_chart"], (GenericChart) ->
 
   class MinMaxChart
 
     constructor: (options) ->
-      @chart = generic_chart.init options
+      @chart = GenericChart.init options
       @chart.yScale.domain d3.extent @getAllYs()
 
       @barWidth = @calculateBarWidth()
