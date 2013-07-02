@@ -533,7 +533,7 @@ public class UserDao extends BaseDao<User> implements IUserDao {
 	@Override
 	public Group getGroupByCompanyName(final String companyName)
 	{
-		String sql = "select * FROM users.user_group INNER JOIN users ON user_group.user_id=users.user_id where users.company_name=?";
+		String sql = "select * FROM users.user_group INNER JOIN users.users ON user_group.user_id=users.user_id where users.company_name=?";
 		Group group = null;
         Connection conn = null;
         

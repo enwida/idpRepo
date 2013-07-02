@@ -7,7 +7,11 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
+import com.gargoylesoftware.htmlunit.html.HtmlPasswordInput;
+import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
+import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
 
 import de.enwida.web.dao.implementation.UserDao;
 import de.enwida.web.model.User;
@@ -55,16 +59,43 @@ public class AdminPanel {
     public void CheckUserLinks() throws Exception {
        HtmlPage page;
        user=userDao.getAllUsers().get(0);
-       String link=webSiteLink+"user/admin/userList";
-       page = webClient.getPage(link);
        
-       link=webSiteLink+"user/";     
-       page = webClient.getPage(link);
-       
-       link=webSiteLink+"user/register";     
-       page = webClient.getPage(link);
-       
-       link=webSiteLink+"user/login";     
-       page = webClient.getPage(link);
+       page = webClient.getPage(webSiteLink+"user/admin/userList");
+          
+       page = webClient.getPage(webSiteLink+"user/");
+          
+       page = webClient.getPage(webSiteLink+"user/register");
+        
+       page = webClient.getPage(webSiteLink+"user/login");
     }
+    
+    @Test
+    public void CheckRegistrationForm() throws Exception {
+        // Get the first page
+        final HtmlPage page1 = webClient.getPage(webSiteLink+"user/register");
+
+        // Get the form that we are dealing with and within that form, 
+        // find the submit button and the field that we want to change.
+        final HtmlForm form = page1.getFormByName("registrationForm");
+
+        final HtmlSubmitInput button = form.getInputByName("saveChanges");
+        final HtmlTextInput textFieldUserName = form.getInputByName("userName");
+        final HtmlTextInput textFieldFirstName = form.getInputByName("firstName");
+        final HtmlTextInput textFieldLastName = form.getInputByName("lastName");
+        final HtmlPasswordInput textFieldPassword = form.getInputByName("password");
+        final HtmlPasswordInput textFieldConfirmPassword = form.getInputByName("confirmPassword");
+
+        // Change the value of the text field
+        textFieldUserName.setValueAttribute("test@enwida.de");
+        textFieldFirstName.setValueAttribute("test");
+        textFieldLastName.setValueAttribute("test");
+        textFieldPassword.setValueAttribute("123456");
+        textFieldConfirmPassword.setValueAttribute("123456");
+
+        // Now submit the form by clicking the button and get back the second page.
+        final HtmlPage page2 = button.click();
+        System.out.println(page2.asText());
+        webClient.closeAllWindows();
+    }
+    
 }
