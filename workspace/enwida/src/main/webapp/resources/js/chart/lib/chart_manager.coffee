@@ -84,7 +84,6 @@ define ["navigation", "spreadsheet", "visual", "lines", "loading"],
 
       @toggleLine = (_, opts) ->
         @attr.disabledLines = opts.disabledLines
-        duration = opts.duration ? 200
         @triggerDraw @attr.data
 
       @defaultAttrs

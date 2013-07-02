@@ -17,8 +17,6 @@ define ["generic_chart", "scale"], (generic_chart, scale) ->
       @barWidth *= 0.8 # Add padding
       @barOffset = @barWidth / 2
 
-      console.log @barWidth
-
     drawBars: (data, id=0, pos=true) ->
       fy = (d) => if pos then @chart.yScale(d.y) else @chart.yScale(0)
       fheight = (d) =>

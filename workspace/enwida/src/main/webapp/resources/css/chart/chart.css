@@ -111,7 +111,7 @@ body {
 	color: black;
 }
 .lines li.hidden div {
-	background-color: #888888 !important;
+	background-color: #888888;
 }
 .lines li.selected:not(.hidden) div {
 	background-color: #888888 !important;
@@ -127,6 +127,9 @@ body {
 }
 .chart[data-chart-type="minmax"] li.line1.hidden.selected div {
 	background-color: #FFA340 !important;
+}
+.chart[data-chart-type="minmax"] .lines li.hidden div {
+	background-color: #888888;
 }
 
 .navigation {

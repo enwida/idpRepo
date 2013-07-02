@@ -18,9 +18,6 @@ define ["generic_chart"], (generic_chart) ->
       @barWidth *= 0.8 # Add padding
       @barOffset = @barWidth / 2
 
-      console.log @chart.yScale.domain()
-      console.log @barWidth
-
     calculateBarWidth: ->
       data = @chart.data[1]
       xLow = @chart.xScale(data[0].x)
@@ -116,9 +113,7 @@ define ["generic_chart"], (generic_chart) ->
       # Modify the x scale to fill the whole svg width
       @chart.svg.select(".x.axis path").attr "d", "M0,6V0H#{@chart.options.width}V6"
 
-      unless _(@chart.options.disabledLines).contains 1
-        @drawBars @chart.data[1], 1
-
+      @drawBars @chart.data[1], 1
       @drawLine @chart.data[0], 0
       @drawDots @chart.data[0], 0
 

@@ -33,30 +33,31 @@ define ->
             @attr.disabledLines.push i
 
           li.toggleClass "hidden"
-          @trigger "toggleLine",
-            lineId: i
-            disabledLines: @attr.disabledLines
+          @trigger "toggleLine", disabledLines: @attr.disabledLines
         li.hover (=>
           # toggleClass does not work with SVG elements
           @$node.closest(".chart").find(".line#{i}").each ->
             addClass $(@), "selected"
+            $(@).show()
           @$node.closest(".chart").find(".dot#{i}").each ->
             addClass $(@), "selected"
+            $(@).show()
         ), (=>
           # toggleClass does not work with SVG elements
           @$node.closest(".chart").find(".line#{i}").each ->
             removeClass $(@), "selected"
           @$node.closest(".chart").find(".dot#{i}").each ->
             removeClass $(@), "selected"
+
+          if li.hasClass("hidden")
+            @$node.closest(".chart").find(".visual .line#{i}").hide()
+            @$node.closest(".chart").find(".visual .dot#{i}").hide()
         )
         ul.append li
 
+      @trigger "toggleLine", disabledLines: @attr.disabledLines
       for i in @attr.disabledLines
         @$node.find("li.line#{i}").addClass "hidden"
-        @trigger "toggleLine",
-          lineId: i
-          duration: 0
-          disabledLines: @attr.disabledLines
 
     @after "initialize", ->
       @attr.disabledLines = []
