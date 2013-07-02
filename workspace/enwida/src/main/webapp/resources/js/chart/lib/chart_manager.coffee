@@ -31,9 +31,17 @@ define ["navigation", "spreadsheet", "visual", "lines", "loading"],
           if data.length is 0
             return @getMsg().showText "No data"
 
-          data = @preprocessLines data
-          @trigger @select("visual"), "draw", data: data
+          @attr.data = data = @preprocessLines data
+          @triggerDraw data
           @trigger @select("lines"), "updateLines", lines: data
+
+      @triggerDraw = (data) ->
+        if data.length is @attr.disabledLines.length
+          return @getMsg().showText "No lines selected"
+
+        @trigger @select("visual"), "draw",
+          data: data
+          disabledLines: @attr.disabledLines
 
       @preprocessLines = (lines) ->
         switch @attr.type
@@ -75,14 +83,15 @@ define ["navigation", "spreadsheet", "visual", "lines", "loading"],
         lines
 
       @toggleLine = (_, opts) ->
+        @attr.disabledLines = opts.disabledLines
         duration = opts.duration ? 200
-        @$node.find(".visual .line#{opts.lineId}").toggle(duration)
-        @$node.find(".dot#{opts.lineId}").toggle(duration)
+        @triggerDraw @attr.data
 
       @defaultAttrs
         navigation: ".navigation"
         visual: ".visual"
         lines: ".lines"
+        disabledLines: []
 
       @after "initialize", ->
         @on "getLines", @onGetLines

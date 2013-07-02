@@ -114,7 +114,8 @@ define ->
   allValues: (key) ->
     allValues = []
     values = {}
-    for lineData in @chart.data
+    for lineData, i in @chart.data
+      continue if _(@chart.options.disabledLines).contains i
       for dataPoint in lineData
         unless values[dataPoint[key]]?
           allValues.push dataPoint[key]

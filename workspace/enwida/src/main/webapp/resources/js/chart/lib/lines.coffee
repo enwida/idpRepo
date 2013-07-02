@@ -33,7 +33,9 @@ define ->
             @attr.disabledLines.push i
 
           li.toggleClass "hidden"
-          @trigger "toggleLine", lineId: i
+          @trigger "toggleLine",
+            lineId: i
+            disabledLines: @attr.disabledLines
         li.hover (=>
           # toggleClass does not work with SVG elements
           @$node.closest(".chart").find(".line#{i}").each ->
@@ -51,7 +53,10 @@ define ->
 
       for i in @attr.disabledLines
         @$node.find("li.line#{i}").addClass "hidden"
-        @trigger "toggleLine", lineId: i, duration: 0
+        @trigger "toggleLine",
+          lineId: i
+          duration: 0
+          disabledLines: @attr.disabledLines
 
     @after "initialize", ->
       @attr.disabledLines = []

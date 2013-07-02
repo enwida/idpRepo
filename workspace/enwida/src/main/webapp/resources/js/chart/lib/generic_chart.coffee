@@ -14,6 +14,7 @@ define ["scale"], (scale) ->
         width: 960
         height: 500
         parent: "body"
+        disabledLines: []
 
       @options = $.extend default_options, options
       @lines = options.lines
