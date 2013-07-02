@@ -1,4 +1,4 @@
-define ["scale"], (scale) ->
+define ["util/scale"], (Scale) ->
 
   class Chart
 
@@ -24,7 +24,7 @@ define ["scale"], (scale) ->
 
       # @data is an array of line data
       @data = @lines.map (line) -> line.dataPoints
-      scale.init @
+      Scale.init @
       @generateAxes()
 
     generateXAxis: ->
@@ -89,12 +89,35 @@ define ["scale"], (scale) ->
         ["%d", "%d"]
         ["%H:%M", "%H:%M"]
       ]
-      tickFormat = scale.getTickFormater(formats)()
+      tickFormat = Scale.getTickFormater(formats)()
       for tick in $(@options.parent).find("g.tick text")
         date = new Date parseInt $(tick).text().replace(/,/g, "")
         $(tick).text tickFormat date
         $(tick).attr "original-title", d3.time.format("%Y-%m-%d %H:%M") date
         $(tick).tipsy()
+
+    getTooltip: (dp, id, fy) ->
+      x = dp.x
+      if @options?.scale?.x?.type is "date"
+        x = d3.time.format("%Y-%m-%d %H:%M") new Date x
+
+      y = dp.y
+      if typeof fy is "function"
+        y = fy dp
+
+      @getTooltipHtml id, @lines[id].title, @xLabel, @yLabel, x, y
+
+    getTooltipHtml: (id, title, xLabel, yLabel, x, y) ->
+      $("<div>")
+        .append($("<h6>").addClass("tooltip#{id}").text title)
+        .append($("<table cellpadding='2'>")
+          .append($("<tr>")
+            .append($("<td align='left'>").text xLabel)
+            .append($("<td align='left'>").append($("<b>").text x)))
+          .append($("<tr>")
+            .append($("<td align='left'>").text yLabel)
+            .append($("<td align='left'>").append($("<b>").text y)))
+      ).html()
 
   init: (options) ->
     new Chart options

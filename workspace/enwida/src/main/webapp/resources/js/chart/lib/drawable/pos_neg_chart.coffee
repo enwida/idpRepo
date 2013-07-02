@@ -1,11 +1,17 @@
-define ["generic_chart", "scale"], (generic_chart, scale) ->
+define ["./generic_chart", "util/scale"], (GenericChart, Scale) ->
 
   class PosNegChart
 
     constructor: (options) ->
-      @chart = generic_chart.init options
+      @chart = GenericChart.init options
 
-      @barWidth = scale.getBarWidth @chart.data[1], @chart.xScale, "x"
+      # Make sure we have 0 in the domain
+      yDomain = @chart.yScale.domain()
+      yDomain[0] = Math.min(0, yDomain[0])
+      yDomain[1] = Math.max(0, yDomain[1])
+      @chart.yScale.domain yDomain
+
+      @barWidth = Scale.getBarWidth @chart.data[1], @chart.xScale, "x"
       @barOffset = @barWidth / 2
 
       # Adjust the x scale range in order to leave space for the first
@@ -13,11 +19,9 @@ define ["generic_chart", "scale"], (generic_chart, scale) ->
       @chart.xScale.range [@barOffset, @chart.options.width - @barOffset]
 
       # Recalculate bar width
-      @barWidth = scale.getBarWidth @chart.data[1], @chart.xScale, "x"
+      @barWidth = Scale.getBarWidth @chart.data[1], @chart.xScale, "x"
       @barWidth *= 0.8 # Add padding
       @barOffset = @barWidth / 2
-
-      console.log @barWidth
 
     drawBars: (data, id=0, pos=true) ->
       fy = (d) => if pos then @chart.yScale(d.y) else @chart.yScale(0)
@@ -35,21 +39,7 @@ define ["generic_chart", "scale"], (generic_chart, scale) ->
           .attr("y", fy)
           .attr("width", @barWidth)
           .attr("height", fheight)
-          .attr("original-title", (d) =>
-            x = d.x
-            if @chart.options?.scale?.x?.type is "date"
-              x = d3.time.format("%Y-%m-%d %H:%M") new Date x
-
-            $("<div>")
-              .append($("<h6>").addClass("tooltip#{id}").text @chart.lines[id].title)
-              .append($("<table cellpadding='2'>")
-                .append($("<tr>")
-                  .append($("<td align='left'>").text @chart.xLabel)
-                  .append($("<td align='left'>").append($("<b>").text x)))
-                .append($("<tr>")
-                  .append($("<td align='left'>").text @chart.yLabel)
-                  .append($("<td align='left'>").append($("<b>").text d.y)))
-            ).html())
+          .attr("original-title", (d) => @chart.getTooltip d, id)
 
     draw: ->
       @chart.drawSvg()

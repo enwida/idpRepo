@@ -1,4 +1,4 @@
-define ["resolution"], (Resolution) ->
+define ["util/resolution"], (Resolution) ->
 
   flight.component ->
 
@@ -51,6 +51,36 @@ define ["resolution"], (Resolution) ->
 
       @$node.append productSelect
       @$node.append timeSelect
+
+    @modifyDate = (base, opts, backwards) ->
+      result = new Date base
+
+      days = parseInt opts.days
+      months = parseInt opts.months
+      years = parseInt opts.years
+
+      opts.backwards = backwards if backwards?
+      if opts.backwards
+        days *= -1
+        months *= -1
+        years *= -1
+
+      unless isNaN(days)
+        result.setDate(result.getDate() + days)
+      unless isNaN(months)
+        result.setMonth(result.getMonth() + months)
+      unless isNaN(years)
+        result.setFullYear(result.getFullYear() + years)
+
+      result
+
+    @getDateModifier = (timeRange) ->
+      switch timeRange
+        when "Day" then days: 1
+        when "Week" then days: 7
+        when "Month" then months: 1
+        when "Year" then years: 1
+        else {}
 
     @getNavigationData = (callback) ->
       $.ajax "navigation.test",
@@ -205,17 +235,7 @@ define ["resolution"], (Resolution) ->
       result
 
     @getDateTo = (from) ->
-      result = new Date from
-      switch @select("timeRange").val()
-        when "Day"
-          result.setDate(result.getDate() + 1)
-        when "Week"
-          result.setDate(result.getDate() + 7)
-        when "Month"
-          result.setMonth(result.getMonth() + 1)
-        when "Year"
-          result.setFullYear(result.getFullYear() + 1)
-      result
+      @modifyDate from, @getDateModifier @select("timeRange").val()
 
     @getWeekStart = (date) ->
       result = new Date date
@@ -244,17 +264,9 @@ define ["resolution"], (Resolution) ->
         f @getDatepickerElement(timeRange)
 
     @prevPeriode = ->
-      date = new Date @getVisibleFromDate()
-      switch @select("timeRange").val()
-        when "Day"
-          date.setDate(date.getDate() - 1)
-        when "Week"
-          date.setDate(date.getDate() - 7)
-        when "Month"
-          date.setMonth(date.getMonth() - 1)
-        when "Year"
-          date.setFullYear(date.getFullYear() - 1)
-
+      modifier = @getDateModifier(@select("timeRange").val())
+      modifier.backwards = true
+      date = @modifyDate @getVisibleFromDate(), modifier
       @setVisibleFromDate date
       @triggerGetLines()
 

@@ -1,19 +1,30 @@
 package de.enwida.web.utils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import de.enwida.transport.DataResolution;
 
-public class NavigationDefaults {
+public class NavigationDefaults implements Cloneable {
     
     private int tsoId;
     private DataResolution resolution;
     private int product;
     private CalendarRange timeRange;
+    private List<Integer> disabledLines;
     
     public NavigationDefaults(int tsoId, DataResolution resolution, int product, CalendarRange timeRange) {
         this.tsoId = tsoId;
         this.resolution = resolution;
         this.product = product;
         this.timeRange = timeRange;
+        this.disabledLines = new ArrayList<>();
+    }
+    
+    public NavigationDefaults clone() {
+        final NavigationDefaults result = new NavigationDefaults(tsoId, resolution, product, new CalendarRange(timeRange.getFrom(), timeRange.getTo()));
+        result.getDisabledLines().addAll(disabledLines);
+        return result;
     }
 
     public int getTsoId() {
@@ -48,5 +59,12 @@ public class NavigationDefaults {
         this.timeRange = timeRange;
     }
     
+    public List<Integer> getDisabledLines() {
+        return disabledLines;
+    }
+    
+    public void setDisabledLines(List<Integer> disabledLines) {
+        this.disabledLines = disabledLines;
+    }
 
 }

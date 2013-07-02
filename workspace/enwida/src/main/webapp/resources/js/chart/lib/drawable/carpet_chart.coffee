@@ -1,9 +1,9 @@
-define ["generic_chart", "scale"], (generic_chart, scale) ->
+define ["./generic_chart", "util/scale"], (GenericChart, Scale) ->
 
   class CarpetChart
 
     constructor: (options) ->
-      @chart = generic_chart.init options
+      @chart = GenericChart.init options
       @chart.options.scale.x.type = "date"
 
       # Setup y scale
@@ -12,7 +12,7 @@ define ["generic_chart", "scale"], (generic_chart, scale) ->
       @chart.yScale.domain [yDomain[0], yDomain[yDomain.length - 1]]
 
       # Calculate bar width/height
-      @rectWidth = scale.getBarWidth @chart.data[0], @chart.xScale, "x"
+      @rectWidth = Scale.getBarWidth @chart.data[0], @chart.xScale, "x"
       @rectHeight = @chart.options.height / (yDomain.length - 1)
 
     drawCarpet: (data, id=0) ->
@@ -33,16 +33,12 @@ define ["generic_chart", "scale"], (generic_chart, scale) ->
             date.setHours d.y
             x = d3.time.format("%Y-%m-%d %H:%M") date
 
-            $("<div>")
-              .append($("<h6>").addClass("tooltip#{id}").text @chart.lines[id].title)
-              .append($("<table cellpadding='2'>")
-                .append($("<tr>")
-                  .append($("<td align='left'>").text @chart.xLabel)
-                  .append($("<td align='left'>").append($("<b>").text x)))
-                .append($("<tr>")
-                  .append($("<td align='left'>").text @chart.yLabel)
-                  .append($("<td align='left'>").append($("<b>").text d.v)))
-            ).html()
+            @chart.getTooltipHtml id,
+              @chart.lines[id].title
+              @chart.xLabel
+              @chart.yLabel
+              x
+              d.v
           )
 
     drawLegend: ->

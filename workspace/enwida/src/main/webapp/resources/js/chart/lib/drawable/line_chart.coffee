@@ -1,9 +1,9 @@
-define ["generic_chart"], (generic_chart) ->
+define ["./generic_chart"], (GenericChart) ->
 
   class LineChart
 
     constructor: (options) ->
-      @chart = generic_chart.init options
+      @chart = GenericChart.init options
 
     generateLine: ->
       d3.svg.line()
@@ -26,22 +26,7 @@ define ["generic_chart"], (generic_chart) ->
           .attr("r", 4.5)
           .attr("cx", (d) => @chart.xScale(d.x))
           .attr("cy", (d) => @chart.yScale(d.y))
-          .attr("original-title", (d) =>
-            x = d.x
-            if @chart.options?.scale?.x?.type is "date"
-              x = d3.time.format("%Y-%m-%d %H:%M") new Date x
-
-            $("<div>")
-              .append($("<h6>").addClass("tooltip#{id}").text @chart.lines[id].title)
-              .append($("<table cellpadding='2'>")
-                .append($("<tr>")
-                  .append($("<td align='left'>").text @chart.xLabel)
-                  .append($("<td align='left'>").append($("<b>").text x)))
-                .append($("<tr>")
-                  .append($("<td align='left'>").text @chart.yLabel)
-                  .append($("<td align='left'>").append($("<b>").text d.y)))
-            ).html()
-          )
+          .attr("original-title", (d) => @chart.getTooltip d, id)
 
     draw: ->
       @chart.drawSvg()
@@ -50,10 +35,6 @@ define ["generic_chart"], (generic_chart) ->
         @drawLine lineData, i
         @drawDots lineData, i
       @chart.drawLegend()
-
-    redraw: ->
-      @chart.svg = null
-      @draw()
 
   init: (options) ->
     new LineChart options

@@ -20,6 +20,14 @@ public class ProductLeaf extends ProductNode {
     public ProductLeaf(int id, String name) {
         this(id, name, new ArrayList<DataResolution>(), CalendarRange.always());
     }
+    
+    @Override
+    public ProductNode clone() {
+        final ProductLeaf result = new ProductLeaf(getId(), getName());
+        result.getResolution().addAll(resolution);
+        result.setTimeRange(new CalendarRange(timeRange.getFrom(), timeRange.getTo()));
+        return result;
+    }
 
     public List<DataResolution> getResolution() {
         return resolution;

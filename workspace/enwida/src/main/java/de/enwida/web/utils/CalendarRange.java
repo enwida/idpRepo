@@ -15,6 +15,8 @@ public class CalendarRange {
     }
     
     public CalendarRange(Date from, Date to) {
+        this.from = Calendar.getInstance();
+        this.to = Calendar.getInstance();
         this.from.setTime(from);
         this.to.setTime(to);
     }

@@ -8,7 +8,7 @@ import de.enwida.web.utils.CalendarRange;
 import de.enwida.web.utils.ProductLeaf;
 import de.enwida.web.utils.ProductNode;
 
-public class ProductTree {
+public class ProductTree implements Cloneable {
     
     public static class ProductAttributes {
         public int productId;
@@ -141,6 +141,12 @@ public class ProductTree {
             parent.getChildren().remove(leaf);
         }
         cleanTree();
+    }
+    
+    public ProductTree clone() {
+        final ProductTree result = new ProductTree(tso);
+        result.root = root.clone();
+        return result;
     }
     
     public ProductNode getRoot() {

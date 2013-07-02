@@ -1,5 +1,8 @@
 package de.enwida.web.dao.implementation;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
@@ -15,6 +18,7 @@ import de.enwida.web.model.ChartNavigationData;
 import de.enwida.web.model.ProductTree;
 import de.enwida.web.model.User;
 import de.enwida.web.utils.CalendarRange;
+import de.enwida.web.utils.NavigationDefaults;
 import de.enwida.web.utils.ProductLeaf;
 import de.enwida.web.utils.ProductNode;
 
@@ -32,6 +36,7 @@ public class NavigationDaoImpl extends BaseDao<User> implements INavigationDao {
 	    final ChartNavigationData navigationData = new ChartNavigationData(chartTitle, xAxisLabel, yAxisLabel);
 	    fillDefaultProducts(navigationData);
 	    
+
 	    return navigationData;
     }
     
@@ -86,4 +91,9 @@ public class NavigationDaoImpl extends BaseDao<User> implements INavigationDao {
 	    tree.addNode(prodTCR);
 	    navigationData.addProductTree(tree);
     }
+
+    public void setMessageSource(MessageSource messageSource) {
+        this.messageSource = messageSource;
+    }
+    
 }
