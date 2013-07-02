@@ -18,6 +18,9 @@ define ["generic_chart"], (generic_chart) ->
       @barWidth *= 0.8 # Add padding
       @barOffset = @barWidth / 2
 
+      console.log @chart.yScale.domain()
+      console.log @barWidth
+
     calculateBarWidth: ->
       data = @chart.data[1]
       xLow = @chart.xScale(data[0].x)
@@ -77,7 +80,10 @@ define ["generic_chart"], (generic_chart) ->
               x = d3.time.format("%Y-%m-%d %H:%M") new Date x
 
             $("<div>")
-              .append($("<h6>").addClass("tooltip#{id}").text @chart.lines[id].title)
+              .append($("<h6>")
+                .addClass("minmax")
+                .addClass("tooltip#{id}")
+                .text(@chart.lines[id].title))
               .append($("<table cellpadding='2'>")
                 .append($("<tr>")
                   .append($("<td align='left'>").text @chart.xLabel)
@@ -88,9 +94,13 @@ define ["generic_chart"], (generic_chart) ->
             ).html())
 
     getAllYs: ->
-      allValues = @chart.data[0].map (dp) -> dp.y
-      allValues = allValues.concat @chart.data[1].map (dp) -> dp.min
-      allValues.concat @chart.data[1].map (dp) -> dp.max
+      allValues = []
+      unless _(@chart.options.disabledLines).contains 0
+        allValues = allValues.concat @chart.data[0].map (dp) -> dp.y
+      unless _(@chart.options.disabledLines).contains 1
+        allValues = allValues.concat @chart.data[1].map (dp) -> dp.min
+        allValues = allValues.concat @chart.data[1].map (dp) -> dp.max
+      allValues
 
     getSmallestDistance: (data, key="x") ->
       result = Infinity
@@ -106,7 +116,9 @@ define ["generic_chart"], (generic_chart) ->
       # Modify the x scale to fill the whole svg width
       @chart.svg.select(".x.axis path").attr "d", "M0,6V0H#{@chart.options.width}V6"
 
-      @drawBars @chart.data[1], 1
+      unless _(@chart.options.disabledLines).contains 1
+        @drawBars @chart.data[1], 1
+
       @drawLine @chart.data[0], 0
       @drawDots @chart.data[0], 0
 

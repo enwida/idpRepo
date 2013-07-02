@@ -86,6 +86,9 @@ body {
 .tooltip2 {
   color: green;
 }
+.minmax.tooltip1 {
+	color: #FFA340;
+}
 .lines {
   padding: 10px 0;
   margin-left: 50px;

@@ -13,8 +13,8 @@ define ->
       optimalDensity: 25
       maximumDensity: 15
     "bar":
-      optimalDensity: 50
-      maximumDensity: 40
+      optimalDensity: 30
+      maximumDensity: 25
     "minmax":
       optimalDensity: 25
       maximumDensity: 15
@@ -22,11 +22,17 @@ define ->
       optimalDensity: 25
       maximumDensity: 15
 
-  getOptimalResolution: (type, timeRange, filters, width) ->
+  linesMatter = ["bar"]
+
+  getOptimalResolution: (type, timeRange, filters, width, lines=1) ->
     return "HOURLY" if type is "carpet"
 
     optimalDataPointCount = width / densities[type].optimalDensity
     maximumDataPointCount = width / densities[type].maximumDensity
+
+    if _.contains linesMatter, type
+      optimalDataPointCount /= lines
+      maximumDataPointCount /= lines
 
     diffSeconds = (timeRange.to - timeRange.from) / 1000
     validKeys = _(_(resolutions).keys()).filter (res) -> _(filters).contains res

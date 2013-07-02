@@ -26,10 +26,17 @@ define ["line_chart", "bar_chart", "carpet_chart", "min_max_chart", "pos_neg_cha
         else
           console.log "Unknown chart type: '#{@attr.type}'"
 
+    @hideDisabledLines = (disabledLines) ->
+      for lineId in disabledLines
+        @$node.find(".line#{lineId}").hide()
+        @$node.find(".dot#{lineId}").hide()
+
     @draw = (_, opts) ->
       @$node.empty()
+      @attr.chartOptions.disabledLines = opts.disabledLines
       chart = @getChart opts.data
       chart.draw()
+      @hideDisabledLines opts.disabledLines
 
       switch @attr.type
         when "line"

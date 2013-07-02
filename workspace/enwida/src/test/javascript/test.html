@@ -1,0 +1,28 @@
+<html>
+  <head>
+    <title>Enwida tests</title>
+    <link rel="stylesheet" href="components/mocha/mocha.css" />
+    <script src="../../main/webapp/resources/js/chart/assets.js"></script>
+    <script src="../../main/webapp/resources/js/chart/charts.js"></script>
+    <script src="components/mocha/mocha.js"></script>
+  </head>
+  <body>
+    <div id="mocha"></div>
+    <script>mocha.setup("bdd")</script>
+    <script src="test.js"></script>
+    <script>
+      require.config({
+        baseUrl: "."
+      });
+      require(["components/chai/chai"], function(chai) {
+        // Inject chai assertion library
+        window.chai = chai;
+        window.expect = chai.expect;
+
+        // Run the tests
+        mocha.run();
+      });
+    </script>
+  </body>
+</html>
+
