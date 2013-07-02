@@ -2,17 +2,22 @@
 CREATE SCHEMA users;
 
 
-CREATE TABLE users.users (
-    user_id SERIAL PRIMARY KEY,
-    user_name character varying(45) NOT NULL,
-    user_password character varying(45) NOT NULL,
-    first_name character varying(45) NOT NULL,
-    last_name character varying(45) NOT NULL,
-    enabled boolean NOT NULL,
-    joining_date date NOT NULL,
-    telephone character varying(20),
-    company_name character varying(45) NOT NULL
-);
+CREATE TABLE users.users
+(
+  user_id serial NOT NULL,
+  user_name character varying(45) NOT NULL,
+  user_password character varying(45) NOT NULL,
+  first_name character varying(45) NOT NULL,
+  last_name character varying(45) NOT NULL,
+  enabled boolean NOT NULL,
+  joining_date date NOT NULL,
+  telephone character varying(20),
+  company_name character varying(45) NOT NULL,
+  company_logo character varying,
+  activation_id character varying NOT NULL,
+  CONSTRAINT users_pkey PRIMARY KEY (user_id)
+)
+;
 
 
 CREATE TABLE users.groups (
