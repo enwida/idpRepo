@@ -77,7 +77,10 @@ define ["generic_chart"], (generic_chart) ->
               x = d3.time.format("%Y-%m-%d %H:%M") new Date x
 
             $("<div>")
-              .append($("<h6>").addClass("tooltip#{id}").text @chart.lines[id].title)
+              .append($("<h6>")
+                .addClass("minmax")
+                .addClass("tooltip#{id}")
+                .text(@chart.lines[id].title))
               .append($("<table cellpadding='2'>")
                 .append($("<tr>")
                   .append($("<td align='left'>").text @chart.xLabel)
