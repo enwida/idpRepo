@@ -47,22 +47,45 @@ CREATE TABLE users.rights (
 
 
 CREATE TABLE users.user_group (
+	id SERIAL PRIMARY KEY,
     user_id integer NOT NULL,
     group_id integer NOT NULL,
 	CONSTRAINT "FK_user_usergroup" FOREIGN KEY (user_id) REFERENCES users(user_id),
-	CONSTRAINT "FK_group_usergroup" FOREIGN KEY (group_id) REFERENCES groups(group_id),
-	PRIMARY KEY(user_id,group_id)
+	CONSTRAINT "FK_group_usergroup" FOREIGN KEY (group_id) REFERENCES groups(group_id)
 );
 
 
 CREATE TABLE users.group_role (
+	id SERIAL PRIMARY KEY,
     group_id integer NOT NULL,
     role_id integer,
-	CONSTRAINT "FK_group_usergroup" FOREIGN KEY (group_id) REFERENCES groups(group_id),
-	CONSTRAINT "FK_roles_rights" FOREIGN KEY (role_id) REFERENCES roles(role_id),
-	PRIMARY KEY(group_id,role_id)
+	CONSTRAINT "FK_group_group" FOREIGN KEY (group_id) REFERENCES groups(group_id),
+	CONSTRAINT "FK_roles_rights" FOREIGN KEY (role_id) REFERENCES roles(role_id)
 	);
 	
+
+	
+INSERT INTO users.users(
+		user_name, user_password, first_name, last_name, enabled, 
+		joining_date, telephone, company_name)
+VALUES ('micha', 'ach1m', 'Michael', 'Steck', true, '2013-07-02', '0049 89 1234567','enwida');
+
+
+INSERT INTO users.roles( role_name, description)
+    VALUES ('admin','adminstrator');
+	
+INSERT INTO users.groups(group_name, auto_pass)
+VALUES ('adminGroup', TRUE);
+
+
+INSERT INTO users.group_role(
+            group_id, role_id)
+    VALUES (1, 1);
+
+INSERT INTO users.user_group(
+            user_id, group_id)
+    VALUES (1, 1);
+
 	
 --drop all tables	
 drop table users.group_role;

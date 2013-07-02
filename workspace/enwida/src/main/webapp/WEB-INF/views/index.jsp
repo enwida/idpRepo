@@ -12,7 +12,7 @@
     <a href="?lang=en">en</a> | <a href="?lang=de">de</a>
 </span>
   <a href="user/">dashboard</a>
-  <a href="register">registration</a>
+  <a href="user/register">registration</a>
 
 </body>
 </html>

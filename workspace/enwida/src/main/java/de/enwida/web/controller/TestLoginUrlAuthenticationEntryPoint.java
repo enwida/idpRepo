@@ -1,5 +1,8 @@
 package de.enwida.web.controller;
 
+import java.io.IOException;
+
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -18,5 +21,14 @@ public class TestLoginUrlAuthenticationEntryPoint extends LoginUrlAuthentication
         System.out.println("test");
         System.out.println("request: "+request.getParameter("origin"));
         return super.determineUrlToUseForThisRequest(request, response, exception);
+    }
+    
+    @Override
+    public void commence(HttpServletRequest request,
+            HttpServletResponse response, AuthenticationException authException)
+            throws IOException, ServletException {
+        System.out.println("test");
+        // TODO Auto-generated method stub
+        super.commence(request, response, authException);
     }
 }
