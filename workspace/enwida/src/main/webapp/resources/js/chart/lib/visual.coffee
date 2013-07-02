@@ -3,6 +3,13 @@ define ["line_chart", "bar_chart", "carpet_chart", "min_max_chart", "pos_neg_cha
 
   flight.component ->
 
+    chartClasses =
+      line   : LineChart
+      bar    : BarChart
+      minmax : MinMaxChart
+      posneg : PosNegChart
+      carpet : CarpetChart
+
     @onNavigationData = (_, opts) ->
       @attr.chartOptions.xLabel = opts.data.xAxisLabel
       @attr.chartOptions.yLabel = opts.data.yAxisLabel
@@ -12,19 +19,8 @@ define ["line_chart", "bar_chart", "carpet_chart", "min_max_chart", "pos_neg_cha
 
     @getChart = (lines) ->
       @attr.chartOptions.lines = lines
-      switch @attr.type
-        when "line"
-          LineChart.init @attr.chartOptions
-        when "bar"
-          BarChart.init @attr.chartOptions
-        when "minmax"
-          MinMaxChart.init @attr.chartOptions
-        when "carpet"
-          CarpetChart.init @attr.chartOptions
-        when "posneg"
-          PosNegChart.init @attr.chartOptions
-        else
-          console.log "Unknown chart type: '#{@attr.type}'"
+      ChartClass = chartClasses[@attr.type] ? LineChart
+      ChartClass.init @attr.chartOptions
 
     @hideDisabledLines = (disabledLines) ->
       for lineId in disabledLines
@@ -37,22 +33,11 @@ define ["line_chart", "bar_chart", "carpet_chart", "min_max_chart", "pos_neg_cha
       chart = @getChart opts.data
       chart.draw()
       @hideDisabledLines opts.disabledLines
+      @setupTooltips()
 
-      switch @attr.type
-        when "line"
-          @$node.find("circle").tipsy(gravity: "sw", html: true, opacity: 0.95)
-        when "bar"
-          @$node.find("rect").tipsy(gravity: "sw", html: true, opacity: 0.95)
-        when "minmax"
-          @$node.find("circle").tipsy(gravity: "sw", html: true, opacity: 0.95)
-          @$node.find("rect").tipsy(gravity: "sw", html: true, opacity: 0.95)
-        when "carpet"
-          @$node.find("rect").tipsy(gravity: "sw", html: true, opacity: 0.95)
-        when "posneg"
-          @$node.find("rect").tipsy(gravity: "sw", html: true, opacity: 0.95)
-
-    @defaultAttrs
-      ChartClass: LineChart
+    @setupTooltips = ->
+      @$node.find("circle").tipsy(gravity: "sw", html: true, opacity: 0.95)
+      @$node.find("rect").tipsy(gravity: "sw", html: true, opacity: 0.95)
 
     @after "initialize", ->
       @on "navigationData", @onNavigationData

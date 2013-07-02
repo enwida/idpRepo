@@ -1,5 +1,5 @@
-define ["navigation", "spreadsheet", "visual", "lines", "loading"],
-  (Navigation, Spreadsheet, Visual, Lines, Loading) ->
+define ["navigation", "spreadsheet", "visual", "lines", "loading", "lines_preprocessor"],
+  (Navigation, Spreadsheet, Visual, Lines, Loading, LinesPreprocessor) ->
 
     flight.component ->
 
@@ -31,7 +31,7 @@ define ["navigation", "spreadsheet", "visual", "lines", "loading"],
           if data.length is 0
             return @getMsg().showText "No data"
 
-          @attr.data = data = @preprocessLines data
+          @attr.data = data = LinesPreprocessor.transform @attr.type, data
           @triggerDraw data
           @trigger @select("lines"), "updateLines", lines: data
 
@@ -43,44 +43,6 @@ define ["navigation", "spreadsheet", "visual", "lines", "loading"],
           data: data
           disabledLines: @attr.disabledLines
 
-      @preprocessLines = (lines) ->
-        switch @attr.type
-          when "minmax"
-            result = []
-            # Add avg line
-            result.push lines[1]
-
-            # Generate min/max line
-            minMaxLine = lines[0]
-            minMaxLine.title += " / #{lines[2].title}"
-            for dp, i in minMaxLine.dataPoints
-              dp.min = dp.y
-              dp.max = lines[2].dataPoints[i].y
-
-            result.push minMaxLine
-            lines = result
-          when "carpet"
-            # Use only first line
-            line = lines[0]
-            hourFormat = d3.time.format "%H"
-            for dp in line.dataPoints
-              date = new Date dp.x
-              dp.v = dp.y
-              dp.y = parseInt hourFormat date
-              date.setHours 0
-              date.setMinutes 0
-              date.setSeconds 0
-              date.setMilliseconds 0
-              dp.x = date.getTime()
-            lines = [line]
-          when "posneg"
-            # Calculate negative line
-            for dp in lines[1].dataPoints
-              dp.y *= -1
-            # Strip remaining lines
-            lines = [lines[0], lines[1]]
-
-        lines
 
       @toggleLine = (_, opts) ->
         @attr.disabledLines = opts.disabledLines
