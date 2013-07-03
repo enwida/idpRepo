@@ -13,6 +13,7 @@
 </style>
 </head>
 <body>
+<a href="login">login</a>
 	<h3>Forgot Password</h3>
  
 	<a>${error}</a>

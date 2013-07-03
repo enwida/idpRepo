@@ -1,5 +1,6 @@
 package de.enwida.web.servlet;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -28,8 +29,26 @@ public class UserLog extends HandlerInterceptorAdapter{
                 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth!=null){
-            String name=auth.getName();
-            log(name,request.getRequestURL()+request.getQueryString());
+            String logUserName="";
+            String name=logUserName=auth.getName();
+            if(name=="anonymousUser"){
+                logUserName=name;
+                Cookie[] cookies = request.getCookies();
+                //Check if user already has a cookie
+                if( cookies!=null){
+                    logUserName="C_"+name;
+                    for (Cookie cookie : cookies) {
+                        //logging once
+                          UserLog.log(logUserName ,"|"+ "Cookie"+cookie.getValue()+"|");
+                      }
+                }
+                UserLog.log(logUserName , "|IP: "+request.getRemoteAddr()+" USER-AGENT: "+request.getHeader("User-Agent")+"|");
+            }
+            String param=request.getQueryString();
+            if(param==null) param="";
+            if (!request.getRequestURL().toString().contains(".")){
+                log(logUserName,"|            |"+request.getRequestURL()+param+"|");
+            }
         }           
     }
     
