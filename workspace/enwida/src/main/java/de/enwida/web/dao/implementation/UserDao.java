@@ -230,8 +230,8 @@ public class UserDao extends BaseDao<User> implements IUserDao {
 
 		try 
 		{
-			final String sql = "INSERT INTO users.users ( user_name, user_password, first_name, last_name, enabled, joining_date, telephone, company_name, company_logo )" +
-					" VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?)";	    			
+			final String sql = "INSERT INTO users.users ( user_name, user_password, first_name, last_name, enabled, joining_date, telephone, company_name, company_logo, activation_id )" +
+					" VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";	    			
 			this.jdbcTemplate.update(
 				    new PreparedStatementCreator() {
 				        public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
@@ -245,6 +245,7 @@ public class UserDao extends BaseDao<User> implements IUserDao {
 				            ps.setString(7, user.getTelephone());
                             ps.setString(8, user.getCompanyName());
                             ps.setString(9, user.getCompanyLogo());
+                            ps.setString(10, user.getActivationKey());
 				            return ps;
 				        }
 				    },

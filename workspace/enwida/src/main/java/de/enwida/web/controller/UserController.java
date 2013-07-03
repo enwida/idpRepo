@@ -175,6 +175,15 @@ public class UserController {
 		
 		return availabilityCheck + "";
 	}
+
+	@RequestMapping(value="/activateUser",method=RequestMethod.GET)
+	public @ResponseBody void activateUser(ModelMap model, String username, String actId){
+		
+		boolean availabilityCheck = userService.usernameAvailablility(username);
+		if(availabilityCheck)
+		{}
+				
+	}
 	
 	@RequestMapping(value="/forgotPassword",method=RequestMethod.GET)
     public String showForgotPassForm(ModelMap model){
