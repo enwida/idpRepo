@@ -17,4 +17,8 @@ public class Constants {
 	public static final String ENWIDA_CHART_COOKIE_ANONYMOUS = "enwida_chart_cookie_anonymous";
 	public static final String ENWIDA_CHART_COOKIE_USER = "enwida_chart_cookie_user";
 	public static final int ENWIDA_CHART_COOKIE_EXPIRY_TIME = -1;
+	
+	// URLs
+	public static final String ACTIVATION_URL = "http://localhost:8080/enwida/user/activateUser?";
+	
 }
