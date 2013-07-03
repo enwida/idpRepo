@@ -62,3 +62,5 @@ define ->
     @after "initialize", ->
       @attr.disabledLines = []
       @on "updateLines", @updateLines
+      @on "disabledLines", (_, opts) ->
+        @attr.disabledLines = opts.lines if opts.lines?

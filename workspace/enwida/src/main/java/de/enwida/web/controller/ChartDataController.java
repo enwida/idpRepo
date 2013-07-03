@@ -72,19 +72,21 @@ public class ChartDataController {
 	    @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Calendar startTime,
 	    @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Calendar endTime,
 	    @RequestParam DataResolution resolution, Locale locale) {
-	final ChartLinesRequest request = new ChartLinesRequest(chartId,
-		product, tso, new CalendarRange(startTime, startTime),
-		resolution, locale);
+        
+        
+    	final ChartLinesRequest request = new ChartLinesRequest(chartId,
+    		product, tso, new CalendarRange(startTime, startTime),
+    		resolution, locale);
 
-	return lineService.getLines(request);
+    	return lineService.getLines(request);
     }
 
     @RequestMapping(value = "/chart", method = RequestMethod.GET)
     public String exampleChart(Principal principal) {
-	if (principal != null) {
-	    System.out.println(principal.getName());
-	}
-	return "charts/index";
+    	if (principal != null) {
+    	    System.out.println(principal.getName());
+    	}
+    	return "charts/index";
     }
 
     @RequestMapping(value = "/navigation", method = RequestMethod.GET)
@@ -105,6 +107,34 @@ public class ChartDataController {
 
     	return chartNavigationData;
     }
+    
+    @RequestMapping(value = "/disabledLines", method = RequestMethod.POST)
+    @ResponseBody
+    public void setDisabledLines(
+        @RequestParam int chartId,
+        @RequestParam String lines,
+        HttpServletRequest request,
+        HttpServletResponse response,
+        Principal principal) {
+        
+        // Try to update the cookie data
+        try {
+            final NavigationDefaults defaults = getNavigationDefaultsFromCookie(chartId, request, principal);
+            if (lines.isEmpty()) {
+                defaults.setDisabledLines(new ArrayList<Integer>());
+            } else {
+                final String[] lineIds = lines.split(",");
+                final List<Integer> disabledLines = new ArrayList<>();
+    
+                for (final String lineId : lineIds) {
+                    disabledLines.add(Integer.parseInt(lineId));
+                }
+                defaults.setDisabledLines(disabledLines);
+            }
+            updateChartDefaultsCookie(chartId, defaults, request, response, principal);
+        } catch (Exception ignored) { }
+    }
+    
 
     /*
      * ==========================================================================

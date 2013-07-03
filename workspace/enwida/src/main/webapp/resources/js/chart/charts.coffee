@@ -1,7 +1,7 @@
 require.config
   baseUrl: "/enwida/resources/js/chart/lib"
 
-require ["components/chart_manager", "util/logger"], (ChartManager, Logger) ->
+require ["util/logger", "components/chart_manager"], (Logger, ChartManager) ->
 
     $(document).ready ->
       # Inject global logger object

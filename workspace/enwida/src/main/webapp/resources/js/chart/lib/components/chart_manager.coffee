@@ -36,6 +36,17 @@ define [ "components/navigation"
           error: (err) =>
             callback err
 
+      @reportDisabledLines = (disabledLines) ->
+        $.ajax "disabledLines",
+          type: "POST"
+          data:
+            chartId: @attr.id
+            lines: disabledLines.join ","
+          error: (err) =>
+            @logError "Error while reporting disabled lines: #{err.error}"
+          success: =>
+            @log "Sent disabled lines"
+
       @onGetLines = (a, opts) ->
         @getLines opts, (err, data) =>
           throw err if err?
@@ -57,6 +68,7 @@ define [ "components/navigation"
 
       @toggleLine = (_, opts) ->
         @attr.disabledLines = opts.disabledLines
+        @reportDisabledLines opts.disabledLines
         @triggerDraw @attr.data
 
       @defaultAttrs
@@ -66,12 +78,20 @@ define [ "components/navigation"
         disabledLines: []
 
       @after "initialize", ->
+        # Logging facilities
+        @log = Logger.logCurried("ChartManager")(2)
+        @logError = Logger.logCurried("ChartManager")(0)
+
+        # Event handlers
         @on "getLines", @onGetLines
         @on "updateNavigation", (_, opts) ->
           @attr.navigationData = opts.data
           @trigger @select("visual"), "navigationData", opts
+          @trigger @select("lines"), "disabledLines",
+            lines: opts.data?.defaults?.disabledLines
         @on "toggleLine", @toggleLine
 
+        # Parse element attributes
         @attr.type = @$node.attr("data-chart-type") ? "line"
         @attr.width = parseInt(@$node.attr("data-width")) ? 800
 
