@@ -20,7 +20,7 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
  *
  */
 public class UserLog extends HandlerInterceptorAdapter{
-    Logger logger = Logger.getLogger(getClass());   
+    static Logger logger = Logger.getLogger(UserLog.class);   
     
     @Override
     public void postHandle(HttpServletRequest request,
@@ -29,27 +29,26 @@ public class UserLog extends HandlerInterceptorAdapter{
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth!=null){
             String name=auth.getName();
-
-            if(Logger.getRootLogger().getAppender(name)==null){ //create FileAppender if necessary
-              RollingFileAppender fa = new RollingFileAppender();
-              fa.setName(name);
-              fa.setFile(System.getenv("ENWIDA_HOME")+"/log/"+name+".log");
-              fa.setLayout(new PatternLayout("%d{ISO8601}: %m%n"));
-              fa.setThreshold(Level.INFO);
-              fa.setMaxFileSize("1MB");
-              fa.activateOptions();
-              Logger.getRootLogger().addAppender(fa);
-            }
-            FileAppender fa = (FileAppender) Logger.getRootLogger().getAppender(name);
-                    
-            if (request.getRequestURL().substring(request.getRequestURL().length()-1).equals("/")){
-                logger.info("IP: "+request.getRemoteAddr()+", USER-AGENT: "+request.getHeader("User-Agent"));
-            }
-
-              
-            logger.info(" isLogin:Yes Cookie:No User:"+name+" IP:"+request.getRemoteAddr());
-            Logger.getRootLogger().removeAppender(fa);
+            log(name,request.getRequestURL()+request.getQueryString());
         }           
+    }
+    
+    public static void log(String name,String message)
+    {
+        if(Logger.getRootLogger().getAppender(name)==null){ //create FileAppender if necessary
+            RollingFileAppender fa = new RollingFileAppender();
+            fa.setName(name);
+            fa.setFile(System.getenv("ENWIDA_HOME")+"/log/"+name+".log");
+            fa.setLayout(new PatternLayout("%d{ISO8601}: %m%n"));
+            fa.setThreshold(Level.INFO);
+            fa.setMaxFileSize("1MB");
+            fa.activateOptions();
+            Logger.getRootLogger().addAppender(fa);
+          }
+          FileAppender fa = (FileAppender) Logger.getRootLogger().getAppender(name);
+
+          logger.info(message);               
+          Logger.getRootLogger().removeAppender(fa);
     }
 	
 	public void infoLogin(Logger logger,String message,String IP,String cookie) {

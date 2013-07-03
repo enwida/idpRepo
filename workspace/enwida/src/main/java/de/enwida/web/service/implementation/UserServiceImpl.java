@@ -1,11 +1,16 @@
 package de.enwida.web.service.implementation;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.sql.Date;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
+
+import javax.mail.MessagingException;
+import javax.mail.internet.AddressException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,6 +21,7 @@ import de.enwida.web.model.Group;
 import de.enwida.web.model.Role;
 import de.enwida.web.model.User;
 import de.enwida.web.service.interfaces.UserService;
+import de.enwida.web.utils.ActivationIdGenerator;
 import de.enwida.web.utils.Constants;
 
 @Service("UserService")
@@ -37,13 +43,16 @@ public class UserServiceImpl implements UserService {
 	    return userDao.findAllUsers();
 	}
 
-
+	@Transactional
 	public boolean saveUser(User user) 
 	{
 		// Saving user in the user table
 		Date date = new Date(Calendar.getInstance().getTimeInMillis());
 		user.setJoiningDate(date);
 		user.setEnabled(false);
+		
+		ActivationIdGenerator activationIdGenerator = new ActivationIdGenerator();
+		user.setActivationKey(activationIdGenerator.getActivationId());
 		long userId = userDao.save(user);
 				
 		if(userId != -1)
@@ -59,7 +68,22 @@ public class UserServiceImpl implements UserService {
 			else
 			{
 			    Group anonymousGroup = userDao.getGroupByName("anonymous");
+			    if(anonymousGroup == null)
+			    {
+			    	anonymousGroup = new Group();
+			    	anonymousGroup.setGroupName("anonymous");
+			    	anonymousGroup.setAutoPass(true);
+			    }
+			    anonymousGroup = userDao.addGroup(anonymousGroup);
                 userDao.assignUserToGroup(userId, anonymousGroup.getGroupID());
+			}
+			
+			try 
+			{
+				mailService.SendEmail(user.getUserName(), "Activation Link", Constants.ACTIVATION_URL + "username=" + user.getUserName() + "&actId=" + user.getActivationKey());
+			}
+			catch (Exception e) {
+				return false;
 			}
 			
 			return true;

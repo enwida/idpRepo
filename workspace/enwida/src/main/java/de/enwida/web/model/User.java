@@ -20,6 +20,7 @@ public class User {
     private List<Group> groups;
     private List<Role> roles;
     private String telephone;
+    private String activationKey;
 
 
 	private UserPermissionCollection userPermissionCollection=new UserPermissionCollection();
@@ -179,4 +180,12 @@ public class User {
     public void setConfirmPassword(String confirmPassword) {
         this.confirmPassword = confirmPassword;
     }
+
+	public String getActivationKey() {
+		return activationKey;
+	}
+
+	public void setActivationKey(String activationKey) {
+		this.activationKey = activationKey;
+	}
 }

@@ -25,24 +25,27 @@
 	   </authentication-provider>
 	</authentication-manager>
 	
-	 <beans:bean id="loginSuccessHandler" class="de.enwida.web.controller.LoginSuccessHandler">
-		 <beans:property name="defaultTargetUrl" value="/user/  "/>
-	 </beans:bean>
-	
-	<beans:bean id="authenticationEntryPoint" class="de.enwida.web.controller.TestLoginUrlAuthenticationEntryPoint">
- 		<beans:property name="loginFormUrl" value="/user/login.html"/>
+	<beans:bean id="rememberMeAuthenticationProvider" class="org.springframework.security.authentication.RememberMeAuthenticationProvider">
+	    <beans:constructor-arg name="key" value="token"/>
 	</beans:bean>
+	
+ 	 <beans:bean id="loginSuccessHandler" class="de.enwida.web.controller.LoginSuccessHandler">
+		 <beans:property name="defaultTargetUrl" value="/user/" />
+		 <beans:property name="useReferer" value="true"/>
+	 </beans:bean>
 
-    <http use-expressions="true" auto-config="true" entry-point-ref="authenticationEntryPoint">
+
+    <http use-expressions="true" auto-config="true" >
 <!--  		<intercept-url pattern="/dashboard" access="hasRole('ROLE USER')"/> -->
 	    <intercept-url pattern="/" access="permitAll" />
 	    <intercept-url pattern="/*" access="permitAll" />
 	    <intercept-url pattern="/j_spring_security_check" access="hasRole('ROLE USER')"/>
  	    <intercept-url pattern="/user/admin/*" access="hasRole('admin')" />
 	    
-	    <form-login  login-page="/user/login.html"  authentication-failure-url="/user/loginFailed" login-processing-url="/j_spring_security_check"  authentication-success-handler-ref="loginSuccessHandler"/>        
+	    <form-login  login-page="/user/login.html"  authentication-failure-url="/user/loginFailed" login-processing-url="/j_spring_security_check" 
+	     authentication-success-handler-ref="loginSuccessHandler" default-target-url="/user/login.html"  always-use-default-target="false"/>        
 	    <logout logout-success-url="/" logout-url="/j_spring_security_logout" />
 	    <access-denied-handler error-page="/403.html"/>
-	    <remember-me key="!casAA='0401./e;2009NrI"/>
+	     <remember-me key="!casAA='0401./e;2009NrI" use-secure-cookie="true" />
     </http>
 </beans:beans>   

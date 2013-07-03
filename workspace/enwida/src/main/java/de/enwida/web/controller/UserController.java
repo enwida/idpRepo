@@ -60,7 +60,7 @@ public class UserController {
 			userStatusURL="../j_spring_security_logout";
 		}else{
 			name="anonymous";
-			userStatusURL=userStatus="login";
+			userStatusURL=userStatus="";
 		}
 		model.addAttribute("username", name);
 		model.addAttribute("userStatus", userStatus);
@@ -107,7 +107,12 @@ public class UserController {
 	}
 	
 	@RequestMapping(value="/login", method = RequestMethod.GET)
-	public String login(ModelMap model) {
+	public String login(ModelMap model,HttpServletRequest request) {
+
+	    String referrer = request.getHeader("Referer");
+	    if(referrer!=null){
+	        request.getSession().setAttribute("url_prior_login", referrer);
+	    }
 		return "user/login";
 	}
 	
@@ -169,6 +174,15 @@ public class UserController {
 		}
 		
 		return availabilityCheck + "";
+	}
+
+	@RequestMapping(value="/activateUser",method=RequestMethod.GET)
+	public @ResponseBody void activateUser(ModelMap model, String username, String actId){
+		
+		boolean availabilityCheck = userService.usernameAvailablility(username);
+		if(availabilityCheck)
+		{}
+				
 	}
 	
 	@RequestMapping(value="/forgotPassword",method=RequestMethod.GET)
