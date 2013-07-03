@@ -34,11 +34,8 @@
 		 <beans:property name="useReferer" value="true"/>
 	 </beans:bean>
 
-	<beans:bean id="authenticationEntryPoint" class="de.enwida.web.controller.TestLoginUrlAuthenticationEntryPoint">
- 		<beans:property name="loginFormUrl" value="/user/login.html"/>
-	</beans:bean>
 
-    <http use-expressions="true" auto-config="true" entry-point-ref="authenticationEntryPoint">
+    <http use-expressions="true" auto-config="true" >
 <!--  		<intercept-url pattern="/dashboard" access="hasRole('ROLE USER')"/> -->
 	    <intercept-url pattern="/" access="permitAll" />
 	    <intercept-url pattern="/*" access="permitAll" />
