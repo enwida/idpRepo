@@ -75,5 +75,9 @@ public interface IUserDao {
     public Group getGroupByName(String groupName);
 
     public List<User> getAllUsers();
+    
+    public boolean checkUserActivationId(String username, String activationCode);
+    
+    public boolean activateUser(String username);
 
 }

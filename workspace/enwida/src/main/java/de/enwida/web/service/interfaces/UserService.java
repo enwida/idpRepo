@@ -33,4 +33,5 @@ public interface UserService {
     public void removeGroup(int groupID) throws Exception;
     public boolean usernameAvailablility(final String username);
     public boolean enableDisableAspect(int rightID, boolean enabled);
+    public boolean activateUser(String username, String activationCode);
 }
