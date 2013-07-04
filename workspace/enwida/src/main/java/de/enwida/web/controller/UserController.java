@@ -177,12 +177,22 @@ public class UserController {
 	}
 
 	@RequestMapping(value="/activateUser",method=RequestMethod.GET)
-	public @ResponseBody void activateUser(ModelMap model, String username, String actId){
+	public @ResponseBody String activateUser(ModelMap model, String username, String actId){
 		
-		boolean availabilityCheck = userService.usernameAvailablility(username);
-		if(availabilityCheck)
-		{}
+		boolean activated = userService.activateUser(username, actId);
+		if(activated)
+		{
+			String name = "Test Test";
+    		String userStatus="logout";
+    		String userStatusURL="../j_spring_security_logout";
+
+    		model.addAttribute("username", name);
+    		model.addAttribute("userStatus", userStatus);
+    		model.addAttribute("userStatusURL", userStatusURL);
+    		return "user/index";  
+		}
 				
+		return "";
 	}
 	
 	@RequestMapping(value="/forgotPassword",method=RequestMethod.GET)
