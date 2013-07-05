@@ -49,6 +49,9 @@
 	<beans:bean id="aspectDao" class="de.enwida.web.dao.implementation.AspectDaoImpl">
 	</beans:bean>
 
+	<beans:bean id="userService" class="de.enwida.web.service.implementation.UserServiceImpl">
+	</beans:bean>
+
 	<beans:bean id="lineService" class="de.enwida.web.service.implementation.LineService">
 	</beans:bean>
 
