@@ -10,6 +10,7 @@ import de.enwida.transport.DataResolution;
 import de.enwida.web.dao.interfaces.IDataAutorizationDao;
 import de.enwida.web.dao.interfaces.IDataAvailibilityDao;
 import de.enwida.web.model.DataAvailibility;
+import de.enwida.web.model.User;
 import de.enwida.web.service.interfaces.IAvailibilityService;
 import de.enwida.web.utils.CalendarRange;
 import de.enwida.web.utils.EnwidaUtils;
@@ -28,7 +29,7 @@ public class AvailibilityService implements IAvailibilityService {
 		return dataAvailibilityDao.isAvailableByExample(dataAvailibility);
 	}
 
-    public ProductRestriction getProductRestriction(int productId, int tso, Aspect aspect, int role) {
+    public ProductRestriction getProductRestriction(int productId, int tso, Aspect aspect, User user) {
     	
     	DataAvailibility dataAvailibility = new DataAvailibility();
     	dataAvailibility.setProduct(productId);

@@ -13,6 +13,8 @@ import de.enwida.web.dao.interfaces.IAspectsDao;
 import de.enwida.web.model.ChartLinesRequest;
 import de.enwida.web.model.DataAuthorization;
 import de.enwida.web.model.DataAvailibility;
+import de.enwida.web.model.Role;
+import de.enwida.web.model.User;
 import de.enwida.web.service.interfaces.IAvailibilityService;
 import de.enwida.web.service.interfaces.ILineService;
 import de.enwida.web.service.interfaces.ISecurityService;
@@ -31,11 +33,11 @@ public class LineService implements ILineService {
     @Autowired
     private LineManager lineManager;
 
-    public List<IDataLine> getLines(ChartLinesRequest request) {
+    public List<IDataLine> getLines(ChartLinesRequest request, User user) {
         final List<IDataLine> result = new ArrayList<IDataLine>();
         
         for (final LineRequest lineRequest : getLineRequests(request)) {
-            if (!securityService.isAllowed(getDataAuthorization(lineRequest))) {
+            if (!isAllowed(lineRequest, user)) {
                 continue;
             }
             if (!availibilityService.isAvailable(getDataAvailibility(lineRequest))) {
@@ -68,6 +70,18 @@ public class LineService implements ILineService {
                     ));
         }
         return result;
+    }
+    
+    private boolean isAllowed(LineRequest lineRequest, User user) {
+        final DataAuthorization authorization = getDataAuthorization(lineRequest);
+
+        for (final Role role : user.getRoles()) {
+            authorization.setRole((int) role.getRoleID());
+            if (securityService.isAllowed(authorization)) {
+                return true;
+            }
+        }
+        return false;
     }
     
     private DataAuthorization getDataAuthorization(LineRequest request) {
