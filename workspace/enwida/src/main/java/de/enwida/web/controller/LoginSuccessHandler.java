@@ -39,11 +39,13 @@ public class LoginSuccessHandler extends
             url = (String) request.getSession().getAttribute("url_prior_login");
         }
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        UserLog.log(auth.getName() , "IP: "+request.getRemoteAddr()+", USER-AGENT: "+request.getHeader("User-Agent"));
-        System.out.println("Redirect url: " + url);
+        //logging once
+        UserLog.log(auth.getName() , "|IP: "+request.getRemoteAddr()+" USER-AGENT: "+request.getHeader("User-Agent")+"|");
+        UserLog.log(auth.getName() , "|Redirect URL:"+url+"|");
         Cookie[] cookies = request.getCookies();
         for (Cookie cookie : cookies) {
-            System.out.println(cookie.getValue());
+          //logging once
+            UserLog.log(auth.getName() ,"|"+ "Cookie"+cookie.getValue()+"|");
         }
         if (url != null) {
 

@@ -46,6 +46,6 @@
 	     authentication-success-handler-ref="loginSuccessHandler" default-target-url="/user/login.html"  always-use-default-target="false"/>        
 	    <logout logout-success-url="/" logout-url="/j_spring_security_logout" />
 	    <access-denied-handler error-page="/403.html"/>
-	     <remember-me key="!casAA='0401./e;2009NrI" use-secure-cookie="true" />
+	     <remember-me key="!casAA='0401./e;2009NrI"/>
     </http>
 </beans:beans>   
