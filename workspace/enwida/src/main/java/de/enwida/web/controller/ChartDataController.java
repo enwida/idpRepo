@@ -39,9 +39,11 @@ import de.enwida.web.dao.interfaces.INavigationDao;
 import de.enwida.web.model.ChartLinesRequest;
 import de.enwida.web.model.ChartNavigationData;
 import de.enwida.web.model.ProductTree;
+import de.enwida.web.model.User;
 import de.enwida.web.service.implementation.CookieSecurityService;
 import de.enwida.web.service.implementation.LineService;
 import de.enwida.web.service.interfaces.INavigationService;
+import de.enwida.web.service.interfaces.UserService;
 import de.enwida.web.utils.CalendarRange;
 import de.enwida.web.utils.ChartDefaults;
 import de.enwida.web.utils.Constants;
@@ -62,6 +64,9 @@ public class ChartDataController {
 
     @Autowired
     private CookieSecurityService cookieSecurityService;
+    
+    @Autowired
+    private UserService userService;
 
     @RequestMapping(value = "/lines", method = RequestMethod.GET)
     @ResponseBody
@@ -71,20 +76,21 @@ public class ChartDataController {
 	    @RequestParam int tso,
 	    @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Calendar startTime,
 	    @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Calendar endTime,
-	    @RequestParam DataResolution resolution, Locale locale) {
-	final ChartLinesRequest request = new ChartLinesRequest(chartId,
-		product, tso, new CalendarRange(startTime, startTime),
-		resolution, locale);
+	    @RequestParam DataResolution resolution,
+	    Locale locale,
+	    Principal principal) {
+        
+        
+    	final ChartLinesRequest request = new ChartLinesRequest(chartId,
+    		product, tso, new CalendarRange(startTime, startTime),
+    		resolution, locale);
 
-	return lineService.getLines(request);
+    	return lineService.getLines(request, getUser(principal));
     }
 
     @RequestMapping(value = "/chart", method = RequestMethod.GET)
     public String exampleChart(Principal principal) {
-	if (principal != null) {
-	    System.out.println(principal.getName());
-	}
-	return "charts/index";
+    	return "charts/index";
     }
 
     @RequestMapping(value = "/navigation", method = RequestMethod.GET)
@@ -92,8 +98,7 @@ public class ChartDataController {
     public ChartNavigationData getNavigationData(@RequestParam int chartId,
 	    HttpServletRequest request, Principal principal, Locale locale) {
 
-    	// FIXME: get user / submit correct role
-    	final ChartNavigationData chartNavigationData = navigationService.getNavigationData(chartId, 0, locale);
+    	final ChartNavigationData chartNavigationData = navigationService.getNavigationData(chartId, getUser(principal), locale);
 
     	// Try to set the defaults from the cookie
     	try {
@@ -105,6 +110,42 @@ public class ChartDataController {
 
     	return chartNavigationData;
     }
+    
+    @RequestMapping(value = "/disabledLines", method = RequestMethod.POST)
+    @ResponseBody
+    public void setDisabledLines(
+        @RequestParam int chartId,
+        @RequestParam String lines,
+        HttpServletRequest request,
+        HttpServletResponse response,
+        Principal principal) {
+        
+        // Try to update the cookie data
+        try {
+            final NavigationDefaults defaults = getNavigationDefaultsFromCookie(chartId, request, principal);
+            if (lines.isEmpty()) {
+                defaults.setDisabledLines(new ArrayList<Integer>());
+            } else {
+                final String[] lineIds = lines.split(",");
+                final List<Integer> disabledLines = new ArrayList<>();
+    
+                for (final String lineId : lineIds) {
+                    disabledLines.add(Integer.parseInt(lineId));
+                }
+                defaults.setDisabledLines(disabledLines);
+            }
+            updateChartDefaultsCookie(chartId, defaults, request, response, principal);
+        } catch (Exception ignored) { }
+    }
+    
+    private User getUser(Principal principal) {
+        try {
+            return userService.getUser(principal.getName());
+        } catch (Exception e) {
+            return null;
+        }
+    }
+    
 
     /*
      * ==========================================================================

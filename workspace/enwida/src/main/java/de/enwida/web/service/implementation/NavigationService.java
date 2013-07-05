@@ -27,6 +27,7 @@ import de.enwida.web.dao.interfaces.INavigationDao;
 import de.enwida.web.model.ChartNavigationData;
 import de.enwida.web.model.ProductTree;
 import de.enwida.web.model.ProductTree.ProductAttributes;
+import de.enwida.web.model.User;
 import de.enwida.web.service.interfaces.IAvailibilityService;
 import de.enwida.web.service.interfaces.INavigationService;
 import de.enwida.web.service.interfaces.ISecurityService;
@@ -62,7 +63,7 @@ public class NavigationService implements INavigationService {
 		}
 	}
 
-    public ChartNavigationData getNavigationData(int chartId, int role, Locale locale) {
+    public ChartNavigationData getNavigationData(int chartId, User user, Locale locale) {
         // Get the internationalized properties
 	    final String chartTitle = getChartMessage("title", chartId, locale);
 	    final String xAxisLabel = getChartMessage("xlabel", chartId, locale);
@@ -78,8 +79,8 @@ public class NavigationService implements INavigationService {
         // Fetch the related aspects and shrink the navigation data
         // under security and availability perspective
         final List<Aspect> aspects = aspectsDao.getAspects(chartId);
-        shrinkNavigationOnSecurity(navigationData, aspects, role);
-        shrinkNavigationOnAvailibility(navigationData, aspects, role);
+        shrinkNavigationOnSecurity(navigationData, aspects, user);
+        shrinkNavigationOnAvailibility(navigationData, aspects, user);
         
         return navigationData;
     }
@@ -113,20 +114,20 @@ public class NavigationService implements INavigationService {
         }
     }
     
-    private void shrinkNavigationOnSecurity(ChartNavigationData navigationData, List<Aspect> aspects, final int role) {
+    private void shrinkNavigationOnSecurity(ChartNavigationData navigationData, List<Aspect> aspects, final User user) {
         shrinkNavigation(navigationData, aspects, new IProductRestrictionGetter() {
             
             public ProductRestriction getProductRestriction(int productId, int tso, Aspect aspect) {
-                return securityService.getProductRestriction(productId, tso, aspect, role);
+                return securityService.getProductRestriction(productId, tso, aspect, user);
             }
         });
     }
 
-    private void shrinkNavigationOnAvailibility(ChartNavigationData navigationData, List<Aspect> aspects, final int role) {
+    private void shrinkNavigationOnAvailibility(ChartNavigationData navigationData, List<Aspect> aspects, final User user) {
         shrinkNavigation(navigationData, aspects, new IProductRestrictionGetter() {
             
             public ProductRestriction getProductRestriction(int productId, int tso, Aspect aspect) {
-                return availibilityService.getProductRestriction(productId, tso, aspect, role);
+                return availibilityService.getProductRestriction(productId, tso, aspect, user);
             }
         });
     }

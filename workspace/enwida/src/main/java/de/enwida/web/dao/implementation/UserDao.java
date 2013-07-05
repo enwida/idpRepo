@@ -1085,6 +1085,39 @@ public class UserDao extends BaseDao<User> implements IUserDao {
     }
 
     @Override
+    public boolean activateUser(String username) {
+    	   String sql = "UPDATE users.users SET enabled=? WHERE user_name=?";
+           
+           Connection conn = null;
+    
+           try {
+               conn = datasource.getConnection();
+               PreparedStatement ps = conn.prepareStatement(sql);
+               ps.setBoolean(1, true);
+               ps.setString(2, username);
+               ps.executeUpdate();
+               ps.close();
+           } 
+           catch (SQLException e) 
+           {
+               return false;
+           } 
+           finally 
+           {
+               if (conn != null) 
+               {
+                   try 
+                   {
+                	   conn.close();
+                   } 
+                   catch (SQLException e) {}
+               }
+           }
+           
+           return true;
+    }
+    
+    @Override
     public Group getGroupByName(String groupName) {
         Group group = null;
         
@@ -1150,4 +1183,52 @@ public class UserDao extends BaseDao<User> implements IUserDao {
         }
         return users;
     }
+    
+    
+    @Override
+    public boolean checkUserActivationId(String username, String activationCode) {
+
+        String sql = "select activation_id from users.users where users.user_name=?";
+        Connection conn = null;
+        
+        try 
+        {
+            conn = datasource.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, username);
+            ResultSet rs = ps.executeQuery();
+            
+            if (rs.next()) 
+            {
+                if(rs.getString(1).equals(activationCode))
+                {
+                	return true;
+                }                
+            }
+            
+            rs.close();
+            ps.close();
+        } 
+        catch (SQLException e) 
+        {
+            throw new RuntimeException(e);
+        } 
+        finally 
+        {
+            if (conn != null) 
+            {
+                try 
+                {
+                	conn.close();
+                } 
+                catch (SQLException e) 
+                {
+                	
+                }
+            }
+        }
+        
+        return false;        
+    }
+
 }

@@ -14,6 +14,7 @@ import javax.mail.internet.AddressException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 import de.enwida.web.dao.interfaces.IUserDao;
@@ -24,7 +25,8 @@ import de.enwida.web.service.interfaces.UserService;
 import de.enwida.web.utils.ActivationIdGenerator;
 import de.enwida.web.utils.Constants;
 
-@Service("UserService")
+
+@TransactionConfiguration( defaultRollback = true )
 @Transactional
 public class UserServiceImpl implements UserService {
 
@@ -46,13 +48,16 @@ public class UserServiceImpl implements UserService {
 	@Transactional
 	public boolean saveUser(User user) 
 	{
-		// Saving user in the user table
+		
 		Date date = new Date(Calendar.getInstance().getTimeInMillis());
 		user.setJoiningDate(date);
 		user.setEnabled(false);
 		
+		// Generating activation Id for User
 		ActivationIdGenerator activationIdGenerator = new ActivationIdGenerator();
 		user.setActivationKey(activationIdGenerator.getActivationId());
+		
+		// Saving user in the user table
 		long userId = userDao.save(user);
 				
 		if(userId != -1)
@@ -67,6 +72,7 @@ public class UserServiceImpl implements UserService {
 			}
 			else
 			{
+				// saving in default group (Anonymous)
 			    Group anonymousGroup = userDao.getGroupByName("anonymous");
 			    if(anonymousGroup == null)
 			    {
@@ -203,4 +209,16 @@ public class UserServiceImpl implements UserService {
     public boolean enableDisableAspect(int rightID, boolean enabled) {
         return userDao.enableDisableAspect(rightID,enabled);
     }
+
+	@Override
+	public boolean activateUser(String username, String activationCode) 
+	{
+		if(userDao.checkUserActivationId(username, activationCode))
+		{
+			return userDao.activateUser(username);
+			
+		}
+		
+		return false;
+	}
 }
