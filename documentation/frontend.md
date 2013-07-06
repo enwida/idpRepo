@@ -241,5 +241,133 @@ component functions inside a callback.
 
     
 ## The Charts Frontend Implementation
+
+### Architecture
+An overview of the architecture and the communication between the frontend components and the 
+web server is visualized in the following diagram ([high resolution version](frontend_overview.pdf)).
+
+<img src="frontend_overview.png" />
+
+#### Directory Structure
+Important files/directories in `js/chart`:
+
+- `assets/` contains the JavaScript assets
+- `assets.js` contains all assets in minified form
+- `charts.coffee` is the main script
+- `lib/` contains all RequireJS modules
+- `lib/components` contains all Flight components
+- `lib/drawable` contains the modules which actually draw the charts
+- `lib/util` contains some utility modules
+
+### Layout
+The basic layout of the chart element is shown in the following structure.
+
+<div style="border: 1px solid black; padding: 10px;">
+  .chart
+  <div style="border: 1px solid black; padding: 10px; margin: 10px;">
+    .visual
+  </div>
+  <div style="border: 1px solid black; padding: 10px; margin: 10px;">
+    .lines
+  </div>
+  <div style="border: 1px solid black; padding: 10px; margin: 10px;">
+    .navigation
+  </div>
+</div>
+
+The outer chart div element of class "chart" has another three div elements as its children.
+The child of class "visual" contains the actual chart (the SVG image). All elements for
+enabling/disabling single lines are included in the "lines" div element. The "navigation" div
+element contains all elements representing product and time range selection.
+
+Each of these elements has a Flight module attached to it:
+
+- .chart: `ChartManager`
+- .visual: `Visual`
+- .lines: `Lines`
+- .navigation: `Navigation`
+
+When loaded, the main script will find all divs of class "chart" and attach a new instance
+of the `ChartManager` component to each of them. The `ChartManager` will then create the
+"visual", "lines", and "navigation" div elements and attach the corresponding Flight components
+to them.
+
+### Imaging
+The actual chart images are implemented using the [d3.js](http://d3js.org) library which is used
+to create inline SVG images. Sincle SVG uses an XML format, the images can be created by adding
+new elements to the DOM (just like any other HTML elements as div, h1, etc.).
+
+#### Chart Types
+
+##### Line Chart
+The line chart can show several lines of data at once using linear interpolation between the
+data points.
+
+##### Bar Chart
+The bar chart can show several lines of data at once whereby the different lines are represented
+by differently colored bars located next to each other for each data point.
+
+##### Min-Max Chart
+This chart type works for exactly three lines of data. The first and the last line represent the
+minimun and the maximum values respectively whereas the second line contains the average values.
+The second line is drawn as in an ordinary line chart.
+Additionally, a bar ranging from the minimun to the maximum value is drawn for each data point.
+
+##### Positive-Negative Chart
+This chart type takes exactly two lines of data whereby the first line contains positive values 
+while the last one contains negative values.
+The lines are drawn as bars one below the other in different colors ranging from 0 to the positive
+value and from 0 to the negative value, respectively.
+
+##### Carpet Chart
+This chart works with exactly one line of three-dimensional data (x, y, v). For every (x, y)-pair
+one bar is drawn at the corresponding coordinate. The color of the bars is governed by the v value.
+Futhermore, a scale is drawn on the right side which maps colors to v values.
+
+[TODO: pictures]
+
+#### Implementation
+Each of these charts are implemented as a RequireJS module in the `drawable` subdirectory.
+There is also a module called `GenericChart` which encapsulates common functionality like scale
+setup and drawing of the SVG skeletion including the axes.
+
+#### Interface
+Every chart module exports an `init` method which takes an options object as its only argument and
+returns the corresponding chart object which exports a `draw` method.
+The options object has the following form:
+
+    { 
+      parent: element       # The element the SVG is drawn into
+      lines: [line]         # The lines to draw
+      disabledLines: [int]  # Disabled lines as indices (optional)
+      xLabel: string        # X axis label (optional)
+      yLabel: string        # Y axis label (optional)
+      width: int            # SVG width (optional)
+      height: int           # SVG height (optional)
+      scale: {              # Scale setup (optional)
+               x: scaleOptions
+               y: scaleOptions
+             }              
+    }
+
+A line object has the following form:
+
+    {
+      title: string
+      dataPoints: [{ x: double, y: double }]
+      # dataPoints for carpet chart: [{ x: double, y: double, v: double }]
+    }
+
+The scale options have the following format:
+
+    {
+      type: scaleType              # Supported: "linear", "ordinal", "date"
+      domain: {                    # Domain setup
+                type: domainType   # Supported: "extent", "map", "stretch", "fixed"
+                high: double       # Upper bound for fixed domain
+                low: double        # Lower bound for fixed domain       
+              }
+    }
+
 [TODO]
 
