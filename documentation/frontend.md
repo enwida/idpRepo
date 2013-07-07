@@ -239,6 +239,36 @@ see something like `(param) => ...` in component code. This works just like an o
 definition but keeps the `this` reference stable in the body. This is often used to call
 component functions inside a callback.
 
+## Usage
+In order to use the charts frontend, all you have to do is including the required CSS and JavaScript
+files and having one div element for each chart in the HTML document.
+The div elements must be of class "chart" and have an attribute called `data-chart-id` set to
+the desired chart ID. Other (optional) attributes are:
+
+- `data-chart-type`: "linear", "bar", "minmax", "posneg", or "carpet" (defaults to "linear")
+- `data-width`: width of the SVG in pixels (defaults to 800)
+
+Example:
+
+    <!doctype html>
+    <html>
+      <head>
+        <title>Charts</title>
+        <link rel="stylesheet" href="/enwida/resources/css/chart/assets.css" >
+        <link rel="stylesheet" href="/enwida/resources/css/chart/chart.css" >
+        <script src="/enwida/resources/js/chart/assets.js"></script>
+        <script src="/enwida/resources/js/chart/charts.js"></script>
+      </head>
+      <body>
+        <div class="chart" data-chart-id="0"></div>
+        <div class="chart" data-chart-id="0" data-chart-type="bar"></div>
+        <div class="chart"
+             data-chart-id="1"
+             data-chart-type="carpet"
+             data-width="1200">
+        </div>
+      </body>
+    </html>
     
 ## The Charts Frontend Implementation
 
@@ -362,12 +392,118 @@ The scale options have the following format:
 
     {
       type: scaleType              # Supported: "linear", "ordinal", "date"
+      dateFormats: [               # Adaptive date formats when using date scale
+                     [compareFormat, showFormat]
+                   ]
       domain: {                    # Domain setup
-                type: domainType   # Supported: "extent", "map", "stretch", "fixed"
+                type: [domainType] # Supported: "extent", "map", "stretch", "fixed"
                 high: double       # Upper bound for fixed domain
                 low: double        # Lower bound for fixed domain       
               }
     }
 
-[TODO]
+##### Scale Types
+A _linear_ scale maps every value between its lower and upper bound to the corresponding position
+on the axis. So there are infinitely many values such a scale can take as an argument (ignoring
+the fact that there is only a finite set of floating point numbers between two values).
+The domain of a linear scale is an array with two elements: `[lowerBound, upperBound]`.
+
+By contrast, _ordinal_ scales map a finite set of values to axis positions without any interpolation
+taking place. This scale type is usually used in bar charts.
+The domain of such a scale is an array of possible values: `[val1, val2, ..., valn]`
+
+_Date_ scales work just like linear scales, except that its values are interpreted as JavaScript
+timestamps (milliseconds since epoch). These will be translated their corresponding date
+representation using an adaptive strategy. The date formats used for this strategy can be
+configured in the chart options object (see code block above). The strategy does the following:
+
+- The first timestamp is displayed using the `showFormat` of the first element in the array.
+- For every following timestamp:
+    - For every element in the date formats array:
+        - The timestamp is converted to a string using the `compareFormat`
+        - This string is compared to the `compareFormat` of the previous timestamp
+        - If they differ the current timestamp's representation is retrieved using the
+          current `showFormat`
+
+
+### Tooltips
+Tooltips are implemented using the JavaScript library
+[tipsy](http://onehackoranother.com/projects/jquery/tipsy).
+
+Every data point in a line chart as well as every bar show a tooltip on mouseover displaying the
+name of the line and the x and the y value of the corresponding data point.
+There are also tooltips on the tick labels of date scales which show the corresponding timestamp
+in a full date format.
+
+This is achieved by setting the `original-title` attribute of the elements in question and calling
+the `tipsy` function on their corresponding jQuery wrapper object.
+
+### Navigation
+The navigation layer of the charts frontend can be divided into three components:
+
+- Line selection
+- Product selection
+- Time range selection
+
+The former is handled by the `Line` Flight component whereas the other ones are both processed
+by the `Navigation` Flight component (there is room for improvement).
+
+#### Line Selection
+The line selection component is pretty simple.
+It listens for `updateLines` events and shows the passed lines with their color and title to the
+user. If the user clicks on one of these representations the component will trigger a
+`toggleLine` event to the `ChartManager` which is then responsible for hiding the disabled
+lines and sending a request to the web server updating the user's preferences for this chart type.
+
+Furthermore, the component listens for `disabledLines` events in order to keep its array of
+disabled lines up-to-date. This is especially useful when the `ChartManager` sends the set of
+disabled lines from the user's navigation defaults. This way, the component knows about the disabled
+line before the line information actually arrive through the `updateLines` event.
+
+#### Product Selection
+When the `Navigation` component is initialized, it creates the required combo boxes (HTML `select`
+elements) for TSO and product number parts.
+Afterwards, the navigation data for the corresponding chart id are requested from the web server.
+This data is then used to fill the combo boxes with their corresponding options. The product trees
+play an important role in this process. As a next step, the default values are applied to the
+elements a `getLines` event is triggered to the `ChartManager`. This way, the user sees the
+chart representing his/her default selection.
+
+When the users selects a new product configuration another `getLines` event is fired.
+Moreover, the product selection elements adapt their values according to the product trees.
+
+#### Time Range Selection
+The user is allowed to select one of four predefined time ranges:
+
+- A day
+- A week
+- A month
+- A year
+
+He/she also has to select the beginning of the specific time range. For this matter a modified
+version of the [improved bootstrap datepicker](http://eternicode.github.io/bootstrap-datepicker)
+has been used.
+Depending on the selected time range it allows you to select a single day, a single week, a single
+month, or a single year. As soon as the time range or the beginning date are changed, a
+`getLines` event is fired.
+
+A separate timestamp is managed for each time range which is synchronized when a beginning date
+of another time range is changed.
+
+Example: the user selects a daily time range and 2010-12-15 as the beginning timestamp. Then he/she
+switches to a monthly time range. Now data of the whole december of 2010 is shown. Afterwards the
+user selects March of 2011 whereupon the corresponding data is displayed. When he/she now switches
+back to a daily time range, date for 2011-03-15 is shown.
+
+Technically, this is achieved by maintaining four different datepickers of which only one is
+visible at all times. Each of these corresponds a specific time range and synchronize the way
+described above.
+
+##### Resolution Calculation
+As the user is not allowed to select the data resolution himself/herself, it is calculated by the
+`Resolution` utility module. The calculation takes the chart type, the selected time range, the
+SVG width, the number of lines to display, as well as the set of allowed resolution into account.
+Each chart type has an optimal and a minimal width per data point assigned to it (currently
+ill-named "optimalDensity" and "maximumDensity"). The algorithm tries to match the optimal width
+as good as possible without being below the minimum width.
 
