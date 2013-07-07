@@ -83,7 +83,7 @@ define ["util/scale"], (Scale) ->
       @drawYAxis @yAxis
 
     makeDateScale: ->
-      formats = @options?.x?.dateFormats ? [
+      formats = @options?.scale?.x?.dateFormats ? [
         ["%Y", "%Y-%m-%d"]
         ["%m", "%b"]
         ["%d", "%d"]
