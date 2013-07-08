@@ -58,7 +58,7 @@ public class NavigationService implements INavigationService {
 	
 	@PostConstruct
 	public void init() throws IOException {
-	     for (int i = 0; i < 1; i++) {
+	     for (int i = 0; i < 2; i++) {
 	    	 defaultNavigationData.put(i, getNavigationDataFromJsonFile(i));
 		}
 	}
@@ -81,9 +81,28 @@ public class NavigationService implements INavigationService {
         final List<Aspect> aspects = aspectsDao.getAspects(chartId);
         shrinkNavigationOnSecurity(navigationData, aspects, user);
         shrinkNavigationOnAvailibility(navigationData, aspects, user);
+        setTsos(navigationData, locale);
         
         return navigationData;
     }
+    
+    public ChartNavigationData getNavigationDataUNSECURE(int chartId, User user, Locale locale) {
+        // Get the internationalized properties
+	    final String chartTitle = getChartMessage("title", chartId, locale);
+	    final String xAxisLabel = getChartMessage("xlabel", chartId, locale);
+	    final String yAxisLabel = getChartMessage("ylabel", chartId, locale);
+        
+	    // Get basic navigation data from hash table and apply
+	    // internationalized properties
+        final ChartNavigationData navigationData = defaultNavigationData.get(chartId).clone();
+        navigationData.setChartTitle(chartTitle);
+        navigationData.setxAxisLabel(xAxisLabel);
+        navigationData.setyAxisLabel(yAxisLabel);
+        setTsos(navigationData, locale);
+        
+        return navigationData;
+    }
+
     
     private interface IProductRestrictionGetter {
         public ProductRestriction getProductRestriction(int productId, int tso, Aspect aspect);
@@ -150,6 +169,14 @@ public class NavigationService implements INavigationService {
 		jr.close();	
 
         return chartNavigationDataDeSerialized;
+	}
+	
+	private void setTsos(ChartNavigationData navigationData, Locale locale) {
+	    for (final ProductTree tree : navigationData.getProductTrees()) {
+	        final int tso = tree.getTso();
+    	    final String tsoName = messageSource.getMessage("de.enwida.chart.tso." + tso + ".name", null, "TSO " + tso, locale);
+    	    navigationData.addTso(tso, tsoName);
+	    }
 	}
 	
     private String getChartMessage(String property, int chartId, Locale locale) {

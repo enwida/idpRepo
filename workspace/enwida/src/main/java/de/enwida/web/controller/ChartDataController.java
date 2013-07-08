@@ -42,6 +42,7 @@ import de.enwida.web.model.ProductTree;
 import de.enwida.web.model.User;
 import de.enwida.web.service.implementation.CookieSecurityService;
 import de.enwida.web.service.implementation.LineService;
+import de.enwida.web.service.implementation.NavigationService;
 import de.enwida.web.service.interfaces.INavigationService;
 import de.enwida.web.service.interfaces.UserService;
 import de.enwida.web.utils.CalendarRange;
@@ -185,21 +186,8 @@ public class ChartDataController {
 	    Principal principal, Locale locale, HttpServletRequest request,
 	    HttpServletResponse response) throws ParseException {
 
-    	final ChartNavigationData result = navigationDao.getDefaultNavigation(
-    		chartId, locale);
-    	result.addProductTree(new ProductTree(1));
-    	final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-    	final Date from = dateFormat.parse("2010-07-01");
-    	final Date to = dateFormat.parse("2010-12-31");
-    	final Calendar cFrom = Calendar.getInstance();
-    	final Calendar cTo = Calendar.getInstance();
-    	cFrom.setTime(from);
-    	cTo.setTime(to);
-    	result.setDefaults(new NavigationDefaults(99, DataResolution.MONTHLY,
-    		211, new CalendarRange(cFrom, cTo)));
-    	result.setIsDateScale(true);
-    	result.addTso(99, "Standard");
-    	
+        final ChartNavigationData result = ((NavigationService) navigationService).getNavigationDataUNSECURE(chartId, getUser(principal), locale);
+
     	// Try to get the navigation defaults from the cookie
     	try {
     	    final String cookieValue = getChartDefaultsCookie(request, principal);
@@ -212,7 +200,7 @@ public class ChartDataController {
     	        result.setDefaults(defaults);
     	    }
     	} catch (Exception ignored) { }
-
+    	
     	return result;
     }
 
