@@ -42,10 +42,10 @@ define [ "components/navigation"
           data:
             chartId: @attr.id
             lines: disabledLines.join ","
-          error: (err) =>
-            @logError "Error while reporting disabled lines: #{err.error}"
+          error: (xhr, status, err) =>
+            @logError "Error while reporting disabled lines: #{err}"
           success: =>
-            @log "Sent disabled lines"
+            @logDebug "Sent disabled lines"
 
       @onGetLines = (a, opts) ->
         @getLines opts, (err, data) =>
@@ -79,8 +79,8 @@ define [ "components/navigation"
 
       @after "initialize", ->
         # Logging facilities
-        @log = Logger.logCurried("ChartManager")(2)
-        @logError = Logger.logCurried("ChartManager")(0)
+        @logDebug = Logger.logDebug "ChartManager"
+        @logError = Logger.logError "ChartManager"
 
         # Event handlers
         @on "getLines", @onGetLines

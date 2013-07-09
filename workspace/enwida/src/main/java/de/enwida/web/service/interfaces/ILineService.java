@@ -1,13 +1,11 @@
 package de.enwida.web.service.interfaces;
 
-import java.util.List;
-
 import de.enwida.transport.IDataLine;
-import de.enwida.web.model.ChartLinesRequest;
+import de.enwida.transport.LineRequest;
 import de.enwida.web.model.User;
 
 public interface ILineService {
 
-    public List<IDataLine> getLines(ChartLinesRequest request, User user);
+    public IDataLine getLine(LineRequest request, User user) throws Exception;
     
 }

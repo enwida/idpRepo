@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import de.enwida.transport.Aspect;
 import de.enwida.transport.DataResolution;
 import de.enwida.web.model.ProductTree.ProductAttributes;
 import de.enwida.web.utils.CalendarRange;
@@ -21,6 +22,7 @@ public class ChartNavigationData implements Cloneable {
 	private Map<Integer, String> tsos;
 	private String xAxisLabel;
 	private String yAxisLabel;
+	private List<Aspect> aspects;
 	private boolean isDateScale;
 
 	public ChartNavigationData() {
@@ -40,6 +42,7 @@ public class ChartNavigationData implements Cloneable {
 		this.tsos = new HashMap<Integer, String>();
 		this.productTrees = productTrees;
 		this.defaults = defaults;
+		this.aspects = new ArrayList<>();
 	}
 
 	public void addTso(int id, String name) {
@@ -106,6 +109,7 @@ public class ChartNavigationData implements Cloneable {
 	    result.setIsDateScale(isDateScale);
 	    result.setDefaults(defaults.clone());
 	    result.tsos = new HashMap<>(tsos);
+	    result.aspects = new ArrayList<Aspect>(aspects);
 
 	    for (final ProductTree tree : productTrees) {
 	        result.addProductTree(tree.clone());
@@ -156,5 +160,13 @@ public class ChartNavigationData implements Cloneable {
     public void setIsDateScale(boolean dateScale) {
         this.isDateScale = dateScale;
     }
-    
+
+    public List<Aspect> getAspects() {
+        return aspects;
+    }
+
+    public void setAspects(List<Aspect> aspects) {
+        this.aspects = aspects;
+    }
+
 }

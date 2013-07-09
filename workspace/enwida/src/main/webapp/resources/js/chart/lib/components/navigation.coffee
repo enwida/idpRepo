@@ -86,6 +86,7 @@ define ["util/resolution"], (Resolution) ->
       $.ajax "navigation.test",
         data: chartId: @attr.id
         success: (data) =>
+          console.log data
           @navigationData = data
           callback null, data
         error: (err) -> callback err
@@ -98,9 +99,8 @@ define ["util/resolution"], (Resolution) ->
           to   : new Date data.timeRangeMax.to
 
         @fillTso()
-        @fillProduct()
-        @fillResolutions()
         @fillTimeRange dateLimits
+        @fillProduct()
         @setDefaults data.defaults
         @trigger "updateNavigation", data: data
         @triggerGetLines()
@@ -115,12 +115,6 @@ define ["util/resolution"], (Resolution) ->
 
     @fillProduct = ->
       @setProduct 111
-
-    @fillResolutions = ->
-      element = @select "resolution"
-      element.empty()
-      for r in @navigationData.allResolutions
-        element.append($("<option>").val(r).text(r))
 
     @fillTimeRange = (limits={}) ->
       @timeRanges.forEach (timeRange) =>
@@ -184,7 +178,6 @@ define ["util/resolution"], (Resolution) ->
     @setDefaults = (defaults) ->
       @select("tso").val defaults.tso
       @setProduct defaults.product
-      @select("resolution").val defaults.resolution
       @select("timeRange").val @getTimeRange defaults.timeRange
       @refreshDatepicker()
       @forEachDatepicker (picker) ->
@@ -202,7 +195,7 @@ define ["util/resolution"], (Resolution) ->
         values[@productParts[i]] = id
 
       node = @getProductTree().root
-      for name in @treeParts
+      for name, i in @treeParts
         element = @select("product").find ".#{name}"
         element.empty()
         for child in node.children
@@ -211,6 +204,13 @@ define ["util/resolution"], (Resolution) ->
         id = values[name]
         element.val id
         node = (_.find node.children, (c) -> c.id is id) ? node.children[0]
+
+      # Apply restrictions of leaf node
+      console.log node
+      @attr.resolutions = node.resolution
+      @forEachDatepicker (picker) ->
+        picker.datepicker "setStartDate", new Date node.timeRange.from
+        picker.datepicker "setEndDate", new Date node.timeRange.to
 
     @getProduct = ->
       result = ""
@@ -282,7 +282,7 @@ define ["util/resolution"], (Resolution) ->
 
       resolution = Resolution.getOptimalResolution @attr.type,
         timeRange,
-        @navigationData.allResolutions,
+        @attr.resolutions,
         @attr.width
 
       @trigger "getLines",
@@ -290,7 +290,6 @@ define ["util/resolution"], (Resolution) ->
         product: @getProduct()
         timeRange: timeRange
         resolution: resolution
-        # resolution: @select("resolution").val()
 
     @setupEvents = ->
       @$node.on "change", (e) =>
@@ -299,7 +298,6 @@ define ["util/resolution"], (Resolution) ->
     @defaultAttrs
       tso: ".tso"
       product: ".product"
-      resolution: ".resolution"
       timeRange: ".timerange"
       type: "line"
 

@@ -27,9 +27,9 @@ define ["./generic_chart", "util/scale"], (GenericChart, Scale) ->
       fy = (d) => if pos then @chart.yScale(d.y) else @chart.yScale(0)
       fheight = (d) =>
         if pos
-          @chart.yScale(0) - @chart.yScale(d.y)
+          Math.max 0, @chart.yScale(0) - @chart.yScale(d.y)
         else
-          @chart.yScale(d.y) - @chart.yScale(0)
+          Math.max 0, @chart.yScale(d.y) - @chart.yScale(0)
 
       @chart.svg.selectAll(".foo")
         .data(data)

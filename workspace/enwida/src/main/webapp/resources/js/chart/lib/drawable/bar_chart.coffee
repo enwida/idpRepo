@@ -24,7 +24,7 @@ define ["./generic_chart"], (GenericChart) ->
           .attr("x", (d) => @chart.xScale(d.x) - barOffset + id * barWidth)
           .attr("y", (d) => @chart.yScale(d.y))
           .attr("width", barWidth)
-          .attr("height", (d) => @chart.options.height - @chart.yScale(d.y))
+          .attr("height", (d) => Math.max 0, @chart.options.height - @chart.yScale(d.y))
           .attr("original-title", (d) => @chart.getTooltip d, id)
 
     minInterval: (key, id=0) ->

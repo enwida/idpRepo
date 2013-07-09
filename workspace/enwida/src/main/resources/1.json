@@ -120,7 +120,7 @@
                               },
                               "to": {
                                 "@type": "java.util.GregorianCalendar",
-                                "time": "292278994-08-17T08:12:55.807+0100",
+                                "time": "2011-01-01T01:00:00.000+0100",
                                 "zone": "Europe\/Berlin"
                               }
                             },
@@ -277,8 +277,13 @@
     "@items": [
       {
         "@type": "de.enwida.transport.Aspect",
-        "name": "CR_DEGREE_OF_ACTIVATION",
-        "ordinal": 2
+        "name": "CR_VOL_OFFERED",
+        "ordinal": 5
+      },
+      {
+        "@type": "de.enwida.transport.Aspect",
+        "name": "CR_VOL_ACCEPTED",
+        "ordinal": 4
       }
     ]
   },
