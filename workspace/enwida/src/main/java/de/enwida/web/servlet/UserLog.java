@@ -28,56 +28,47 @@ public class UserLog extends HandlerInterceptorAdapter{
             HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
                 
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        if (auth!=null){
-            String logUserName="";
-            String name=logUserName=auth.getName();
-            if(name=="anonymousUser"){
-                logUserName=name;
-                Cookie[] cookies = request.getCookies();
-                //Check if user already has a cookie
-                if( cookies!=null){
-                    logUserName="C_"+name;
-                    for (Cookie cookie : cookies) {
-                        //logging once
-                          UserLog.log(logUserName ,"|"+ "Cookie"+cookie.getValue()+"|");
-                      }
+        Cookie[] cookies = request.getCookies();
+        String cookieName="anonymousCookie";
+        if (cookies!=null){
+            for (Cookie cookie : cookies) {
+                if(cookie.getName().equalsIgnoreCase("enwida.de")){
+                    cookieName=cookie.getValue();
+                    break;
                 }
-                UserLog.log(logUserName , "|IP: "+request.getRemoteAddr()+" USER-AGENT: "+request.getHeader("User-Agent")+"|");
             }
-            String param=request.getQueryString();
-            if(param==null) param="";
-            if (!request.getRequestURL().toString().contains(".")){
-                log(logUserName,"|            |"+request.getRequestURL()+param+"|");
+        }
+
+        String logUserName=auth.getName();
+        if(logUserName=="anonymousUser"){
+            //Check if user already has a cookie
+            if( auth!=null){
+                logUserName="C_"+cookieName;
             }
-        }           
+        }
+        String param=request.getQueryString();
+        if(param==null) param="";
+        if (!request.getRequestURL().toString().contains(".")){
+            log(logUserName,request.getServletPath()+param,request.getRemoteAddr(),cookieName,request.getHeader("User-Agent"),request.getHeader("Referer"));
+        }          
     }
-    
-    public static void log(String name,String message)
+    //Following information will be stored in log file
+    // time, url,IP,Cookie,UA,Redirect
+    public static void log(String userName,String url,String IP,String cookie,String UA,String redirectURL)
     {
-        if(Logger.getRootLogger().getAppender(name)==null){ //create FileAppender if necessary
+        if(Logger.getRootLogger().getAppender(userName)==null){ //create FileAppender if necessary
             RollingFileAppender fa = new RollingFileAppender();
-            fa.setName(name);
-            fa.setFile(System.getenv("ENWIDA_HOME")+"/log/"+name+".log");
-            fa.setLayout(new PatternLayout("%d{ISO8601}: %m%n"));
+            fa.setName(userName);
+            fa.setFile(System.getenv("ENWIDA_HOME")+"/log/"+userName+".log");
+            fa.setLayout(new PatternLayout("%n%d{ISO8601} %m"));
             fa.setThreshold(Level.INFO);
             fa.setMaxFileSize("1MB");
             fa.activateOptions();
             Logger.getRootLogger().addAppender(fa);
           }
-          FileAppender fa = (FileAppender) Logger.getRootLogger().getAppender(name);
+          FileAppender fa = (FileAppender) Logger.getRootLogger().getAppender(userName);
 
-          logger.info(message);               
+          logger.info("|"+url+"|"+IP+"|"+cookie+"|"+UA+"|"+redirectURL);               
           Logger.getRootLogger().removeAppender(fa);
-    }
-	
-	public void infoLogin(Logger logger,String message,String IP,String cookie) {
-        MDC.put("login", "login"); 
-        MDC.put("IP", IP); 
-        MDC.put("cookie", "cookie"); 
-        logger.info(message);
-        MDC.remove("login");
-        MDC.remove("IP");
-        MDC.remove("cookie");
-        MDC.remove("user");
     }
 }
