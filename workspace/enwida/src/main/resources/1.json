@@ -277,8 +277,13 @@
     "@items": [
       {
         "@type": "de.enwida.transport.Aspect",
-        "name": "CR_DEGREE_OF_ACTIVATION",
-        "ordinal": 2
+        "name": "CR_VOL_OFFERED",
+        "ordinal": 5
+      },
+      {
+        "@type": "de.enwida.transport.Aspect",
+        "name": "CR_VOL_ACCEPTED",
+        "ordinal": 4
       }
     ]
   },
