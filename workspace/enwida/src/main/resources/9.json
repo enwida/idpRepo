@@ -11,7 +11,7 @@
       "name": "MONTHLY",
       "ordinal": 4
     },
-    "product": 211,
+    "product": 210,
     "timeRange": {
       "from": {
         "@type": "java.util.GregorianCalendar",
@@ -48,8 +48,8 @@
                   "@items": [
                     {
                       "@type": "de.enwida.web.utils.ProductNode",
-                      "id": 1,
-                      "name": "PT",
+                      "id": 0,
+                      "name": "Whole day",
                       "children": {
                         "@type": "java.util.ArrayList",
                         "@items": [
@@ -130,128 +130,6 @@
                           }
                         ]
                       }
-                    },
-                    {
-                      "@type": "de.enwida.web.utils.ProductNode",
-                      "id": 2,
-                      "name": "OPT",
-                      "children": {
-                        "@type": "java.util.ArrayList",
-                        "@items": [
-                          {
-                            "@ref": 68
-                          },
-                          {
-                            "@ref": 23
-                          }
-                        ]
-                      }
-                    }
-                  ]
-                }
-              },
-              {
-                "@type": "de.enwida.web.utils.ProductNode",
-                "id": 3,
-                "name": "TCR",
-                "children": {
-                  "@type": "java.util.ArrayList",
-                  "@items": [
-                    {
-                      "@type": "de.enwida.web.utils.ProductNode",
-                      "id": 1,
-                      "name": "0-4",
-                      "children": {
-                        "@type": "java.util.ArrayList",
-                        "@items": [
-                          {
-                            "@ref": 68
-                          },
-                          {
-                            "@ref": 23
-                          }
-                        ]
-                      }
-                    },
-                    {
-                      "@type": "de.enwida.web.utils.ProductNode",
-                      "id": 2,
-                      "name": "4-8",
-                      "children": {
-                        "@type": "java.util.ArrayList",
-                        "@items": [
-                          {
-                            "@ref": 68
-                          },
-                          {
-                            "@ref": 23
-                          }
-                        ]
-                      }
-                    },
-                    {
-                      "@type": "de.enwida.web.utils.ProductNode",
-                      "id": 3,
-                      "name": "8-12",
-                      "children": {
-                        "@type": "java.util.ArrayList",
-                        "@items": [
-                          {
-                            "@ref": 68
-                          },
-                          {
-                            "@ref": 23
-                          }
-                        ]
-                      }
-                    },
-                    {
-                      "@type": "de.enwida.web.utils.ProductNode",
-                      "id": 4,
-                      "name": "12-16",
-                      "children": {
-                        "@type": "java.util.ArrayList",
-                        "@items": [
-                          {
-                            "@ref": 68
-                          },
-                          {
-                            "@ref": 23
-                          }
-                        ]
-                      }
-                    },
-                    {
-                      "@type": "de.enwida.web.utils.ProductNode",
-                      "id": 5,
-                      "name": "16-20",
-                      "children": {
-                        "@type": "java.util.ArrayList",
-                        "@items": [
-                          {
-                            "@ref": 68
-                          },
-                          {
-                            "@ref": 23
-                          }
-                        ]
-                      }
-                    },
-                    {
-                      "@type": "de.enwida.web.utils.ProductNode",
-                      "id": 6,
-                      "name": "20-24",
-                      "children": {
-                        "@type": "java.util.ArrayList",
-                        "@items": [
-                          {
-                            "@ref": 68
-                          },
-                          {
-                            "@ref": 23
-                          }
-                        ]
-                      }
                     }
                   ]
                 }
@@ -292,8 +170,8 @@
     "@items": [
       {
         "@type": "de.enwida.transport.Aspect",
-        "name": "CR_VOL_ACTIVATION",
-        "ordinal": 0
+        "name": "CR_DEGREE_OF_ACTIVATION",
+        "ordinal": 2
       }
     ]
   },

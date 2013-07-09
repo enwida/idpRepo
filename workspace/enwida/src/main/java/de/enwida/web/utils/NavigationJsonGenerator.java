@@ -29,13 +29,18 @@ public class NavigationJsonGenerator {
         navigationData.setIsDateScale(true);
         navigationData.getAspects().add(Aspect.CR_DEGREE_OF_ACTIVATION);
 
+        navigationData.getTimeRanges().put("Day", "Day");
+        navigationData.getTimeRanges().put("Week", "Week");
+        navigationData.getTimeRanges().put("Month", "Month");
+        navigationData.getTimeRanges().put("Year", "Year");
+
 	    final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 	    try {
             navigationData.setDefaults(new NavigationDefaults(99, DataResolution.MONTHLY, 211, new CalendarRange(dateFormat.parse("2010-11-01"), dateFormat.parse("2010-12-01"))));
         } catch (ParseException e) {
             e.printStackTrace();
         }
-
+	    
         try {
             final String json = JsonWriter.objectToJson(navigationData);
             System.out.println(json);

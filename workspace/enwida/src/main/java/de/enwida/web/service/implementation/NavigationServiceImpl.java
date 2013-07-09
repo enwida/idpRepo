@@ -58,7 +58,7 @@ public class NavigationServiceImpl implements INavigationService {
 	
 	@PostConstruct
 	public void init() throws IOException {
-	     for (int i = 0; i < 2; i++) {
+	     for (int i = 0; i <= 9; i++) {
 	    	 defaultNavigationData.put(i, getNavigationDataFromJsonFile(i));
 		}
 	}
@@ -68,42 +68,39 @@ public class NavigationServiceImpl implements INavigationService {
 	}
 
     public ChartNavigationData getNavigationData(int chartId, User user, Locale locale) {
-        // Get the internationalized properties
-	    final String chartTitle = getChartMessage("title", chartId, locale);
-	    final String xAxisLabel = getChartMessage("xlabel", chartId, locale);
-	    final String yAxisLabel = getChartMessage("ylabel", chartId, locale);
-        
 	    // Get basic navigation data from hash table and apply
 	    // internationalized properties
         final ChartNavigationData navigationData = getDefaultNavigationData(chartId);
-        navigationData.setChartTitle(chartTitle);
-        navigationData.setxAxisLabel(xAxisLabel);
-        navigationData.setyAxisLabel(yAxisLabel);
         
         // Fetch the related aspects and shrink the navigation data
         // under security and availability perspective
         shrinkNavigationOnSecurity(navigationData, user);
         shrinkNavigationOnAvailibility(navigationData, user);
-        setTsos(navigationData, locale);
+        setLocalAttributes(navigationData, chartId, locale);
         
         return navigationData;
     }
     
     public ChartNavigationData getNavigationDataUNSECURE(int chartId, User user, Locale locale) {
-        // Get the internationalized properties
-	    final String chartTitle = getChartMessage("title", chartId, locale);
-	    final String xAxisLabel = getChartMessage("xlabel", chartId, locale);
-	    final String yAxisLabel = getChartMessage("ylabel", chartId, locale);
-        
 	    // Get basic navigation data from hash table and apply
 	    // internationalized properties
         final ChartNavigationData navigationData = defaultNavigationData.get(chartId).clone();
+        setLocalAttributes(navigationData, chartId, locale);
+        
+        return navigationData;
+    }
+    
+    private void setLocalAttributes(ChartNavigationData navigationData, int chartId, Locale locale) {
+	    final String chartTitle = getChartMessage("title", chartId, locale);
+	    final String xAxisLabel = getChartMessage("xlabel", chartId, locale);
+	    final String yAxisLabel = getChartMessage("ylabel", chartId, locale);
+	    
         navigationData.setChartTitle(chartTitle);
         navigationData.setxAxisLabel(xAxisLabel);
         navigationData.setyAxisLabel(yAxisLabel);
-        setTsos(navigationData, locale);
         
-        return navigationData;
+        setTsos(navigationData, locale);
+        setTimeRange(navigationData, locale);
     }
 
     
@@ -179,6 +176,13 @@ public class NavigationServiceImpl implements INavigationService {
 	        final int tso = tree.getTso();
     	    final String tsoName = messageSource.getMessage("de.enwida.chart.tso." + tso + ".name", null, "TSO " + tso, locale);
     	    navigationData.addTso(tso, tsoName);
+	    }
+	}
+	
+	private void setTimeRange(ChartNavigationData navigationData, Locale locale) {
+	    for (final String key : navigationData.getTimeRanges().keySet()) {
+    	    final String timeRangeName = messageSource.getMessage("de.enwida.chart.timerange." + key ,null, key, locale);
+    	    navigationData.getTimeRanges().put(key, timeRangeName);
 	    }
 	}
 	
