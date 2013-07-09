@@ -139,8 +139,9 @@ define ["util/resolution"], (Resolution) ->
 
       timeRange = @select("timeRange")
       for tr in @timeRanges
-        # TODO: locale
-        timeRange.append($("<option>").val(tr).text(tr))
+        continue unless _(@navigationData.timeRanges).contains tr
+        localTimeRange = @navigationData.timeRanges[tr]
+        timeRange.append($("<option>").val(tr).text(localTimeRange))
 
       @refreshDatepicker()
 

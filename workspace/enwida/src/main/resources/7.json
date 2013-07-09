@@ -292,8 +292,18 @@
     "@items": [
       {
         "@type": "de.enwida.transport.Aspect",
-        "name": "CR_VOL_ACTIVATION",
-        "ordinal": 0
+        "name": "CR_POWERPRICE_MIN",
+        "ordinal": 10
+      },
+      {
+        "@type": "de.enwida.transport.Aspect",
+        "name": "CR_POWERPRICE_MID",
+        "ordinal": 11
+      },
+      {
+        "@type": "de.enwida.transport.Aspect",
+        "name": "CR_POWERPRICE_MAX",
+        "ordinal": 12
       }
     ]
   },
