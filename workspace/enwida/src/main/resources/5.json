@@ -275,15 +275,9 @@
   "timeRanges": {
     "@type": "java.util.HashMap",
     "@keys": [
-      "Year",
-      "Week",
-      "Day",
       "Month"
     ],
     "@items": [
-      "Year",
-      "Week",
-      "Day",
       "Month"
     ]
   },
@@ -292,10 +286,15 @@
     "@items": [
       {
         "@type": "de.enwida.transport.Aspect",
-        "name": "CR_VOL_ACTIVATION",
-        "ordinal": 0
+        "name": "CR_WORKPRICE_ACCEPTED",
+        "ordinal": 8
+      },
+      {
+        "@type": "de.enwida.transport.Aspect",
+        "name": "CR_WORKPRICE_REJECTED",
+        "ordinal": 9
       }
     ]
   },
-  "isDateScale": true
+  "isDateScale": false
 }

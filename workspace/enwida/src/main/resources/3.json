@@ -292,8 +292,8 @@
     "@items": [
       {
         "@type": "de.enwida.transport.Aspect",
-        "name": "CR_VOL_ACTIVATION",
-        "ordinal": 0
+        "name": "CR_ACTIVATION_FREQUENCY",
+        "ordinal": 3
       }
     ]
   },
