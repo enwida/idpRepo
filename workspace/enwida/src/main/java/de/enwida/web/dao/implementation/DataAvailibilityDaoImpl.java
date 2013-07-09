@@ -4,13 +4,13 @@ import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
-import de.enwida.web.dao.interfaces.BaseDao;
+import de.enwida.web.dao.interfaces.AbstractBaseDao;
 import de.enwida.web.dao.interfaces.IDataAvailibilityDao;
 import de.enwida.web.dao.rowmapper.DataAvailabilityRowMapper;
 import de.enwida.web.model.DataAvailibility;
 
 @Repository
-public class DataAvailibilityDao extends BaseDao<DataAvailibility> implements IDataAvailibilityDao {
+public class DataAvailibilityDaoImpl extends AbstractBaseDao<DataAvailibility> implements IDataAvailibilityDao {
 
 	public boolean isAvailableByExample(DataAvailibility dataAvailibility) {
 		

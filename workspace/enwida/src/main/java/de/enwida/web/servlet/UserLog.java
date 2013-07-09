@@ -18,7 +18,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
-import de.enwida.web.service.implementation.CookieSecurityService;
+import de.enwida.web.service.implementation.CookieSecurityServiceImpl;
 import de.enwida.web.utils.Constants;
 
 /**
@@ -30,7 +30,7 @@ public class UserLog extends HandlerInterceptorAdapter{
     static Logger logger = Logger.getLogger(UserLog.class);
     
     @Autowired
-    private CookieSecurityService cookieSecurityService;
+    private CookieSecurityServiceImpl cookieSecurityService;
 
     @Override
     public void postHandle(HttpServletRequest request,

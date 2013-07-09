@@ -18,14 +18,14 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
-import de.enwida.web.dao.interfaces.BaseDao;
+import de.enwida.web.dao.interfaces.AbstractBaseDao;
 import de.enwida.web.dao.interfaces.IUserDao;
 import de.enwida.web.model.Group;
 import de.enwida.web.model.Role;
 import de.enwida.web.model.User;
 
 @Repository
-public class UserDao extends BaseDao<User> implements IUserDao {
+public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
 	
 	@Autowired
 	private DriverManagerDataSource datasource;

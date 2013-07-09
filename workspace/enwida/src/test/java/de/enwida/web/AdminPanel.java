@@ -13,7 +13,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlPasswordInput;
 import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
 import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
 
-import de.enwida.web.dao.implementation.UserDao;
+import de.enwida.web.dao.implementation.UserDaoImpl;
 import de.enwida.web.model.User;
  
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -25,7 +25,7 @@ public class AdminPanel {
     final WebClient webClient = new WebClient();
     
     @Autowired
-    private UserDao userDao;
+    private UserDaoImpl userDao;
 
     
     private User user;

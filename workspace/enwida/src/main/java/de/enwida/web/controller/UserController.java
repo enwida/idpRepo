@@ -19,8 +19,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import de.enwida.web.model.User;
-import de.enwida.web.service.implementation.MailService;
+import de.enwida.web.service.implementation.MailServiceImpl;
 import de.enwida.web.service.interfaces.UserService;
+import de.enwida.web.utils.LogoFinder;
 import de.enwida.web.validator.UserValidator;
 
 /**
@@ -40,7 +41,7 @@ public class UserController {
 	private UserValidator userValidator;
  
 	@Autowired	
-	private MailService mail;
+	private MailServiceImpl mail;
 	
 	@RequestMapping(value="/user", method = RequestMethod.GET)
 	public String displayDashboard(Model model, Locale locale) {

@@ -26,7 +26,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
-import de.enwida.web.dao.implementation.UserDao;
+import de.enwida.web.dao.implementation.UserDaoImpl;
 import de.enwida.web.model.Group;
 import de.enwida.web.model.User;
  
@@ -38,7 +38,7 @@ public class UserManagementTest {
 	private DriverManagerDataSource datasource;
 	
 	@Autowired
-	private UserDao userDao;
+	private UserDaoImpl userDao;
 
 	
 	private User user;

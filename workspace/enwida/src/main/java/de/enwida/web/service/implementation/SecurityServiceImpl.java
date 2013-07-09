@@ -18,7 +18,7 @@ import de.enwida.web.utils.EnwidaUtils;
 import de.enwida.web.utils.ProductRestriction;
 
 @Service
-public class SecurityService implements ISecurityService {
+public class SecurityServiceImpl implements ISecurityService {
 
 	@Autowired
 	private IDataAvailibilityDao dataAvailibilityDao;

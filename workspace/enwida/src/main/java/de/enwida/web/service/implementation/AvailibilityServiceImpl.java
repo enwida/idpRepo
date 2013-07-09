@@ -17,7 +17,7 @@ import de.enwida.web.utils.EnwidaUtils;
 import de.enwida.web.utils.ProductRestriction;
 
 @Service
-public class AvailibilityService implements IAvailibilityService {
+public class AvailibilityServiceImpl implements IAvailibilityService {
 
 	@Autowired
 	private IDataAvailibilityDao dataAvailibilityDao;

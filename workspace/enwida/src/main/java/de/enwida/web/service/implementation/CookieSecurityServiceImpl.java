@@ -17,7 +17,7 @@ import org.apache.log4j.Logger;
  * @author Jitin
  *
  */
-public class CookieSecurityService {
+public class CookieSecurityServiceImpl {
 
 	private static final String UNICODE_FORMAT = "UTF8";
 	/**

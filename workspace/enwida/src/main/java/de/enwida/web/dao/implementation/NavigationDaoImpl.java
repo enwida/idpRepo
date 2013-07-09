@@ -12,7 +12,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Repository;
 
 import de.enwida.transport.DataResolution;
-import de.enwida.web.dao.interfaces.BaseDao;
+import de.enwida.web.dao.interfaces.AbstractBaseDao;
 import de.enwida.web.dao.interfaces.INavigationDao;
 import de.enwida.web.model.ChartNavigationData;
 import de.enwida.web.model.ProductTree;
@@ -23,7 +23,7 @@ import de.enwida.web.utils.ProductLeaf;
 import de.enwida.web.utils.ProductNode;
 
 @Repository
-public class NavigationDaoImpl extends BaseDao<User> implements INavigationDao {
+public class NavigationDaoImpl extends AbstractBaseDao<User> implements INavigationDao {
 
 	@Autowired
 	private MessageSource messageSource;

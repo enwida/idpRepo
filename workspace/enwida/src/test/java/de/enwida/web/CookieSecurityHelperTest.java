@@ -9,7 +9,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import de.enwida.web.service.implementation.CookieSecurityService;
+import de.enwida.web.service.implementation.CookieSecurityServiceImpl;
 import de.enwida.web.utils.Constants;
 
 /**
@@ -20,13 +20,13 @@ public class CookieSecurityHelperTest {
 
 	private String plaintext = "something to encrypt";
 	private String encryptedText = "E7/4iATyWCOGG0wAjxlczpwgDtUyQ3Tb";
-	private CookieSecurityService cookieSecurityHelper;
+	private CookieSecurityServiceImpl cookieSecurityHelper;
 	/**
 	 * @throws java.lang.Exception
 	 */
 	@Before
 	public void setUp() throws Exception {
-		cookieSecurityHelper = new CookieSecurityService();
+		cookieSecurityHelper = new CookieSecurityServiceImpl();
 	}
 
 	/**

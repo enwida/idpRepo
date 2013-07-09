@@ -14,7 +14,7 @@ import de.enwida.web.service.interfaces.IAvailibilityService;
 import de.enwida.web.service.interfaces.ILineService;
 import de.enwida.web.service.interfaces.ISecurityService;
 
-public class LineService implements ILineService {
+public class LineServiceImpl implements ILineService {
     
     @Autowired
     private IAspectsDao aspectDao;

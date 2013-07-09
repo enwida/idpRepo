@@ -37,7 +37,7 @@
 	<beans:bean id="userPermissionCollection" class="de.enwida.web.model.UserPermissionCollection">
 	</beans:bean>
 	
-	<beans:bean id="userDao" class="de.enwida.web.dao.implementation.UserDao">
+	<beans:bean id="userDao" class="de.enwida.web.dao.implementation.UserDaoImpl">
 	</beans:bean>
 	
 	<beans:bean id="aspectDao" class="de.enwida.web.dao.implementation.AspectDaoImpl">
@@ -46,7 +46,7 @@
 	<beans:bean id="userService" class="de.enwida.web.service.implementation.UserServiceImpl">
 	</beans:bean>
 
-	<beans:bean id="lineService" class="de.enwida.web.service.implementation.LineService">
+	<beans:bean id="lineService" class="de.enwida.web.service.implementation.LineServiceImpl">
 	</beans:bean>
 
 	<interceptors>
@@ -84,7 +84,7 @@
 	<beans:bean id="dbc" class="de.enwida.rl.controller.DatabaseController">	
 	</beans:bean>	
 
-	<beans:bean id="mailService" class="de.enwida.web.service.implementation.MailService">
+	<beans:bean id="mailService" class="de.enwida.web.service.implementation.MailServiceImpl">
 	     <beans:property name="starttls" value="${mail.smtp.starttls.enable}"/>
 	     <beans:property name="host" value="${mail.smtp.host}"/>
 	     <beans:property name="user" value="${mail.smtp.user}"/>

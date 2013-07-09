@@ -37,7 +37,7 @@ import de.enwida.web.utils.ProductRestriction;
 
 @Service("NavigationService")
 @Transactional
-public class NavigationService implements INavigationService {
+public class NavigationServiceImpl implements INavigationService {
 
 	@Autowired
 	private INavigationDao navigationDao;

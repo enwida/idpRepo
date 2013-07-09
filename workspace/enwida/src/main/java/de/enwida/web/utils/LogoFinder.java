@@ -1,4 +1,4 @@
-package de.enwida.web.controller;
+package de.enwida.web.utils;
 
 import java.io.IOException;
 

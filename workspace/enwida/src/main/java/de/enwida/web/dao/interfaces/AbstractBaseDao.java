@@ -10,13 +10,13 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
-public abstract class BaseDao<T> {
+public abstract class AbstractBaseDao<T> {
 
 	private Class<T> modelClass;
 	protected JdbcTemplate jdbcTemplate;
 	
 	@SuppressWarnings("unchecked")
-	public BaseDao() {
+	public AbstractBaseDao() {
 		this.modelClass = (Class<T>) ((ParameterizedType) getClass()
 				.getGenericSuperclass()).getActualTypeArguments()[0];
 	}

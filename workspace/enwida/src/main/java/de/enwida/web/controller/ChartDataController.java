@@ -31,9 +31,9 @@ import de.enwida.transport.IDataLine;
 import de.enwida.transport.LineRequest;
 import de.enwida.web.model.ChartNavigationData;
 import de.enwida.web.model.User;
-import de.enwida.web.service.implementation.CookieSecurityService;
-import de.enwida.web.service.implementation.LineService;
-import de.enwida.web.service.implementation.NavigationService;
+import de.enwida.web.service.implementation.CookieSecurityServiceImpl;
+import de.enwida.web.service.implementation.LineServiceImpl;
+import de.enwida.web.service.implementation.NavigationServiceImpl;
 import de.enwida.web.service.interfaces.INavigationService;
 import de.enwida.web.service.interfaces.UserService;
 import de.enwida.web.utils.CalendarRange;
@@ -49,13 +49,13 @@ import de.enwida.web.utils.NavigationDefaults;
 public class ChartDataController {
 
     @Autowired
-    private LineService lineService;
+    private LineServiceImpl lineService;
 
     @Autowired
     private INavigationService navigationService;
 
     @Autowired
-    private CookieSecurityService cookieSecurityService;
+    private CookieSecurityServiceImpl cookieSecurityService;
     
     @Autowired
     private UserService userService;
@@ -186,7 +186,7 @@ public class ChartDataController {
 	    Principal principal, Locale locale, HttpServletRequest request,
 	    HttpServletResponse response) throws ParseException {
 
-        final ChartNavigationData result = ((NavigationService) navigationService).getNavigationDataUNSECURE(chartId, getUser(principal), locale);
+        final ChartNavigationData result = ((NavigationServiceImpl) navigationService).getNavigationDataUNSECURE(chartId, getUser(principal), locale);
 
     	// Try to get the navigation defaults from the cookie
     	try {

@@ -15,7 +15,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
-import de.enwida.web.service.implementation.CookieSecurityService;
+import de.enwida.web.service.implementation.CookieSecurityServiceImpl;
 import de.enwida.web.service.interfaces.UserService;
 import de.enwida.web.utils.Constants;
 
@@ -26,7 +26,7 @@ public class LoginSuccessHandler extends
     private UserService userService;
     
   //  @Autowired
-    private CookieSecurityService cookieSecurityService=new CookieSecurityService();
+    private CookieSecurityServiceImpl cookieSecurityService=new CookieSecurityServiceImpl();
 
     private static org.apache.log4j.Logger log = Logger
             .getLogger(LoginSuccessHandler.class);
@@ -76,11 +76,11 @@ public class LoginSuccessHandler extends
         this.userService = userService;
     }
 
-    public CookieSecurityService getCookieSecurityService() {
+    public CookieSecurityServiceImpl getCookieSecurityService() {
         return cookieSecurityService;
     }
 
-    public void setCookieSecurityService(CookieSecurityService cookieSecurityService) {
+    public void setCookieSecurityService(CookieSecurityServiceImpl cookieSecurityService) {
         this.cookieSecurityService = cookieSecurityService;
     }
 }

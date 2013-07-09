@@ -4,13 +4,13 @@ import java.util.List;
 
 import org.springframework.stereotype.Repository;
 
-import de.enwida.web.dao.interfaces.BaseDao;
+import de.enwida.web.dao.interfaces.AbstractBaseDao;
 import de.enwida.web.dao.interfaces.IDataAutorizationDao;
 import de.enwida.web.dao.rowmapper.DataAuthorizationRowMapper;
 import de.enwida.web.model.DataAuthorization;
 
 @Repository
-public class DataAuthorizationDao extends BaseDao<DataAuthorization> implements IDataAutorizationDao {
+public class DataAuthorizationDaoImpl extends AbstractBaseDao<DataAuthorization> implements IDataAutorizationDao {
 
 	public boolean isAuthorizedByExample(DataAuthorization dataAuthorization) {
 		String SELECT_QUERY = "SELECT COUNT(*) FROM data_authorization WHERE role = ? AND tso = ? AND product = ? AND aspect SIMILAR TO ? AND resolution SIMILAR TO ? AND time_from >= ? AND time_to <= ? AND enabled = ?;";
