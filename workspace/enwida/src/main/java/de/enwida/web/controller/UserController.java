@@ -1,12 +1,18 @@
 package de.enwida.web.controller;
 
+import java.io.File;
 import java.security.Principal;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileItemFactory;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.stereotype.Controller;
@@ -17,7 +23,9 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 
+import de.enwida.web.model.FileUpload;
 import de.enwida.web.model.User;
 import de.enwida.web.service.implementation.MailService;
 import de.enwida.web.service.interfaces.UserService;
@@ -230,5 +238,40 @@ public class UserController {
 			}
 		}
 		return "user/forgotPassword";
+	}
+	
+	@RequestMapping(value="/upload", method = RequestMethod.GET)
+	public ModelAndView getUplaodUserData() {
+
+		return new ModelAndView("user/upload");
+	}
+	
+	@RequestMapping(value="/upload", method = RequestMethod.POST)
+	public ModelAndView postUplaodUserData(@ModelAttribute(value="fileUpload") FileUpload fileUpload, BindingResult result, HttpServletRequest request) {
+		
+		boolean isMultipart = ServletFileUpload.isMultipartContent(request);
+
+        if (isMultipart) {
+            try {
+            	FileItem item = fileUpload.getFile().getFileItem();
+            	
+            	if (!item.isFormField()) {
+	                String fileName = item.getName();
+	
+	                String root = request.getSession().getServletContext().getRealPath("/");
+	                File path = new File(root + "/uploads");
+	                if (!path.exists()) {
+	                    boolean status = path.mkdirs();
+	                }
+	
+	                File uploadedFile = new File(path + "/" + fileName);
+	                System.out.println(uploadedFile.getAbsolutePath());
+	                //item.write(uploadedFile);
+	            }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+		return new ModelAndView("user/upload", "fileUpload", new FileUpload() );
 	}
 }
