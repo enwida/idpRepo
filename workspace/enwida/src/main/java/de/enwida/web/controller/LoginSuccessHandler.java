@@ -13,16 +13,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
+import de.enwida.web.service.implementation.CookieSecurityService;
 import de.enwida.web.service.interfaces.UserService;
-import de.enwida.web.utils.AESencrp;
+import de.enwida.web.utils.Constants;
 
-@Service("loginSuccessHandler")
+
 public class LoginSuccessHandler extends
         SavedRequestAwareAuthenticationSuccessHandler {
     @Autowired
     private UserService userService;
+    
+  //  @Autowired
+    private CookieSecurityService cookieSecurityService=new CookieSecurityService();
 
     private static org.apache.log4j.Logger log = Logger
             .getLogger(LoginSuccessHandler.class);
@@ -39,7 +43,15 @@ public class LoginSuccessHandler extends
             url = (String) request.getSession().getAttribute("url_prior_login");
         }
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        Cookie cookie=new Cookie("enwida.de",AESencrp.encrypt(auth.getName()));
+        //delete all cookies and update cookie
+        Cookie cookie=new Cookie("enwida.de",cookieSecurityService.encryptJsonString(auth.getName(), Constants.ENCRYPTION_KEY));
+      
+        Cookie[] cookies = request.getCookies();
+        if(cookies!=null)
+            for (int i = 0; i < cookies.length; i++) {
+             cookies[i].setMaxAge(0);
+        }
+            
         response.addCookie(cookie);
         
         if (url != null) {
@@ -54,5 +66,21 @@ public class LoginSuccessHandler extends
                 e.printStackTrace();
             }
         }
+    }
+
+    public UserService getUserService() {
+        return userService;
+    }
+
+    public void setUserService(UserService userService) {
+        this.userService = userService;
+    }
+
+    public CookieSecurityService getCookieSecurityService() {
+        return cookieSecurityService;
+    }
+
+    public void setCookieSecurityService(CookieSecurityService cookieSecurityService) {
+        this.cookieSecurityService = cookieSecurityService;
     }
 }

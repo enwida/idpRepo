@@ -40,12 +40,6 @@
 	<beans:bean id="userDao" class="de.enwida.web.dao.implementation.UserDao">
 	</beans:bean>
 	
-	<beans:bean id="groupDao" class="de.enwida.web.dao.implementation.GroupDao">
-	</beans:bean>
-	
-	<beans:bean id="roleDao" class="de.enwida.web.dao.implementation.RoleDao">
-	</beans:bean>
-	
 	<beans:bean id="aspectDao" class="de.enwida.web.dao.implementation.AspectDaoImpl">
 	</beans:bean>
 

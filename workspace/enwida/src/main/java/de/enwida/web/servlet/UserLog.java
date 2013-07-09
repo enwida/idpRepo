@@ -12,12 +12,14 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
 import org.apache.log4j.RollingFileAppender;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
-import de.enwida.web.utils.AESencrp;
+import de.enwida.web.service.implementation.CookieSecurityService;
+import de.enwida.web.utils.Constants;
 
 /**
  * logs the user web requests
@@ -25,62 +27,36 @@ import de.enwida.web.utils.AESencrp;
  *
  */
 public class UserLog extends HandlerInterceptorAdapter{
-    static Logger logger = Logger.getLogger(UserLog.class);   
+    static Logger logger = Logger.getLogger(UserLog.class);
     
+    @Autowired
+    private CookieSecurityService cookieSecurityService;
+
     @Override
     public void postHandle(HttpServletRequest request,
             HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
                 
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();    
-        String userID="";
-        boolean loggedin=false;
-        if( auth!=null){
-            //check if user has enwida cookie
-            Cookie[] cookies = request.getCookies();
-            if (cookies!=null){
-                for (Cookie cookie : cookies) {
-                    if(cookie.getName().equalsIgnoreCase("enwida.de")){
-                        userID=cookie.getValue();
-                        break;
-                    }
-                }
-            }
-            //check if we could get userID from cookie, if not create new cookie with random id
-            if(userID.equalsIgnoreCase("")){
-                SecureRandom random = new SecureRandom();
-                Cookie cookie=new Cookie("enwida.de","not"+new BigInteger(130, random).toString(32));
-                userID=cookie.getValue();
-                response.addCookie(cookie);
-            }
-            
-            //if user name is anonymous
-            if (auth.getName().equalsIgnoreCase("anonymousUser")){
-                if (!userID.contains("not")){
-                    try{
-                        userID=AESencrp.decrypt(userID);
-                    }catch(Exception e){
-                        if(cookies!=null)
-                        for (int i = 0; i < cookies.length; i++) {
-                         cookies[i].setMaxAge(0);
-                        }
-                    }
-                }
-                else{
-                    loggedin=false;
-                    userID="C_"+userID;
-                }
-            }
-            else{
-                loggedin=true;
-                userID=auth.getName();
-            }
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        boolean loggedin = false;
+        String logFileName = null;
+        // if user name is anonymous
+        if (auth.getName().equalsIgnoreCase("anonymousUser")) {
+            loggedin = false;
+            logFileName = request.getAttribute("clientId").toString();
+        } else {
+            loggedin = true;
+            logFileName = auth.getName();
         }
-
-        String param=request.getQueryString();
-        if(param==null) param="";
-        if (!request.getRequestURL().toString().contains(".")){
-            log(userID,request.getServletPath()+param,request.getRemoteAddr(),loggedin,request.getHeader("User-Agent"),request.getHeader("Referer"));
-        }          
+        
+        String param = request.getQueryString();
+        if (param == null)
+            param = "";
+        if (!request.getRequestURL().toString().contains(".")) {
+            log(logFileName, request.getServletPath() + param,
+                    request.getRemoteAddr(), loggedin,
+                    request.getHeader("User-Agent"),
+                    request.getHeader("Referer"));
+        }        
     }
     //Following information will be stored in log file
     // time, url,IP,loggedIn,UA,Redirect
@@ -100,5 +76,41 @@ public class UserLog extends HandlerInterceptorAdapter{
 
           logger.info("|"+url+"|"+IP+"|"+loggedin+"|"+UA+"|"+redirectURL);               
           Logger.getRootLogger().removeAppender(fa);
+    }
+    @Override
+    public boolean preHandle(HttpServletRequest request,
+            javax.servlet.http.HttpServletResponse response, Object handler)
+            throws Exception {
+        String clientID=null;
+        String sessionID=null;
+        //check if there is a cookie, get clientID and sessionID
+        //(may not be needed if there is already clientID)
+        Cookie[] cookies = request.getCookies();
+        if (cookies!=null){
+            for (Cookie cookie : cookies) {
+                if(cookie.getName().equalsIgnoreCase("enwida.de")){
+                    clientID=cookieSecurityService.dycryptJsonString(cookie.getValue(), Constants.ENCRYPTION_KEY);
+                }
+                if(cookie.getName().equalsIgnoreCase("JSESSION")){
+                    sessionID=cookie.getValue();
+                }
+            }
+        }
+        //no clientID cookie
+        if (clientID==null){
+            
+            if (sessionID==null){
+                SecureRandom random = new SecureRandom();
+                sessionID= new BigInteger(130, random).toString(32);
+            }
+            //user sessionID as clientID
+            clientID=sessionID;
+            Cookie cookie=new Cookie("enwida.de",cookieSecurityService.encryptJsonString(clientID, Constants.ENCRYPTION_KEY));
+            sessionID=cookie.getValue();
+            response.addCookie(cookie);
+        }
+        
+        request.setAttribute("clientId", clientID);
+        return super.preHandle(request, response, handler);
     }
 }
