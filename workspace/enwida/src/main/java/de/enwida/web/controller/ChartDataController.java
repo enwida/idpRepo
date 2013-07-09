@@ -3,17 +3,11 @@ package de.enwida.web.controller;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.security.Principal;
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -35,10 +29,7 @@ import de.enwida.transport.Aspect;
 import de.enwida.transport.DataResolution;
 import de.enwida.transport.IDataLine;
 import de.enwida.transport.LineRequest;
-import de.enwida.web.dao.interfaces.INavigationDao;
-import de.enwida.web.model.ChartLinesRequest;
 import de.enwida.web.model.ChartNavigationData;
-import de.enwida.web.model.ProductTree;
 import de.enwida.web.model.User;
 import de.enwida.web.service.implementation.CookieSecurityService;
 import de.enwida.web.service.implementation.LineService;
@@ -69,25 +60,6 @@ public class ChartDataController {
     @Autowired
     private UserService userService;
 
-    @RequestMapping(value = "/lines", method = RequestMethod.GET)
-    @ResponseBody
-    public List<IDataLine> getLines(
-	    @RequestParam int chartId,
-	    @RequestParam int product,
-	    @RequestParam int tso,
-	    @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Calendar startTime,
-	    @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Calendar endTime,
-	    @RequestParam DataResolution resolution,
-	    Locale locale,
-	    Principal principal) {
-        
-        
-    	final ChartLinesRequest request = new ChartLinesRequest(chartId,
-    		product, tso, new CalendarRange(startTime, startTime),
-    		resolution, locale);
-
-    	return lineService.getLines(request, getUser(principal));
-    }
 
     @RequestMapping(value = "/chart", method = RequestMethod.GET)
     public String exampleChart(Principal principal) {
@@ -111,7 +83,53 @@ public class ChartDataController {
 
     	return chartNavigationData;
     }
-    
+
+    @RequestMapping(value = "/lines", method = RequestMethod.GET)
+    @ResponseBody
+    public List<IDataLine> getLines(
+	    @RequestParam int chartId,
+	    @RequestParam int product,
+	    @RequestParam int tso,
+	    @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Calendar startTime,
+	    @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Calendar endTime,
+	    @RequestParam DataResolution resolution,
+	    Locale locale,
+	    Principal principal) {
+        
+        final List<IDataLine> result = new ArrayList<>();
+        final List<Aspect> aspects = navigationService.getDefaultNavigationData(chartId).getAspects();
+        
+        for (final Aspect aspect : aspects) {
+        	final LineRequest request = new LineRequest(aspect, product, tso, startTime, endTime, resolution, locale);
+
+        	try {
+                final IDataLine line = lineService.getLine(request, getUser(principal));
+                result.add(line);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return result;
+    }
+
+    @RequestMapping(value = "/line", method = RequestMethod.GET)
+    @ResponseBody
+    public IDataLine getLine(
+	    @RequestParam String strAspect,
+	    @RequestParam int product,
+	    @RequestParam int tso,
+	    @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Calendar startTime,
+	    @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Calendar endTime,
+	    @RequestParam DataResolution resolution,
+	    Locale locale,
+	    Principal principal) throws Exception {
+        
+        final Aspect aspect = Aspect.valueOf(strAspect);
+    	final LineRequest request = new LineRequest(aspect, product, tso, startTime, endTime, resolution, locale);
+        return lineService.getLine(request, getUser(principal));
+    }
+
+
     @RequestMapping(value = "/disabledLines", method = RequestMethod.POST)
     @ResponseBody
     public void setDisabledLines(
@@ -162,24 +180,6 @@ public class ChartDataController {
     @Autowired
     private LineManager lineManager;
 
-    @Autowired
-    private INavigationDao navigationDao;
-    
-    private static final Map<Integer, List<Aspect>> aspectMap = new HashMap<Integer, List<Aspect>>();
-    static {
-        final List<Aspect> minMax = Arrays.asList(new Aspect[] {
-            Aspect.CR_POWERPRICE_MIN, Aspect.CR_POWERPRICE_MID,
-            Aspect.CR_POWERPRICE_MAX });
-        final List<Aspect> volume = Arrays.asList(new Aspect[] { Aspect.CR_VOL_ACTIVATION });
-
-        aspectMap.put(0, minMax);
-        aspectMap.put(1, minMax);
-        aspectMap.put(2, minMax);
-        aspectMap.put(3, volume);
-        aspectMap.put(4, minMax);
-    }
-
-
     @RequestMapping(value = "/navigation.test", method = RequestMethod.GET)
     @ResponseBody
     public ChartNavigationData getNavigationDataTest(@RequestParam int chartId,
@@ -219,8 +219,9 @@ public class ChartDataController {
 	    Principal principal) {
 
     	final List<IDataLine> result = new ArrayList<IDataLine>();
-    
-    	for (final Aspect aspect : aspectMap.get(chartId)) {
+    	final ChartNavigationData navigationData = navigationService.getDefaultNavigationData(chartId);
+
+    	for (final Aspect aspect : navigationData.getAspects()) {
 
     	    final LineRequest req = new LineRequest(aspect, product, tso,
     		    startTime, endTime, resolution, locale);

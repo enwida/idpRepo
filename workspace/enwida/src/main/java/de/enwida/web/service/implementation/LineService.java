@@ -1,16 +1,11 @@
 package de.enwida.web.service.implementation;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 
 import de.enwida.chart.LineManager;
-import de.enwida.transport.Aspect;
 import de.enwida.transport.IDataLine;
 import de.enwida.transport.LineRequest;
 import de.enwida.web.dao.interfaces.IAspectsDao;
-import de.enwida.web.model.ChartLinesRequest;
 import de.enwida.web.model.DataAuthorization;
 import de.enwida.web.model.DataAvailibility;
 import de.enwida.web.model.Role;
@@ -33,43 +28,14 @@ public class LineService implements ILineService {
     @Autowired
     private LineManager lineManager;
 
-    public List<IDataLine> getLines(ChartLinesRequest request, User user) {
-        final List<IDataLine> result = new ArrayList<IDataLine>();
-        
-        for (final LineRequest lineRequest : getLineRequests(request)) {
-            if (!isAllowed(lineRequest, user)) {
-                continue;
-            }
-            if (!availibilityService.isAvailable(getDataAvailibility(lineRequest))) {
-                continue;
-            }
-
-            try {
-                result.add(lineManager.getLine(lineRequest));
-            } catch (Exception e) {
-                // Don't add line to list
-                e.printStackTrace();
-            }
+    public IDataLine getLine(LineRequest request, User user) throws Exception {
+        if (!isAllowed(request, user)) {
+            throw new SecurityException("Access to line denied");
         }
-        return result;
-    }
-    
-    private List<LineRequest> getLineRequests(ChartLinesRequest request) {
-        final List<LineRequest> result = new ArrayList<LineRequest>();
-        final List<Aspect> aspects = aspectDao.getAspects(request.getChartId());
-        
-        for (final Aspect aspect : aspects) {
-            result.add(new LineRequest(
-                    aspect,
-                    request.getProduct(),
-                    request.getTso(),
-                    request.getTimeRange().getFrom(),
-                    request.getTimeRange().getTo(),
-                    request.getResolution(),
-                    request.getLocale()
-                    ));
+        if (!availibilityService.isAvailable(getDataAvailibility(request))) {
+            throw new IllegalAccessError("Data not available");
         }
-        return result;
+        return lineManager.getLine(request);
     }
     
     private boolean isAllowed(LineRequest lineRequest, User user) {

@@ -1,13 +1,13 @@
 {
   "@type": "de.enwida.web.model.ChartNavigationData",
   "chartTitle": {
-    "@id": 2,
+    "@id": 7,
     "value": ""
   },
   "defaults": {
     "tsoId": 99,
     "resolution": {
-      "@id": 48,
+      "@id": 53,
       "name": "MONTHLY",
       "ordinal": 4
     },
@@ -54,10 +54,10 @@
                         "@type": "java.util.ArrayList",
                         "@items": [
                           {
-                            "@id": 63,
+                            "@id": 68,
                             "@type": "de.enwida.web.utils.ProductLeaf",
                             "resolution": {
-                              "@id": 43,
+                              "@id": 48,
                               "@type": "java.util.Arrays$ArrayList",
                               "@items": [
                                 {
@@ -81,7 +81,7 @@
                                   "ordinal": 3
                                 },
                                 {
-                                  "@ref": 48
+                                  "@ref": 53
                                 },
                                 {
                                   "@type": "de.enwida.transport.DataResolution",
@@ -107,10 +107,10 @@
                             "children": null
                           },
                           {
-                            "@id": 18,
+                            "@id": 23,
                             "@type": "de.enwida.web.utils.ProductLeaf",
                             "resolution": {
-                              "@ref": 43
+                              "@ref": 48
                             },
                             "timeRange": {
                               "from": {
@@ -139,10 +139,10 @@
                         "@type": "java.util.ArrayList",
                         "@items": [
                           {
-                            "@ref": 63
+                            "@ref": 68
                           },
                           {
-                            "@ref": 18
+                            "@ref": 23
                           }
                         ]
                       }
@@ -165,10 +165,10 @@
                         "@type": "java.util.ArrayList",
                         "@items": [
                           {
-                            "@ref": 63
+                            "@ref": 68
                           },
                           {
-                            "@ref": 18
+                            "@ref": 23
                           }
                         ]
                       }
@@ -181,10 +181,10 @@
                         "@type": "java.util.ArrayList",
                         "@items": [
                           {
-                            "@ref": 63
+                            "@ref": 68
                           },
                           {
-                            "@ref": 18
+                            "@ref": 23
                           }
                         ]
                       }
@@ -197,10 +197,10 @@
                         "@type": "java.util.ArrayList",
                         "@items": [
                           {
-                            "@ref": 63
+                            "@ref": 68
                           },
                           {
-                            "@ref": 18
+                            "@ref": 23
                           }
                         ]
                       }
@@ -213,10 +213,10 @@
                         "@type": "java.util.ArrayList",
                         "@items": [
                           {
-                            "@ref": 63
+                            "@ref": 68
                           },
                           {
-                            "@ref": 18
+                            "@ref": 23
                           }
                         ]
                       }
@@ -229,10 +229,10 @@
                         "@type": "java.util.ArrayList",
                         "@items": [
                           {
-                            "@ref": 63
+                            "@ref": 68
                           },
                           {
-                            "@ref": 18
+                            "@ref": 23
                           }
                         ]
                       }
@@ -245,10 +245,10 @@
                         "@type": "java.util.ArrayList",
                         "@items": [
                           {
-                            "@ref": 63
+                            "@ref": 68
                           },
                           {
-                            "@ref": 18
+                            "@ref": 23
                           }
                         ]
                       }
@@ -267,10 +267,20 @@
     "@type": "java.util.HashMap"
   },
   "xAxisLabel": {
-    "@ref": 2
+    "@ref": 7
   },
   "yAxisLabel": {
-    "@ref": 2
+    "@ref": 7
+  },
+  "aspects": {
+    "@type": "java.util.ArrayList",
+    "@items": [
+      {
+        "@type": "de.enwida.transport.Aspect",
+        "name": "CR_DEGREE_OF_ACTIVATION",
+        "ordinal": 2
+      }
+    ]
   },
   "isDateScale": true
 }

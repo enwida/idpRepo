@@ -62,6 +62,10 @@ public class NavigationService implements INavigationService {
 	    	 defaultNavigationData.put(i, getNavigationDataFromJsonFile(i));
 		}
 	}
+	
+	public ChartNavigationData getDefaultNavigationData(int chartId) {
+	    return defaultNavigationData.get(chartId).clone();
+	}
 
     public ChartNavigationData getNavigationData(int chartId, User user, Locale locale) {
         // Get the internationalized properties
@@ -71,16 +75,15 @@ public class NavigationService implements INavigationService {
         
 	    // Get basic navigation data from hash table and apply
 	    // internationalized properties
-        final ChartNavigationData navigationData = defaultNavigationData.get(chartId).clone();
+        final ChartNavigationData navigationData = getDefaultNavigationData(chartId);
         navigationData.setChartTitle(chartTitle);
         navigationData.setxAxisLabel(xAxisLabel);
         navigationData.setyAxisLabel(yAxisLabel);
         
         // Fetch the related aspects and shrink the navigation data
         // under security and availability perspective
-        final List<Aspect> aspects = aspectsDao.getAspects(chartId);
-        shrinkNavigationOnSecurity(navigationData, aspects, user);
-        shrinkNavigationOnAvailibility(navigationData, aspects, user);
+        shrinkNavigationOnSecurity(navigationData, user);
+        shrinkNavigationOnAvailibility(navigationData, user);
         setTsos(navigationData, locale);
         
         return navigationData;
@@ -108,13 +111,13 @@ public class NavigationService implements INavigationService {
         public ProductRestriction getProductRestriction(int productId, int tso, Aspect aspect);
     }
     
-    private void shrinkNavigation(ChartNavigationData navigationData, List<Aspect> aspects, IProductRestrictionGetter service) {
+    private void shrinkNavigation(ChartNavigationData navigationData, IProductRestrictionGetter service) {
         for (final ProductTree productTree : navigationData.getProductTrees()) {
             final List<ProductAttributes> products = productTree.flatten();
             
             for (final ProductAttributes productAttrs : products) {
                 final List<ProductRestriction> restrictions = new ArrayList<ProductRestriction>();
-                for (final Aspect aspect : aspects) {
+                for (final Aspect aspect : navigationData.getAspects()) {
                     restrictions.add(service.getProductRestriction(productAttrs.productId, productTree.getTso(), aspect));
                 }
                 final ProductRestriction combinedRestriction = ProductRestriction.combineMaximum(restrictions);
@@ -133,8 +136,8 @@ public class NavigationService implements INavigationService {
         }
     }
     
-    private void shrinkNavigationOnSecurity(ChartNavigationData navigationData, List<Aspect> aspects, final User user) {
-        shrinkNavigation(navigationData, aspects, new IProductRestrictionGetter() {
+    private void shrinkNavigationOnSecurity(ChartNavigationData navigationData, final User user) {
+        shrinkNavigation(navigationData, new IProductRestrictionGetter() {
             
             public ProductRestriction getProductRestriction(int productId, int tso, Aspect aspect) {
                 return securityService.getProductRestriction(productId, tso, aspect, user);
@@ -142,8 +145,8 @@ public class NavigationService implements INavigationService {
         });
     }
 
-    private void shrinkNavigationOnAvailibility(ChartNavigationData navigationData, List<Aspect> aspects, final User user) {
-        shrinkNavigation(navigationData, aspects, new IProductRestrictionGetter() {
+    private void shrinkNavigationOnAvailibility(ChartNavigationData navigationData, final User user) {
+        shrinkNavigation(navigationData, new IProductRestrictionGetter() {
             
             public ProductRestriction getProductRestriction(int productId, int tso, Aspect aspect) {
                 return availibilityService.getProductRestriction(productId, tso, aspect, user);

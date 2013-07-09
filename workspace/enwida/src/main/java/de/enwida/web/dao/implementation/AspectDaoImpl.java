@@ -20,11 +20,6 @@ public class AspectDaoImpl implements IAspectsDao {
     @Autowired
     private DriverManagerDataSource datasource;
 
-    public List<Aspect> getAspects(int chartId) {
-        // TODO Auto-generated method stub
-        return Collections.emptyList();
-    }
-
     public List<AspectRight> getAllAspects(long roleID) {
         String sql = "select * FROM users.rights";
         Connection conn = null;
