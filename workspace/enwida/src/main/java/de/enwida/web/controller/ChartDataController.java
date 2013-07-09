@@ -338,7 +338,6 @@ public class ChartDataController {
 				decryptString = cookieSecurityService.dycryptJsonString(
 						cookie.getValue(), Constants.ENCRYPTION_KEY);
 			}
-
 		}
 		return decryptString;
 	}
