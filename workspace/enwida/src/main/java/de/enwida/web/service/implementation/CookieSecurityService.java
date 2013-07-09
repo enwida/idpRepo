@@ -24,21 +24,20 @@ public class CookieSecurityService {
 	 * Triple Data Encryption Algorithm (TDEA) block cipher
 	 */
 	private static final String DESEDE_ENCRYPTION_SCHEME = "DESede";
-	private static final String ENCRYPTION_KEY = "enwidaChartCookieDataEncryptionKey";
 
-	public String dycryptJsonString(String encryptedStr) {
-		return decrypt(encryptedStr);
+	public String dycryptJsonString(String encryptedStr, String encryptionKey) {
+		return decrypt(encryptedStr, encryptionKey);
 	}
 
-	public String encryptJsonString(String jsonStr) {
-		return encrypt(jsonStr);
+	public String encryptJsonString(String jsonStr, String encryptionKey) {
+		return encrypt(jsonStr, encryptionKey);
 	}
 
-	private String encrypt(String unencryptedString) {
+	private String encrypt(String unencryptedString, String encryptionKey) {
 		String encryptedString = null;
 		try {
 			Cipher cipher = Cipher.getInstance(DESEDE_ENCRYPTION_SCHEME);
-			cipher.init(Cipher.ENCRYPT_MODE, getKey());
+			cipher.init(Cipher.ENCRYPT_MODE, getKey(encryptionKey));
 			byte[] plainText = unencryptedString.getBytes(UNICODE_FORMAT);
 			byte[] encryptedText = cipher.doFinal(plainText);
 			encryptedString = new String(Base64.encodeBase64(encryptedText));
@@ -50,11 +49,11 @@ public class CookieSecurityService {
 		return encryptedString;
 	}
 
-	private String decrypt(String encryptedString) {
+	private String decrypt(String encryptedString, String encryptionKey) {
 		String decryptedText = null;
 		try {
 			Cipher cipher = Cipher.getInstance(DESEDE_ENCRYPTION_SCHEME);
-			cipher.init(Cipher.DECRYPT_MODE, getKey());
+			cipher.init(Cipher.DECRYPT_MODE, getKey(encryptionKey));
 			byte[] encryptedText = Base64.decodeBase64(encryptedString);
 			byte[] plainText = cipher.doFinal(encryptedText);
 			decryptedText = new String(plainText);
@@ -66,8 +65,8 @@ public class CookieSecurityService {
 		return decryptedText;
 	}
 
-	private SecretKey getKey() throws Exception {
-		byte[] arrayBytes = ENCRYPTION_KEY.getBytes(UNICODE_FORMAT);
+	private SecretKey getKey(String encryptionkey) throws Exception {
+		byte[] arrayBytes = encryptionkey.getBytes(UNICODE_FORMAT);
 		KeySpec ks = new DESedeKeySpec(arrayBytes);
 		SecretKeyFactory skf = SecretKeyFactory
 				.getInstance(DESEDE_ENCRYPTION_SCHEME);

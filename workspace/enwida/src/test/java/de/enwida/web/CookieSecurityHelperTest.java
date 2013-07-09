@@ -10,6 +10,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import de.enwida.web.service.implementation.CookieSecurityService;
+import de.enwida.web.utils.Constants;
 
 /**
  * @author Jitin
@@ -42,7 +43,8 @@ public class CookieSecurityHelperTest {
 	@Test
 	public void testDycryptJsonString() {
 		String plaintext = cookieSecurityHelper
-				.dycryptJsonString(encryptedText);
+.dycryptJsonString(
+				encryptedText, Constants.ENCRYPTION_KEY);
 		System.out.println(encryptedText + " => " + plaintext);
 		assertNotNull(plaintext);
 	}
@@ -53,7 +55,8 @@ public class CookieSecurityHelperTest {
 	@Test
 	public void testEncryptJsonString() {
 		String encryptedText = cookieSecurityHelper
-				.encryptJsonString(plaintext);
+.encryptJsonString(
+				plaintext, Constants.ENCRYPTION_KEY);
 		System.out.println(plaintext + " => " + encryptedText);
 		assertNotNull(encryptedText);
 	}
