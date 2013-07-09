@@ -4,6 +4,7 @@ import java.security.Principal;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -113,6 +114,15 @@ public class UserController {
 	    if(referrer!=null){
 	        request.getSession().setAttribute("url_prior_login", referrer);
 	    }
+	    Cookie[] cookies = request.getCookies();
+        if (cookies!=null){
+            for (Cookie cookie : cookies) {
+                if(cookie.getName().equalsIgnoreCase("JSESSIONID")){
+                    request.getSession().setAttribute("oldCookieID", cookie.getValue());
+                    break;
+                }
+            }
+        }
 		return "user/login";
 	}
 	

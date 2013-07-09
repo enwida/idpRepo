@@ -273,10 +273,15 @@ public class ChartDataController {
         
         // Set the defaults for our chart ID
         chartDefaults.set(chartId, defaults);
+		if (principal != null) {
+			chartDefaults.setUsername(principal.getName());
+		}
         final String defaultsJson = JsonWriter.objectToJson(chartDefaults);
         
     	// Create/update cookie
     	if (principal != null) {
+			// Insert / Update user chart navigation settings in database
+
     	    setUserSettingsInCookie(defaultsJson, response,
     		    Constants.ENWIDA_CHART_COOKIE_USER);
     	} else {
@@ -300,18 +305,17 @@ public class ChartDataController {
      * @param response
      *            {@link HttpServletResponse}
      */
-    public void setUserSettingsInCookie(final String userName,
-	    final HttpServletResponse response, String cookieName) {
+	public void setUserSettingsInCookie(final String userSettingsJson,
+			final HttpServletResponse response, String cookieName) {
 
-    	final String usersettingsjson = userName;
-    	final String encryptedData = cookieSecurityService
-    		.encryptJsonString(usersettingsjson);
-    	final Cookie chartcookie = new Cookie(cookieName, encryptedData);
-    	// works only for SSL connection
-    	// chartcookie.setSecure(true);
-    	chartcookie.setMaxAge(Constants.ENWIDA_CHART_COOKIE_EXPIRY_TIME);
-    	response.addCookie(chartcookie);
-    }
+		final String encryptedData = cookieSecurityService.encryptJsonString(
+				userSettingsJson, Constants.ENCRYPTION_KEY);
+		final Cookie chartcookie = new Cookie(cookieName, encryptedData);
+		// works only for SSL connection
+		// chartcookie.setSecure(true);
+		chartcookie.setMaxAge(Constants.ENWIDA_CHART_COOKIE_EXPIRY_TIME);
+		response.addCookie(chartcookie);
+	}
 
     /**
      * This method is used to get the chart settings of user in a {@link Cookie}
@@ -322,21 +326,20 @@ public class ChartDataController {
      *            {@link HttpServletResponse}
      */
     public String getUserSettingsFromCookie(HttpServletRequest request,
-	    String cookieName) {
+			String cookieName) {
 
-    	String decryptString = null;
-    	final Cookie[] cookies = request.getCookies();
-    	for (final Cookie cookie : cookies) {
-    	    // System.out.println(cookie.getValue());
-    	    if (((cookie.getName() != null) && cookie.getName().equals(
-    		    cookieName))
-    		    && (cookie.getValue() != null)) {
-    		decryptString = cookieSecurityService.dycryptJsonString(cookie
-    			.getValue());
-    	    }
-    
-    	}
-    	return decryptString;
-    }
+		String decryptString = null;
+		final Cookie[] cookies = request.getCookies();
+		for (final Cookie cookie : cookies) {
+			// System.out.println(cookie.getValue());
+			if (((cookie.getName() != null) && cookie.getName().equals(
+					cookieName))
+					&& (cookie.getValue() != null)) {
+				decryptString = cookieSecurityService.dycryptJsonString(
+						cookie.getValue(), Constants.ENCRYPTION_KEY);
+			}
+		}
+		return decryptString;
+	}
 
 }
