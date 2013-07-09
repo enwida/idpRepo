@@ -133,7 +133,7 @@ public class AdminController {
         File file;
         try {
             file=new File(System.getenv("ENWIDA_HOME")+"/log/"+user+".log");
-            model.addAttribute("userLog",  FileUtils.readFileToString(file));
+            model.addAttribute("userLog",FileUtils.readFileToString(file));
         } catch (Exception e) {
             model.addAttribute("error", "File can not be read");
         } 

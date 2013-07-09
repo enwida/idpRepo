@@ -39,14 +39,9 @@ public class LoginSuccessHandler extends
             url = (String) request.getSession().getAttribute("url_prior_login");
         }
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        //logging once
-        UserLog.log(auth.getName() , "|IP: "+request.getRemoteAddr()+" USER-AGENT: "+request.getHeader("User-Agent")+"|");
-        UserLog.log(auth.getName() , "|Redirect URL:"+url+"|");
-        Cookie[] cookies = request.getCookies();
-        for (Cookie cookie : cookies) {
-          //logging once
-            UserLog.log(auth.getName() ,"|"+ "Cookie"+cookie.getValue()+"|");
-        }
+        Cookie cookie=new Cookie("enwida.de",auth.getName());
+        response.addCookie(cookie);
+        
         if (url != null) {
 
             response.sendRedirect(url);
