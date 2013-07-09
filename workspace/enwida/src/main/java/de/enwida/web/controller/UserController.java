@@ -114,15 +114,6 @@ public class UserController {
 	    if(referrer!=null){
 	        request.getSession().setAttribute("url_prior_login", referrer);
 	    }
-	    Cookie[] cookies = request.getCookies();
-        if (cookies!=null){
-            for (Cookie cookie : cookies) {
-                if(cookie.getName().equalsIgnoreCase("JSESSIONID")){
-                    request.getSession().setAttribute("oldCookieID", cookie.getValue());
-                    break;
-                }
-            }
-        }
 		return "user/login";
 	}
 	

@@ -16,7 +16,7 @@ import org.springframework.security.web.authentication.SavedRequestAwareAuthenti
 import org.springframework.stereotype.Service;
 
 import de.enwida.web.service.interfaces.UserService;
-import de.enwida.web.servlet.UserLog;
+import de.enwida.web.utils.AESencrp;
 
 @Service("loginSuccessHandler")
 public class LoginSuccessHandler extends
@@ -39,7 +39,7 @@ public class LoginSuccessHandler extends
             url = (String) request.getSession().getAttribute("url_prior_login");
         }
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        Cookie cookie=new Cookie("enwida.de",auth.getName());
+        Cookie cookie=new Cookie("enwida.de",AESencrp.encrypt(auth.getName()));
         response.addCookie(cookie);
         
         if (url != null) {
