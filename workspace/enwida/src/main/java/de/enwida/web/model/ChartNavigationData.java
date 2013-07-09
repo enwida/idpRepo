@@ -20,6 +20,7 @@ public class ChartNavigationData implements Cloneable {
 	private NavigationDefaults defaults;
 	private List<ProductTree> productTrees;
 	private Map<Integer, String> tsos;
+	private Map<String, String> timeRanges;
 	private String xAxisLabel;
 	private String yAxisLabel;
 	private List<Aspect> aspects;
@@ -43,6 +44,7 @@ public class ChartNavigationData implements Cloneable {
 		this.productTrees = productTrees;
 		this.defaults = defaults;
 		this.aspects = new ArrayList<>();
+		this.timeRanges = new HashMap<>();
 	}
 
 	public void addTso(int id, String name) {
@@ -110,6 +112,7 @@ public class ChartNavigationData implements Cloneable {
 	    result.setDefaults(defaults.clone());
 	    result.tsos = new HashMap<>(tsos);
 	    result.aspects = new ArrayList<Aspect>(aspects);
+	    result.timeRanges = new HashMap<>(timeRanges);
 
 	    for (final ProductTree tree : productTrees) {
 	        result.addProductTree(tree.clone());
@@ -167,6 +170,10 @@ public class ChartNavigationData implements Cloneable {
 
     public void setAspects(List<Aspect> aspects) {
         this.aspects = aspects;
+    }
+
+    public Map<String, String> getTimeRanges() {
+        return timeRanges;
     }
 
 }
