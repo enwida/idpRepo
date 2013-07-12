@@ -28,7 +28,6 @@ public abstract class AbstractBaseDao<T> {
 	@Autowired
 	public void setDataSource(DataSource dataSource) {
 		this.jdbcTemplate = new JdbcTemplate(dataSource);
-		
 	}
 	
 	public T findById(Long id) {

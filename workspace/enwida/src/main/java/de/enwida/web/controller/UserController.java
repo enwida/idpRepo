@@ -2,19 +2,13 @@ package de.enwida.web.controller;
 
 import java.io.File;
 import java.security.Principal;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Locale;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.FileItemFactory;
-import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -41,9 +35,6 @@ public class UserController {
 	
 	@Autowired
 	private UserService userService;
-	
-	@Autowired
-	private DriverManagerDataSource datasource;
 	
 	@Autowired
 	private UserValidator userValidator;

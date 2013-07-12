@@ -8,7 +8,6 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -39,9 +38,6 @@ public class AdminController {
 	
     @Autowired
     private AspectService aspectService;
-	
-	@Autowired
-	private DriverManagerDataSource datasource;
 	
 	@Autowired
 	private UserValidator userValidator;

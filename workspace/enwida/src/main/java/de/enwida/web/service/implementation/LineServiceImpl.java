@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import de.enwida.chart.LineManager;
 import de.enwida.transport.IDataLine;
 import de.enwida.transport.LineRequest;
-import de.enwida.web.dao.interfaces.IAspectsDao;
 import de.enwida.web.model.DataAuthorization;
 import de.enwida.web.model.DataAvailibility;
 import de.enwida.web.model.Role;
@@ -15,9 +14,6 @@ import de.enwida.web.service.interfaces.ILineService;
 import de.enwida.web.service.interfaces.ISecurityService;
 
 public class LineServiceImpl implements ILineService {
-    
-    @Autowired
-    private IAspectsDao aspectDao;
     
     @Autowired
     private ISecurityService securityService;

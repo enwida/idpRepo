@@ -86,6 +86,8 @@
 	<beans:bean id="dbc" class="de.enwida.rl.controller.DatabaseController">	
 	</beans:bean>	
 
+	<beans:bean scope="singleton" name="cookieSecurityService" class="de.enwida.web.service.implementation.CookieSecurityServiceImpl"></beans:bean>
+
 	<beans:bean id="mailService" class="de.enwida.web.service.implementation.MailServiceImpl">
 	     <beans:property name="starttls" value="${mail.smtp.starttls.enable}"/>
 	     <beans:property name="host" value="${mail.smtp.host}"/>
