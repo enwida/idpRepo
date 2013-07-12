@@ -14,5 +14,4 @@ public interface INavigationService {
 	ChartNavigationData getDefaultNavigationData(int chartId);
 	
 	ChartNavigationData getNavigationDataFromJsonFile(int chartId) throws IOException;
-	void putNavigationDataToJsonFile(int chartId, ChartNavigationData chartNavigationData) throws IOException;
 }

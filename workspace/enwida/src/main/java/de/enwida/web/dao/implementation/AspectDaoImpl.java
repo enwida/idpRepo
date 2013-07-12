@@ -5,13 +5,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
-import de.enwida.transport.Aspect;
 import de.enwida.web.dao.interfaces.IAspectsDao;
 import de.enwida.web.model.AspectRight;
 

@@ -22,7 +22,7 @@ import org.springframework.web.servlet.ModelAndView;
 import de.enwida.web.model.FileUpload;
 import de.enwida.web.model.User;
 import de.enwida.web.service.implementation.MailServiceImpl;
-import de.enwida.web.service.interfaces.UserService;
+import de.enwida.web.service.interfaces.IUserService;
 import de.enwida.web.utils.LogoFinder;
 import de.enwida.web.validator.UserValidator;
 
@@ -34,7 +34,7 @@ import de.enwida.web.validator.UserValidator;
 public class UserController {
 	
 	@Autowired
-	private UserService userService;
+	private IUserService userService;
 	
 	@Autowired
 	private UserValidator userValidator;

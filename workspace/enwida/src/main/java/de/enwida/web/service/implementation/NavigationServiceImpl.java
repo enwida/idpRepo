@@ -19,11 +19,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cedarsoftware.util.io.JsonReader;
-import com.cedarsoftware.util.io.JsonWriter;
 
 import de.enwida.transport.Aspect;
-import de.enwida.web.dao.interfaces.IAspectsDao;
-import de.enwida.web.dao.interfaces.INavigationDao;
 import de.enwida.web.model.ChartNavigationData;
 import de.enwida.web.model.ProductTree;
 import de.enwida.web.model.ProductTree.ProductAttributes;
@@ -40,16 +37,10 @@ import de.enwida.web.utils.ProductRestriction;
 public class NavigationServiceImpl implements INavigationService {
 
 	@Autowired
-	private INavigationDao navigationDao;
-	
-	@Autowired
 	private ISecurityService securityService;
 	
 	@Autowired
 	private IAvailibilityService availibilityService;
-	
-	@Autowired
-	private IAspectsDao aspectsDao;
 	
 	@Autowired
 	private MessageSource messageSource;
@@ -150,13 +141,6 @@ public class NavigationServiceImpl implements INavigationService {
             }
         });
     }
-
-    @Override
-	public void putNavigationDataToJsonFile(int chartId, ChartNavigationData chartNavigationData) throws IOException {
-		String json = JsonWriter.objectToJson(chartNavigationData);
-		System.out.println(json);
-		//TODO: Complete the Implementation
-	}
 
 	@Override
 	public ChartNavigationData getNavigationDataFromJsonFile(int chartId) throws IOException {

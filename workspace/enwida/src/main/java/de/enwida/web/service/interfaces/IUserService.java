@@ -6,7 +6,7 @@ import de.enwida.web.model.Group;
 import de.enwida.web.model.Role;
 import de.enwida.web.model.User;
 
-public interface UserService {
+public interface IUserService {
 
     public User getUser(Long id);
     public User getUser(String userName);

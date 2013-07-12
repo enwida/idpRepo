@@ -22,8 +22,8 @@ import de.enwida.web.model.AspectRight;
 import de.enwida.web.model.Group;
 import de.enwida.web.model.Role;
 import de.enwida.web.model.User;
-import de.enwida.web.service.interfaces.AspectService;
-import de.enwida.web.service.interfaces.UserService;
+import de.enwida.web.service.interfaces.IAspectService;
+import de.enwida.web.service.interfaces.IUserService;
 import de.enwida.web.validator.UserValidator;
 
 /**
@@ -34,10 +34,10 @@ import de.enwida.web.validator.UserValidator;
 public class AdminController {
 	
 	@Autowired
-	private UserService userService;
+	private IUserService userService;
 	
     @Autowired
-    private AspectService aspectService;
+    private IAspectService aspectService;
 	
 	@Autowired
 	private UserValidator userValidator;

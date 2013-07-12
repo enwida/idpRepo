@@ -1,8 +1,5 @@
 package de.enwida.web.dao.implementation;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
@@ -18,7 +15,6 @@ import de.enwida.web.model.ChartNavigationData;
 import de.enwida.web.model.ProductTree;
 import de.enwida.web.model.User;
 import de.enwida.web.utils.CalendarRange;
-import de.enwida.web.utils.NavigationDefaults;
 import de.enwida.web.utils.ProductLeaf;
 import de.enwida.web.utils.ProductNode;
 

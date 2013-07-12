@@ -35,7 +35,7 @@ import de.enwida.web.service.implementation.CookieSecurityServiceImpl;
 import de.enwida.web.service.implementation.LineServiceImpl;
 import de.enwida.web.service.implementation.NavigationServiceImpl;
 import de.enwida.web.service.interfaces.INavigationService;
-import de.enwida.web.service.interfaces.UserService;
+import de.enwida.web.service.interfaces.IUserService;
 import de.enwida.web.utils.CalendarRange;
 import de.enwida.web.utils.ChartDefaults;
 import de.enwida.web.utils.Constants;
@@ -58,7 +58,7 @@ public class ChartDataController {
     private CookieSecurityServiceImpl cookieSecurityService;
     
     @Autowired
-    private UserService userService;
+    private IUserService userService;
 
 
     @RequestMapping(value = "/chart", method = RequestMethod.GET)

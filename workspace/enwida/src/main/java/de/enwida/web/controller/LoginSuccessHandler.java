@@ -8,28 +8,23 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
-import org.springframework.stereotype.Component;
 
 import de.enwida.web.service.implementation.CookieSecurityServiceImpl;
-import de.enwida.web.service.interfaces.UserService;
+import de.enwida.web.service.interfaces.IUserService;
 import de.enwida.web.utils.Constants;
 
 
 public class LoginSuccessHandler extends
         SavedRequestAwareAuthenticationSuccessHandler {
     @Autowired
-    private UserService userService;
+    private IUserService userService;
     
-  //  @Autowired
-    private CookieSecurityServiceImpl cookieSecurityService=new CookieSecurityServiceImpl();
-
-    private static org.apache.log4j.Logger log = Logger
-            .getLogger(LoginSuccessHandler.class);
+    @Autowired
+    private CookieSecurityServiceImpl cookieSecurityService;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request,
@@ -68,11 +63,11 @@ public class LoginSuccessHandler extends
         }
     }
 
-    public UserService getUserService() {
+    public IUserService getUserService() {
         return userService;
     }
 
-    public void setUserService(UserService userService) {
+    public void setUserService(IUserService userService) {
         this.userService = userService;
     }
 
