@@ -50,12 +50,10 @@ public class ProductTree implements Cloneable {
     private static void flatten(ProductNode node, String productId, List<ProductAttributes> accumulator) {
         if (node instanceof ProductLeaf) {
             final ProductLeaf leaf = (ProductLeaf) node;
-            productId += leaf.getId();
-            accumulator.add(new ProductAttributes(Integer.parseInt(productId), leaf.getResolution(), leaf.getTimeRange()));
+            accumulator.add(new ProductAttributes(Integer.parseInt(productId + leaf.getId()), leaf.getResolution(), leaf.getTimeRange()));
         } else if (node.getChildren() != null) {
-            productId += node.getId();
             for (final ProductNode child : node.getChildren()) {
-                flatten(child, productId, accumulator);
+                flatten(child, productId + node.getId(), accumulator);
             }
         }
     }

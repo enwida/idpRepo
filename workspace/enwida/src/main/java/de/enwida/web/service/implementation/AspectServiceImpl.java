@@ -8,11 +8,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import de.enwida.web.dao.interfaces.IAspectsDao;
 import de.enwida.web.model.AspectRight;
-import de.enwida.web.service.interfaces.AspectService;
+import de.enwida.web.service.interfaces.IAspectService;
 
 @Service("AspectService")
 @Transactional
-public class AspectServiceImpl implements AspectService {
+public class AspectServiceImpl implements IAspectService {
 
 	@Autowired
 	private IAspectsDao aspectDao;

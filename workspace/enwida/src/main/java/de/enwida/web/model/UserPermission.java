@@ -2,8 +2,6 @@ package de.enwida.web.model;
 
 import java.security.Permission;
 
-import org.joda.convert.ToString;
-
 public class UserPermission extends Permission {
 
 	public UserPermission(String name) {
@@ -24,8 +22,10 @@ public class UserPermission extends Permission {
 
 	@Override
 	public boolean equals(Object obj) {
-		// TODO Auto-generated method stub
-		return this.getName()==((Permission)obj).getName();
+	    if (obj == null || !(obj instanceof Permission)) {
+	        return false;
+	    }
+		return this.getName().equals(((Permission)obj).getName());
 	}
 
 	@Override

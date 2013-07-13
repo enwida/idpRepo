@@ -20,7 +20,5 @@
 			</list>
 		</property>
 	</bean>	
-		
-	<bean scope="singleton" name="cookieSecurityService" class="de.enwida.web.service.implementation.CookieSecurityServiceImpl"></bean>
 	
 </beans>

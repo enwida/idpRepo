@@ -1,13 +1,10 @@
 package de.enwida.web;
 
-import static org.junit.Assert.assertEquals;
-
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Calendar;
-import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -15,7 +12,6 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -118,6 +114,7 @@ public class UserManagementTest {
 			}
 		}
 	}
+	
 	
 	private String getSpringSecurityQuery(String xPathInFile) throws Exception{
 	    DocumentBuilder builder = DocumentBuilderFactory.newInstance().newDocumentBuilder();

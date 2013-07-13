@@ -5,15 +5,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
+
+import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.PreparedStatementCreator;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
@@ -28,7 +25,7 @@ import de.enwida.web.model.User;
 public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
 	
 	@Autowired
-	private DriverManagerDataSource datasource;
+	private DataSource datasource;
 	
 	@Override
 	public List<User> findAllUsersWithPermissions(){

@@ -6,16 +6,16 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
 import de.enwida.web.model.User;
-import de.enwida.web.service.interfaces.UserService;
+import de.enwida.web.service.interfaces.IUserService;
 import de.enwida.web.utils.Constants;
 
 @Component
 public class UserValidator implements Validator {
     
     @Autowired
-    private UserService userService;
+    private IUserService userService;
 
-	public boolean supports(Class clazz) {
+	public boolean supports(Class<?> clazz) {
 		return clazz.equals(User.class);
 	}
 	
