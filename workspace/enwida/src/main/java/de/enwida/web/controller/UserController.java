@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -40,7 +41,9 @@ public class UserController {
 	private UserValidator userValidator;
  
 	@Autowired	
-	private MailServiceImpl mail;
+	private MailServiceImpl mail;	
+
+    private static org.apache.log4j.Logger logger = Logger.getLogger(AdminController.class);
 	
 	@RequestMapping(value="/user", method = RequestMethod.GET)
 	public String displayDashboard(Model model, Locale locale) {
@@ -217,6 +220,7 @@ public class UserController {
 			try {
 				mail.SendEmail(email,"Your Password:",password);
 			} catch (Exception e) {
+	            logger.error(e.getMessage());
 				model.addAttribute("error", "Mailling Error");
 			}
 		}

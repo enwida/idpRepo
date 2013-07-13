@@ -7,9 +7,11 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
+import de.enwida.web.controller.AdminController;
 import de.enwida.web.dao.interfaces.IAspectsDao;
 import de.enwida.web.model.AspectRight;
 
@@ -17,6 +19,8 @@ public class AspectDaoImpl implements IAspectsDao {
     
     @Autowired
     private DriverManagerDataSource datasource;
+    
+    private static org.apache.log4j.Logger logger = Logger.getLogger(AdminController.class);
 
     public List<AspectRight> getAllAspects(long roleID) {
         String sql = "select * FROM users.rights";
@@ -45,7 +49,9 @@ public class AspectDaoImpl implements IAspectsDao {
             if (conn != null) {
                 try {
                 conn.close();
-                } catch (SQLException e) {}
+                } catch (SQLException e) {
+                    logger.error(e.getMessage());
+                }
             }
         }
         return rights;

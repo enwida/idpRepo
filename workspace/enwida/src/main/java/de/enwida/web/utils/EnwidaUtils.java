@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.math.BigInteger;
+import java.security.SecureRandom;
 
 import de.enwida.transport.Aspect;
 import de.enwida.transport.DataResolution;
@@ -102,5 +104,11 @@ public class EnwidaUtils {
 		return sb.toString();
  
 	}
+	
+	private SecureRandom random = new SecureRandom();
 
+    public String getActivationId()
+    {
+      return new BigInteger(130, random).toString(32);
+    }
 }

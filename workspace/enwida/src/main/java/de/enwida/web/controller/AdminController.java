@@ -132,6 +132,7 @@ public class AdminController {
             model.addAttribute("userLog",FileUtils.readFileToString(file));
         } catch (Exception e) {
             model.addAttribute("error", "File can not be read");
+            logger.error(e.getMessage());
         } 
         model.addAttribute("content", "userLog");
         return "user/admin/master";
@@ -186,6 +187,7 @@ public class AdminController {
             model.addAttribute("info", "OK");
         } catch (Exception e) {
             model.addAttribute("error", "e");
+            logger.error(e.getMessage());
         }
         return user(model,userID);
     }
@@ -201,6 +203,7 @@ public class AdminController {
             
         } catch (Exception e) {
             model.addAttribute("error", "Deassign all groups to delete user");
+            logger.info(e.getMessage());
             return user(model,userID);
         }
         return userList(model);

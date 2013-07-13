@@ -32,7 +32,7 @@ public abstract class AbstractBaseDao<T> {
 	
 	public T findById(Long id) {
 		String sql = "SELECT * FROM T_" + this.modelClass.getSimpleName().toUpperCase() + " WHERE id = " + id;
-		return (T) this.jdbcTemplate.queryForObject(sql, this.modelClass);
+		return this.jdbcTemplate.queryForObject(sql, this.modelClass);
 	}
 
 	public List<T> findByExample(T obj) {

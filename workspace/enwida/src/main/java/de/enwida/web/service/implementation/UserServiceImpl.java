@@ -6,17 +6,19 @@ import java.sql.Date;
 import java.util.Calendar;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
+import de.enwida.web.controller.AdminController;
 import de.enwida.web.dao.interfaces.IUserDao;
 import de.enwida.web.model.Group;
 import de.enwida.web.model.Role;
 import de.enwida.web.model.User;
 import de.enwida.web.service.interfaces.IUserService;
-import de.enwida.web.utils.ActivationIdGenerator;
 import de.enwida.web.utils.Constants;
+import de.enwida.web.utils.EnwidaUtils;
 
 
 @TransactionConfiguration( defaultRollback = true )
@@ -28,6 +30,8 @@ public class UserServiceImpl implements IUserService {
 
     @Autowired
     private MailServiceImpl mailService;
+    
+    private static org.apache.log4j.Logger logger = Logger.getLogger(AdminController.class);
 	
     public User getUser(Long id) {
 		
@@ -47,7 +51,7 @@ public class UserServiceImpl implements IUserService {
 		user.setEnabled(false);
 		
 		// Generating activation Id for User
-		ActivationIdGenerator activationIdGenerator = new ActivationIdGenerator();
+		EnwidaUtils activationIdGenerator = new EnwidaUtils();
 		user.setActivationKey(activationIdGenerator.getActivationId());
 		
 		// Saving user in the user table
@@ -82,6 +86,7 @@ public class UserServiceImpl implements IUserService {
 				mailService.SendEmail(user.getUserName(), "Activation Link", Constants.ACTIVATION_URL + "username=" + user.getUserName() + "&actId=" + user.getActivationKey());
 			}
 			catch (Exception e) {
+			    logger.error(e.getMessage());
 				return false;
 			}
 			

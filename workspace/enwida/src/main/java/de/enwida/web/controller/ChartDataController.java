@@ -13,6 +13,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
@@ -59,6 +60,8 @@ public class ChartDataController {
     
     @Autowired
     private IUserService userService;
+    
+    private static org.apache.log4j.Logger logger = Logger.getLogger(AdminController.class);
 
 
     @RequestMapping(value = "/chart", method = RequestMethod.GET)
@@ -79,7 +82,9 @@ public class ChartDataController {
         	if (defaults != null) {
             	chartNavigationData.setDefaults(defaults);
         	}
-    	} catch (Exception ignored) { }
+    	} catch (Exception ignored) {
+    	    logger.info(ignored.getMessage());
+    	}
 
     	return chartNavigationData;
     }
@@ -154,13 +159,16 @@ public class ChartDataController {
                 defaults.setDisabledLines(disabledLines);
             }
             updateChartDefaultsCookie(chartId, defaults, request, response, principal);
-        } catch (Exception ignored) { }
+        } catch (Exception ignored) { 
+            logger.info(ignored.getMessage());
+        }
     }
     
     private User getUser(Principal principal) {
         try {
             return userService.getUser(principal.getName());
         } catch (Exception e) {
+            logger.error(e.getMessage());
             return null;
         }
     }
@@ -199,7 +207,9 @@ public class ChartDataController {
     	    if (defaults != null) {
     	        result.setDefaults(defaults);
     	    }
-    	} catch (Exception ignored) { }
+    	} catch (Exception ignored) {
+            logger.info(ignored.getMessage());
+    	}
     	
     	return result;
     }
@@ -268,7 +278,9 @@ public class ChartDataController {
             chartDefaults = (ChartDefaults) jsonReader.readObject();
             jsonReader.close();
         } catch (Exception e) {
-            chartDefaults = new ChartDefaults();
+            chartDefaults = new ChartDefaults(); 
+            logger.error(e.getMessage());
+
         }
         
         // Set the defaults for our chart ID

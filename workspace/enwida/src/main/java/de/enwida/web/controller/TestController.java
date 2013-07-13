@@ -39,9 +39,9 @@ public class TestController {
 				
 		DataAvailibility da = new DataAvailibility();
 		da.setProduct(211);		
-		cal.set(2008, 00, 02, 00, 00, 00);
+		cal.set(2008, 00, 2, 00, 00, 00);
 		da.setTimeFrom(new Date(cal.getTimeInMillis()));
-		cal.set(2013, 02, 13, 19, 30, 00);
+		cal.set(2013, 2, 13, 19, 30, 00);
 		da.setTimeTo(new Date(cal.getTimeInMillis()));
 		da.setTableName("15min");
 		
@@ -61,9 +61,9 @@ public class TestController {
 		da.setProductId(321);
 		da.setAspect("rl_ab1");
 		da.setResolution("15min");
-		cal.set(2010, 00, 01, 00, 00, 00);
+		cal.set(2010, 00, 1, 00, 00, 00);
 		da.setTimeFrom(new Date(cal.getTimeInMillis()));
-		cal.set(2011, 00, 01, 00, 00, 00);
+		cal.set(2011, 00, 1, 00, 00, 00);
 		da.setTimeTo(new Date(cal.getTimeInMillis()));	
 		da.setEnabled(true);
 		

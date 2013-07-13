@@ -12,6 +12,7 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 
+import org.apache.log4j.Logger;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,6 +23,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
+import de.enwida.web.controller.AdminController;
 import de.enwida.web.dao.implementation.UserDaoImpl;
 import de.enwida.web.model.Group;
 import de.enwida.web.model.User;
@@ -34,7 +36,9 @@ public class UserManagementTest {
 	private DriverManagerDataSource datasource;
 	
 	@Autowired
-	private UserDaoImpl userDao;
+	private UserDaoImpl userDao;	
+
+    private static org.apache.log4j.Logger logger = Logger.getLogger(AdminController.class);
 
 	
 	private User user;
@@ -86,7 +90,9 @@ public class UserManagementTest {
 			if (conn != null) {
 				try {
 				conn.close();
-				} catch (SQLException e) {}
+                } catch (SQLException e) {
+                    logger.error(e.getMessage());
+                }
 			}
 		}
 	}
@@ -110,7 +116,9 @@ public class UserManagementTest {
 			if (conn != null) {
 				try {
 				conn.close();
-				} catch (SQLException e) {}
+                } catch (SQLException e) {
+                    logger.error(e.getMessage());
+                }
 			}
 		}
 	}

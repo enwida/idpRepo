@@ -39,7 +39,8 @@ public class LoginSuccessHandler extends
         }
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         //delete all cookies and update cookie
-        Cookie cookie=new Cookie("enwida.de",cookieSecurityService.encryptJsonString(auth.getName(), Constants.ENCRYPTION_KEY));
+        String cookieString=cookieSecurityService.encryptJsonString(auth.getName(), Constants.ENCRYPTION_KEY);
+        Cookie cookie=new Cookie("enwida.de",cookieString);
       
         Cookie[] cookies = request.getCookies();
         if(cookies!=null)

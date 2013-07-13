@@ -9,12 +9,14 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
+import de.enwida.web.controller.AdminController;
 import de.enwida.web.dao.interfaces.AbstractBaseDao;
 import de.enwida.web.dao.interfaces.IUserDao;
 import de.enwida.web.model.Group;
@@ -26,6 +28,9 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
 	
 	@Autowired
 	private DataSource datasource;
+	
+	
+    private static org.apache.log4j.Logger logger = Logger.getLogger(AdminController.class);
 	
 	@Override
 	public List<User> findAllUsersWithPermissions(){
@@ -59,7 +64,9 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
 			if (conn != null) {
 				try {
 				conn.close();
-				} catch (SQLException e) {}
+				} catch (SQLException e) {
+                    logger.error(e.getMessage());
+				}
 			}
 		}
 
@@ -85,7 +92,6 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
 					rs.getString("user_password"), 
                     rs.getBoolean("enabled")
 				);
-				;
                 user.setFirstName(rs.getString("first_name"));
                 user.setLastName(rs.getString("last_name"));
                 user.setTelephone(rs.getString("telephone"));
@@ -104,7 +110,9 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
 			if (conn != null) {
 				try {
 				conn.close();
-				} catch (SQLException e) {}
+				} catch (SQLException e) {
+                    logger.error(e.getMessage());
+                }
 			}
 		}
 
@@ -133,12 +141,15 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
             rs.close();
             ps.close();
         } catch (SQLException e) {
+            logger.error(e.getMessage());
             throw new RuntimeException(e);
         } finally {
             if (conn != null) {
                 try {
                 conn.close();
-                } catch (SQLException e) {}
+                } catch (SQLException e) {
+                    logger.error(e.getMessage());
+                }
             }
         }
         return roles;
@@ -158,12 +169,15 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
 			ps.executeUpdate();
 			ps.close();
 		} catch (SQLException e) {
+            logger.error(e.getMessage());
 			throw new RuntimeException(e);
 		} finally {
 			if (conn != null) {
 				try {
 				conn.close();
-				} catch (SQLException e) {}
+				} catch (SQLException e) {
+                    logger.error(e.getMessage());
+				}
 			}
 		}
 	}
@@ -181,12 +195,15 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
             ps.executeUpdate();
             ps.close();
         } catch (SQLException e) {
+            logger.error(e.getMessage());
             throw new RuntimeException(e);
         } finally {
             if (conn != null) {
                 try {
                 conn.close();
-                } catch (SQLException e) {}
+                } catch (SQLException e) {
+                    logger.error(e.getMessage());
+                }
             }
         }
     }
@@ -208,12 +225,15 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
 			rs.close();
 			ps.close();
 		} catch (SQLException e) {
+            logger.error(e.getMessage());
 			throw new RuntimeException(e);
 		} finally {
 			if (conn != null) {
 				try {
 				conn.close();
-				} catch (SQLException e) {}
+				} catch (SQLException e) {
+                    logger.error(e.getMessage());
+				}
 			}
 		}
 		return password;
@@ -252,6 +272,7 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
 		}
 		catch (Exception e) 
 		{
+            logger.error(e.getMessage());
 			e.printStackTrace();
 		}      
 		return id.intValue();
@@ -290,6 +311,7 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
 		} 
 		catch (SQLException e) 
 		{
+            logger.error(e.getMessage());
 			throw new RuntimeException(e);
 		} 
 		finally 
@@ -300,7 +322,9 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
 				{
 					conn.close();
 				} 
-				catch (SQLException e) {}
+				catch (SQLException e) {
+                    logger.error(e.getMessage());
+				}
 			}
 		}
 
@@ -328,12 +352,15 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
 			rs.close();
 			ps.close();
 		} catch (SQLException e) {
+            logger.error(e.getMessage());
 			throw new RuntimeException(e);
 		} finally {
 			if (conn != null) {
 				try {
 				conn.close();
-				} catch (SQLException e) {}
+				} catch (SQLException e) {
+                    logger.error(e.getMessage());
+                }
 			}
 		}
 		return groups;
@@ -360,12 +387,15 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
 			rs.close();
 			ps.close();
 		} catch (SQLException e) {
+            logger.error(e.getMessage());
 			throw new RuntimeException(e);
 		} finally {
 			if (conn != null) {
 				try {
 				conn.close();
-				} catch (SQLException e) {}
+				} catch (SQLException e) {
+                    logger.error(e.getMessage());
+				}
 			}
 		}
 		return groups;
@@ -390,12 +420,15 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
 			rs.close();
 			ps.close();
 		} catch (SQLException e) {
+            logger.error(e.getMessage());
 			throw new RuntimeException(e);
 		} finally {
 			if (conn != null) {
 				try {
 				conn.close();
-				} catch (SQLException e) {}
+				} catch (SQLException e) {
+                    logger.error(e.getMessage());
+				}
 			}
 		}
 		return groups;
@@ -425,6 +458,7 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
         } 
         catch (Exception e) 
         {
+            logger.error(e.getMessage());
             return null;
         } 
         
@@ -451,12 +485,15 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
             ps.executeUpdate();
             ps.close();
         } catch (SQLException e) {
+            logger.error(e.getMessage());
             throw new RuntimeException(e);
         } finally {
             if (conn != null) {
                 try {
                 conn.close();
-                } catch (SQLException e) {}
+                } catch (SQLException e) {
+                    logger.error(e.getMessage());
+                }
             }
         }
     }
@@ -480,12 +517,15 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
             rs.close();
             ps.close();
         } catch (SQLException e) {
+            logger.error(e.getMessage());
             throw new RuntimeException(e);
         } finally {
             if (conn != null) {
                 try {
                 conn.close();
-                } catch (SQLException e) {}
+                } catch (SQLException e) {
+                    logger.error(e.getMessage());
+                }
             }
         }
         return roles;
@@ -512,6 +552,7 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
 		} 
 		catch (SQLException e) 
 		{
+            logger.error(e.getMessage());
 			throw new RuntimeException(e);
 		} 
 		finally 
@@ -522,7 +563,10 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
 				{
 					conn.close();
 				} 
-				catch (SQLException e) {}
+				catch (SQLException e) {
+
+                    logger.error(e.getMessage());
+				}
 			}
 		}		
 		return false;
@@ -553,12 +597,16 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
             rs.close();
             ps.close();
         } catch (SQLException e) {
+            logger.error(e.getMessage());
             throw new RuntimeException(e);
         } finally {
             if (conn != null) {
                 try {
                 conn.close();
-                } catch (SQLException e) {}
+                } catch (SQLException e) {
+
+                    logger.error(e.getMessage());
+                }
             }
         }
         
@@ -586,12 +634,16 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
 			rs.close();
 			ps.close();
     	} catch (SQLException e) {
+            logger.error(e.getMessage());
             throw new RuntimeException(e);
         } finally {
             if (conn != null) {
                 try {
                 conn.close();
-                } catch (SQLException e) {}
+                } catch (SQLException e) {
+
+                    logger.error(e.getMessage());
+                }
             }
         }
         return -1;  
@@ -623,12 +675,16 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
 			rs.close();
 			ps.close();
     	} catch (SQLException e) {
+            logger.error(e.getMessage());
             throw new RuntimeException(e);
         } finally {
             if (conn != null) {
                 try {
                 conn.close();
-                } catch (SQLException e) {}
+                } catch (SQLException e) {
+
+                    logger.error(e.getMessage());
+                }
             }
         }
 		
@@ -657,12 +713,16 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
 			rs.close();
 			ps.close();
     	} catch (SQLException e) {
+            logger.error(e.getMessage());
             throw new RuntimeException(e);
         } finally {
             if (conn != null) {
                 try {
                 conn.close();
-                } catch (SQLException e) {}
+                } catch (SQLException e) {
+
+                    logger.error(e.getMessage());
+                }
             }
         }
 		
@@ -689,12 +749,15 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
 			rs.close();
 			ps.close();
     	} catch (SQLException e) {
+            logger.error(e.getMessage());
             throw new RuntimeException(e);
         } finally {
             if (conn != null) {
                 try {
                 conn.close();
-                } catch (SQLException e) {}
+                } catch (SQLException e) {
+                    logger.error(e.getMessage());
+                }
             }
         }
 		
@@ -720,12 +783,15 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
             ps.executeUpdate();
             ps.close();
         } catch (SQLException e) {
+            logger.error(e.getMessage());
             throw new RuntimeException(e);
         } finally {
             if (conn != null) {
                 try {
                 conn.close();
-                } catch (SQLException e) {}
+                } catch (SQLException e) {
+                    logger.error(e.getMessage());
+                }
             }
         }
         return true;
@@ -760,12 +826,15 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
             rs.close();
             ps.close();
         } catch (SQLException e) {
+            logger.error(e.getMessage());
             throw new RuntimeException(e);
         } finally {
             if (conn != null) {
                 try {
                 conn.close();
-                } catch (SQLException e) {}
+                } catch (SQLException e) {
+                    logger.error(e.getMessage());
+                }
             }
         }
 
@@ -791,12 +860,15 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
             ps.executeUpdate();
             ps.close();
         } catch (SQLException e) {
+            logger.error(e.getMessage());
             return e.getLocalizedMessage();
         } finally {
             if (conn != null) {
                 try {
                 conn.close();
-                } catch (SQLException e) {}
+                } catch (SQLException e) {
+                    logger.error(e.getMessage());
+                }
             }
         }
         return "OK";
@@ -819,12 +891,15 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
             ps.executeUpdate();
             ps.close();
         } catch (SQLException e) {
+            logger.error(e.getMessage());
             return e.getLocalizedMessage();
         } finally {
             if (conn != null) {
                 try {
                 conn.close();
-                } catch (SQLException e) {}
+                } catch (SQLException e) {
+                    logger.error(e.getMessage());
+                }
             }
         }       
         return "OK";
@@ -849,12 +924,15 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
             ps.executeUpdate();
             ps.close();
         } catch (SQLException e) {
+            logger.error(e.getMessage());
             return e.getLocalizedMessage();
         } finally {
             if (conn != null) {
                 try {
                 conn.close();
-                } catch (SQLException e) {}
+                } catch (SQLException e) {
+                    logger.error(e.getMessage());
+                }
             }
         }
         return "OK"; 
@@ -877,12 +955,15 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
             ps.executeUpdate();
             ps.close();
         } catch (SQLException e) {
+            logger.error(e.getMessage());
             return e.getLocalizedMessage();
         } finally {
             if (conn != null) {
                 try {
                 conn.close();
-                } catch (SQLException e) {}
+                } catch (SQLException e) {
+                    logger.error(e.getMessage());
+                }
             }
         }       
         return "OK";
@@ -917,12 +998,15 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
             rs.close();
             ps.close();
         } catch (SQLException e) {
+            logger.error(e.getMessage());
             throw new RuntimeException(e);
         } finally {
             if (conn != null) {
                 try {
                 conn.close();
-                } catch (SQLException e) {}
+                } catch (SQLException e) {
+                    logger.error(e.getMessage());
+                }
             }
         }
         return roles;
@@ -962,12 +1046,15 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
 			rs.close();
 			ps.close();
 		} catch (SQLException e) {
+            logger.error(e.getMessage());
 			throw new RuntimeException(e);
 		} finally {
 			if (conn != null) {
 				try {
 				conn.close();
-				} catch (SQLException e) {}
+                } catch (SQLException e) {
+                    logger.error(e.getMessage());
+                }
 			}
 		}
 		return groups;
@@ -987,12 +1074,15 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
             ps.executeUpdate();
             ps.close();
         } catch (SQLException e) {
+            logger.error(e.getMessage());
             throw new RuntimeException(e);
         } finally {
             if (conn != null) {
                 try {
                 conn.close();
-                } catch (SQLException e) {}
+                } catch (SQLException e) {
+                    logger.error(e.getMessage());
+                }
             }
         }
         return true;
@@ -1012,12 +1102,14 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
             ps.executeUpdate();
             ps.close();
         } catch (SQLException e) {
+            logger.error(e.getMessage());
             throw new RuntimeException(e);
         } finally {
             if (conn != null) {
                 try {
                     conn.close();
                 } catch (SQLException e) {
+                    logger.error(e.getMessage());
                 }
             }
         }
@@ -1044,12 +1136,15 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
             rs.close();
             ps.close();
         } catch (SQLException e) {
+            logger.error(e.getMessage());
             throw new RuntimeException(e);
         } finally {
             if (conn != null) {
                 try {
                 conn.close();
-                } catch (SQLException e) {}
+                } catch (SQLException e) {
+                    logger.error(e.getMessage());
+                }
             }
         }
         return false;
@@ -1070,12 +1165,15 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
             ps.executeUpdate();
             ps.close();
         } catch (SQLException e) {
+            logger.error(e.getMessage());
             throw new RuntimeException(e);
         } finally {
             if (conn != null) {
                 try {
                 conn.close();
-                } catch (SQLException e) {}
+                } catch (SQLException e) {
+                    logger.error(e.getMessage());
+                }
             }
         }
         return true;
@@ -1097,6 +1195,7 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
            } 
            catch (SQLException e) 
            {
+               logger.error(e.getMessage());
                return false;
            } 
            finally 
@@ -1106,8 +1205,9 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
                    try 
                    {
                 	   conn.close();
-                   } 
-                   catch (SQLException e) {}
+                   } catch (SQLException e) {
+                       logger.error(e.getMessage());
+                   }
                }
            }
            
@@ -1139,12 +1239,15 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
             rs.close();
             ps.close();
         } catch (SQLException e) {
+            logger.error(e.getMessage());
             throw new RuntimeException(e);
         } finally {
             if (conn != null) {
                 try {
                 conn.close();
-                } catch (SQLException e) {}
+                } catch (SQLException e) {
+                    logger.error(e.getMessage());
+                }
             }
         }
         
@@ -1170,12 +1273,15 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
             rs.close();
             ps.close();
         } catch (SQLException e) {
+            logger.error(e.getMessage());
             throw new RuntimeException(e);
         } finally {
             if (conn != null) {
                 try {
                 conn.close();
-                } catch (SQLException e) {}
+                } catch (SQLException e) {
+                    logger.error(e.getMessage());
+                }
             }
         }
         return users;
@@ -1208,6 +1314,7 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
         } 
         catch (SQLException e) 
         {
+            logger.error(e.getMessage());
             throw new RuntimeException(e);
         } 
         finally 
@@ -1217,10 +1324,8 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
                 try 
                 {
                 	conn.close();
-                } 
-                catch (SQLException e) 
-                {
-                	
+                } catch (SQLException e) {
+                    logger.error(e.getMessage());
                 }
             }
         }
