@@ -18,12 +18,10 @@ public class User {
 	private Date loginCount;
 	private String lastLogin;
     private List<Group> groups;
-    private List<Role> roles;
+    private UserRoleCollection roles;
     private String telephone;
     private String activationKey;
-
-
-	private UserPermissionCollection userPermissionCollection=new UserPermissionCollection();
+	private UserRoleCollection userPermissionCollection;
 
 	public User(long userID, String userName, String password,String firstName,String lastName, boolean enabled) {
 		// TODO Auto-generated constructor stub
@@ -88,17 +86,17 @@ public class User {
 		return this.getUserName();
 	}
 
-	public UserPermissionCollection getUserPermissionCollection() {
+	public UserRoleCollection getUserPermissionCollection() {
 		return userPermissionCollection;
 	}
 
 	public void setUserPermissionCollection(
-			UserPermissionCollection userPermissionCollection) {
+			UserRoleCollection userPermissionCollection) {
 		this.userPermissionCollection = userPermissionCollection;
 	}
 	
 	public boolean hasPermission(String permission){
-		return getUserPermissionCollection().implies(new UserPermission(permission));
+		return getUserPermissionCollection().implies(new UserRole(permission));
 	}
 
 	public boolean isEnabled() {
@@ -157,11 +155,11 @@ public class User {
         this.groups = groups;
     }
 
-    public List<Role> getRoles() {
+    public UserRoleCollection getRoles() {
         return roles;
     }
 
-    public void setRoles(List<Role> roles) {
+    public void setRoles(UserRoleCollection roles) {
         this.roles = roles;
     }
 

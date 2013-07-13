@@ -7,8 +7,8 @@ import de.enwida.transport.IDataLine;
 import de.enwida.transport.LineRequest;
 import de.enwida.web.model.DataAuthorization;
 import de.enwida.web.model.DataAvailibility;
-import de.enwida.web.model.Role;
 import de.enwida.web.model.User;
+import de.enwida.web.model.UserRole;
 import de.enwida.web.service.interfaces.IAvailibilityService;
 import de.enwida.web.service.interfaces.ILineService;
 import de.enwida.web.service.interfaces.ISecurityService;
@@ -37,7 +37,7 @@ public class LineServiceImpl implements ILineService {
     private boolean isAllowed(LineRequest lineRequest, User user) {
         final DataAuthorization authorization = getDataAuthorization(lineRequest);
 
-        for (final Role role : user.getRoles()) {
+        for (final UserRole role : user.getRoles()) {
             authorization.setRole((int) role.getRoleID());
             if (securityService.isAllowed(authorization)) {
                 return true;

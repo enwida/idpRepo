@@ -22,6 +22,8 @@ import de.enwida.web.dao.interfaces.IUserDao;
 import de.enwida.web.model.Group;
 import de.enwida.web.model.Role;
 import de.enwida.web.model.User;
+import de.enwida.web.model.UserRole;
+import de.enwida.web.model.UserRoleCollection;
 
 @Repository
 public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
@@ -98,7 +100,7 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
                 user.setCompanyName(rs.getString("company_name"));
                 ArrayList<Group> groups = getUserGroups(user.getUserID());
                 user.setGroups(groups);
-                ArrayList<Role> roles = getUserRoles(user.getUserID());
+                UserRoleCollection roles = getUserRoles(user.getUserID());
                 user.setRoles(roles);
 				users.add(user);
 			}
@@ -120,22 +122,21 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
 	}
 	
 	@Override
-	public ArrayList<Role> getUserRoles(long userID) {
+	public UserRoleCollection getUserRoles(long userID) {
 	    String sql = "select DISTINCT ON (role_id) roles.role_id,roles.role_name FROM users.roles " +
 	    		"INNER JOIN users.group_role ON group_role.role_id=roles.role_id " +
 	    		"INNER JOIN users.user_group ON user_group.group_id=group_role.group_id " +
 	    		" where users.user_group.user_id=?";
         Connection conn = null;
-        ArrayList<Role> roles = new ArrayList<Role>();
+        UserRoleCollection roles = new UserRoleCollection();
         try {
             conn = datasource.getConnection();
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setLong(1, userID);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                Role role = new Role();
+                UserRole role = new UserRole(rs.getString("role_name"));
                 role.setRoleID(rs.getLong("role_id"));
-                role.setRoleName(rs.getString("role_name"));
                 roles.add(role);
             }
             rs.close();
@@ -303,7 +304,7 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
                 user.setTelephone(rs.getString("telephone"));
                 ArrayList<Group> groups = getUserGroups(user.getUserID());
                 user.setGroups(groups);
-                ArrayList<Role> roles = getUserRoles(user.getUserID());
+                UserRoleCollection roles = getUserRoles(user.getUserID());
                 user.setRoles(roles);
 			}
 			rs.close();
@@ -820,7 +821,7 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
                 user.setTelephone(rs.getString("telephone"));
                 ArrayList<Group> groups = getUserGroups(user.getUserID());
                 user.setGroups(groups);
-                ArrayList<Role> roles = getUserRoles(user.getUserID());
+                UserRoleCollection roles = getUserRoles(user.getUserID());
                 user.setRoles(roles);
             }
             rs.close();

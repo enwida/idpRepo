@@ -2,9 +2,11 @@ package de.enwida.web.model;
 
 import java.security.Permission;
 
-public class UserPermission extends Permission {
+public class UserRole extends Permission {
+    
+    private long roleID;
 
-	public UserPermission(String name) {
+	public UserRole(String name) {
 		super(name);
 		// TODO Auto-generated constructor stub
 	}
@@ -45,5 +47,13 @@ public class UserPermission extends Permission {
 		// TODO Auto-generated method stub
 		return super.getName();
 	}
+
+    public long getRoleID() {
+        return roleID;
+    }
+
+    public void setRoleID(long roleID) {
+        this.roleID = roleID;
+    }
 	
 }

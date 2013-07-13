@@ -23,8 +23,9 @@ public class LoginSuccessHandler extends
     @Autowired
     private IUserService userService;
     
-    @Autowired
-    private CookieSecurityServiceImpl cookieSecurityService;
+    //@Autowired
+    //TODO:Why this is not initialized?
+    private CookieSecurityServiceImpl cookieSecurityService=new CookieSecurityServiceImpl();
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request,

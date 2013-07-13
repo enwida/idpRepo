@@ -10,8 +10,8 @@ import de.enwida.transport.Aspect;
 import de.enwida.web.dao.interfaces.IDataAutorizationDao;
 import de.enwida.web.dao.interfaces.IDataAvailibilityDao;
 import de.enwida.web.model.DataAuthorization;
-import de.enwida.web.model.Role;
 import de.enwida.web.model.User;
+import de.enwida.web.model.UserRole;
 import de.enwida.web.service.interfaces.ISecurityService;
 import de.enwida.web.utils.CalendarRange;
 import de.enwida.web.utils.EnwidaUtils;
@@ -50,7 +50,7 @@ public class SecurityServiceImpl implements ISecurityService {
     
     public ProductRestriction getProductRestriction(int productId, int tso, Aspect aspect, User user) {
         final List<ProductRestriction> restrictions = new ArrayList<>();
-        for (final Role role : user.getRoles()) {
+        for (final UserRole role : user.getRoles()) {
             final ProductRestriction restriction = getProductRestriction(productId, tso, aspect, (int) role.getRoleID());
             restrictions.add(restriction);
         }

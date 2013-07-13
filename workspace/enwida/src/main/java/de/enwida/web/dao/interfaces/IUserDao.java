@@ -6,6 +6,7 @@ import java.util.List;
 import de.enwida.web.model.Group;
 import de.enwida.web.model.Role;
 import de.enwida.web.model.User;
+import de.enwida.web.model.UserRoleCollection;
 
 public interface IUserDao {
     public long save(User user);
@@ -70,7 +71,7 @@ public interface IUserDao {
 
     public void deleteUserGroup(long userID);
 
-    public ArrayList<Role> getUserRoles(long userID);
+    public UserRoleCollection getUserRoles(long userID);
 
     public Group getGroupByName(String groupName);
 
