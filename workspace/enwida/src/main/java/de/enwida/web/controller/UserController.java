@@ -111,13 +111,17 @@ public class UserController {
 	}
 	
 	@RequestMapping(value="/login", method = RequestMethod.GET)
-	public String login(ModelMap model,HttpServletRequest request) {
+	public String login(ModelMap model,HttpServletRequest request,Principal principal) {
 
 	    String referrer = request.getHeader("Referer");
 	    if(referrer!=null){
 	        request.getSession().setAttribute("url_prior_login", referrer);
 	    }
+	    if(principal!=null){
+	        return "user/index";
+	    }else{
 		return "user/login";
+	    }
 	}
 	
 	@RequestMapping(value="/logout", method = RequestMethod.GET)
