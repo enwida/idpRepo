@@ -43,7 +43,7 @@ public class CookieSecurityHelperTest {
 	@Test
 	public void testDycryptJsonString() {
 		String plaintext = cookieSecurityHelper
-.dycryptJsonString(
+.decryptJsonString(
 				encryptedText, Constants.ENCRYPTION_KEY);
 		System.out.println(encryptedText + " => " + plaintext);
 		assertNotNull(plaintext);

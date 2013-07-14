@@ -28,10 +28,14 @@
 	<beans:bean id="rememberMeAuthenticationProvider" class="org.springframework.security.authentication.RememberMeAuthenticationProvider">
 	    <beans:constructor-arg name="key" value="token"/>
 	</beans:bean>
+
+	<beans:bean id="cookieSecurityService" scope="singleton" class="de.enwida.web.service.implementation.CookieSecurityServiceImpl">
+	</beans:bean>
 	
  	 <beans:bean id="loginSuccessHandler" class="de.enwida.web.controller.LoginSuccessHandler">
 		 <beans:property name="defaultTargetUrl" value="/user/" />
 		 <beans:property name="useReferer" value="true"/>
+		 <beans:property name="cookieSecurityService" ref="cookieSecurityService"/>
 	 </beans:bean>
 
 

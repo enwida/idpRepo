@@ -13,11 +13,9 @@ import javax.crypto.spec.DESedeKeySpec;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
 
-/**
- * @author Jitin
- *
- */
-public class CookieSecurityServiceImpl {
+import de.enwida.web.service.interfaces.ICookieSecurityService;
+
+public class CookieSecurityServiceImpl implements ICookieSecurityService {
 
 	private static final String UNICODE_FORMAT = "UTF8";
 	/**
@@ -25,7 +23,7 @@ public class CookieSecurityServiceImpl {
 	 */
 	private static final String DESEDE_ENCRYPTION_SCHEME = "DESede";
 
-	public String dycryptJsonString(String encryptedStr, String encryptionKey) {
+	public String decryptJsonString(String encryptedStr, String encryptionKey) {
 		return decrypt(encryptedStr, encryptionKey);
 	}
 

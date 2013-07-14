@@ -89,7 +89,7 @@ public class UserLog extends HandlerInterceptorAdapter{
         if (cookies!=null){
             for (Cookie cookie : cookies) {
                 if(cookie.getName().equalsIgnoreCase("enwida.de")){
-                    clientID=cookieSecurityService.dycryptJsonString(cookie.getValue(), Constants.ENCRYPTION_KEY);
+                    clientID=cookieSecurityService.decryptJsonString(cookie.getValue(), Constants.ENCRYPTION_KEY);
                 }
                 if(cookie.getName().equalsIgnoreCase("JSESSION")){
                     sessionID=cookie.getValue();
