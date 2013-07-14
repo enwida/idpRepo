@@ -32,9 +32,9 @@ import de.enwida.transport.IDataLine;
 import de.enwida.transport.LineRequest;
 import de.enwida.web.model.ChartNavigationData;
 import de.enwida.web.model.User;
-import de.enwida.web.service.implementation.CookieSecurityServiceImpl;
 import de.enwida.web.service.implementation.LineServiceImpl;
 import de.enwida.web.service.implementation.NavigationServiceImpl;
+import de.enwida.web.service.interfaces.ICookieSecurityService;
 import de.enwida.web.service.interfaces.INavigationService;
 import de.enwida.web.service.interfaces.IUserService;
 import de.enwida.web.utils.CalendarRange;
@@ -56,7 +56,7 @@ public class ChartDataController {
     private INavigationService navigationService;
 
     @Autowired
-    private CookieSecurityServiceImpl cookieSecurityService;
+    private ICookieSecurityService cookieSecurityService;
     
     @Autowired
     private IUserService userService;
@@ -347,7 +347,7 @@ public class ChartDataController {
 			if (((cookie.getName() != null) && cookie.getName().equals(
 					cookieName))
 					&& (cookie.getValue() != null)) {
-				decryptString = cookieSecurityService.dycryptJsonString(
+				decryptString = cookieSecurityService.decryptJsonString(
 						cookie.getValue(), Constants.ENCRYPTION_KEY);
 			}
 		}

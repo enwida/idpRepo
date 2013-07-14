@@ -8,24 +8,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 
-import de.enwida.web.service.implementation.CookieSecurityServiceImpl;
-import de.enwida.web.service.interfaces.IUserService;
+import de.enwida.web.service.interfaces.ICookieSecurityService;
 import de.enwida.web.utils.Constants;
 
+public class LoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
 
-public class LoginSuccessHandler extends
-        SavedRequestAwareAuthenticationSuccessHandler {
-    @Autowired
-    private IUserService userService;
-    
-    //@Autowired
-    //TODO:Why this is not initialized?
-    private CookieSecurityServiceImpl cookieSecurityService=new CookieSecurityServiceImpl();
+    private ICookieSecurityService cookieSecurityService;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request,
@@ -65,19 +57,11 @@ public class LoginSuccessHandler extends
         }
     }
 
-    public IUserService getUserService() {
-        return userService;
-    }
-
-    public void setUserService(IUserService userService) {
-        this.userService = userService;
-    }
-
-    public CookieSecurityServiceImpl getCookieSecurityService() {
+    public ICookieSecurityService getCookieSecurityService() {
         return cookieSecurityService;
     }
 
-    public void setCookieSecurityService(CookieSecurityServiceImpl cookieSecurityService) {
+    public void setCookieSecurityService(ICookieSecurityService cookieSecurityService) {
         this.cookieSecurityService = cookieSecurityService;
     }
 }
