@@ -3,11 +3,26 @@ package de.enwida.web.model;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Group {
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 
+@Entity
+@Table(name = "users.groups")
+public class Group {
+    
+    @Id
+    @Column(name="group_id")
     private Long groupID;
+    
+    @Column(name="group_name")
     private String groupName;
+    
+    @Column(name="user_id")
     private boolean autoPass;
+    @Transient
     public List<User> assignedUsers;
 
     public Long getGroupID() {
