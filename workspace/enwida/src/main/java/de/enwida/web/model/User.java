@@ -3,14 +3,6 @@ package de.enwida.web.model;
 import java.sql.Date;
 import java.util.List;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
-@Entity
-@Table(name = "user")
 public class User {
  
 	private Long userID;
@@ -49,7 +41,6 @@ public class User {
 		// TODO Auto-generated constructor stub
 	}
 
-	@Column(name = "last_name")
 	public String getLastName() {
 		return lastName;
 	}
@@ -58,7 +49,6 @@ public class User {
 		this.lastName = lastName;
 	}
 
-	@Column(name = "first_name")
 	public String getFirstName() {
 		return firstName;
 	}
@@ -67,7 +57,6 @@ public class User {
 		this.firstName = firstName;
 	}
 
-	@Column(name = "password")
 	public String getPassword() {
 		return password;
 	}
@@ -76,7 +65,6 @@ public class User {
 		this.password = password;
 	}
 
-	@Column(name = "user_name")
 	public String getUserName() {
 		return userName;
 	}
@@ -84,9 +72,7 @@ public class User {
 	public void setUserName(String userName) {
 		this.userName = userName;
 	}
-	
-	@Id
-	@Column(name = "user_id")
+
 	public Long getUserID() {
 		return userID;
 	}
