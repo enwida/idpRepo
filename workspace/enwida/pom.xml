@@ -15,13 +15,8 @@
 		<javax.servlet.jstl-version>1.2</javax.servlet.jstl-version>
 		<junit-version>4.7</junit-version>
 	</properties>
-	<repositories>
-		<repository>
-			<id>JBoss repository</id>
-			<url>http://repository.jboss.com/maven2/</url>
-		</repository>
-	</repositories>
 	<dependencies>
+
 
 		<!-- Spring 3 dependencies -->
 		<dependency>
@@ -145,24 +140,21 @@
 			<version>9.0-801.jdbc3</version>
 		</dependency>
 
-		<!-- Hibernate core -->
+		<!-- Hibernate framework -->
 		<dependency>
-			<groupId>hibernate</groupId>
-			<artifactId>hibernate3</artifactId>
-			<version>3.2.3.GA</version>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-core</artifactId>
+			<version>3.5.1-Final</version>
 		</dependency>
-
-		<!-- Hibernate annotation -->
 		<dependency>
-			<groupId>hibernate-annotations</groupId>
+			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-annotations</artifactId>
-			<version>3.3.0.GA</version>
+			<version>3.5.6-Final</version>
 		</dependency>
-
 		<dependency>
-			<groupId>hibernate-commons-annotations</groupId>
+			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-commons-annotations</artifactId>
-			<version>3.0.0.GA</version>
+			<version>3.2.0.Final</version>
 		</dependency>
 
 		<!-- Hibernate library dependecy start -->
@@ -171,7 +163,6 @@
 			<artifactId>dom4j</artifactId>
 			<version>1.6.1</version>
 		</dependency>
-
 		<dependency>
 			<groupId>commons-logging</groupId>
 			<artifactId>commons-logging</artifactId>
@@ -212,7 +203,6 @@
 		</dependency>
 
 	</dependencies>
-
 	<build>
 		<finalName>enwida</finalName>
 		<plugins>

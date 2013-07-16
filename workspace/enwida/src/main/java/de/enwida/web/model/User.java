@@ -10,9 +10,10 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "user")
+@Table(name = "USER")
 public class User {
- 
+    @Id
+    @GeneratedValue
 	private Long userID;
 	private String userName;
 	private String lastName;
@@ -121,6 +122,7 @@ public class User {
 		this.enabled = enabled;
 	}
 	
+	@Column(name = "joining_date")
 	public Date getJoiningDate() {
 		return joiningDate;
 	}
@@ -145,6 +147,7 @@ public class User {
 		this.lastLogin = lastLogin;
 	}
 	
+	@Column(name = "company_name")
     public String getCompanyName() {
         return companyName;
     }
@@ -153,6 +156,7 @@ public class User {
         this.companyName = companyName;
     }
 
+    @Column(name = "telephone")
     public String getTelephone() {
         return telephone;
     }
@@ -176,7 +180,8 @@ public class User {
     public void setRoles(UserRoleCollection roles) {
         this.roles = roles;
     }
-
+    
+    @Column(name = "company_logo")
     public String getCompanyLogo() {
         return companyLogo;
     }
