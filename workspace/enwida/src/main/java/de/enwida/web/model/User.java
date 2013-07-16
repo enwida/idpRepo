@@ -3,17 +3,6 @@ package de.enwida.web.model;
 import java.sql.Date;
 import java.util.List;
 
-<<<<<<< HEAD
-=======
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
-@Entity
-@Table(name = "user")
->>>>>>> parent of 07a0ef0... pom file for missing hibernate is fixed
 public class User {
  
 	private Long userID;
