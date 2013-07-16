@@ -15,6 +15,11 @@
 		<javax.servlet.jstl-version>1.2</javax.servlet.jstl-version>
 		<junit-version>4.7</junit-version>
 	</properties>
+<<<<<<< HEAD
+
+	<dependencies>
+
+=======
 	<repositories>
 		<repository>
 			<id>JBoss repository</id>
@@ -23,6 +28,7 @@
 	</repositories>
 	<dependencies>
 
+>>>>>>> parent of 07a0ef0... pom file for missing hibernate is fixed
 		<!-- Spring 3 dependencies -->
 		<dependency>
 			<groupId>org.springframework</groupId>
@@ -145,6 +151,8 @@
 			<version>9.0-801.jdbc3</version>
 		</dependency>
 
+<<<<<<< HEAD
+=======
 		<!-- Hibernate core -->
 		<dependency>
 			<groupId>hibernate</groupId>
@@ -191,6 +199,7 @@
 		</dependency>
 		<!-- Hibernate library dependecy end -->
 
+>>>>>>> parent of 07a0ef0... pom file for missing hibernate is fixed
 		<!-- Test -->
 		<dependency>
 			<groupId>junit</groupId>
@@ -204,12 +213,12 @@
 			<artifactId>transport</artifactId>
 			<version>1.2.2</version>
 		</dependency>
-
+		
 		<dependency>
-			<groupId>com.cedarsoftware</groupId>
-			<artifactId>json-io</artifactId>
-			<version>2.0</version>
-		</dependency>
+            <groupId>com.cedarsoftware</groupId>
+            <artifactId>json-io</artifactId>
+            <version>2.0</version>
+        </dependency>
 
 	</dependencies>
 
