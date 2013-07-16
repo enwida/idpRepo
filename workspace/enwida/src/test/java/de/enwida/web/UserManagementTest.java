@@ -13,6 +13,7 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathFactory;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Session;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,6 +28,7 @@ import de.enwida.web.controller.AdminController;
 import de.enwida.web.dao.implementation.UserDaoImpl;
 import de.enwida.web.model.Group;
 import de.enwida.web.model.User;
+import de.enwida.web.utils.HibernateUtil;
  
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:/root-context-test.xml")
@@ -58,6 +60,16 @@ public class UserManagementTest {
 	    userDao.enableDisableUser(user.getUserID(), true);
 	    userDao.deleteUser(user);
 	}
+	
+	 @Test
+    public void HibernateTest() {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        session.beginTransaction();
+        user.setJoiningDate(new Date(Calendar.getInstance().getTimeInMillis()));
+        user.setCompanyName("enwida.de");
+        session.save(user);
+        session.getTransaction().commit();
+    }
 	
    @Test
     public void saveUserGroup() {

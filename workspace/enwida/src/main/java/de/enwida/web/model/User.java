@@ -3,134 +3,155 @@ package de.enwida.web.model;
 import java.sql.Date;
 import java.util.List;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
+@Entity
+@Table(name = "users.users")
 public class User {
- 
-	private Long userID;
-	private String userName;
-	private String lastName;
+    
+    @Id
+    private Long userID;
+    private String userName;
+    private String lastName;
     private String firstName;
-	private String password;
+    private String password;
     private String confirmPassword;
     private String companyName;
     private String companyLogo;
-	private boolean enabled;
-	private Date joiningDate;
-	private Date loginCount;
-	private String lastLogin;
+    private boolean enabled;
+    private Date joiningDate;
+    private Date loginCount;
+    private String lastLogin;
     private List<Group> groups;
     private UserRoleCollection roles;
     private String telephone;
     private String activationKey;
-	private UserRoleCollection userPermissionCollection;
+    private UserRoleCollection userPermissionCollection;
 
-	public User(long userID, String userName, String password,String firstName,String lastName, boolean enabled) {
-		// TODO Auto-generated constructor stub
-		this.setUserID(userID);
-		this.setUserName(userName);
-		this.setLastName(lastName);
-		this.setFirstName(firstName);
-		this.setPassword(password);
-		this.setEnabled(enabled);
-	}
-	
-	public User(long userID,String userName,String password, boolean enabled){
-		this(userID,userName,password,null,null,enabled);
-	}
+    public User(long userID, String userName, String password,
+            String firstName, String lastName, boolean enabled) {
+        // TODO Auto-generated constructor stub
+        this.setUserID(userID);
+        this.setUserName(userName);
+        this.setLastName(lastName);
+        this.setFirstName(firstName);
+        this.setPassword(password);
+        this.setEnabled(enabled);
+    }
 
-	public User() {
-		// TODO Auto-generated constructor stub
-	}
+    public User(long userID, String userName, String password, boolean enabled) {
+        this(userID, userName, password, null, null, enabled);
+    }
 
-	public String getLastName() {
-		return lastName;
-	}
+    public User() {
+        // TODO Auto-generated constructor stub
+    }
 
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
-	}
+    @Column(name = "last_name")
+    public String getLastName() {
+        return lastName;
+    }
 
-	public String getFirstName() {
-		return firstName;
-	}
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
 
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
-	}
+    @Column(name = "first_name")
+    public String getFirstName() {
+        return firstName;
+    }
 
-	public String getPassword() {
-		return password;
-	}
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
 
-	public void setPassword(String password) {
-		this.password = password;
-	}
+    @Column(name = "user_password")
+    public String getPassword() {
+        return password;
+    }
 
-	public String getUserName() {
-		return userName;
-	}
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
-	public void setUserName(String userName) {
-		this.userName = userName;
-	}
+    @Column(name = "user_name")
+    public String getUserName() {
+        return userName;
+    }
 
-	public Long getUserID() {
-		return userID;
-	}
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
 
-	public void setUserID(Long userID) {
-		this.userID = userID;
-	}
-	
-	@Override
-	public String toString() {
-		return this.getUserName();
-	}
+    @Id
+    @Column(name = "user_id")
+    public Long getUserID() {
+        return userID;
+    }
 
-	public UserRoleCollection getUserPermissionCollection() {
-		return userPermissionCollection;
-	}
+    public void setUserID(Long userID) {
+        this.userID = userID;
+    }
 
-	public void setUserPermissionCollection(
-			UserRoleCollection userPermissionCollection) {
-		this.userPermissionCollection = userPermissionCollection;
-	}
-	
-	public boolean hasPermission(String permission){
-		return getUserPermissionCollection().implies(new UserRole(permission));
-	}
+    @Override
+    public String toString() {
+        return this.getUserName();
+    }
 
-	public boolean isEnabled() {
-		return enabled;
-	}
+    @Transient
+    public UserRoleCollection getUserPermissionCollection() {
+        return userPermissionCollection;
+    }
 
-	public void setEnabled(boolean enabled) {
-		this.enabled = enabled;
-	}
-	
-	public Date getJoiningDate() {
-		return joiningDate;
-	}
+    public void setUserPermissionCollection(
+            UserRoleCollection userPermissionCollection) {
+        this.userPermissionCollection = userPermissionCollection;
+    }
 
-	public void setJoiningDate(Date joiningDate) {
-		this.joiningDate = joiningDate;
-	}
+    public boolean hasPermission(String permission) {
+        return getUserPermissionCollection().implies(new UserRole(permission));
+    }
 
-	public Date getLoginCount() {
-		return loginCount;
-	}
+    public boolean isEnabled() {
+        return enabled;
+    }
 
-	public void setLoginCount(Date loginCount) {
-		this.loginCount = loginCount;
-	}
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
 
-	public String getLastLogin() {
-		return lastLogin;
-	}
+    @Column(name = "joining_date")
+    public Date getJoiningDate() {
+        return joiningDate;
+    }
 
-	public void setLastLogin(String lastLogin) {
-		this.lastLogin = lastLogin;
-	}
-	
+    public void setJoiningDate(Date joiningDate) {
+        this.joiningDate = joiningDate;
+    }
+
+    @Transient
+    public Date getLoginCount() {
+        return loginCount;
+    }
+
+    public void setLoginCount(Date loginCount) {
+        this.loginCount = loginCount;
+    }
+
+    @Transient
+    public String getLastLogin() {
+        return lastLogin;
+    }
+
+    public void setLastLogin(String lastLogin) {
+        this.lastLogin = lastLogin;
+    }
+
+    @Column(name = "company_name")
     public String getCompanyName() {
         return companyName;
     }
@@ -139,6 +160,7 @@ public class User {
         this.companyName = companyName;
     }
 
+    @Column(name = "telephone")
     public String getTelephone() {
         return telephone;
     }
@@ -146,15 +168,8 @@ public class User {
     public void setTelephone(String telephone) {
         this.telephone = telephone;
     }
-    
-    public List<Group> getGroups() {
-        return groups;
-    }
 
-    public void setGroups(List<Group> groups) {
-        this.groups = groups;
-    }
-
+    @Transient
     public UserRoleCollection getRoles() {
         return roles;
     }
@@ -163,6 +178,7 @@ public class User {
         this.roles = roles;
     }
 
+    @Column(name = "company_logo")
     public String getCompanyLogo() {
         return companyLogo;
     }
@@ -171,6 +187,7 @@ public class User {
         this.companyLogo = companyLogo;
     }
 
+    @Transient
     public String getConfirmPassword() {
         return confirmPassword;
     }
@@ -179,11 +196,20 @@ public class User {
         this.confirmPassword = confirmPassword;
     }
 
-	public String getActivationKey() {
-		return activationKey;
-	}
+    @Column(name = "activation_id")
+    public String getActivationKey() {
+        return activationKey;
+    }
 
-	public void setActivationKey(String activationKey) {
-		this.activationKey = activationKey;
-	}
+    public void setActivationKey(String activationKey) {
+        this.activationKey = activationKey;
+    }
+
+    public List<Group> getGroups() {
+        return groups;
+    }
+
+    public void setGroups(List<Group> groups) {
+        this.groups = groups;
+    }
 }
