@@ -13,8 +13,6 @@ public interface IUserDao {
 
     public String getPassword(String email);
 
-    public List<User> findAllUsersWithPermissions();
-
     public User getUserByID(Long id);
 
     public ArrayList<Group> getAvailableGroupsForUser(long userID);

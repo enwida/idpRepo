@@ -35,47 +35,6 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
     private static org.apache.log4j.Logger logger = Logger.getLogger(AdminController.class);
 	
 	@Override
-	public List<User> findAllUsersWithPermissions(){
-		ArrayList<User> users = new ArrayList<User>();
-		String sql = "SELECT * FROM users";
-		 
-		Connection conn = null;
- 
-		try 
-		{
-			conn = datasource.getConnection();
-			PreparedStatement ps = conn.prepareStatement(sql);
-			User user = null;
-			ResultSet rs = ps.executeQuery();
-			while (rs.next()) {
-				user = new User(
-					rs.getLong("user_id"),
-					rs.getString("user_name"), 
-					rs.getString("user_password"), 
-					rs.getBoolean("enabled")
-				);
-				user.setFirstName(rs.getString("first_name"));
-				user.setLastName(rs.getString("last_name"));
-				//users.add(loadUserFromDB(user));
-			}
-			rs.close();
-			ps.close();
-		} catch (SQLException e) {
-			throw new RuntimeException(e);
-		} finally {
-			if (conn != null) {
-				try {
-				conn.close();
-				} catch (SQLException e) {
-                    logger.error(e.getMessage());
-				}
-			}
-		}
-
-		return users;
-	}
-	
-	@Override
 	public List<User> findAllUsers(){
 		ArrayList<User> users = new ArrayList<User>();
 		String sql = "SELECT * FROM users.users";

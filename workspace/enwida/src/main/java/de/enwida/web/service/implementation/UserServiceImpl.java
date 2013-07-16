@@ -102,10 +102,6 @@ public class UserServiceImpl implements IUserService {
 		return userDao.getPassword(email);
 	}
 
-	public List<User> findAllUsersWithPermissions(){
-		return userDao.findAllUsersWithPermissions();
-	}
-
 	public List<Group> getAvailableGroupsForUser(long userID) {
 		return userDao.getAvailableGroupsForUser(userID);
 	}
