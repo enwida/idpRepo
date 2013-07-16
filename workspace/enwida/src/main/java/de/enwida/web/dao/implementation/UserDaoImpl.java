@@ -576,7 +576,8 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
 	@Override
 	public Group getGroupByCompanyName(final String companyName)
 	{
-		String sql = "select * FROM users.user_group INNER JOIN users.users ON user_group.user_id=users.user_id where users.company_name=?";
+		String sql = "select * FROM users.user_group INNER JOIN users.users ON user_group.user_id=users.user_id INNER" +
+				" JOIN users.groups ON groups.group_id= user_group.group_id where users.company_name=?";
 		Group group = null;
         Connection conn = null;
         
