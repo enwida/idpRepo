@@ -57,3 +57,4 @@ define [ "drawable/line_chart"
       @attr.chartOptions =
         parent: @$node
         width: @attr.width
+        height: @attr.height

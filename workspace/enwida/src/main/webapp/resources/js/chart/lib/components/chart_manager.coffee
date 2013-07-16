@@ -93,7 +93,11 @@ define [ "components/navigation"
 
         # Parse element attributes
         @attr.type = @$node.attr("data-chart-type") ? "line"
-        @attr.width = parseInt(@$node.attr("data-width")) ? 800
+        @attr.width = parseInt(@$node.attr("data-width"))
+        @attr.height = parseInt(@$node.attr("data-height"))
+
+        @attr.width = 800 if isNaN @attr.width
+        @attr.height = 800 if isNaN @attr.height
 
         # Add visual
         visual = $("<div>").addClass "visual"
@@ -102,6 +106,7 @@ define [ "components/navigation"
           id: @attr.id
           type: @attr.type
           width: @attr.width
+          height: @attr.height
 
         # Add lines
         if @attr.type isnt "carpet"
