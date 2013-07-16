@@ -30,8 +30,7 @@ import de.enwida.web.model.User;
  
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:/root-context-test.xml")
-public class UserManagement {
-    //This class name shouldn't contain "test", not to fail mvn install
+public class UserManagementTest {
 
 	@Autowired
 	private DriverManagerDataSource datasource;
