@@ -21,6 +21,15 @@
 	<bean id="rightsDao" class="de.enwida.web.dao.implementation.RightsDaoImpl">
 	</bean>
 	
+	<bean id="mailService" class="de.enwida.web.service.implementation.MailServiceImpl">
+	     <property name="starttls" value="${mail.smtp.starttls.enable}"/>
+	     <property name="host" value="${mail.smtp.host}"/>
+	     <property name="user" value="${mail.smtp.user}"/>
+	     <property name="port" value="${mail.smtp.port"/>
+	     <property name="auth" value="${mail.smtp.auth}"/>
+	     <property name="password" value="${mail.smtp.password}"/>
+	</bean>
+	
 	<bean id="propertyConfigurer"
 		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<property name="locations">

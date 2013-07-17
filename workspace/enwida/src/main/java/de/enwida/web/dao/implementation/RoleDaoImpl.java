@@ -38,7 +38,7 @@ public class RoleDaoImpl extends AbstractBaseDao<Role> implements IRoleDao {
 	@Override
 	public List<Role> getUserRoles(long userID) {
 	    
-	    String sql = "select DISTINCT ON (role_id) roles.role_id,roles.role_name FROM users.roles " +
+	    String sql = "select DISTINCT ON (role_id) roles.role_id,roles.role_name,roles.description FROM users.roles " +
 	    		"INNER JOIN users.group_role ON group_role.role_id=roles.role_id " +
 	    		"INNER JOIN users.user_group ON user_group.group_id=group_role.group_id " +
 	    		" where users.user_group.user_id=?";

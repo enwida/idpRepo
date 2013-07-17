@@ -2,6 +2,8 @@ package de.enwida.web;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -9,6 +11,8 @@ import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.List;
 
+import javax.mail.MessagingException;
+import javax.mail.internet.AddressException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPath;
@@ -34,6 +38,7 @@ import de.enwida.web.dao.implementation.UserDaoImpl;
 import de.enwida.web.model.Group;
 import de.enwida.web.model.Right;
 import de.enwida.web.model.User;
+import de.enwida.web.service.implementation.MailServiceImpl;
  
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:/root-context-test.xml")
@@ -43,7 +48,10 @@ public class UserManagement {
 	private DriverManagerDataSource datasource;
 	
 	@Autowired
-	private UserDaoImpl userDao;	
+	private UserDaoImpl userDao;
+
+    @Autowired
+    private MailServiceImpl mailService;
 	   
     @Autowired
     private GroupDaoImpl groupDao;    
@@ -96,6 +104,11 @@ public class UserManagement {
       assertEquals("test", user2.getCompanyName());
       userDao.deleteUser(user);
       assertEquals(null,userDao.getUserByName(user.getUserName()));
+   }
+   
+   @Test
+   public void testMail() throws Exception {
+       mailService.SendEmail("olcaytarazan@gmail.com", "User Management Test", "Ignore");
    }
    
    @Test
