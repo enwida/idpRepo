@@ -50,7 +50,11 @@
 			</tr>
 			<tr>
 				<td>Roles</td>
-				<td>${user.roles}</td>
+				<td>
+				<c:forEach var="role" items="${user.roles}">
+					<a href="editAspect?roleID=${role.roleID}">${role.roleName}</a>
+				</c:forEach>
+				</td>
 			</tr>
 		</table>
 		<input type="submit" name="delete" value="Delete" />

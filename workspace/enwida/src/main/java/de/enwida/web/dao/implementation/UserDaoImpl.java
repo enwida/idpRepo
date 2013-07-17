@@ -23,7 +23,6 @@ import de.enwida.web.controller.AdminController;
 import de.enwida.web.dao.interfaces.AbstractBaseDao;
 import de.enwida.web.dao.interfaces.IUserDao;
 import de.enwida.web.model.Group;
-import de.enwida.web.model.UserRoleCollection;
 import de.enwida.web.model.User;
 
 @Repository
@@ -69,13 +68,12 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
 		
 	@Override
 	public void deleteUser(User user) {
-		this.deleteById(user.getUserID());
-	}
-	
-	@Override
-    public String getPassword(String email) {
-		String sql = "SELECT * FROM users.users where users.user_name=?";
-		return null;
+	    String sql = "DELETE FROM  users.users WHERE user_name=?";
+        try {
+            this.jdbcTemplate.update(sql,user.getUserName());
+        }catch (Exception e) {
+            logger.error(e.getMessage());
+        }
 	}
 	
     @Override
@@ -120,7 +118,22 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
 	@Override
 	public User getUserByID(Long id) {
 	    String sql = "SELECT * FROM users.users where users.user_id=?;";
-	    return this.jdbcTemplate.queryForObject(sql, new Object[] { id }, new BeanPropertyRowMapper(User.class));
+	    List<Map<String,Object>> rows =this.jdbcTemplate.queryForList(sql,id);
+        for (Map row : rows) {
+            User user = new User();
+            user.setUserID(Long.parseLong(row.get("user_id").toString()));
+            user.setUserName((String) row.get("user_name"));
+            user.setPassword((String) row.get("user_password"));
+            user.setFirstName((String) row.get("first_Name"));
+            user.setLastName((String) row.get("last_Name"));
+            user.setEnabled((boolean) row.get("enabled"));
+            user.setCompanyLogo((String) row.get("company_Logo"));
+            user.setCompanyName((String) row.get("company_name"));
+            user.setTelephone((String) row.get("telephone"));
+            user.setJoiningDate((Date) row.get("joining_date"));
+            return user;
+        }
+        return null;
 	}
   
 
@@ -133,52 +146,9 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
     @Override
     public boolean checkUserActivationId(String username, String activationCode) {
 
-        String sql = "select activation_id from users.users where users.user_name=?";
-        Connection conn = null;
-        
-        try 
-        {
-            conn = datasource.getConnection();
-            PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setString(1, username);
-            ResultSet rs = ps.executeQuery();
-            
-            if (rs.next()) 
-            {
-                if(rs.getString(1).equals(activationCode))
-                {
-                	return true;
-                }                
-            }
-            
-            rs.close();
-            ps.close();
-        } 
-        catch (SQLException e) 
-        {
-            logger.error(e.getMessage());
-            throw new RuntimeException(e);
-        } 
-        finally 
-        {
-            if (conn != null) 
-            {
-                try 
-                {
-                	conn.close();
-                } catch (SQLException e) {
-                    logger.error(e.getMessage());
-                }
-            }
-        }
-        
-        return false;        
-    }
-
-    @Override
-    public ArrayList<Group> getAvailableGroupsForUser(long userID) {
-        // TODO Auto-generated method stub
-        return null;
+        String sql = "select activation_id from users.users where users.user_name="+username;
+        String activationID=(String)this.jdbcTemplate.queryForObject(sql,  String.class);
+        return activationID.equalsIgnoreCase(activationCode);
     }
 
     @Override
@@ -186,21 +156,9 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
         // TODO Auto-generated method stub
         return null;
     }
-
-    @Override
-    public boolean checkEmailAvailability(String email) {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
+    
     @Override
     public User getUserByName(String userName) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public UserRoleCollection getUserRoles(long userID) {
         // TODO Auto-generated method stub
         return null;
     }
@@ -210,7 +168,7 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
         if(userId==0 || groupID==0){
             throw new RuntimeException("Invalid userID or GroupID");
         }
-        String sql = "INSERT INTO users.user_group VALUES (?, ?)";
+        String sql = "INSERT INTO users.user_group(user_id,group_id) VALUES (?, ?)";
         try {
             this.jdbcTemplate.update(sql, userId,groupID);
         }catch (Exception e) {
@@ -244,8 +202,8 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
 
     @Override
     public boolean updateUser(User user) {
-        String sql = "UPDATE users.users SET first_name=?,last_name=?,telephone=?,user_password=? WHERE user_id=?";
-        this.jdbcTemplate.update(sql, user.getFirstName(),user.getLastName(),user.getTelephone(),user.getPassword(),user.getUserID());
+        String sql = "UPDATE users.users SET first_name=?,last_name=?,telephone=?,user_password=?,company_name=? WHERE user_name=?";
+        this.jdbcTemplate.update(sql,new Object[]{ user.getFirstName(),user.getLastName(),user.getTelephone(),user.getPassword(),user.getCompanyName(),user.getUserName()});
         return true;
     }
 
@@ -257,20 +215,14 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
     }
     
     @Override
-    public boolean usernameAvailablility(String username) {
-        String sql = "select user_id from users.users where users.user_name=?";
-        int userID=(int)this.jdbcTemplate.queryForInt(sql, username);
-        if(userID != 0){
-            return true;
-        }else{
-            return false;
-        }
+    public boolean usernameAvailablility(String userName) {
+        return this.getUserByName(userName)!=null;
     }
 
     @Override
     public List<User> getUsersByGroupID(Long groupID) {
 
-        String sql = "SELECT * FROM users.users";
+        String sql = "SELECT * FROM users.users INNER JOIN users.user_group ON users.users.user_id=users.user_group.user_id WHERE user_group.group_ID="+groupID;
         List<User> users  = this.jdbcTemplate.query(sql,new BeanPropertyRowMapper(User.class));
         return users;
         

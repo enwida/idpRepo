@@ -48,7 +48,9 @@ public class UserServiceImpl implements IUserService {
 	
     public User getUser(Long id) {
 		
-		return userDao.getUserByID(id);
+		User user = userDao.getUserByID(id);
+		user.setRoles(roleDao.getUserRoles(user.getUserID()));
+		return user;
 	}
 
 	public List<User> getUsers() {
@@ -89,8 +91,8 @@ public class UserServiceImpl implements IUserService {
 			    	anonymousGroup = new Group();
 			    	anonymousGroup.setGroupName("anonymous");
 			    	anonymousGroup.setAutoPass(true);
+                    anonymousGroup = groupDao.addGroup(anonymousGroup);
 			    }
-			    anonymousGroup = groupDao.addGroup(anonymousGroup);
                 userDao.assignUserToGroup(userId, anonymousGroup.getGroupID());
 			}
 			
@@ -112,11 +114,7 @@ public class UserServiceImpl implements IUserService {
 	}
 
 	public String getPassword(String email) {
-		return userDao.getPassword(email);
-	}
-
-	public List<Group> getAvailableGroupsForUser(long userID) {
-		return userDao.getAvailableGroupsForUser(userID);
+		return userDao.getUserByName(email).getPassword();
 	}
 	
 	public List<Group> getUserGroups(long userID) {
@@ -141,7 +139,7 @@ public class UserServiceImpl implements IUserService {
     }
     
 	public boolean checkEmailAvailability(String email) {	
-		return userDao.checkEmailAvailability(email);
+		return userDao.getUserByName(email)==null;
 	}
 	
     public boolean updateUser(User user) {

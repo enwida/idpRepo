@@ -1,5 +1,7 @@
 package de.enwida.web;
 
+import static org.junit.Assert.assertEquals;
+
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -23,7 +25,12 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
+import com.sun.mail.imap.Rights;
+
 import de.enwida.web.controller.AdminController;
+import de.enwida.web.dao.implementation.GroupDaoImpl;
+import de.enwida.web.dao.implementation.RightsDaoImpl;
+import de.enwida.web.dao.implementation.RoleDaoImpl;
 import de.enwida.web.dao.implementation.UserDaoImpl;
 import de.enwida.web.model.Group;
 import de.enwida.web.model.User;
@@ -37,6 +44,17 @@ public class UserManagement {
 	
 	@Autowired
 	private UserDaoImpl userDao;	
+	
+	   
+    @Autowired
+    private GroupDaoImpl groupDao;    
+    
+    
+    @Autowired
+    private RoleDaoImpl roleDao;   
+    
+    @Autowired
+    private RightsDaoImpl rightsDao;     
 
     private static org.apache.log4j.Logger logger = Logger.getLogger(AdminController.class);
 
@@ -50,7 +68,7 @@ public class UserManagement {
 	    user.setCompanyName("enwida.de");
         User existingUser = userDao.getUserByName(user.getUserName());
 	    if(existingUser==null){
-	        userDao.save(user);
+	        user.setUserID(userDao.save(user));
 	    }else{
 	        user=existingUser;
 	    }
@@ -61,15 +79,25 @@ public class UserManagement {
 	
    @Test
     public void saveUserGroup() {
-       Group group = userDao.getAllGroups().get(0);
+       Group group = groupDao.getAllGroups().get(0);
        //save user in any group
        userDao.assignUserToGroup(user.getUserID(),group.getGroupID());
        userDao.deassignUserFromGroup(user.getUserID(), group.getGroupID());
        //save user in anonymous group
-       group =userDao.getGroupByName("anonymous");
+       group =groupDao.getGroupByName("anonymous");
        userDao.assignUserToGroup(user.getUserID(),group.getGroupID());
        userDao.deassignUserFromGroup(user.getUserID(), group.getGroupID());
     }
+   
+   @Test
+   public void updateUser() {
+      user.setCompanyName("test");
+      userDao.updateUser(user);
+      User user2=userDao.getUserByName(user.getUserName());
+      assertEquals("test", user2.getCompanyName());
+      userDao.deleteUser(user2);
+      assertEquals(null,userDao.getUserByName(user2.getUserName()));
+   }
 
 	@Test
 	public void SpringSecurtyLoginSQLCheck() throws Exception {
@@ -136,8 +164,8 @@ public class UserManagement {
 	
 	@Test
 	public void testEnabledDisableAspect() {
-        userDao.enableDisableAspect(1, true);
-        userDao.enableDisableAspect(1, false);
+        rightsDao.enableDisableAspect(1, true);
+        rightsDao.enableDisableAspect(1, false);
 	}
 
 }

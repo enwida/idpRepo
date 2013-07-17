@@ -167,7 +167,6 @@ public class UserController {
         		return "user/index";        		
 	        }
 	    }
-	    model.addAttribute("content", "register");
         return "user/master";
 	}
 	

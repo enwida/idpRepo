@@ -11,8 +11,14 @@
 		<property name="username" value="${db.user}" />
 		<property name="password" value="${db.pw}" />
 	</bean>
-	
-	<bean id="userDao" class="de.enwida.web.dao.implementation.UserDao">
+
+	<bean id="userDao" class="de.enwida.web.dao.implementation.UserDaoImpl">
+	</bean>
+	<bean id="roleDao" class="de.enwida.web.dao.implementation.RoleDaoImpl">
+	</bean>
+	<bean id="groupDao" class="de.enwida.web.dao.implementation.GroupDaoImpl">
+	</bean>
+	<bean id="rightsDao" class="de.enwida.web.dao.implementation.RightsDaoImpl">
 	</bean>
 	
 	<bean id="propertyConfigurer"
