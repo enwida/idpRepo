@@ -5,7 +5,7 @@ import java.util.List;
 
 public class User {
  
-	private Long userID;
+	private long userID;
 	private String userName;
 	private String lastName;
     private String firstName;
@@ -73,11 +73,11 @@ public class User {
 		this.userName = userName;
 	}
 
-	public Long getUserID() {
+	public long getUserID() {
 		return userID;
 	}
 
-	public void setUserID(Long userID) {
+	public void setUserID(long userID) {
 		this.userID = userID;
 	}
 	

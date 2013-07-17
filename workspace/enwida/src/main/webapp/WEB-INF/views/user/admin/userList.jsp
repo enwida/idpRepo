@@ -8,8 +8,8 @@
 			<th>Enable/Disabled</th>
 			<th>Name LastName</th>
 			<th>Last Login</th>
-			<th>Company Name</th>
 			<th>Tel</th>
+			<th>Company Name</th>
 			<th>Operations</th>
 		</tr>
 	</thead>

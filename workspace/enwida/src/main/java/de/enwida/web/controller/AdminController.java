@@ -64,37 +64,7 @@ public class AdminController {
 		return admin(model);
 	}
     
-    @RequestMapping(value="/editGroup", method = RequestMethod.GET)
-    public String editGroup(Model model,String action,Integer groupID,String newGroup) {    
-        try {
-            if( action!=null){
-                switch(action){
-                    case "delete":
-                        userService.removeGroup(groupID);
-                        break;
-                    case "add":
-                        Group group=new Group();
-                        group.setGroupName(newGroup);            
-                        userService.addGroup(group);
-                }
-                model.addAttribute("info", "OK");
-            }
-        } catch (Exception e) {
-            model.addAttribute("error", e.getMessage());
-        }
-        
-        List<Group> groups= userService.getAllGroups();
-        model.addAttribute("groups", groups);
-        
-        List<Group> groupsWithUsers= userService.getAllGroupsWithUsers();
-        model.addAttribute("groupsWithUsers", groupsWithUsers);
-        
-        List<User> users= userService.getUsers();
-        model.addAttribute("users", users);
-        
-        model.addAttribute("content", "editGroup");
-        return "user/admin/master";
-    }
+   
        
     
     @RequestMapping(value="/roleList", method = RequestMethod.GET)
@@ -186,7 +156,7 @@ public class AdminController {
             userService.resetPassword(userID);
             model.addAttribute("info", "OK");
         } catch (Exception e) {
-            model.addAttribute("error", "e");
+            model.addAttribute("error", "Error:"+e.getLocalizedMessage());
             logger.error(e.getMessage());
         }
         return user(model,userID);
@@ -209,20 +179,48 @@ public class AdminController {
         return userList(model);
     }
     
+    @RequestMapping(value="/editGroup", method = RequestMethod.GET)
+    public String editGroup(Model model,String action,Integer groupID,String newGroup) {    
+        try {
+            if( action!=null){
+                switch(action){
+                    case "delete":
+                        userService.removeGroup(groupID);
+                        break;
+                    case "add":
+                        Group group=new Group();
+                        group.setGroupName(newGroup);            
+                        userService.addGroup(group);
+                }
+                model.addAttribute("info", "OK");
+            }
+        } catch (Exception e) {
+            model.addAttribute("error", e.getMessage());
+        }
+        
+        List<Group> groups= userService.getAllGroups();
+        model.addAttribute("groups", groups);
+        
+        List<Group> groupsWithUsers= userService.getAllGroupsWithUsers();
+        model.addAttribute("groupsWithUsers", groupsWithUsers);
+        
+        List<User> users= userService.getUsers();
+        model.addAttribute("users", users);
+        
+        model.addAttribute("content", "editGroup");
+        return "user/admin/master";
+    }
+    
     @RequestMapping(value="/editGroup",method=RequestMethod.POST, params = "assign")
     public String assignUserToGroup(Model model,int selectedUser,int selectedGroup)
     {
-        String result= userService.assignUserToGroup(selectedUser,selectedGroup);
-        model.addAttribute("info", result);
-        return editGroup(model,null,0,null);
+        return "hello";
     }
     
     @RequestMapping(value="/editGroup",method=RequestMethod.POST, params = "deassign")
     public String deassignUserToGroup(Model model,int selectedUser,int selectedGroup)
     {
-        String result= userService.deassignUserToGroup(selectedUser,selectedGroup);
-        model.addAttribute("info", result);
-        return editGroup(model,null,0,null);
+        return "hello";
     }
     
     @RequestMapping(value="/editGroup",method=RequestMethod.POST, params = "addGroup")
