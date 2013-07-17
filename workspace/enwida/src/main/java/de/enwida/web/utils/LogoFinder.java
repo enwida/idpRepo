@@ -35,7 +35,7 @@ public class LogoFinder {
                 }else{
                     url = domElement.getAttribute("src"); 
                 }
-                url = url.replace("http", "https");
+                url = url.replace("http:", "https:");
                 final BufferedImage bi = ImageIO.read(new URL(url));
                 if (bi != null && bi.getHeight() < 200 && bi.getWidth() < 200) {
                     images += imgSrc;

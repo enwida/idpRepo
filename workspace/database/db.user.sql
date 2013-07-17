@@ -15,8 +15,8 @@ CREATE TABLE users.users
   joining_date date NOT NULL,
   telephone character varying(20),
   company_name character varying(45) NOT NULL,
-  company_logo character varying,
-  activation_id character varying,
+  company_logo character varying(45),
+  activation_id character varying(45),
   CONSTRAINT users_pkey PRIMARY KEY (user_id)
 )
 ;

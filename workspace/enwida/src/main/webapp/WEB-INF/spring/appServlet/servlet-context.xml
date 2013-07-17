@@ -36,9 +36,6 @@
 		<beans:property name="basename" value="/resources/messages/messages" />
 	</beans:bean>
 	
-	<beans:bean id="userPermissionCollection" class="de.enwida.web.model.UserRoleCollection">
-	</beans:bean>
-	
 	<beans:bean id="userDao" class="de.enwida.web.dao.implementation.UserDaoImpl">
 	</beans:bean>
 	

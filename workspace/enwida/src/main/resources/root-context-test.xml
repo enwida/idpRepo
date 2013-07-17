@@ -11,8 +11,23 @@
 		<property name="username" value="${db.user}" />
 		<property name="password" value="${db.pw}" />
 	</bean>
+
+	<bean id="userDao" class="de.enwida.web.dao.implementation.UserDaoImpl">
+	</bean>
+	<bean id="roleDao" class="de.enwida.web.dao.implementation.RoleDaoImpl">
+	</bean>
+	<bean id="groupDao" class="de.enwida.web.dao.implementation.GroupDaoImpl">
+	</bean>
+	<bean id="rightsDao" class="de.enwida.web.dao.implementation.RightsDaoImpl">
+	</bean>
 	
-	<bean id="userDao" class="de.enwida.web.dao.implementation.UserDao">
+	<bean id="mailService" class="de.enwida.web.service.implementation.MailServiceImpl">
+	     <property name="starttls" value="${mail.smtp.starttls.enable}"/>
+	     <property name="host" value="${mail.smtp.host}"/>
+	     <property name="user" value="${mail.smtp.user}"/>
+	     <property name="port" value="${mail.smtp.port"/>
+	     <property name="auth" value="${mail.smtp.auth}"/>
+	     <property name="password" value="${mail.smtp.password}"/>
 	</bean>
 	
 	<bean id="propertyConfigurer"

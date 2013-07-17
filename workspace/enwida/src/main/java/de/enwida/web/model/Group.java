@@ -5,7 +5,7 @@ import java.util.List;
 
 public class Group {
 
-    private Long groupID;
+    private long groupID;
     private String groupName;
     private boolean autoPass;
     public List<User> assignedUsers;

@@ -14,7 +14,6 @@ public interface IUserService {
 	public boolean saveUser(User user);
 	public String getPassword(String email);
 	public List<User> findAllUsers();
-	public List<Group> getAvailableGroupsForUser(long userID);
 	public List<Group> getUserGroups(long userID);
 	public List<Group> getAllGroups();
     public Group addGroup(Group newGroup);

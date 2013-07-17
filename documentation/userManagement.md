@@ -55,6 +55,8 @@ Database Schema
 ##Security structure
 <img src="img/securitySequenceDiagram.png" width="600px" />
    
+##DAO structure
+<img src="img/daoInherit.png" width="600px" />
 ###ADMIN PAGES
 
 **Page Name: User** 
@@ -195,6 +197,11 @@ This will be handled with the following logic.
 - Logo is tried to retrieve from company web address automatically.
 - Allowed email address are allowed and groups are be assigned according to CompanyName autoPass property
 
+
+
+**Logo Download** 
+During the registration process,after user mail input, domain name is extracted from the mail and using HTMLUnit Browser all images from that website is retrived.Then according the image size(images smaller then 100X100), they are proposed to user for selection
+
 ###USER TRACKING AND LOGGING
 Following logging files are generated
 
@@ -224,7 +231,16 @@ Same Chart Request workflow will be used in Download page
  
 
 
-#Upload
+##Upload
 Users can upload cvs formatted files to the webpage. This data is parsed and saved into database and displayed on a chart
 
 <img src="img/userManagementUML.png" width="600px" />
+
+###Testing
+####Testing Web page availability and functionality
+HtmlUnit is used for testing the admin pages.HTMLUnit behaves like a browser and during the tests every browser actions can be simulated.
+
+
+####Testing Database Access Objects functionality
+
+All dao methods are testing in userManagement.java file.This Junit tests calls all the functions to catch any failures.

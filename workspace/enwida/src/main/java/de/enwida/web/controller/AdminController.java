@@ -83,9 +83,6 @@ public class AdminController {
             model.addAttribute("error", e.getMessage());
         }
         
-        List<Group> groups= userService.getAllGroups();
-        model.addAttribute("groups", groups);
-        
         List<Group> groupsWithUsers= userService.getAllGroupsWithUsers();
         model.addAttribute("groupsWithUsers", groupsWithUsers);
         
@@ -186,7 +183,7 @@ public class AdminController {
             userService.resetPassword(userID);
             model.addAttribute("info", "OK");
         } catch (Exception e) {
-            model.addAttribute("error", "e");
+            model.addAttribute("error", "Error:"+e.getLocalizedMessage());
             logger.error(e.getMessage());
         }
         return user(model,userID);

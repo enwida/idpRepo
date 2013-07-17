@@ -12,6 +12,9 @@ import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 import de.enwida.web.controller.AdminController;
+import de.enwida.web.dao.interfaces.IGroupDao;
+import de.enwida.web.dao.interfaces.IRightsDao;
+import de.enwida.web.dao.interfaces.IRoleDao;
 import de.enwida.web.dao.interfaces.IUserDao;
 import de.enwida.web.model.Group;
 import de.enwida.web.model.Role;
@@ -27,6 +30,16 @@ public class UserServiceImpl implements IUserService {
 
     @Autowired
     private IUserDao userDao;
+    
+    @Autowired
+    private IGroupDao groupDao;
+     
+    @Autowired
+    private IRoleDao roleDao;
+    
+    
+   @Autowired
+   private IRightsDao rightsDao;
 
     @Autowired
     private MailServiceImpl mailService;
@@ -35,7 +48,9 @@ public class UserServiceImpl implements IUserService {
 	
     public User getUser(Long id) {
 		
-		return userDao.getUserByID(id);
+		User user = userDao.getUserByID(id);
+		user.setRoles(roleDao.getUserRoles(user.getUserID()));
+		return user;
 	}
 
 	public List<User> getUsers() {
@@ -59,25 +74,25 @@ public class UserServiceImpl implements IUserService {
 				
 		if(userId != -1)
 		{			
-			Group group = userDao.getGroupByCompanyName(user.getCompanyName());
+			Group group = groupDao.getGroupByCompanyName(user.getCompanyName());
 			
 			if(group != null && group.isAutoPass())
 			{
-		        Group newGroup = userDao.getGroupByGroupId(group.getGroupID());
+		        Group newGroup = groupDao.getGroupByGroupId(group.getGroupID());
                 userDao.assignUserToGroup(userId, newGroup.getGroupID());
 
 			}
 			else
 			{
 				// saving in default group (Anonymous)
-			    Group anonymousGroup = userDao.getGroupByName("anonymous");
+			    Group anonymousGroup = groupDao.getGroupByName("anonymous");
 			    if(anonymousGroup == null)
 			    {
 			    	anonymousGroup = new Group();
 			    	anonymousGroup.setGroupName("anonymous");
 			    	anonymousGroup.setAutoPass(true);
+                    anonymousGroup = groupDao.addGroup(anonymousGroup);
 			    }
-			    anonymousGroup = userDao.addGroup(anonymousGroup);
                 userDao.assignUserToGroup(userId, anonymousGroup.getGroupID());
 			}
 			
@@ -99,15 +114,7 @@ public class UserServiceImpl implements IUserService {
 	}
 
 	public String getPassword(String email) {
-		return userDao.getPassword(email);
-	}
-
-	public List<User> findAllUsersWithPermissions(){
-		return userDao.findAllUsersWithPermissions();
-	}
-
-	public List<Group> getAvailableGroupsForUser(long userID) {
-		return userDao.getAvailableGroupsForUser(userID);
+		return userDao.getUserByName(email).getPassword();
 	}
 	
 	public List<Group> getUserGroups(long userID) {
@@ -115,24 +122,24 @@ public class UserServiceImpl implements IUserService {
 	}
 
 	public List<Group> getAllGroups() {
-		return userDao.getAllGroups();
+		return groupDao.getAllGroups();
 	}
 
     public Group addGroup(Group newGroup) {
     	newGroup.setAutoPass(false);
-        return userDao.addGroup(newGroup);
+        return groupDao.addGroup(newGroup);
     }
 
     public void saveRole(Role role) {
-        userDao.addRole(role);
+        roleDao.addRole(role);
     }
 
     public List<Role> getAllRoles() {
-        return userDao.getAllRoles();
+        return roleDao.getAllRoles();
     }
     
 	public boolean checkEmailAvailability(String email) {	
-		return userDao.checkEmailAvailability(email);
+		return userDao.getUserByName(email)==null;
 	}
 	
     public boolean updateUser(User user) {
@@ -169,19 +176,27 @@ public class UserServiceImpl implements IUserService {
     }
 
     public List<Group> getAllGroupsWithUsers() {
-        return userDao.getAllGroupsWithUsers();
+        List<Group> groups = groupDao.getAllGroups();
+        for (Group group : groups) {
+            group.setAssignedUsers(userDao.getUsersByGroupID(group.getGroupID()));
+        }
+        return groups;
     }
 
     public String assignRoleToGroup(int roleID, int groupID) {
-        return  userDao.assignRoleToGroup(roleID,groupID);
+        return  groupDao.assignRoleToGroup(roleID,groupID);
     }
 
     public String deassignRoleToGroup(int roleID, int groupID) {
-        return userDao.deassignRoleFromGroup(roleID,groupID);
+        return groupDao.deassignRoleFromGroup(roleID,groupID);
     }
 
     public List<Role> getAllRolesWithGroups() {
-        return userDao.getAllRolesWithGroups();
+        List<Role> roles = roleDao.getAllRoles();
+        for (Role role : roles) {
+            role.setAssignedGroups(groupDao.getGroupsByRole(role.getRoleID()));
+        }
+        return roles;
     }
 
     public List<User> findAllUsers() {
@@ -195,7 +210,7 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public void removeGroup(int groupID) throws Exception {
-        userDao.removeGroup(groupID);
+        groupDao.removeGroup(groupID);
     }
     
     @Override
@@ -205,7 +220,7 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public boolean enableDisableAspect(int rightID, boolean enabled) {
-        return userDao.enableDisableAspect(rightID,enabled);
+        return rightsDao.enableDisableAspect(rightID,enabled);
     }
 
 	@Override

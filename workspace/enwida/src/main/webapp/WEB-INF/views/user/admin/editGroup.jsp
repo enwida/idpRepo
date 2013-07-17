@@ -1,6 +1,5 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<%@ page session="false"%>
 
 <br>
 <form name='f' method='POST'>
@@ -21,10 +20,10 @@
 					</td>
 					<td><input type="checkbox" checked="${group.autoPass}"/></td>
 					<td>
-					<c:if test="${group.assignedUsers!=null}">
+					<c:if test="${group.assignedUsers.size()>=1}">
 						remove users to delete group
 					</c:if>
-					<c:if test="${group.assignedUsers==null}">
+					<c:if test="${group.assignedUsers.size()==0}">
 						<a href='editGroup?groupID=${group.groupID}&action=delete'> delete</a>
 					</c:if>	
 					</td>
@@ -56,7 +55,7 @@ $(function() {
 		<tr>
 			<td>
 				<select name="selectedGroup">
-						<c:forEach var="group" items="${groups}">
+						<c:forEach var="group" items="${groupsWithUsers}">
 							<option value="${group.groupID}">${group.groupName}</option>
 						</c:forEach>
 				</select>
