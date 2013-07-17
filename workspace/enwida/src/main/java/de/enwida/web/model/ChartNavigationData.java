@@ -115,11 +115,15 @@ public class ChartNavigationData implements Cloneable {
 	
 	public ChartNavigationData clone() {
 	    final ChartNavigationData result = new ChartNavigationData(chartTitle, xAxisLabel, yAxisLabel);
-	    result.setIsDateScale(isDateScale);
 	    result.setDefaults(defaults.clone());
 	    result.tsos = new HashMap<>(tsos);
 	    result.aspects = new ArrayList<Aspect>(aspects);
 	    result.timeRanges = new HashMap<>(timeRanges);
+
+	    result.setIsDateScale(isDateScale);
+	    result.setHasLineSelection(hasLineSelection);
+	    result.setHasProductSelection(hasProductSelection);
+	    result.setHasTimeSelection(hasTimeSelection);
 
 	    for (final ProductTree tree : productTrees) {
 	        result.addProductTree(tree.clone());
@@ -177,31 +181,11 @@ public class ChartNavigationData implements Cloneable {
         return aspects;
     }
 
-    public void setAspects(List<Aspect> aspects) {
-        this.aspects = aspects;
-    }
-
     public Map<String, String> getTimeRanges() {
         return timeRanges;
     }
 
-	public void setTimeRanges(Map<String, String> timeRanges) {
-		this.timeRanges = timeRanges;
-	}
-
-	public void setProductTrees(List<ProductTree> productTrees) {
-		this.productTrees = productTrees;
-	}
-
-	public void setTsos(Map<Integer, String> tsos) {
-		this.tsos = tsos;
-	}
-
-	public void setDateScale(boolean isDateScale) {
-		this.isDateScale = isDateScale;
-	}
-
-	public boolean isHasTimeSelection() {
+	public boolean getHasTimeSelection() {
 		return hasTimeSelection;
 	}
 
@@ -209,7 +193,7 @@ public class ChartNavigationData implements Cloneable {
 		this.hasTimeSelection = hasTimeSelection;
 	}
 
-	public boolean isHasProductSelection() {
+	public boolean getHasProductSelection() {
 		return hasProductSelection;
 	}
 
@@ -217,7 +201,7 @@ public class ChartNavigationData implements Cloneable {
 		this.hasProductSelection = hasProductSelection;
 	}
 
-	public boolean isHasLineSelection() {
+	public boolean getHasLineSelection() {
 		return hasLineSelection;
 	}
 

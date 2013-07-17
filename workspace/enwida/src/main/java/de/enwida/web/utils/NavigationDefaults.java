@@ -64,9 +64,9 @@ public class NavigationDefaults implements Cloneable {
     public List<Integer> getDisabledLines() {
         return disabledLines;
     }
-    
-    public void setDisabledLines(List<Integer> disabledLines) {
-        this.disabledLines = disabledLines;
-    }
 
+	public void setDisabledLines(List<Integer> disabledLines) {
+		this.disabledLines = disabledLines;
+	}
+    
 }

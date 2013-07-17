@@ -57,8 +57,4 @@ public class ProductNode implements Cloneable {
         children.add(child);
     }
 
-	public void setChildren(List<ProductNode> children) {
-		this.children = children;
-	}
-    
 }
