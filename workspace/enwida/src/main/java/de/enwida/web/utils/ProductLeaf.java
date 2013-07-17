@@ -10,6 +10,8 @@ public class ProductLeaf extends ProductNode {
     
     private List<DataResolution> resolution;
     private CalendarRange timeRange;
+
+    public ProductLeaf() { }
     
     public ProductLeaf(int id, String name, List<DataResolution> resolution, CalendarRange timeRange) {
         super(id, name, null);

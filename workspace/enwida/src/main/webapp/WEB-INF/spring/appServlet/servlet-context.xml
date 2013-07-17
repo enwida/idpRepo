@@ -88,6 +88,14 @@
 
 	<beans:bean id="cookieSecurityService" scope="singleton" class="de.enwida.web.service.implementation.CookieSecurityServiceImpl">
 	</beans:bean>
+	
+	<beans:bean id="isoDateFormat" class="java.text.SimpleDateFormat">
+		<beans:constructor-arg value="yyyy-MM-dd" />
+	</beans:bean>
+
+	<beans:bean id="objectMapperFactory" scope="singleton" class="de.enwida.web.utils.ObjectMapperFactory">
+		<beans:constructor-arg ref="isoDateFormat" />
+	</beans:bean>
 
 	<beans:bean id="mailService" class="de.enwida.web.service.implementation.MailServiceImpl">
 	     <beans:property name="starttls" value="${mail.smtp.starttls.enable}"/>

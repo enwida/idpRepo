@@ -3,7 +3,6 @@
  */
 package de.enwida.web.service.implementation;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -18,7 +17,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.cedarsoftware.util.io.JsonReader;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import de.enwida.transport.Aspect;
 import de.enwida.web.model.ChartNavigationData;
@@ -28,7 +27,7 @@ import de.enwida.web.model.User;
 import de.enwida.web.service.interfaces.IAvailibilityService;
 import de.enwida.web.service.interfaces.INavigationService;
 import de.enwida.web.service.interfaces.ISecurityService;
-import de.enwida.web.utils.EnwidaUtils;
+import de.enwida.web.utils.ObjectMapperFactory;
 import de.enwida.web.utils.ProductLeaf;
 import de.enwida.web.utils.ProductRestriction;
 
@@ -45,11 +44,14 @@ public class NavigationServiceImpl implements INavigationService {
 	@Autowired
 	private MessageSource messageSource;
 	
+	@Autowired
+	private ObjectMapperFactory objectMapperFactory;
+	
 	private Hashtable<Integer, ChartNavigationData> defaultNavigationData =  new Hashtable<Integer, ChartNavigationData>();
 	
 	@PostConstruct
 	public void init() throws IOException {
-	     for (int i = 0; i <= 9; i++) {
+	     for (int i = 0; i <= 0; i++) {
 	    	 defaultNavigationData.put(i, getNavigationDataFromJsonFile(i));
 		}
 	}
@@ -144,15 +146,9 @@ public class NavigationServiceImpl implements INavigationService {
 
 	@Override
 	public ChartNavigationData getNavigationDataFromJsonFile(int chartId) throws IOException {
-		
-		InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream( chartId + ".json");
-		String json = EnwidaUtils.getStringFromInputStream(in);
-		
-		JsonReader jr = new JsonReader(new ByteArrayInputStream(json.getBytes()));		
-		ChartNavigationData chartNavigationDataDeSerialized = (ChartNavigationData) jr.readObject();
-		jr.close();	
-
-        return chartNavigationDataDeSerialized;
+		final InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream( chartId + ".json");
+		final ObjectMapper om = objectMapperFactory.create();
+		return om.readValue(in, ChartNavigationData.class);
 	}
 	
 	private void setTsos(ChartNavigationData navigationData, Locale locale) {

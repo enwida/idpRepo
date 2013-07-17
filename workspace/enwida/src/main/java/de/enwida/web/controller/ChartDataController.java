@@ -1,6 +1,5 @@
 package de.enwida.web.controller;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.security.Principal;
 import java.text.ParseException;
@@ -22,8 +21,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.cedarsoftware.util.io.JsonReader;
-import com.cedarsoftware.util.io.JsonWriter;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import de.enwida.chart.LineManager;
 import de.enwida.transport.Aspect;
@@ -41,6 +39,7 @@ import de.enwida.web.utils.CalendarRange;
 import de.enwida.web.utils.ChartDefaults;
 import de.enwida.web.utils.Constants;
 import de.enwida.web.utils.NavigationDefaults;
+import de.enwida.web.utils.ObjectMapperFactory;
 
 /**
  * Handles chart data requests
@@ -60,6 +59,9 @@ public class ChartDataController {
     
     @Autowired
     private IUserService userService;
+    
+    @Autowired
+    private ObjectMapperFactory objectMapperFactory;
     
     private static org.apache.log4j.Logger logger = Logger.getLogger(AdminController.class);
 
@@ -198,12 +200,7 @@ public class ChartDataController {
 
     	// Try to get the navigation defaults from the cookie
     	try {
-    	    final String cookieValue = getChartDefaultsCookie(request, principal);
-    	    final JsonReader jsonReader = new JsonReader(new ByteArrayInputStream(cookieValue.getBytes()));
-    	    final ChartDefaults chartDefaults = (ChartDefaults) jsonReader.readObject();
-    	    jsonReader.close();
-
-    	    final NavigationDefaults defaults = chartDefaults.get(chartId);
+    		final NavigationDefaults defaults = getNavigationDefaultsFromCookie(chartId, request, principal);
     	    if (defaults != null) {
     	        result.setDefaults(defaults);
     	    }
@@ -259,36 +256,46 @@ public class ChartDataController {
     	return result;
     }
     
-    private NavigationDefaults getNavigationDefaultsFromCookie(int chartId, HttpServletRequest request, Principal principal) throws IOException {
+    private ChartDefaults getChartDefaultsFromCookie(HttpServletRequest request, Principal principal) throws Exception {
 	    final String cookieValue = getChartDefaultsCookie(request, principal);
-	    final JsonReader jsonReader = new JsonReader(new ByteArrayInputStream(cookieValue.getBytes()));
-	    final ChartDefaults chartDefaults = (ChartDefaults) jsonReader.readObject();
-	    jsonReader.close();
-	    return chartDefaults.get(chartId);
+	    final ObjectMapper objectMapper = objectMapperFactory.create();
+	    final ChartDefaults result = objectMapper.readValue(cookieValue, ChartDefaults.class);
+
+	    if (result == null) {
+	    	throw new Exception("Error while parsing defaults cookie");
+	    }
+	    return result;
+    }
+    
+    private NavigationDefaults getNavigationDefaultsFromCookie(int chartId, HttpServletRequest request, Principal principal) throws Exception {
+    	final ChartDefaults chartDefaults = getChartDefaultsFromCookie(request, principal);
+	    final NavigationDefaults result = chartDefaults.get(chartId);
+	    
+	    if (result == null) {
+	    	throw new Exception("No defaults for chart ID " + chartId);
+	    }
+	    return result;
     }
 
     private void updateChartDefaultsCookie(int chartId, NavigationDefaults defaults, HttpServletRequest request,
 	    HttpServletResponse response, Principal principal) throws IOException {
 
         // Get the current chart defaults
-        final String cookieValue = getChartDefaultsCookie(request, principal);
-        ChartDefaults chartDefaults;
-        try {
-            final JsonReader jsonReader = new JsonReader(new ByteArrayInputStream(cookieValue.getBytes()));
-            chartDefaults = (ChartDefaults) jsonReader.readObject();
-            jsonReader.close();
-        } catch (Exception e) {
-            chartDefaults = new ChartDefaults(); 
-            logger.error(e.getMessage());
-
-        }
-        
+    	ChartDefaults chartDefaults;
+    	try {
+    		chartDefaults = getChartDefaultsFromCookie(request, principal);
+    	} catch (Exception e) {
+    		chartDefaults = new ChartDefaults();
+    	}
+    	
         // Set the defaults for our chart ID
         chartDefaults.set(chartId, defaults);
 		if (principal != null) {
 			chartDefaults.setUsername(principal.getName());
 		}
-        final String defaultsJson = JsonWriter.objectToJson(chartDefaults);
+		
+		final ObjectMapper objectMapper = objectMapperFactory.create();
+        final String defaultsJson = objectMapper.writeValueAsString(chartDefaults);
         
     	// Create/update cookie
     	if (principal != null) {

@@ -9,6 +9,8 @@ public class CalendarRange {
     private Calendar from;
     private Calendar to;
     
+    public CalendarRange() { }
+    
     public CalendarRange(Calendar from, Calendar to) {
         this.from = from;
         this.to = to;

@@ -1,301 +1,251 @@
 {
-  "@type": "de.enwida.web.model.ChartNavigationData",
-  "chartTitle": {
-    "@id": 7,
-    "value": ""
-  },
-  "defaults": {
-    "tsoId": 99,
-    "resolution": {
-      "@id": 53,
-      "name": "MONTHLY",
-      "ordinal": 4
+  "defaults" : {
+    "tsoId" : 99,
+    "resolution" : "MONTHLY",
+    "product" : 211,
+    "timeRange" : {
+      "from" : "2010-11-01",
+      "to" : "2010-12-01"
     },
-    "product": 211,
-    "timeRange": {
-      "from": {
-        "@type": "java.util.GregorianCalendar",
-        "time": "2010-11-01T00:00:00.000+0100",
-        "zone": "Europe\/Berlin"
-      },
-      "to": {
-        "@type": "java.util.GregorianCalendar",
-        "time": "2010-12-01T00:00:00.000+0100",
-        "zone": "Europe\/Berlin"
-      }
+    "disabledLines" : [ ]
+  },
+  "productTrees" : [ {
+    "root" : {
+      "@c" : ".ProductNode",
+      "id" : 0,
+      "name" : "root",
+      "children" : [ {
+        "@c" : ".ProductNode",
+        "id" : 2,
+        "name" : "SCR",
+        "children" : [ {
+          "@c" : ".ProductNode",
+          "id" : 1,
+          "name" : "PT",
+          "children" : [ {
+            "@c" : ".ProductLeaf",
+            "id" : 1,
+            "name" : "pos",
+            "children" : [ ],
+            "resolution" : [ "QUATER_HOURLY", "HOURLY", "DAILY", "WEEKLY", "MONTHLY", "YEARLY" ],
+            "timeRange" : {
+              "from" : "1970-01-01",
+              "to" : "292278994-08-17"
+            }
+          }, {
+            "@c" : ".ProductLeaf",
+            "id" : 2,
+            "name" : "neg",
+            "children" : [ ],
+            "resolution" : [ "QUATER_HOURLY", "HOURLY", "DAILY", "WEEKLY", "MONTHLY", "YEARLY" ],
+            "timeRange" : {
+              "from" : "1970-01-01",
+              "to" : "292278994-08-17"
+            }
+          } ]
+        }, {
+          "@c" : ".ProductNode",
+          "id" : 2,
+          "name" : "OPT",
+          "children" : [ {
+            "@c" : ".ProductLeaf",
+            "id" : 1,
+            "name" : "pos",
+            "children" : [ ],
+            "resolution" : [ "QUATER_HOURLY", "HOURLY", "DAILY", "WEEKLY", "MONTHLY", "YEARLY" ],
+            "timeRange" : {
+              "from" : "1970-01-01",
+              "to" : "292278994-08-17"
+            }
+          }, {
+            "@c" : ".ProductLeaf",
+            "id" : 2,
+            "name" : "neg",
+            "children" : [ ],
+            "resolution" : [ "QUATER_HOURLY", "HOURLY", "DAILY", "WEEKLY", "MONTHLY", "YEARLY" ],
+            "timeRange" : {
+              "from" : "1970-01-01",
+              "to" : "292278994-08-17"
+            }
+          } ]
+        } ]
+      }, {
+        "@c" : ".ProductNode",
+        "id" : 3,
+        "name" : "TCR",
+        "children" : [ {
+          "@c" : ".ProductNode",
+          "id" : 1,
+          "name" : "0-4",
+          "children" : [ {
+            "@c" : ".ProductLeaf",
+            "id" : 1,
+            "name" : "pos",
+            "children" : [ ],
+            "resolution" : [ "QUATER_HOURLY", "HOURLY", "DAILY", "WEEKLY", "MONTHLY", "YEARLY" ],
+            "timeRange" : {
+              "from" : "1970-01-01",
+              "to" : "292278994-08-17"
+            }
+          }, {
+            "@c" : ".ProductLeaf",
+            "id" : 2,
+            "name" : "neg",
+            "children" : [ ],
+            "resolution" : [ "QUATER_HOURLY", "HOURLY", "DAILY", "WEEKLY", "MONTHLY", "YEARLY" ],
+            "timeRange" : {
+              "from" : "1970-01-01",
+              "to" : "292278994-08-17"
+            }
+          } ]
+        }, {
+          "@c" : ".ProductNode",
+          "id" : 2,
+          "name" : "4-8",
+          "children" : [ {
+            "@c" : ".ProductLeaf",
+            "id" : 1,
+            "name" : "pos",
+            "children" : [ ],
+            "resolution" : [ "QUATER_HOURLY", "HOURLY", "DAILY", "WEEKLY", "MONTHLY", "YEARLY" ],
+            "timeRange" : {
+              "from" : "1970-01-01",
+              "to" : "292278994-08-17"
+            }
+          }, {
+            "@c" : ".ProductLeaf",
+            "id" : 2,
+            "name" : "neg",
+            "children" : [ ],
+            "resolution" : [ "QUATER_HOURLY", "HOURLY", "DAILY", "WEEKLY", "MONTHLY", "YEARLY" ],
+            "timeRange" : {
+              "from" : "1970-01-01",
+              "to" : "292278994-08-17"
+            }
+          } ]
+        }, {
+          "@c" : ".ProductNode",
+          "id" : 3,
+          "name" : "8-12",
+          "children" : [ {
+            "@c" : ".ProductLeaf",
+            "id" : 1,
+            "name" : "pos",
+            "children" : [ ],
+            "resolution" : [ "QUATER_HOURLY", "HOURLY", "DAILY", "WEEKLY", "MONTHLY", "YEARLY" ],
+            "timeRange" : {
+              "from" : "1970-01-01",
+              "to" : "292278994-08-17"
+            }
+          }, {
+            "@c" : ".ProductLeaf",
+            "id" : 2,
+            "name" : "neg",
+            "children" : [ ],
+            "resolution" : [ "QUATER_HOURLY", "HOURLY", "DAILY", "WEEKLY", "MONTHLY", "YEARLY" ],
+            "timeRange" : {
+              "from" : "1970-01-01",
+              "to" : "292278994-08-17"
+            }
+          } ]
+        }, {
+          "@c" : ".ProductNode",
+          "id" : 4,
+          "name" : "12-16",
+          "children" : [ {
+            "@c" : ".ProductLeaf",
+            "id" : 1,
+            "name" : "pos",
+            "children" : [ ],
+            "resolution" : [ "QUATER_HOURLY", "HOURLY", "DAILY", "WEEKLY", "MONTHLY", "YEARLY" ],
+            "timeRange" : {
+              "from" : "1970-01-01",
+              "to" : "292278994-08-17"
+            }
+          }, {
+            "@c" : ".ProductLeaf",
+            "id" : 2,
+            "name" : "neg",
+            "children" : [ ],
+            "resolution" : [ "QUATER_HOURLY", "HOURLY", "DAILY", "WEEKLY", "MONTHLY", "YEARLY" ],
+            "timeRange" : {
+              "from" : "1970-01-01",
+              "to" : "292278994-08-17"
+            }
+          } ]
+        }, {
+          "@c" : ".ProductNode",
+          "id" : 5,
+          "name" : "16-20",
+          "children" : [ {
+            "@c" : ".ProductLeaf",
+            "id" : 1,
+            "name" : "pos",
+            "children" : [ ],
+            "resolution" : [ "QUATER_HOURLY", "HOURLY", "DAILY", "WEEKLY", "MONTHLY", "YEARLY" ],
+            "timeRange" : {
+              "from" : "1970-01-01",
+              "to" : "292278994-08-17"
+            }
+          }, {
+            "@c" : ".ProductLeaf",
+            "id" : 2,
+            "name" : "neg",
+            "children" : [ ],
+            "resolution" : [ "QUATER_HOURLY", "HOURLY", "DAILY", "WEEKLY", "MONTHLY", "YEARLY" ],
+            "timeRange" : {
+              "from" : "1970-01-01",
+              "to" : "292278994-08-17"
+            }
+          } ]
+        }, {
+          "@c" : ".ProductNode",
+          "id" : 6,
+          "name" : "20-24",
+          "children" : [ {
+            "@c" : ".ProductLeaf",
+            "id" : 1,
+            "name" : "pos",
+            "children" : [ ],
+            "resolution" : [ "QUATER_HOURLY", "HOURLY", "DAILY", "WEEKLY", "MONTHLY", "YEARLY" ],
+            "timeRange" : {
+              "from" : "1970-01-01",
+              "to" : "292278994-08-17"
+            }
+          }, {
+            "@c" : ".ProductLeaf",
+            "id" : 2,
+            "name" : "neg",
+            "children" : [ ],
+            "resolution" : [ "QUATER_HOURLY", "HOURLY", "DAILY", "WEEKLY", "MONTHLY", "YEARLY" ],
+            "timeRange" : {
+              "from" : "1970-01-01",
+              "to" : "292278994-08-17"
+            }
+          } ]
+        } ]
+      } ]
     },
-    "disabledLines": {
-      "@type": "java.util.ArrayList"
-    }
+    "tso" : 99
+  } ],
+  "tsos" : { },
+  "timeRanges" : {
+    "Year" : "Year",
+    "Week" : "Week",
+    "Day" : "Day",
+    "Month" : "Month"
   },
-  "productTrees": {
-    "@type": "java.util.ArrayList",
-    "@items": [
-      {
-        "@type": "de.enwida.web.model.ProductTree",
-        "root": {
-          "id": 0,
-          "name": "root",
-          "children": {
-            "@type": "java.util.ArrayList",
-            "@items": [
-              {
-                "@type": "de.enwida.web.utils.ProductNode",
-                "id": 2,
-                "name": "SCR",
-                "children": {
-                  "@type": "java.util.ArrayList",
-                  "@items": [
-                    {
-                      "@type": "de.enwida.web.utils.ProductNode",
-                      "id": 1,
-                      "name": "PT",
-                      "children": {
-                        "@type": "java.util.ArrayList",
-                        "@items": [
-                          {
-                            "@id": 68,
-                            "@type": "de.enwida.web.utils.ProductLeaf",
-                            "resolution": {
-                              "@id": 48,
-                              "@type": "java.util.Arrays$ArrayList",
-                              "@items": [
-                                {
-                                  "@type": "de.enwida.transport.DataResolution",
-                                  "name": "QUATER_HOURLY",
-                                  "ordinal": 0
-                                },
-                                {
-                                  "@type": "de.enwida.transport.DataResolution",
-                                  "name": "HOURLY",
-                                  "ordinal": 1
-                                },
-                                {
-                                  "@type": "de.enwida.transport.DataResolution",
-                                  "name": "DAILY",
-                                  "ordinal": 2
-                                },
-                                {
-                                  "@type": "de.enwida.transport.DataResolution",
-                                  "name": "WEEKLY",
-                                  "ordinal": 3
-                                },
-                                {
-                                  "@ref": 53
-                                },
-                                {
-                                  "@type": "de.enwida.transport.DataResolution",
-                                  "name": "YEARLY",
-                                  "ordinal": 5
-                                }
-                              ]
-                            },
-                            "timeRange": {
-                              "from": {
-                                "@type": "java.util.GregorianCalendar",
-                                "time": "1970-01-01T01:00:00.000+0100",
-                                "zone": "Europe\/Berlin"
-                              },
-                              "to": {
-                                "@type": "java.util.GregorianCalendar",
-                                "time": "292278994-08-17T08:12:55.807+0100",
-                                "zone": "Europe\/Berlin"
-                              }
-                            },
-                            "id": 1,
-                            "name": "pos",
-                            "children": null
-                          },
-                          {
-                            "@id": 23,
-                            "@type": "de.enwida.web.utils.ProductLeaf",
-                            "resolution": {
-                              "@ref": 48
-                            },
-                            "timeRange": {
-                              "from": {
-                                "@type": "java.util.GregorianCalendar",
-                                "time": "1970-01-01T01:00:00.000+0100",
-                                "zone": "Europe\/Berlin"
-                              },
-                              "to": {
-                                "@type": "java.util.GregorianCalendar",
-                                "time": "292278994-08-17T08:12:55.807+0100",
-                                "zone": "Europe\/Berlin"
-                              }
-                            },
-                            "id": 2,
-                            "name": "neg",
-                            "children": null
-                          }
-                        ]
-                      }
-                    },
-                    {
-                      "@type": "de.enwida.web.utils.ProductNode",
-                      "id": 2,
-                      "name": "OPT",
-                      "children": {
-                        "@type": "java.util.ArrayList",
-                        "@items": [
-                          {
-                            "@ref": 68
-                          },
-                          {
-                            "@ref": 23
-                          }
-                        ]
-                      }
-                    }
-                  ]
-                }
-              },
-              {
-                "@type": "de.enwida.web.utils.ProductNode",
-                "id": 3,
-                "name": "TCR",
-                "children": {
-                  "@type": "java.util.ArrayList",
-                  "@items": [
-                    {
-                      "@type": "de.enwida.web.utils.ProductNode",
-                      "id": 1,
-                      "name": "0-4",
-                      "children": {
-                        "@type": "java.util.ArrayList",
-                        "@items": [
-                          {
-                            "@ref": 68
-                          },
-                          {
-                            "@ref": 23
-                          }
-                        ]
-                      }
-                    },
-                    {
-                      "@type": "de.enwida.web.utils.ProductNode",
-                      "id": 2,
-                      "name": "4-8",
-                      "children": {
-                        "@type": "java.util.ArrayList",
-                        "@items": [
-                          {
-                            "@ref": 68
-                          },
-                          {
-                            "@ref": 23
-                          }
-                        ]
-                      }
-                    },
-                    {
-                      "@type": "de.enwida.web.utils.ProductNode",
-                      "id": 3,
-                      "name": "8-12",
-                      "children": {
-                        "@type": "java.util.ArrayList",
-                        "@items": [
-                          {
-                            "@ref": 68
-                          },
-                          {
-                            "@ref": 23
-                          }
-                        ]
-                      }
-                    },
-                    {
-                      "@type": "de.enwida.web.utils.ProductNode",
-                      "id": 4,
-                      "name": "12-16",
-                      "children": {
-                        "@type": "java.util.ArrayList",
-                        "@items": [
-                          {
-                            "@ref": 68
-                          },
-                          {
-                            "@ref": 23
-                          }
-                        ]
-                      }
-                    },
-                    {
-                      "@type": "de.enwida.web.utils.ProductNode",
-                      "id": 5,
-                      "name": "16-20",
-                      "children": {
-                        "@type": "java.util.ArrayList",
-                        "@items": [
-                          {
-                            "@ref": 68
-                          },
-                          {
-                            "@ref": 23
-                          }
-                        ]
-                      }
-                    },
-                    {
-                      "@type": "de.enwida.web.utils.ProductNode",
-                      "id": 6,
-                      "name": "20-24",
-                      "children": {
-                        "@type": "java.util.ArrayList",
-                        "@items": [
-                          {
-                            "@ref": 68
-                          },
-                          {
-                            "@ref": 23
-                          }
-                        ]
-                      }
-                    }
-                  ]
-                }
-              }
-            ]
-          }
-        },
-        "tso": 99
-      }
-    ]
+  "aspects" : [ "CR_DEGREE_OF_ACTIVATION" ],
+  "isDateScale" : true,
+  "allResolutions" : [ "YEARLY", "WEEKLY", "DAILY", "HOURLY", "QUATER_HOURLY", "MONTHLY" ],
+  "timeRangeMax" : {
+    "from" : "1970-01-01",
+    "to" : "292278994-08-17"
   },
-  "tsos": {
-    "@type": "java.util.HashMap"
+  "timeRangeMin" : {
+    "from" : "1970-01-01",
+    "to" : "292278994-08-17"
   },
-  "xAxisLabel": {
-    "@ref": 7
-  },
-  "yAxisLabel": {
-    "@ref": 7
-  },
-  "timeRanges": {
-    "@type": "java.util.HashMap",
-    "@keys": [
-      "Year",
-      "Week",
-      "Day",
-      "Month"
-    ],
-    "@items": [
-      "Year",
-      "Week",
-      "Day",
-      "Month"
-    ]
-  },
-  "aspects": {
-    "@type": "java.util.ArrayList",
-    "@items": [
-      {
-        "@type": "de.enwida.transport.Aspect",
-        "name": "CR_VOL_ACTIVATION",
-        "ordinal": 0
-      }
-    ]
-  },
-  "isDateScale": true
+  "title" : ""
 }
+

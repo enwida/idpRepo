@@ -8,7 +8,8 @@ import java.util.Locale;
 
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 
-import com.cedarsoftware.util.io.JsonWriter;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 import de.enwida.transport.Aspect;
 import de.enwida.transport.DataResolution;
@@ -42,8 +43,9 @@ public class NavigationJsonGenerator {
         }
 	    
         try {
-            final String json = JsonWriter.objectToJson(navigationData);
-            System.out.println(json);
+            final ObjectMapper om = new ObjectMapperFactory(dateFormat).create();
+            om.enable(SerializationFeature.INDENT_OUTPUT);
+            System.out.println(om.writeValueAsString(navigationData));
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -24,6 +24,8 @@ public class ProductTree implements Cloneable {
     
     private ProductNode root;
     private int tso;
+    
+    public ProductTree() { }
 
     public ProductTree(ProductNode root) {
         this.root = root;
@@ -163,4 +165,8 @@ public class ProductTree implements Cloneable {
         this.tso = tso;
     }
 
+	public void setRoot(ProductNode root) {
+		this.root = root;
+	}
+    
 }

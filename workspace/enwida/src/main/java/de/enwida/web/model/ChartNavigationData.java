@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import de.enwida.transport.Aspect;
 import de.enwida.transport.DataResolution;
 import de.enwida.web.model.ProductTree.ProductAttributes;
@@ -27,6 +29,7 @@ public class ChartNavigationData implements Cloneable {
 	private boolean isDateScale;
 
 	public ChartNavigationData() {
+		this.tsos = new HashMap<>();
 	}
 
 	public ChartNavigationData(String chartTitle, String xAxisLabel, String yAxisLabel) {
@@ -49,10 +52,6 @@ public class ChartNavigationData implements Cloneable {
 
 	public void addTso(int id, String name) {
 		this.tsos.put(id, name);
-	}
-
-	public String getChartTitle() {
-		return this.chartTitle;
 	}
 
 	public NavigationDefaults getDefaults() {
@@ -128,10 +127,12 @@ public class ChartNavigationData implements Cloneable {
 		return this.tsos;
 	}
 
+	@JsonIgnore
 	public String getxAxisLabel() {
 		return this.xAxisLabel;
 	}
 
+	@JsonIgnore
 	public String getyAxisLabel() {
 		return this.yAxisLabel;
 	}
@@ -176,4 +177,20 @@ public class ChartNavigationData implements Cloneable {
         return timeRanges;
     }
 
+	public void setTimeRanges(Map<String, String> timeRanges) {
+		this.timeRanges = timeRanges;
+	}
+
+	public void setProductTrees(List<ProductTree> productTrees) {
+		this.productTrees = productTrees;
+	}
+
+	public void setTsos(Map<Integer, String> tsos) {
+		this.tsos = tsos;
+	}
+
+	public void setDateScale(boolean isDateScale) {
+		this.isDateScale = isDateScale;
+	}
+	
 }

@@ -13,6 +13,8 @@ public class NavigationDefaults implements Cloneable {
     private CalendarRange timeRange;
     private List<Integer> disabledLines;
     
+    public NavigationDefaults() { }
+
     public NavigationDefaults(int tsoId, DataResolution resolution, int product, CalendarRange timeRange) {
         this.tsoId = tsoId;
         this.resolution = resolution;
