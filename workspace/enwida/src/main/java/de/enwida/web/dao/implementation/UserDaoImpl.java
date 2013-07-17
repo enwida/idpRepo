@@ -15,6 +15,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.PreparedStatementCreator;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
@@ -36,23 +37,7 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
 	
 	@Override
 	public List<User> findAllUsers(){
-	    List<Map> rows = this.findAll();
-	    List<User> users = new ArrayList<User>();
-	    for (Map row : rows) {
-	        User user = new User();
-            user.setUserID(Long.parseLong(row.get("user_id").toString()));
-            user.setUserName((String) row.get("user_name"));
-            user.setPassword((String) row.get("user_password"));
-            user.setFirstName((String) row.get("first_Name"));
-            user.setLastName((String) row.get("last_Name"));
-            user.setEnabled((boolean) row.get("enabled"));
-            user.setCompanyLogo((String) row.get("company_Logo"));
-            user.setCompanyName((String) row.get("company_name"));
-            user.setTelephone((String) row.get("telephone"));
-            user.setJoiningDate((Date) row.get("joining_date"));
-	        users.add(user);
-	    }
-	    return users;
+        return this.findAll();
 	}
 	
 	@Override
@@ -60,9 +45,19 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
 	    return "users.users";
 	}
 	
-	public Object mapRow(ResultSet rs, int rowNum) throws SQLException {
+	@Override
+	public User mapRow(ResultSet rs, int rowNum) throws SQLException {
         User user = new User();
         user.setUserID(rs.getLong("user_id"));
+        user.setUserName(rs.getString("user_name"));
+        user.setPassword(rs.getString("user_password"));
+        user.setFirstName(rs.getString("first_Name"));
+        user.setLastName(rs.getString("last_Name"));
+        user.setEnabled(rs.getBoolean("enabled"));
+        user.setCompanyLogo(rs.getString("company_Logo"));
+        user.setCompanyName(rs.getString("company_name"));
+        user.setTelephone(rs.getString("telephone"));
+        user.setJoiningDate(rs.getDate("joining_date"));
         return user;
     }
 		
@@ -115,33 +110,17 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
 		return id.intValue();
 	}
 
-	@Override
-	public User getUserByID(Long id) {
-	    String sql = "SELECT * FROM users.users where users.user_id=?;";
-	    List<Map<String,Object>> rows =this.jdbcTemplate.queryForList(sql,id);
-        for (Map row : rows) {
-            User user = new User();
-            user.setUserID(Long.parseLong(row.get("user_id").toString()));
-            user.setUserName((String) row.get("user_name"));
-            user.setPassword((String) row.get("user_password"));
-            user.setFirstName((String) row.get("first_Name"));
-            user.setLastName((String) row.get("last_Name"));
-            user.setEnabled((boolean) row.get("enabled"));
-            user.setCompanyLogo((String) row.get("company_Logo"));
-            user.setCompanyName((String) row.get("company_name"));
-            user.setTelephone((String) row.get("telephone"));
-            user.setJoiningDate((Date) row.get("joining_date"));
-            return user;
-        }
-        return null;
-	}
+    @Override
+    public User getUserByID(Long id) {
+        String sql = "SELECT * FROM users.users WHERE user_id=?";
+        List<User> users = this.jdbcTemplate.query(sql,new Object[]{id}, this);
+        return ((users.size() > 0) ? users.get(0) : null);
+    }
   
-
     @Override
     public List<User> getAllUsers() {
         return this.findAll();
     }
-    
     
     @Override
     public boolean checkUserActivationId(String username, String activationCode) {
@@ -159,8 +138,9 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
     
     @Override
     public User getUserByName(String userName) {
-        // TODO Auto-generated method stub
-        return null;
+        String sql = "SELECT * FROM users.users WHERE user_name=?";
+        List<User> users=this.jdbcTemplate.query(sql,new Object[]{userName}, this);
+        return ((users.size()>0)? users.get(0) : null);
     }
 
     @Override
@@ -223,7 +203,7 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
     public List<User> getUsersByGroupID(Long groupID) {
 
         String sql = "SELECT * FROM users.users INNER JOIN users.user_group ON users.users.user_id=users.user_group.user_id WHERE user_group.group_ID="+groupID;
-        List<User> users  = this.jdbcTemplate.query(sql,new BeanPropertyRowMapper(User.class));
+        List<User> users  = this.jdbcTemplate.query(sql,this);
         return users;
         
     }

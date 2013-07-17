@@ -13,8 +13,6 @@ public interface IUserDao {
 
     public ArrayList<Group> getUserGroups(long userID);
 
-    public User getUserByName(String userName);
-
     public void deleteUser(User user);
 
     List<User> findAllUsers();
@@ -36,5 +34,7 @@ public interface IUserDao {
     public boolean usernameAvailablility(String username);
 
     public List<User> getUsersByGroupID(Long groupID);
+
+    User getUserByName(String userName);
 
 }

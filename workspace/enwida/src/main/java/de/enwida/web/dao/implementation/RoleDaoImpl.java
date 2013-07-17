@@ -1,5 +1,7 @@
 package de.enwida.web.dao.implementation;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -15,6 +17,7 @@ import de.enwida.web.controller.AdminController;
 import de.enwida.web.dao.interfaces.AbstractBaseDao;
 import de.enwida.web.dao.interfaces.IRoleDao;
 import de.enwida.web.model.Role;
+import de.enwida.web.model.User;
 
 @Repository
 public class RoleDaoImpl extends AbstractBaseDao<Role> implements IRoleDao {
@@ -39,19 +42,16 @@ public class RoleDaoImpl extends AbstractBaseDao<Role> implements IRoleDao {
 	    		"INNER JOIN users.group_role ON group_role.role_id=roles.role_id " +
 	    		"INNER JOIN users.user_group ON user_group.group_id=group_role.group_id " +
 	    		" where users.user_group.user_id=?";
-
-	    List<Role> roles  =new  ArrayList<Role>();
-        
-        List<Map<String,Object>> rows =this.jdbcTemplate.queryForList(sql,userID);
-        for (Map row : rows) {
-            Role role = new Role();
-            role.setRoleID(Long.parseLong(row.get("role_id").toString()));
-            role.setRoleName((String) row.get("role_name"));
-            role.setDescription((String) row.get("description"));
-            roles.add(role);
-        }
-        return roles;
-
+        return this.jdbcTemplate.query(sql,new Object[]{userID},this);
+    }
+	
+	@Override
+    public Role mapRow(ResultSet rs, int rowNum) throws SQLException {
+	    Role role = new Role();
+	    role.setRoleID(rs.getLong("role_id"));
+	    role.setRoleName(rs.getString("role_name"));
+	    role.setDescription(rs.getString("description"));
+        return role;
     }
 
 	@Override

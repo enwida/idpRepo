@@ -55,6 +55,8 @@ Database Schema
 ##Security structure
 <img src="img/securitySequenceDiagram.png" width="600px" />
    
+##DAO structure
+<img src="img/daoInherit.png" width="600px" />
 ###ADMIN PAGES
 
 **Page Name: User** 

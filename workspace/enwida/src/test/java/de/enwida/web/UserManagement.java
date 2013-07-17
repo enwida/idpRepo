@@ -7,6 +7,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Calendar;
+import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -25,14 +26,13 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
-import com.sun.mail.imap.Rights;
-
 import de.enwida.web.controller.AdminController;
 import de.enwida.web.dao.implementation.GroupDaoImpl;
 import de.enwida.web.dao.implementation.RightsDaoImpl;
 import de.enwida.web.dao.implementation.RoleDaoImpl;
 import de.enwida.web.dao.implementation.UserDaoImpl;
 import de.enwida.web.model.Group;
+import de.enwida.web.model.Right;
 import de.enwida.web.model.User;
  
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -44,11 +44,9 @@ public class UserManagement {
 	
 	@Autowired
 	private UserDaoImpl userDao;	
-	
 	   
     @Autowired
     private GroupDaoImpl groupDao;    
-    
     
     @Autowired
     private RoleDaoImpl roleDao;   
@@ -91,12 +89,24 @@ public class UserManagement {
    
    @Test
    public void updateUser() {
+      userDao.save(user);
       user.setCompanyName("test");
       userDao.updateUser(user);
       User user2=userDao.getUserByName(user.getUserName());
       assertEquals("test", user2.getCompanyName());
-      userDao.deleteUser(user2);
-      assertEquals(null,userDao.getUserByName(user2.getUserName()));
+      userDao.deleteUser(user);
+      assertEquals(null,userDao.getUserByName(user.getUserName()));
+   }
+   
+   @Test
+   public void testRightsDao() {
+      List<Right> rights=  rightsDao.findAll();
+      rightsDao.enableDisableAspect(rights.get(0).getRightID(), false);
+      List<Right> rights2=  rightsDao.findAll();
+      assertEquals(false,rights2.get(0).isEnabled());
+      rightsDao.enableDisableAspect(rights.get(0).getRightID(), true);
+       List<Right> rights3=  rightsDao.findAll();
+      assertEquals(true,rights3.get(0).isEnabled());
    }
 
 	@Test
