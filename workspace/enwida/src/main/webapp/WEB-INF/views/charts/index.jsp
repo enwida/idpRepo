@@ -39,17 +39,18 @@
 <h1>Chart Experiments</h1>
  
  
-<div class="chart" data-chart-id="0" data-width="960" data-chart-type="line"></div>
-<div class="chart" data-chart-id="0" data-width="960" data-chart-type="carpet"></div>
-
-<!--  <div class="chart" data-chart-id="1" data-width="960" data-chart-type="line"></div> -->
+<div class="chart" data-chart-id="0" data-width="900" data-height="400" data-chart-type="line"></div>
+<div class="chart" data-chart-id="6" data-width="900" data-height="400" data-chart-type="minmax"></div>
+<div class="chart" data-chart-id="8" data-width="900" data-height="400" data-chart-type="posneg"></div>
+<!-- <div class="chart" data-chart-id="1" data-width="960" data-chart-type="line"></div> -->
 <!-- <div class="chart" data-chart-id="2" data-width="960" data-chart-type="line"></div> -->
-<!--  <div class="chart" data-chart-id="3" data-width="960" data-chart-type="line"></div>  -->
-<!-- <div class="chart" data-chart-id="4" data-width="960" data-chart-type="line"></div> -->
-<!-- <div class="chart" data-chart-id="5" data-width="960" data-chart-type="line"></div> -->
-<!-- <div class="chart" data-chart-id="6" data-width="960" data-chart-type="minmax"></div> -->
-<!-- <div class="chart" data-chart-id="7" data-width="960" data-chart-type="line"></div> -->
-<!-- <div class="chart" data-chart-id="8" data-width="960" data-chart-type="bar"></div> -->
+<!-- <div class="chart" data-chart-id="3" data-width="960" data-chart-type="line"></div> -->
+<!-- <div class="chart" data-chart-id="4" data-width="900" data-height="400" data-chart-type="line"></div>
+<div class="chart" data-chart-id="5" data-width="900" data-height="400" data-chart-type="line"></div>
+<div class="chart" data-chart-id="7" data-width="900" data-height="400" data-chart-type="line"></div>
+<div class="chart" data-chart-id="8" data-width="900" data-height="400" data-chart-type="bar"></div>
+ -->
+<!--  <div class="chart" data-chart-id="9" data-width="900" data-height="400" data-chart-type="line"></div> -->
 
 </body>
 </html>

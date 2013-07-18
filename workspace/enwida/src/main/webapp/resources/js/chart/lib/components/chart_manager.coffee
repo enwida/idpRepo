@@ -13,6 +13,25 @@ define [ "components/navigation"
   ) ->
 
     flight.component ->
+      @applyVisibility = ->
+        linesSelection   = @$node.find ".lines"
+        productSelection = @$node.find ".productSelect"
+        timeSelection    = @$node.find ".timeselect"
+
+        if @attr.navigationData.hasLineSelection
+          linesSelection.show()
+        else
+          linesSelection.hide()
+
+        if @attr.navigationData.hasProductSelection
+          productSelection.show()
+        else
+          productSelection.hide()
+
+        if @attr.navigationData.hasTimeSelection
+          timeSelection.show()
+        else
+          timeSelection.hide()
 
       @getMsg = ->
         Loading.of @select("visual"),
@@ -86,6 +105,7 @@ define [ "components/navigation"
         @on "getLines", @onGetLines
         @on "updateNavigation", (_, opts) ->
           @attr.navigationData = opts.data
+          @applyVisibility()
           @trigger @select("visual"), "navigationData", opts
           @trigger @select("lines"), "disabledLines",
             lines: opts.data?.defaults?.disabledLines

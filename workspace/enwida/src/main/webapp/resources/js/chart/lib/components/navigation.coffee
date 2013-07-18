@@ -113,6 +113,11 @@ define ["util/resolution"], (Resolution) ->
       for key of @navigationData.tsos
         element.append($("<option>").val(key).text(tsos[key]))
 
+      if _(@navigationData.tsos).keys().length <= 1
+        element.hide()
+      else
+        element.show()
+
     @fillProduct = ->
       @setProduct 111
 
@@ -202,12 +207,16 @@ define ["util/resolution"], (Resolution) ->
         for child in node.children
           element.append $("<option>").val(child.id).text(child.name)
 
+        if node.children.length <= 1
+          element.hide()
+        else
+          element.show()
+
         id = values[name]
         element.val id
         node = (_.find node.children, (c) -> c.id is id) ? node.children[0]
 
       # Apply restrictions of leaf node
-      console.log node
       @attr.resolutions = node.resolution
       @forEachDatepicker (picker) ->
         picker.datepicker "setStartDate", new Date node.timeRange.from
@@ -248,7 +257,8 @@ define ["util/resolution"], (Resolution) ->
       @$node.find(".datepicker-#{timeRange} .from")
 
     @getVisibleFromDate = ->
-      new Date @$node.find(".datepicker-generic:visible .from").data("datepicker").date
+      timeRange = @select("timeRange").val()
+      new Date @$node.find(".datepicker-#{timeRange} .from").data("datepicker").date
 
     @setVisibleFromDate = (date) ->
       @$node.find(".datepicker-generic:visible .from").datepicker "setDate", date
