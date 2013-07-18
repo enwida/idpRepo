@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.test.context.transaction.TransactionConfiguration;
+import org.springframework.transaction.annotation.Transactional;
 
 import de.enwida.transport.Aspect;
 import de.enwida.transport.DataResolution;
@@ -16,7 +18,9 @@ import de.enwida.web.utils.CalendarRange;
 import de.enwida.web.utils.EnwidaUtils;
 import de.enwida.web.utils.ProductRestriction;
 
-@Service
+@TransactionConfiguration(defaultRollback = true)
+@Service("availabilityService")
+@Transactional
 public class AvailibilityServiceImpl implements IAvailibilityService {
 
 	@Autowired

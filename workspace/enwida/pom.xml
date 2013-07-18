@@ -150,6 +150,27 @@
 			<version>2.0</version>
 		</dependency>
 
+		<!-- Dependeent Jars for log4j start -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>jcl-over-slf4j</artifactId>
+			<version>1.7.0</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>1.7.0</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>1.7.0</version>
+			<scope>runtime</scope>
+		</dependency>
+		<!-- Dependeent Jars for log4j end -->
+
 		<!-- Postgres Sql Driver -->
 		<dependency>
 			<groupId>postgresql</groupId>
@@ -158,11 +179,7 @@
 		</dependency>
 
 		<!-- Hibernate framework -->
-		<!-- <dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-core</artifactId>
-			<version>${hibernate.version}</version>
-		</dependency> -->
+
 
 		<dependency>
 			<groupId>org.hibernate</groupId>
@@ -171,11 +188,12 @@
 			<scope>runtime</scope>
 		</dependency>
 
-		<!-- <dependency>
-			<groupId>org.hibernate.javax.persistence</groupId>
-			<artifactId>hibernate-jpa-2.0-api</artifactId>
-			<version>1.0.0.Final</version>
-		</dependency> -->
+		<!-- Moved to datamanager so please do not include here <dependency> <groupId>org.hibernate</groupId> 
+			<artifactId>hibernate-core</artifactId> <version>${hibernate.version}</version> 
+			</dependency> <dependency> <groupId>org.hibernate.javax.persistence</groupId> 
+			<artifactId>hibernate-jpa-2.0-api</artifactId> <version>1.0.0.Final</version> 
+			</dependency> -->
+
 		<!-- Hibernate library dependecy start -->
 		<dependency>
 			<groupId>dom4j</groupId>

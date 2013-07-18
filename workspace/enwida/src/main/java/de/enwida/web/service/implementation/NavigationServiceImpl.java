@@ -16,6 +16,7 @@ import javax.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
+import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cedarsoftware.util.io.JsonReader;
@@ -32,8 +33,9 @@ import de.enwida.web.utils.EnwidaUtils;
 import de.enwida.web.utils.ProductLeaf;
 import de.enwida.web.utils.ProductRestriction;
 
-@Service("NavigationService")
+@TransactionConfiguration(defaultRollback = true)
 @Transactional
+@Service("navigationService")
 public class NavigationServiceImpl implements INavigationService {
 
 	@Autowired

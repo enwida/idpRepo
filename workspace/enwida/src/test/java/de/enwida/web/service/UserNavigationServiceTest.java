@@ -1,5 +1,7 @@
 package de.enwida.web.service;
 
+import java.util.List;
+
 import junit.framework.Assert;
 
 import org.junit.After;
@@ -10,17 +12,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import de.enwida.web.model.User;
 import de.enwida.web.service.interfaces.IUserService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:/root-context-test.xml")
 public class UserNavigationServiceTest {
+
 	@Autowired
 	private IUserService userService;
 
 	@Before
 	public void setUp() throws Exception {
-		System.out.println(userService.getUsers());
+		// System.out.println(userService.getUsers());
 		// userDao.updateUserNavigation(new UserNavigation(1, "13",
 		// "soemdata"));
 		// em.persist(new UserNavigation("12", "sjdajsdajd"));
@@ -32,7 +36,9 @@ public class UserNavigationServiceTest {
 
 	@Test
 	public void test() {
-		Assert.assertNotNull(userService.getUsers());
+		List<User> users = userService.getUsers();
+		System.out.println("Users Found : " + users);
+		Assert.assertNotNull(users);
 	}
 
 }

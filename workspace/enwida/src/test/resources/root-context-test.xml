@@ -60,22 +60,6 @@
 		<property name="packagesToScan" value="de.enwida.web.db.model" />
 		<property name="persistenceUnitName" value="enwida-jpa"/>
 		<property name="dataSource" ref="dataSource"/>
-		<property name="jpaVendorAdapter"> 
-            <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter"> 
-                <property name="databasePlatform" value="org.hibernate.dialect.PostgreSQLDialect"/> 
-                <property name="showSql" value="true" /> 
-                <property name="generateDdl" value="true"/>
-            </bean> 
-        </property>
-         <property name="jpaProperties">
-                <!-- set extra properties here, e.g. for Hibernate: -->
-            <props>
-            	<prop key="hibernate.hbm2ddl.auto">update</prop>
-            	<prop key="hibernate.cache.use_second_level_cache">false</prop>
-            	<prop key="hibernate.cache.provider_class">org.hibernate.cache.HashtableCacheProvider</prop>
-            	<prop key="hibernate.ejb.naming_strategy">org.hibernate.cfg.ImprovedNamingStrategy</prop>
-            </props>
-        </property>
 	</bean>
 	
 	<bean id="jpaTransactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">

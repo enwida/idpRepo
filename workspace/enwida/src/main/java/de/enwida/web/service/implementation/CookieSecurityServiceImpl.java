@@ -13,10 +13,14 @@ import javax.crypto.spec.DESedeKeySpec;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
+import org.springframework.test.context.transaction.TransactionConfiguration;
+import org.springframework.transaction.annotation.Transactional;
 
 import de.enwida.web.service.interfaces.ICookieSecurityService;
 
-@Service
+@Transactional
+@TransactionConfiguration(defaultRollback = true)
+@Service("cookieSecurityService")
 public class CookieSecurityServiceImpl implements ICookieSecurityService {
 
 	private static final String UNICODE_FORMAT = "UTF8";

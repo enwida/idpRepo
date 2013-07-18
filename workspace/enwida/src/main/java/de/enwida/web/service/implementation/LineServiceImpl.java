@@ -18,7 +18,7 @@ import de.enwida.web.service.interfaces.ISecurityService;
 
 @TransactionConfiguration(defaultRollback = true)
 @Transactional
-@Service
+@Service("lineService")
 public class LineServiceImpl implements ILineService {
     
     @Autowired

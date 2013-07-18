@@ -35,6 +35,8 @@
 	<beans:bean id="userPermissionCollection" class="de.enwida.web.model.UserRoleCollection">
 	</beans:bean>
 	
+	<!-- All service and DAO's are initialised at root application context level so as 
+	to use in testcases run and varioos other standalone parts of application. 
 	<beans:bean id="userDao" class="de.enwida.web.dao.implementation.UserDaoImpl">
 	</beans:bean>
 	
@@ -45,7 +47,7 @@
 	</beans:bean>
 
 	<beans:bean id="lineService" class="de.enwida.web.service.implementation.LineServiceImpl">
-	</beans:bean>
+	</beans:bean> -->
 
 	<interceptors>
     	<beans:bean id="localeChangeInterceptor" class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor">
