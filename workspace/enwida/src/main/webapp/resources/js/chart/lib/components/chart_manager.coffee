@@ -1,6 +1,7 @@
 define [ "components/navigation"
          "components/visual"
          "components/lines"
+         "components/infobox"
          "util/loading"
          "util/lines_preprocessor"
         ],
@@ -8,6 +9,7 @@ define [ "components/navigation"
   (Navigation
    Visual
    Lines
+   Infobox
    Loading
    LinesPreprocessor
   ) ->
@@ -67,6 +69,12 @@ define [ "components/navigation"
             @logDebug "Sent disabled lines"
 
       @onGetLines = (a, opts) ->
+        # Update info box
+        opts.title = @attr.navigationData.title
+        @trigger @select("infobox"), "updateInfo",
+          navigationData: @attr.navigationData
+          selections: opts
+
         @getLines opts, (err, data) =>
           throw err if err?
           if data.length is 0
@@ -94,6 +102,7 @@ define [ "components/navigation"
         navigation: ".navigation"
         visual: ".visual"
         lines: ".lines"
+        infobox: ".infobox"
         disabledLines: []
 
       @after "initialize", ->
@@ -128,6 +137,11 @@ define [ "components/navigation"
           width: @attr.width
           height: @attr.height
 
+        # Add info box
+        infoBox = $("<div>").addClass("infobox").css("width", "#{@attr.width}px")
+        @$node.append infoBox
+        Infobox.attachTo infoBox
+
         # Add lines
         if @attr.type isnt "carpet"
           lines = $("<div>").addClass("lines").css("width", "#{@attr.width}px")
@@ -141,4 +155,3 @@ define [ "components/navigation"
           id: @attr.id
           width: @attr.width
           type: @attr.type
-
