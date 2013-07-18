@@ -106,6 +106,8 @@ public class UserLog extends HandlerInterceptorAdapter{
             //user sessionID as clientID
             clientID=sessionID;
             Cookie cookie=new Cookie("enwida.de",cookieSecurityService.encryptJsonString(clientID, Constants.ENCRYPTION_KEY));
+            cookie.setPath("/");
+            cookie.setMaxAge(Integer.MAX_VALUE);
             sessionID=cookie.getValue();
             response.addCookie(cookie);
         }
