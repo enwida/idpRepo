@@ -139,7 +139,7 @@ define ["util/resolution"], (Resolution) ->
 
       timeRange = @select("timeRange")
       for tr in @timeRanges
-        continue unless _(@navigationData.timeRanges).contains tr
+        continue unless _(@navigationData.timeRanges).chain().keys().contains(tr).value()
         localTimeRange = @navigationData.timeRanges[tr]
         timeRange.append($("<option>").val(tr).text(localTimeRange))
 
