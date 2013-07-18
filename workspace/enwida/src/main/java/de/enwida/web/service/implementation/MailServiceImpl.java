@@ -12,6 +12,9 @@ import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
+import org.springframework.stereotype.Service;
+
+@Service
 public class MailServiceImpl {
     private Boolean starttls;
     private String host;

@@ -10,7 +10,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 @Entity
-@Table(name = "users.groups")
+@Table(name = "groups", schema = "users")
 public class Group {
     
     @Id

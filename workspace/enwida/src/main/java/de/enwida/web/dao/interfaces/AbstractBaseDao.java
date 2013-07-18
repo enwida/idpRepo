@@ -3,6 +3,8 @@ package de.enwida.web.dao.interfaces;
 import java.lang.reflect.ParameterizedType;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +16,8 @@ public abstract class AbstractBaseDao<T> {
 
 	private Class<T> modelClass;
 	protected JdbcTemplate jdbcTemplate;
+	@PersistenceContext
+	protected EntityManager em;
 	
 	@SuppressWarnings("unchecked")
 	public AbstractBaseDao() {

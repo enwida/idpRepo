@@ -31,10 +31,6 @@
 	</beans:bean>
 	
 	<beans:bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver" />
-
-	<beans:bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
-		<beans:property name="basename" value="/resources/messages/messages" />
-	</beans:bean>
 	
 	<beans:bean id="userPermissionCollection" class="de.enwida.web.model.UserRoleCollection">
 	</beans:bean>
@@ -68,26 +64,11 @@
 	
 	<context:property-placeholder location="/WEB-INF/configProperties/enwida.jdbc.config" />
 	
-	<beans:bean id="lineManager" class="de.enwida.chart.LineManager">	
-		<beans:property name="messageSource" ref="messageSource" />
-	</beans:bean>	
-	
 	<!-- <beans:bean id="availability" class="de.enwida.rl.Availability" init-method="init">	
 	</beans:bean> -->
 	
-	<beans:bean id="dch" class="de.enwida.common.DateCalendarHelper" init-method="init">	
-		<beans:property name="dataSource" ref="dataSource" />
-	</beans:bean>
 	
-	<beans:bean id="listOfProducts" class="de.enwida.rl.daos.ListOfProducts" init-method="init">	
-		<beans:property name="dataSource" ref="dataSource" />
-	</beans:bean>
-	
-	<beans:bean id="dbc" class="de.enwida.rl.controller.DatabaseController">	
-	</beans:bean>	
-
-	<beans:bean id="cookieSecurityService" scope="singleton" class="de.enwida.web.service.implementation.CookieSecurityServiceImpl">
-	</beans:bean>
+		
 
 	<beans:bean id="mailService" class="de.enwida.web.service.implementation.MailServiceImpl">
 	     <beans:property name="starttls" value="${mail.smtp.starttls.enable}"/>

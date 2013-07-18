@@ -12,9 +12,11 @@ import javax.crypto.spec.DESedeKeySpec;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.log4j.Logger;
+import org.springframework.stereotype.Service;
 
 import de.enwida.web.service.interfaces.ICookieSecurityService;
 
+@Service
 public class CookieSecurityServiceImpl implements ICookieSecurityService {
 
 	private static final String UNICODE_FORMAT = "UTF8";

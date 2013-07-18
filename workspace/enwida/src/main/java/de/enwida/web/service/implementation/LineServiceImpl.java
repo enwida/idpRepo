@@ -1,6 +1,9 @@
 package de.enwida.web.service.implementation;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.test.context.transaction.TransactionConfiguration;
+import org.springframework.transaction.annotation.Transactional;
 
 import de.enwida.chart.LineManager;
 import de.enwida.transport.IDataLine;
@@ -13,6 +16,9 @@ import de.enwida.web.service.interfaces.IAvailibilityService;
 import de.enwida.web.service.interfaces.ILineService;
 import de.enwida.web.service.interfaces.ISecurityService;
 
+@TransactionConfiguration(defaultRollback = true)
+@Transactional
+@Service
 public class LineServiceImpl implements ILineService {
     
     @Autowired

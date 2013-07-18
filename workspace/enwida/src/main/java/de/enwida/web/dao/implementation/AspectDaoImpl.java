@@ -10,12 +10,16 @@ import java.util.List;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.stereotype.Repository;
 
 import de.enwida.web.controller.AdminController;
+import de.enwida.web.dao.interfaces.AbstractBaseDao;
 import de.enwida.web.dao.interfaces.IAspectsDao;
 import de.enwida.web.model.AspectRight;
 
-public class AspectDaoImpl implements IAspectsDao {
+@Repository
+public class AspectDaoImpl extends AbstractBaseDao<AspectRight> implements
+		IAspectsDao {
     
     @Autowired
     private DriverManagerDataSource datasource;

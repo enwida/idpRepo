@@ -25,20 +25,20 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
 import de.enwida.web.controller.AdminController;
-import de.enwida.web.dao.implementation.UserDaoImpl;
+import de.enwida.web.dao.interfaces.IUserDao;
 import de.enwida.web.model.Group;
 import de.enwida.web.model.User;
 import de.enwida.web.utils.HibernateUtil;
  
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "classpath:/root-context-test.xml")
+@ContextConfiguration(locations = "classpath:root-context-test.xml")
 public class UserManagementTest {
 
 	@Autowired
 	private DriverManagerDataSource datasource;
 	
 	@Autowired
-	private UserDaoImpl userDao;	
+	private IUserDao userDao;
 
     private static org.apache.log4j.Logger logger = Logger.getLogger(AdminController.class);
 
@@ -47,6 +47,7 @@ public class UserManagementTest {
 	
 	@Before
 	public void testUser() {
+		System.out.println("jaksdjkads");
 	    user=new User(100,"test1","test","test","test",false);
 	    user.setJoiningDate(new Date(Calendar.getInstance().getTimeInMillis()));
 	    user.setCompanyName("enwida.de");
@@ -56,9 +57,11 @@ public class UserManagementTest {
 	    }else{
 	        user=existingUser;
 	    }
+
 	    userDao.enableDisableUser(user.getUserID(), false);
 	    userDao.enableDisableUser(user.getUserID(), true);
 	    userDao.deleteUser(user);
+
 	}
 	
 	 @Test

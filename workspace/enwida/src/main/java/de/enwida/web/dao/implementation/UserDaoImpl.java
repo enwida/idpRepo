@@ -6,7 +6,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import javax.sql.DataSource;
 
@@ -17,11 +16,11 @@ import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import de.enwida.web.controller.AdminController;
 import de.enwida.web.dao.interfaces.AbstractBaseDao;
 import de.enwida.web.dao.interfaces.IUserDao;
+import de.enwida.web.db.model.UserNavigation;
 import de.enwida.web.model.Group;
 import de.enwida.web.model.Role;
 import de.enwida.web.model.User;
@@ -35,8 +34,8 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
 	@Autowired
 	private DataSource datasource;
 	
-	
-    private static org.apache.log4j.Logger logger = Logger.getLogger(AdminController.class);
+	private static org.apache.log4j.Logger logger = Logger
+			.getLogger(AdminController.class);
 	
 	@Override
 	public List<User> findAllUsersWithPermissions(){
@@ -1309,5 +1308,23 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
         
         return false;        
     }
+
+	public boolean updateUserNavigation(UserNavigation navigation) {
+		boolean success = false;
+		if (em.find(UserNavigation.class, navigation.getId()) == null) {
+			em.persist(navigation);
+			em.flush();
+			success = true;
+			navigation = em.find(UserNavigation.class,
+					navigation.getId());
+		} else {
+			System.out.println("Updating");
+			navigation = em.merge(navigation);
+			em.flush();
+			success = true;
+		}
+		System.out.println(navigation);
+		return success;
+	}
 
 }
