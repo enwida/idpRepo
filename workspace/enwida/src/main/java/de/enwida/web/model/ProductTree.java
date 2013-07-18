@@ -24,6 +24,7 @@ public class ProductTree implements Cloneable {
     
     private ProductNode root;
     private int tso;
+    private String tsoName;
     
     public ProductTree() { }
 
@@ -168,5 +169,13 @@ public class ProductTree implements Cloneable {
 	public void setRoot(ProductNode root) {
 		this.root = root;
 	}
-    
+
+	public String getTsoName() {
+		return tsoName;
+	}
+
+	public void setTsoName(String tsoName) {
+		this.tsoName = tsoName;
+	}
+	
 }

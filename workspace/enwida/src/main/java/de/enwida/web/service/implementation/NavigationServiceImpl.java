@@ -18,7 +18,6 @@ import javax.annotation.PostConstruct;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -30,6 +29,7 @@ import de.enwida.web.model.User;
 import de.enwida.web.service.interfaces.IAvailibilityService;
 import de.enwida.web.service.interfaces.INavigationService;
 import de.enwida.web.service.interfaces.ISecurityService;
+import de.enwida.web.utils.ChartNavigationLocalizer;
 import de.enwida.web.utils.ObjectMapperFactory;
 import de.enwida.web.utils.ProductLeaf;
 import de.enwida.web.utils.ProductRestriction;
@@ -45,10 +45,10 @@ public class NavigationServiceImpl implements INavigationService {
 	private IAvailibilityService availibilityService;
 	
 	@Autowired
-	private MessageSource messageSource;
+	private ObjectMapperFactory objectMapperFactory;
 	
 	@Autowired
-	private ObjectMapperFactory objectMapperFactory;
+	private ChartNavigationLocalizer navigationLocalizer;
 	
 	private String jsonDir;
 	private ObjectMapper objectMapper;
@@ -81,18 +81,20 @@ public class NavigationServiceImpl implements INavigationService {
         // under security and availability perspective
         shrinkNavigationOnSecurity(navigationData, user);
         shrinkNavigationOnAvailibility(navigationData, user);
-        setLocalAttributes(navigationData, chartId, locale);
         
-        return navigationData;
+        // Localize Strings
+        return navigationLocalizer.localize(navigationData, chartId, locale);
     }
     
     public ChartNavigationData getNavigationDataUNSECURE(int chartId, User user, Locale locale) {
 	    // Get basic navigation data from hash table and apply
 	    // internationalized properties
         final ChartNavigationData navigationData = defaultNavigationData.get(chartId).clone();
-        setLocalAttributes(navigationData, chartId, locale);
         
-        return navigationData;
+        // Skip security and availability checks...
+
+        // Localize Strings
+        return navigationLocalizer.localize(navigationData, chartId, locale);
     }
 
 	@Override
@@ -109,20 +111,6 @@ public class NavigationServiceImpl implements INavigationService {
 		this.jsonDir = jsonDir;
 	}
 
-	private void setLocalAttributes(ChartNavigationData navigationData, int chartId, Locale locale) {
-	    final String chartTitle = getChartMessage("title", chartId, locale);
-	    final String xAxisLabel = getChartMessage("xlabel", chartId, locale);
-	    final String yAxisLabel = getChartMessage("ylabel", chartId, locale);
-	    
-        navigationData.setChartTitle(chartTitle);
-        navigationData.setxAxisLabel(xAxisLabel);
-        navigationData.setyAxisLabel(yAxisLabel);
-        
-        setTsos(navigationData, locale);
-        setTimeRange(navigationData, locale);
-    }
-
-    
     private interface IProductRestrictionGetter {
         public ProductRestriction getProductRestriction(int productId, int tso, Aspect aspect);
     }
@@ -168,25 +156,6 @@ public class NavigationServiceImpl implements INavigationService {
                 return availibilityService.getProductRestriction(productId, tso, aspect, user);
             }
         });
-    }
-    
-	private void setTsos(ChartNavigationData navigationData, Locale locale) {
-	    for (final ProductTree tree : navigationData.getProductTrees()) {
-	        final int tso = tree.getTso();
-    	    final String tsoName = messageSource.getMessage("de.enwida.chart.tso." + tso + ".name", null, "TSO " + tso, locale);
-    	    navigationData.addTso(tso, tsoName);
-	    }
-	}
-	
-	private void setTimeRange(ChartNavigationData navigationData, Locale locale) {
-	    for (final String key : navigationData.getTimeRanges().keySet()) {
-    	    final String timeRangeName = messageSource.getMessage("de.enwida.chart.timerange." + key ,null, key, locale);
-    	    navigationData.getTimeRanges().put(key, timeRangeName);
-	    }
-	}
-	
-    private String getChartMessage(String property, int chartId, Locale locale) {
-	    return messageSource.getMessage("de.enwida.chart." + chartId + "." + property, null, "", locale);
     }
     
 	private void readJsonNavigationFiles() {

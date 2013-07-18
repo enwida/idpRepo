@@ -42,7 +42,10 @@
 	<beans:bean id="aspectDao" class="de.enwida.web.dao.implementation.AspectDaoImpl">
 	</beans:bean>
 
-	<beans:bean id="navigationService" class="de.enwida.web.service.implementation.NavigationServiceImpl">
+	<beans:bean scope="singleton" id="navigationLocalizer" class="de.enwida.web.utils.ChartNavigationLocalizer">
+	</beans:bean>
+
+	<beans:bean scope="singleton" id="navigationService" class="de.enwida.web.service.implementation.NavigationServiceImpl">
 		<beans:constructor-arg>
 			<beans:value>${ENWIDA_HOME}/conf/navigation</beans:value>
 		</beans:constructor-arg>
@@ -51,7 +54,7 @@
 	<beans:bean id="userService" class="de.enwida.web.service.implementation.UserServiceImpl">
 	</beans:bean>
 
-	<beans:bean id="lineService" class="de.enwida.web.service.implementation.LineServiceImpl">
+	<beans:bean scope="singleton" id="lineService" class="de.enwida.web.service.implementation.LineServiceImpl">
 	</beans:bean>
 
 	<interceptors>

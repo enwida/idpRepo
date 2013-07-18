@@ -19,12 +19,11 @@ import de.enwida.web.utils.NavigationDefaults;
 public class ChartNavigationData implements Cloneable {
 
 	private String chartTitle;
-	private NavigationDefaults defaults;
-	private List<ProductTree> productTrees;
-	private Map<Integer, String> tsos;
-	private Map<String, String> timeRanges;
 	private String xAxisLabel;
 	private String yAxisLabel;
+	private NavigationDefaults defaults;
+	private List<ProductTree> productTrees;
+	private Map<String, String> timeRanges;
 	private List<Aspect> aspects;
 	private boolean isDateScale;
 	private boolean hasTimeSelection;
@@ -32,9 +31,11 @@ public class ChartNavigationData implements Cloneable {
 	private boolean hasLineSelection;
 
 	public ChartNavigationData() {
-		this.tsos = new HashMap<>();
+		this.productTrees = new ArrayList<>();
+		this.timeRanges = new HashMap<>();
+		this.aspects = new ArrayList<>();
 	}
-
+	
 	public ChartNavigationData(String chartTitle, String xAxisLabel, String yAxisLabel) {
 		this(chartTitle, xAxisLabel, yAxisLabel, true, new ArrayList<ProductTree>(), null);
 	}
@@ -46,7 +47,6 @@ public class ChartNavigationData implements Cloneable {
 		this.xAxisLabel = xAxisLabel;
 		this.yAxisLabel = yAxisLabel;
 		this.isDateScale = dateScale;
-		this.tsos = new HashMap<Integer, String>();
 		this.productTrees = productTrees;
 		this.defaults = defaults;
 		this.aspects = new ArrayList<>();
@@ -58,8 +58,21 @@ public class ChartNavigationData implements Cloneable {
 		this.hasTimeSelection = true;
 	}
 
-	public void addTso(int id, String name) {
-		this.tsos.put(id, name);
+	public ChartNavigationData clone() {
+	    final ChartNavigationData result = new ChartNavigationData(chartTitle, xAxisLabel, yAxisLabel);
+	    result.setDefaults(defaults.clone());
+	    result.aspects = new ArrayList<Aspect>(aspects);
+	    result.timeRanges = new HashMap<>(timeRanges);
+
+	    result.setIsDateScale(isDateScale);
+	    result.setHasLineSelection(hasLineSelection);
+	    result.setHasProductSelection(hasProductSelection);
+	    result.setHasTimeSelection(hasTimeSelection);
+
+	    for (final ProductTree tree : productTrees) {
+	        result.addProductTree(tree.clone());
+	    }
+	    return result;
 	}
 
 	public NavigationDefaults getDefaults() {
@@ -113,30 +126,17 @@ public class ChartNavigationData implements Cloneable {
 	    return CalendarRange.getMinimum(ranges);
 	}
 	
-	public ChartNavigationData clone() {
-	    final ChartNavigationData result = new ChartNavigationData(chartTitle, xAxisLabel, yAxisLabel);
-	    result.setDefaults(defaults.clone());
-	    result.tsos = new HashMap<>(tsos);
-	    result.aspects = new ArrayList<Aspect>(aspects);
-	    result.timeRanges = new HashMap<>(timeRanges);
-
-	    result.setIsDateScale(isDateScale);
-	    result.setHasLineSelection(hasLineSelection);
-	    result.setHasProductSelection(hasProductSelection);
-	    result.setHasTimeSelection(hasTimeSelection);
-
-	    for (final ProductTree tree : productTrees) {
-	        result.addProductTree(tree.clone());
-	    }
-	    return result;
+	public Map<Integer, String> getTsos() {
+		final Map<Integer, String> result = new HashMap<>();
+		
+		for (ProductTree tree : productTrees) {
+			result.put(tree.getTso(), tree.getTsoName());
+		}
+		return result;
 	}
 
 	public String getTitle() {
 		return this.chartTitle;
-	}
-
-	public Map<Integer, String> getTsos() {
-		return this.tsos;
 	}
 
 	@JsonIgnore
