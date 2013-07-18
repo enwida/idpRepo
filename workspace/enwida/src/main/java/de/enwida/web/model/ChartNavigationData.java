@@ -7,8 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import de.enwida.transport.Aspect;
 import de.enwida.transport.DataResolution;
 import de.enwida.web.model.ProductTree.ProductAttributes;
@@ -139,12 +137,10 @@ public class ChartNavigationData implements Cloneable {
 		return this.chartTitle;
 	}
 
-	@JsonIgnore
 	public String getxAxisLabel() {
 		return this.xAxisLabel;
 	}
 
-	@JsonIgnore
 	public String getyAxisLabel() {
 		return this.yAxisLabel;
 	}
