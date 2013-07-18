@@ -42,6 +42,12 @@
 	<beans:bean id="aspectDao" class="de.enwida.web.dao.implementation.AspectDaoImpl">
 	</beans:bean>
 
+	<beans:bean id="navigationService" class="de.enwida.web.service.implementation.NavigationServiceImpl">
+		<beans:constructor-arg>
+			<beans:value>${ENWIDA_HOME}/conf/navigation</beans:value>
+		</beans:constructor-arg>
+	</beans:bean>
+
 	<beans:bean id="userService" class="de.enwida.web.service.implementation.UserServiceImpl">
 	</beans:bean>
 

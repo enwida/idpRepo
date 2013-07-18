@@ -47,6 +47,7 @@ import de.enwida.web.utils.ObjectMapperFactory;
 @Controller
 @RequestMapping("/data")
 public class ChartDataController {
+    private static Logger logger = Logger.getLogger(AdminController.class);
 
     @Autowired
     private LineServiceImpl lineService;
@@ -63,8 +64,6 @@ public class ChartDataController {
     @Autowired
     private ObjectMapperFactory objectMapperFactory;
     
-    private static org.apache.log4j.Logger logger = Logger.getLogger(AdminController.class);
-
 
     @RequestMapping(value = "/chart", method = RequestMethod.GET)
     public String exampleChart(Principal principal) {

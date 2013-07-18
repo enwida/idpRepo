@@ -3,19 +3,22 @@
  */
 package de.enwida.web.service.implementation;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.annotation.PostConstruct;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -31,9 +34,9 @@ import de.enwida.web.utils.ObjectMapperFactory;
 import de.enwida.web.utils.ProductLeaf;
 import de.enwida.web.utils.ProductRestriction;
 
-@Service("NavigationService")
-@Transactional
 public class NavigationServiceImpl implements INavigationService {
+
+    private static Logger logger = Logger.getLogger(NavigationServiceImpl.class);
 
 	@Autowired
 	private ISecurityService securityService;
@@ -47,16 +50,25 @@ public class NavigationServiceImpl implements INavigationService {
 	@Autowired
 	private ObjectMapperFactory objectMapperFactory;
 	
+	private String jsonDir;
+	private ObjectMapper objectMapper;
 	private Hashtable<Integer, ChartNavigationData> defaultNavigationData =  new Hashtable<Integer, ChartNavigationData>();
+	
+	public NavigationServiceImpl(String jsonDir) {
+		this.jsonDir = jsonDir;
+	}
 	
 	@PostConstruct
 	public void init() throws IOException {
-	     for (int i = 0; i <= 0; i++) {
-	    	 defaultNavigationData.put(i, getNavigationDataFromJsonFile(i));
-		}
+		objectMapper = objectMapperFactory.create();
+		readJsonNavigationFiles();
 	}
 	
 	public ChartNavigationData getDefaultNavigationData(int chartId) {
+		final ChartNavigationData result = defaultNavigationData.get(chartId);
+		if (result == null) {
+			return null;
+		}
 	    return defaultNavigationData.get(chartId).clone();
 	}
 
@@ -82,8 +94,22 @@ public class NavigationServiceImpl implements INavigationService {
         
         return navigationData;
     }
-    
-    private void setLocalAttributes(ChartNavigationData navigationData, int chartId, Locale locale) {
+
+	@Override
+	public ChartNavigationData getNavigationDataFromJsonFile(int chartId) throws IOException {
+		final InputStream in = new FileInputStream(new File(jsonDir, chartId + ".json"));
+		return objectMapper.readValue(in, ChartNavigationData.class);
+	}
+	
+    public String getJsonDir() {
+		return jsonDir;
+	}
+
+	public void setJsonDir(String jsonDir) {
+		this.jsonDir = jsonDir;
+	}
+
+	private void setLocalAttributes(ChartNavigationData navigationData, int chartId, Locale locale) {
 	    final String chartTitle = getChartMessage("title", chartId, locale);
 	    final String xAxisLabel = getChartMessage("xlabel", chartId, locale);
 	    final String yAxisLabel = getChartMessage("ylabel", chartId, locale);
@@ -143,14 +169,7 @@ public class NavigationServiceImpl implements INavigationService {
             }
         });
     }
-
-	@Override
-	public ChartNavigationData getNavigationDataFromJsonFile(int chartId) throws IOException {
-		final InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream( chartId + ".json");
-		final ObjectMapper om = objectMapperFactory.create();
-		return om.readValue(in, ChartNavigationData.class);
-	}
-	
+    
 	private void setTsos(ChartNavigationData navigationData, Locale locale) {
 	    for (final ProductTree tree : navigationData.getProductTrees()) {
 	        final int tso = tree.getTso();
@@ -169,4 +188,26 @@ public class NavigationServiceImpl implements INavigationService {
     private String getChartMessage(String property, int chartId, Locale locale) {
 	    return messageSource.getMessage("de.enwida.chart." + chartId + "." + property, null, "", locale);
     }
+    
+	private void readJsonNavigationFiles() {
+		final Pattern fileNamePattern = Pattern.compile("^(\\d+)\\.json$");
+		final File dir = new File(jsonDir);
+		
+		for (final File file : dir.listFiles()) {
+			if (file.isDirectory()) {
+				continue;
+			}
+			final Matcher match = fileNamePattern.matcher(file.getName());
+			if (match.matches()) {
+				final int chartId = Integer.parseInt(match.group(1));
+				try {
+				    final ChartNavigationData navigationData = getNavigationDataFromJsonFile(chartId);
+					defaultNavigationData.put(chartId, navigationData);
+				} catch (IOException e) {
+					logger.error("Error while reading navigation JSON (" + file.getName() + "): " + e.getMessage());
+				}
+			}
+		}
+	}
+
 }
