@@ -13,7 +13,7 @@ define ->
         product += $(@).find("option:selected").text() + " "
       timeRange = formatDate(opts.selections.timeRange.from) + " - " \
                 + formatDate(opts.selections.timeRange.to)
-      resolution = opts.selections.resolution
+      resolution = opts.navigationData.resolutionNames[opts.selections.resolution]
       tso = opts.navigationData.tsos[@$node.closest(".chart").find(".tso").val()]
 
       @select("table").empty()

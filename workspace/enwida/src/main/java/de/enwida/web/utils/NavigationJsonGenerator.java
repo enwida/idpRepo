@@ -89,7 +89,7 @@ public class NavigationJsonGenerator {
     	
     	// Set time ranges
     	for (final String timeRange : template.timeRanges) {
-    		result.getTimeRanges().put(timeRange, timeRange);
+    		result.getTimeRanges().put(timeRange, null);
     	}
     	
     	// Set aspects

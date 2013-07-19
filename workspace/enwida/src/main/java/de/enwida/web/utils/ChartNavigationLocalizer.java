@@ -5,6 +5,7 @@ import java.util.Locale;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 
+import de.enwida.transport.DataResolution;
 import de.enwida.web.model.ChartNavigationData;
 import de.enwida.web.model.ProductTree;
 
@@ -32,6 +33,7 @@ public class ChartNavigationLocalizer {
 			setTitles();
 			setTsos();
 			setTimeRanges();
+			setResolutions();
 			setProductParts();
 	
 			return navigationData;
@@ -67,6 +69,13 @@ public class ChartNavigationLocalizer {
 				for (final ProductNode child : tree.getRoot().getChildren()) {
 					setProductParts(child);
 				}
+			}
+		}
+		
+		private void setResolutions() {
+			for (final DataResolution resolution : navigationData.getAllResolutions()) {
+				final String resolutionName = getChartMessage("resolution." + resolution, resolution.toString().toLowerCase());
+				navigationData.getResolutionNames().put(resolution, resolutionName);
 			}
 		}
 		

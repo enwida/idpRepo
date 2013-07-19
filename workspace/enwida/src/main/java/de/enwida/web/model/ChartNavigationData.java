@@ -7,6 +7,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import de.enwida.transport.Aspect;
 import de.enwida.transport.DataResolution;
 import de.enwida.web.model.ProductTree.ProductAttributes;
@@ -23,6 +26,10 @@ public class ChartNavigationData implements Cloneable {
 	private List<ProductTree> productTrees;
 	private Map<String, String> timeRanges;
 	private List<Aspect> aspects;
+
+	@JsonIgnore
+	private Map<DataResolution, String> resolutionNames;
+
 	private boolean isDateScale;
 	private boolean hasTimeSelection;
 	private boolean hasProductSelection;
@@ -32,6 +39,7 @@ public class ChartNavigationData implements Cloneable {
 		this.productTrees = new ArrayList<>();
 		this.timeRanges = new HashMap<>();
 		this.aspects = new ArrayList<>();
+		this.resolutionNames = new HashMap<>();
 	}
 	
 	public ChartNavigationData(String chartTitle, String xAxisLabel, String yAxisLabel) {
@@ -49,6 +57,7 @@ public class ChartNavigationData implements Cloneable {
 		this.defaults = defaults;
 		this.aspects = new ArrayList<>();
 		this.timeRanges = new HashMap<>();
+		this.resolutionNames = new HashMap<>();
 		
 		// Show all selections by default
 		this.hasLineSelection = true;
@@ -203,6 +212,11 @@ public class ChartNavigationData implements Cloneable {
 
 	public void setHasLineSelection(boolean hasLineSelection) {
 		this.hasLineSelection = hasLineSelection;
+	}
+
+	@JsonGetter
+	public Map<DataResolution, String> getResolutionNames() {
+		return resolutionNames;
 	}
 	
 }

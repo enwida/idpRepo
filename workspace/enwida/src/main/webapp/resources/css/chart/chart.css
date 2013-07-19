@@ -180,9 +180,12 @@ svg.legend {
 }
 
 .infobox {
-  display: none;
   padding: 10px 0;
   margin-left: 50px;
   border-bottom: 1px solid #e0e0e0;
   margin-bottom: 5px;
+}
+
+.infobox table td {
+	padding-right: 30px;
 }
