@@ -2,7 +2,6 @@ package de.enwida.web.dao.implementation;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.List;
 
 import javax.sql.DataSource;
 
@@ -14,7 +13,6 @@ import de.enwida.web.controller.AdminController;
 import de.enwida.web.dao.interfaces.AbstractBaseDao;
 import de.enwida.web.dao.interfaces.IRightsDao;
 import de.enwida.web.model.Right;
-import de.enwida.web.model.User;
 
 @Repository
 public class RightsDaoImpl extends AbstractBaseDao<Right> implements IRightsDao {

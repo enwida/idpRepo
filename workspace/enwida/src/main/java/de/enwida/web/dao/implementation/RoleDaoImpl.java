@@ -8,26 +8,19 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.stereotype.Repository;
 
-import de.enwida.web.controller.AdminController;
 import de.enwida.web.dao.interfaces.AbstractBaseDao;
 import de.enwida.web.dao.interfaces.IRoleDao;
 import de.enwida.web.model.Role;
-import de.enwida.web.model.User;
 
 @Repository
 public class RoleDaoImpl extends AbstractBaseDao<Role> implements IRoleDao {
 	
 	@Autowired
 	private DataSource datasource;
-	
-	
-    private static org.apache.log4j.Logger logger = Logger.getLogger(AdminController.class);
-	
 	
 	@Override
 	public String getDbTableName() {

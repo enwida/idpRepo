@@ -1,8 +1,6 @@
 package de.enwida.web.model;
 
 import java.sql.Date;
-import java.util.ArrayList;
-import java.util.List;
 
 public class Right {
     private long rightID;
