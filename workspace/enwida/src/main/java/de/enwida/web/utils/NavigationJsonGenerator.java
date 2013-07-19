@@ -7,6 +7,7 @@ import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
@@ -104,6 +105,7 @@ public class NavigationJsonGenerator {
     	defaultTo.set(2011, 0, 1);
     	defaults.setTimeRange(new CalendarRange(defaultFrom, defaultTo));
     	defaults.setProduct(Integer.parseInt(template.products.get(0).replaceAll("\\*", "1")));
+    	defaults.setDisabledLines(new ArrayList<Integer>(0));
     	result.setDefaults(defaults);
     	
     	// Create product trees
@@ -118,11 +120,11 @@ public class NavigationJsonGenerator {
     			if (product.equals("200")) {
     				final ProductNode scr = new ProductNode(2, "SCR");
     				node.addChild(scr);
-    				appendZeroParts(node, template);
+    				appendZeroParts(scr, template);
     			} else if (product.equals("300")) {
     				final ProductNode tcr = new ProductNode(3, "TCR");
     				node.addChild(tcr);
-    				appendZeroParts(node, template);
+    				appendZeroParts(tcr, template);
     			} else if (product.equals("2**")) {
     				final ProductNode scr = new ProductNode(2, "SCR");
     				node.addChild(scr);
