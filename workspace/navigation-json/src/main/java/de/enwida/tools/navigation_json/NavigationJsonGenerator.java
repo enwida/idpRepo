@@ -1,4 +1,4 @@
-package de.enwida.web.utils;
+package de.enwida.tools.navigation_json;
 
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
@@ -19,6 +19,11 @@ import de.enwida.transport.Aspect;
 import de.enwida.transport.DataResolution;
 import de.enwida.web.model.ChartNavigationData;
 import de.enwida.web.model.ProductTree;
+import de.enwida.web.utils.CalendarRange;
+import de.enwida.web.utils.NavigationDefaults;
+import de.enwida.web.utils.ObjectMapperFactory;
+import de.enwida.web.utils.ProductLeaf;
+import de.enwida.web.utils.ProductNode;
 
 public class NavigationJsonGenerator {
 	
