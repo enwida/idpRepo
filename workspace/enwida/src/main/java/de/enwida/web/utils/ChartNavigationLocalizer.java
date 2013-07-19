@@ -1,5 +1,7 @@
 package de.enwida.web.utils;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +12,18 @@ import de.enwida.web.model.ChartNavigationData;
 import de.enwida.web.model.ProductTree;
 
 public class ChartNavigationLocalizer {
+	
+	private static List<String> infoKeys;
+	
+	static {
+		infoKeys = Arrays.asList(new String[] {
+			"title",
+			"product",
+			"timerange",
+			"resolution",
+			"tso"
+		});
+	}
 	
 	@Autowired
 	private MessageSource messageSource;
@@ -31,6 +45,7 @@ public class ChartNavigationLocalizer {
 		
 		public ChartNavigationData applyLocalizations() {
 			setTitles();
+			setInfoKeys();
 			setTsos();
 			setTimeRanges();
 			setResolutions();
@@ -44,24 +59,38 @@ public class ChartNavigationLocalizer {
 		    final String xAxisLabel = getChartSpecificMessage("xlabel");
 		    final String yAxisLabel = getChartSpecificMessage("ylabel");
 		    
-	        navigationData.setChartTitle(chartTitle);
-	        navigationData.setxAxisLabel(xAxisLabel);
-	        navigationData.setyAxisLabel(yAxisLabel);
+	        navigationData.getDictionary().setTitle(chartTitle);
+	        navigationData.getDictionary().setxAxisLabel(xAxisLabel);
+	        navigationData.getDictionary().setyAxisLabel(yAxisLabel);
+		}
+		
+		private void setInfoKeys() {
+			for (final String infoKey : infoKeys) {
+				final String infoKeyName = getChartMessage("infokey." + infoKey, infoKey);
+				navigationData.getDictionary().getInfoKeys().put(infoKey, infoKeyName);
+			}
 		}
 		    
 		private void setTsos() {
 		    for (final ProductTree tree : navigationData.getProductTrees()) {
 		        final int tso = tree.getTso();
 	    	    final String tsoName = getChartMessage("tso." + tso, "TSO " + tso);
-	    	    tree.setTsoName(tsoName);
+	    	    navigationData.getDictionary().getTsos().put(tso, tsoName);
 		    }
 		}
 		
 		private void setTimeRanges() {
-		    for (final String key : navigationData.getTimeRanges().keySet()) {
-		    	final String timeRangeName = getChartMessage("timerange." + key, key);
-	    	    navigationData.getTimeRanges().put(key, timeRangeName);
+		    for (final String timeRange : navigationData.getTimeRanges()) {
+		    	final String timeRangeName = getChartMessage("timerange." + timeRange, timeRange);
+		    	navigationData.getDictionary().getTimeRanges().put(timeRange, timeRangeName);
 		    }
+		}
+
+		private void setResolutions() {
+			for (final DataResolution resolution : navigationData.getAllResolutions()) {
+				final String resolutionName = getChartMessage("resolution." + resolution, resolution.toString().toLowerCase());
+				navigationData.getDictionary().getResolutions().put(resolution, resolutionName);
+			}
 		}
 		
 		private void setProductParts() {
@@ -69,13 +98,6 @@ public class ChartNavigationLocalizer {
 				for (final ProductNode child : tree.getRoot().getChildren()) {
 					setProductParts(child);
 				}
-			}
-		}
-		
-		private void setResolutions() {
-			for (final DataResolution resolution : navigationData.getAllResolutions()) {
-				final String resolutionName = getChartMessage("resolution." + resolution, resolution.toString().toLowerCase());
-				navigationData.getResolutionNames().put(resolution, resolutionName);
 			}
 		}
 		

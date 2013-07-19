@@ -5,23 +5,18 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
-import java.util.Locale;
-
-import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
 import de.enwida.transport.Aspect;
 import de.enwida.transport.DataResolution;
-import de.enwida.web.dao.implementation.NavigationDaoImpl;
 import de.enwida.web.model.ChartNavigationData;
 import de.enwida.web.model.ProductTree;
 
@@ -44,18 +39,18 @@ public class NavigationJsonGenerator {
     	} else {
     		final String templatePath = args[0];
     		final byte[] bytes = Files.readAllBytes(Paths.get(templatePath));
-    		final String template = Charset.forName("UTF-8").decode(ByteBuffer.wrap(bytes)).toString();
+    		final String templateJson = Charset.forName("UTF-8").decode(ByteBuffer.wrap(bytes)).toString();
 
+	    	final Template template = objectMapper.readValue(templateJson, Template.class);
     		navigationData = getNavigationFromTemplate(template);
     	}
 	    
     	System.out.println(objectMapper.writeValueAsString(navigationData));
     }
     
-    private static ChartNavigationData getNavigationFromTemplate(String templateJson) throws Exception {
-    	final Template template = objectMapper.readValue(templateJson, Template.class);
+    private static ChartNavigationData getNavigationFromTemplate(Template template) {
     	final ChartNavigationData result = new ChartNavigationData();
-    	
+
     	// Set flags
     	result.setIsDateScale(template.isDateScale != null ? template.isDateScale : true);
     	result.setHasLineSelection(template.hasLineSelection != null ? template.hasLineSelection : true);
@@ -88,9 +83,7 @@ public class NavigationJsonGenerator {
     	}
     	
     	// Set time ranges
-    	for (final String timeRange : template.timeRanges) {
-    		result.getTimeRanges().put(timeRange, null);
-    	}
+    	result.getTimeRanges().addAll(template.timeRanges);
     	
     	// Set aspects
     	result.getAspects().addAll(template.aspects);
@@ -189,28 +182,11 @@ public class NavigationJsonGenerator {
     }
     
     private static ChartNavigationData getExampleNavigation() {
-        // Manually construct the needed beans
-        final ReloadableResourceBundleMessageSource messageSource = new ReloadableResourceBundleMessageSource();
-        messageSource.setBasename("/resources/messages/messages");
-        
-        final NavigationDaoImpl navigationDao = new NavigationDaoImpl();
-        navigationDao.setMessageSource(messageSource);
-
-        final ChartNavigationData navigationData = navigationDao.getDefaultNavigation(0, Locale.ENGLISH);
-        navigationData.setIsDateScale(true);
-        navigationData.getAspects().add(Aspect.CR_DEGREE_OF_ACTIVATION);
-
-        navigationData.getTimeRanges().put("Day", "Day");
-        navigationData.getTimeRanges().put("Week", "Week");
-        navigationData.getTimeRanges().put("Month", "Month");
-        navigationData.getTimeRanges().put("Year", "Year");
-
-	    try {
-            navigationData.setDefaults(new NavigationDefaults(99, DataResolution.MONTHLY, 211, new CalendarRange(dateFormat.parse("2010-11-01"), dateFormat.parse("2010-12-01"))));
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-	    return navigationData;
+    	final Template template = new Template();
+    	template.aspects = Arrays.asList(new Aspect[] { Aspect.CR_VOL_ACCEPTED, Aspect.CR_VOL_OFFERED });
+    	template.tsos = Collections.singletonList(99);
+    	template.products = Arrays.asList(new String[] { "2**", "3**" });
+	    return getNavigationFromTemplate(new Template());
     }
     
     static class Template {

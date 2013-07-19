@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import de.enwida.transport.Aspect;
@@ -15,61 +14,37 @@ import de.enwida.transport.DataResolution;
 import de.enwida.web.model.ProductTree.ProductAttributes;
 import de.enwida.web.utils.CalendarRange;
 import de.enwida.web.utils.NavigationDefaults;
+import de.enwida.web.utils.NavigationDictionary;
 
 
 public class ChartNavigationData implements Cloneable {
 
-	private String chartTitle;
-	private String xAxisLabel;
-	private String yAxisLabel;
 	private NavigationDefaults defaults;
 	private List<ProductTree> productTrees;
-	private Map<String, String> timeRanges;
+	private List<String> timeRanges;
 	private List<Aspect> aspects;
-
-	@JsonIgnore
-	private Map<DataResolution, String> resolutionNames;
 
 	private boolean isDateScale;
 	private boolean hasTimeSelection;
 	private boolean hasProductSelection;
 	private boolean hasLineSelection;
+	
+	@JsonIgnore
+	private NavigationDictionary dictionary;
 
 	public ChartNavigationData() {
 		this.productTrees = new ArrayList<>();
-		this.timeRanges = new HashMap<>();
+		this.timeRanges = new ArrayList<>();
 		this.aspects = new ArrayList<>();
-		this.resolutionNames = new HashMap<>();
+		this.dictionary = new NavigationDictionary();
 	}
 	
-	public ChartNavigationData(String chartTitle, String xAxisLabel, String yAxisLabel) {
-		this(chartTitle, xAxisLabel, yAxisLabel, true, new ArrayList<ProductTree>(), null);
-	}
-
-	public ChartNavigationData(String chartTitle, String xAxisLabel, String yAxisLabel,
-	       boolean dateScale, List<ProductTree> productTrees, NavigationDefaults defaults) {
-	    
-		this.chartTitle = chartTitle;
-		this.xAxisLabel = xAxisLabel;
-		this.yAxisLabel = yAxisLabel;
-		this.isDateScale = dateScale;
-		this.productTrees = productTrees;
-		this.defaults = defaults;
-		this.aspects = new ArrayList<>();
-		this.timeRanges = new HashMap<>();
-		this.resolutionNames = new HashMap<>();
-		
-		// Show all selections by default
-		this.hasLineSelection = true;
-		this.hasProductSelection = true;
-		this.hasTimeSelection = true;
-	}
-
 	public ChartNavigationData clone() {
-	    final ChartNavigationData result = new ChartNavigationData(chartTitle, xAxisLabel, yAxisLabel);
+	    final ChartNavigationData result = new ChartNavigationData();
 	    result.setDefaults(defaults.clone());
 	    result.aspects = new ArrayList<Aspect>(aspects);
-	    result.timeRanges = new HashMap<>(timeRanges);
+	    result.timeRanges = new ArrayList<>(timeRanges);
+	    result.dictionary = dictionary.clone();
 
 	    result.setIsDateScale(isDateScale);
 	    result.setHasLineSelection(hasLineSelection);
@@ -137,41 +112,26 @@ public class ChartNavigationData implements Cloneable {
 		final Map<Integer, String> result = new HashMap<>();
 		
 		for (ProductTree tree : productTrees) {
-			result.put(tree.getTso(), tree.getTsoName());
+			final String tsoName = dictionary.getTsos().get(tree.getTso());
+			result.put(tree.getTso(), tsoName);
 		}
 		return result;
 	}
 
 	public String getTitle() {
-		return this.chartTitle;
+		return dictionary.getTitle();
 	}
 
 	public String getxAxisLabel() {
-		return this.xAxisLabel;
+		return dictionary.getxAxisLabel();
 	}
 
 	public String getyAxisLabel() {
-		return this.yAxisLabel;
-	}
-
-	public void setChartTitle(String chartTitle) {
-		this.chartTitle = chartTitle;
+		return dictionary.getyAxisLabel();
 	}
 
 	public void setDefaults(NavigationDefaults defaults) {
 		this.defaults = defaults;
-	}
-
-	public void setTitle(String title) {
-		this.chartTitle = title;
-	}
-
-	public void setxAxisLabel(String xAxisLabel) {
-		this.xAxisLabel = xAxisLabel;
-	}
-
-	public void setyAxisLabel(String yAxisLabel) {
-		this.yAxisLabel = yAxisLabel;
 	}
 
     public boolean getIsDateScale() {
@@ -186,7 +146,7 @@ public class ChartNavigationData implements Cloneable {
         return aspects;
     }
 
-    public Map<String, String> getTimeRanges() {
+    public List<String> getTimeRanges() {
         return timeRanges;
     }
 
@@ -213,10 +173,13 @@ public class ChartNavigationData implements Cloneable {
 	public void setHasLineSelection(boolean hasLineSelection) {
 		this.hasLineSelection = hasLineSelection;
 	}
-
-	@JsonGetter
-	public Map<DataResolution, String> getResolutionNames() {
-		return resolutionNames;
+	
+	public NavigationDictionary getDictionary() {
+		return dictionary;
+	}
+	
+	public NavigationDictionary getLocalizations() {
+		return dictionary;
 	}
 	
 }
