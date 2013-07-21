@@ -2,6 +2,7 @@ package de.enwida.web.service;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashSet;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -62,7 +63,7 @@ public class UserNavigationServiceTest {
 		diabledLines.add(1);
 		diabledLines.add(2);
 
-		data.setDisabledLines(diabledLines);
+		data.setDisabledLines(new HashSet<Integer>(diabledLines));
 		navSet.setSettingsData(data);
 
 		user.getNavigationSettings().add(navSet);
@@ -81,7 +82,7 @@ public class UserNavigationServiceTest {
 		diabledLines.add(1);
 		diabledLines.add(2);
 
-		data.setDisabledLines(diabledLines);
+		data.setDisabledLines(new HashSet<Integer>(diabledLines));
 		navSet.setSettingsData(data);
 		// save or update navigation settings
 		navigationService.saveUserNavigationSettings(navSet);

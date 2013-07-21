@@ -6,6 +6,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -146,10 +147,10 @@ public class ChartDataController {
 			final NavigationDefaults defaults = getNavigationDefaults(chartId,
 					request);
             if (lines.isEmpty()) {
-				defaults.setDisabledLines(new ArrayList<Integer>());
+				defaults.setDisabledLines(new HashSet<Integer>());
             } else {
                 final String[] lineIds = lines.split(",");
-				final List<Integer> disabledLines = new ArrayList<Integer>();
+				final Set<Integer> disabledLines = new HashSet<Integer>();
     
                 for (final String lineId : lineIds) {
                     disabledLines.add(Integer.parseInt(lineId));

@@ -1,11 +1,10 @@
 package de.enwida.web.db.model;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Embedded;
@@ -16,7 +15,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
@@ -27,7 +25,7 @@ import de.enwida.web.utils.Constants;
 @Entity
 @Table(name = Constants.NAVIGATION_DEFAULTS_TABLE_NAME, schema = Constants.NAVIGATION_DEFAULTS_TABLE_SCHEMA_NAME, uniqueConstraints = { @UniqueConstraint(columnNames = {
 		"TSO_ID", "RESOLUTION", "PRODUCT", CalendarRange.FROM,
-		CalendarRange.TO }) })
+ CalendarRange.TO }) })
 public class NavigationDefaults implements Cloneable,Serializable {
     
 	/**
@@ -35,7 +33,7 @@ public class NavigationDefaults implements Cloneable,Serializable {
 	 */
 	private static final long serialVersionUID = 1268487366015431606L;
 	public static final String NAVIGATION_DEFAULTS_ID = "NAVIGATION_DEFAULTS_ID";
-	public static final String LINE_ID = "LINE_ID";
+	public static final String DISABLED_LINE_ID = "DISABLED_LINE_ID";
 
 	@Id
 	@Column(name = NAVIGATION_DEFAULTS_ID)
@@ -55,12 +53,11 @@ public class NavigationDefaults implements Cloneable,Serializable {
 	@Embedded
 	private CalendarRange timeRange;
 
-	@ElementCollection(targetClass = Integer.class)
-	@JoinTable(name = Constants.USER_NAVIGATION_DISABLED_LINES_TABLE_NAME, schema = Constants.USER_NAVIGATION_DISABLED_LINES_TABLE_SCHEMA_NAME, joinColumns = { @JoinColumn(name = NAVIGATION_DEFAULTS_ID, referencedColumnName = NAVIGATION_DEFAULTS_ID) })
-	private Set<Integer> disableLines;
+	@ElementCollection
+	@CollectionTable(name = Constants.USER_NAVIGATION_DISABLED_LINES_TABLE_NAME, schema = Constants.USER_NAVIGATION_DISABLED_LINES_TABLE_SCHEMA_NAME, joinColumns = { @JoinColumn(name = NAVIGATION_DEFAULTS_ID, referencedColumnName = NAVIGATION_DEFAULTS_ID) })
+	@Column(name = DISABLED_LINE_ID)
+	private Set<Integer> disabledLines;
     
-	@Transient
-	private List<Integer> disabledLines;
 	/**
 	 * 
 	 */
@@ -73,7 +70,7 @@ public class NavigationDefaults implements Cloneable,Serializable {
         this.resolution = resolution;
         this.product = product;
         this.timeRange = timeRange;
-		this.disabledLines = new ArrayList<Integer>();
+		this.disabledLines = new HashSet<Integer>();
     }
     
     public NavigationDefaults clone() {
@@ -113,22 +110,6 @@ public class NavigationDefaults implements Cloneable,Serializable {
     public void setTimeRange(CalendarRange timeRange) {
         this.timeRange = timeRange;
     }
-    
-	@Transient
-	public List<Integer> getDisabledLines() {
-		if (disableLines != null) {
-			disabledLines = new ArrayList<Integer>();
-			disabledLines.addAll(disableLines);
-		}
-        return disabledLines;
-    }
-    
-	public void setDisabledLines(List<Integer> disabledLines) {
-		if (disabledLines != null) {
-			disableLines = new HashSet<Integer>();
-		}
-        this.disabledLines = disabledLines;
-    }
 
 	public int getId() {
 		return id;
@@ -139,19 +120,11 @@ public class NavigationDefaults implements Cloneable,Serializable {
 	}
 
 	@Transient
-	public Set<Integer> getDisableLines() {
-		if (disabledLines != null) {
-				disableLines = new HashSet<Integer>();
-				disableLines.addAll(disabledLines);
-		}
-		return disableLines;
+	public Set<Integer> getDisabledLines() {
+		return disabledLines;
 	}
 
-	public void setDisableLines(Set<Integer> disableLines) {
-		if (disableLines != null) {
-			disabledLines = new ArrayList<>(disableLines);
-		}
-		this.disableLines = disableLines;
+	public void setDisabledLines(Set<Integer> disabledLines) {
+		this.disabledLines = disabledLines;
 	}
-
 }

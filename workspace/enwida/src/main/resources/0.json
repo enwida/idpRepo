@@ -25,7 +25,7 @@
       }
     },
     "disabledLines": {
-      "@type": "java.util.ArrayList"
+      "@type": "java.util.HashSet"
     }
   },
   "productTrees": {
