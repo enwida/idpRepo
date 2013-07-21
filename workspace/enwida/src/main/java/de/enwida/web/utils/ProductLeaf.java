@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 import de.enwida.transport.DataResolution;
+import de.enwida.web.db.model.CalendarRange;
 
 public class ProductLeaf extends ProductNode {
     

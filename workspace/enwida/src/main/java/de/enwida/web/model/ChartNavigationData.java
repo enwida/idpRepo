@@ -9,9 +9,9 @@ import java.util.Set;
 
 import de.enwida.transport.Aspect;
 import de.enwida.transport.DataResolution;
+import de.enwida.web.db.model.CalendarRange;
+import de.enwida.web.db.model.NavigationDefaults;
 import de.enwida.web.model.ProductTree.ProductAttributes;
-import de.enwida.web.utils.CalendarRange;
-import de.enwida.web.utils.NavigationDefaults;
 
 
 public class ChartNavigationData implements Cloneable {

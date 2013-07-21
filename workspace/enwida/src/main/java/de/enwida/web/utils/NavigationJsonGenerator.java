@@ -13,6 +13,8 @@ import com.cedarsoftware.util.io.JsonWriter;
 import de.enwida.transport.Aspect;
 import de.enwida.transport.DataResolution;
 import de.enwida.web.dao.implementation.NavigationDaoImpl;
+import de.enwida.web.db.model.CalendarRange;
+import de.enwida.web.db.model.NavigationDefaults;
 import de.enwida.web.model.ChartNavigationData;
 
 public class NavigationJsonGenerator {

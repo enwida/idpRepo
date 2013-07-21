@@ -1,9 +1,10 @@
 package de.enwida.web.service;
 
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
-import junit.framework.Assert;
-
+import org.apache.log4j.Logger;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -12,7 +13,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import de.enwida.transport.DataResolution;
+import de.enwida.web.db.model.CalendarRange;
+import de.enwida.web.db.model.NavigationDefaults;
+import de.enwida.web.db.model.NavigationSettings;
 import de.enwida.web.model.User;
+import de.enwida.web.service.interfaces.INavigationService;
 import de.enwida.web.service.interfaces.IUserService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -21,13 +27,13 @@ public class UserNavigationServiceTest {
 
 	@Autowired
 	private IUserService userService;
+	@Autowired
+	private INavigationService navigationService;
+
+	private Logger logger = Logger.getLogger(getClass());
 
 	@Before
 	public void setUp() throws Exception {
-		// System.out.println(userService.getUsers());
-		// userDao.updateUserNavigation(new UserNavigation(1, "13",
-		// "soemdata"));
-		// em.persist(new UserNavigation("12", "sjdajsdajd"));
 	}
 
 	@After
@@ -36,9 +42,49 @@ public class UserNavigationServiceTest {
 
 	@Test
 	public void test() {
-		List<User> users = userService.getUsers();
-		System.out.println("Users Found : " + users);
-		Assert.assertNotNull(users);
+		test1();
+		test2();
+	}
+
+	private void test1() {
+		User user1 = new User(0, "username1", "password1", "firstname",
+				"lastname", false);
+		userService.saveUser(user1);
+		System.out.println(userService.getUsers());
+		User user = userService.getUser("username1");
+		NavigationSettings navSet = new NavigationSettings();
+		navSet.setChartId(100);
+		navSet.setUser(user);
+		NavigationDefaults data = new NavigationDefaults(12,
+				DataResolution.WEEKLY, 120, new CalendarRange(
+						Calendar.getInstance(), Calendar.getInstance()));
+		List<Integer> diabledLines = new ArrayList<Integer>();
+		diabledLines.add(1);
+		diabledLines.add(2);
+
+		data.setDisabledLines(diabledLines);
+		navSet.setSettingsData(data);
+
+		user.getNavigationSettings().add(navSet);
+		userService.updateUser(user);
+	}
+
+	private void test2() {
+		NavigationSettings navSet = new NavigationSettings();
+		navSet.setChartId(100);
+		navSet.setClientId(112455);
+		NavigationDefaults data = new NavigationDefaults(12,
+				DataResolution.WEEKLY, 120, new CalendarRange(
+						Calendar.getInstance(), Calendar.getInstance()));
+
+		List<Integer> diabledLines = new ArrayList<Integer>();
+		diabledLines.add(1);
+		diabledLines.add(2);
+
+		data.setDisabledLines(diabledLines);
+		navSet.setSettingsData(data);
+		// save or update navigation settings
+		navigationService.saveUserNavigationSettings(navSet);
 	}
 
 }

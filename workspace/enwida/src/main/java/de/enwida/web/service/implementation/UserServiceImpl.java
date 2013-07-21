@@ -58,6 +58,13 @@ public class UserServiceImpl implements IUserService {
 		// Saving user in the user table
 		long userId = userDao.save(user);
 
+		boolean success = true;
+		// success = postSavingUser(userId,user);
+
+		return success;
+	}
+
+	private boolean postSavingUser(long userId, User user) {
 		if (userId != -1) {
 			Group group = userDao.getGroupByCompanyName(user.getCompanyName());
 
@@ -94,7 +101,6 @@ public class UserServiceImpl implements IUserService {
 			return false;
 		}
 	}
-
 	public String getPassword(String email) {
 		return userDao.getPassword(email);
 	}

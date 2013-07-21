@@ -7,10 +7,12 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.NoResultException;
+import javax.persistence.NonUniqueResultException;
+import javax.persistence.TypedQuery;
 import javax.sql.DataSource;
 
 import org.apache.log4j.Logger;
-import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
@@ -20,13 +22,11 @@ import org.springframework.stereotype.Repository;
 import de.enwida.web.controller.AdminController;
 import de.enwida.web.dao.interfaces.AbstractBaseDao;
 import de.enwida.web.dao.interfaces.IUserDao;
-import de.enwida.web.db.model.UserNavigation;
 import de.enwida.web.model.Group;
 import de.enwida.web.model.Role;
 import de.enwida.web.model.User;
 import de.enwida.web.model.UserRole;
 import de.enwida.web.model.UserRoleCollection;
-import de.enwida.web.utils.HibernateUtil;
 
 @Repository
 public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
@@ -39,89 +39,16 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
 	
 	@Override
 	public List<User> findAllUsersWithPermissions(){
-		ArrayList<User> users = new ArrayList<User>();
-		String sql = "SELECT * FROM users";
-		 
-		Connection conn = null;
- 
-		try 
-		{
-			conn = datasource.getConnection();
-			PreparedStatement ps = conn.prepareStatement(sql);
-			User user = null;
-			ResultSet rs = ps.executeQuery();
-			while (rs.next()) {
-				user = new User(
-					rs.getLong("user_id"),
-					rs.getString("user_name"), 
-					rs.getString("user_password"), 
-					rs.getBoolean("enabled")
-				);
-				user.setFirstName(rs.getString("first_name"));
-				user.setLastName(rs.getString("last_name"));
-				//users.add(loadUserFromDB(user));
-			}
-			rs.close();
-			ps.close();
-		} catch (SQLException e) {
-			throw new RuntimeException(e);
-		} finally {
-			if (conn != null) {
-				try {
-				conn.close();
-				} catch (SQLException e) {
-                    logger.error(e.getMessage());
-				}
-			}
-		}
-
-		return users;
+		TypedQuery<User> typedQuery = em.createQuery(
+				"from " + User.class.getName(), User.class);
+		return typedQuery.getResultList();
 	}
 	
 	@Override
 	public List<User> findAllUsers(){
-		ArrayList<User> users = new ArrayList<User>();
-		String sql = "SELECT * FROM users.users";
-		 
-		Connection conn = null;
- 
-		try {
-			conn = datasource.getConnection();
-			PreparedStatement ps = conn.prepareStatement(sql);
-			User user = null;
-			ResultSet rs = ps.executeQuery();
-			while (rs.next()) {
-				user = new User(
-					rs.getLong("user_id"),
-					rs.getString("user_name"), 
-					rs.getString("user_password"), 
-                    rs.getBoolean("enabled")
-				);
-                user.setFirstName(rs.getString("first_name"));
-                user.setLastName(rs.getString("last_name"));
-                user.setTelephone(rs.getString("telephone"));
-                user.setCompanyName(rs.getString("company_name"));
-                ArrayList<Group> groups = getUserGroups(user.getUserID());
-                user.setGroups(groups);
-                UserRoleCollection roles = getUserRoles(user.getUserID());
-                user.setRoles(roles);
-				users.add(user);
-			}
-			rs.close();
-			ps.close();
-		} catch (SQLException e) {
-			throw new RuntimeException(e);
-		} finally {
-			if (conn != null) {
-				try {
-				conn.close();
-				} catch (SQLException e) {
-                    logger.error(e.getMessage());
-                }
-			}
-		}
-
-		return users;
+		TypedQuery<User> typedQuery = em.createQuery(
+				"from " + User.class.getName(), User.class);
+		return typedQuery.getResultList();
 	}
 	
 	@Override
@@ -162,7 +89,7 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
 	@Override
 	public void deleteUser(User user) {
 	    deleteUserGroup(user.getUserID());
-		String sql = "DELETE FROM users.users WHERE users.user_name=?";
+		String sql = "DELETE FROM users.user WHERE users.user_name=?";
 		 
 		Connection conn = null;
  
@@ -195,7 +122,7 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
         try {
             conn = datasource.getConnection();
             PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setLong(1, userID);
+			ps.setLong(1, (int) userID);
             ps.executeUpdate();
             ps.close();
         } catch (SQLException e) {
@@ -214,7 +141,7 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
 
 	@Override
     public String getPassword(String email) {
-		String sql = "SELECT * FROM users.users where users.user_name=?";
+		String sql = "SELECT * FROM users.user where users.user_name=?";
 		String password=null;
 		Connection conn = null;
  
@@ -244,19 +171,25 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
 	}
 	
     @Override
-	public long save(final User user) 
-	{
-        Session session = HibernateUtil.getSessionFactory().openSession();
-        session.beginTransaction();
-        user.setUserID((long)666);
-        session.save(user);
-        session.getTransaction().commit();
-        return user.getUserID();
+	public long save(User user)
+ {
+		User exisinguser = getUserByName(user.getUserName());
+		try {
+			if (exisinguser == null) {
+				em.persist(user);
+				em.flush();
+			}
+			user = getUserByName(user.getUserName());
+		} catch (Exception e) {
+			logger.error("Error saving user : " + user.getUserName(), e);
+		}
+
+		return user.getUserID();
 	}
 
 	@Override
 	public User getUserByID(Long id) {
-		String sql = "SELECT * FROM users.users WHERE users.user_id=?";
+		String sql = "SELECT * FROM users.user WHERE users.user_id=?";
 		Connection conn = null;
 		User user = null;
 		try {
@@ -344,7 +277,7 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
 	
 	@Override
 	public ArrayList<Group> getUserGroups(long userID) {
-		String sql = "select * FROM users.groups INNER JOIN users.user_group ON users.user_group.group_id=groups.group_id where user_group.user_id=?";
+		String sql = "select * FROM users.group INNER JOIN users.user_group ON users.user_group.group_id=groups.group_id where user_group.user_id=?";
 		Connection conn = null;
 		ArrayList<Group> groups = new ArrayList<Group>();
 		
@@ -510,7 +443,7 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
     @Override
 	public boolean checkEmailAvailability(String email) {
 		
-		String sql = "SELECT * FROM users.users where user_name=?";
+		String sql = "SELECT * FROM users.user where user_name=?";
 		Connection conn = null;
  
 		try {
@@ -551,7 +484,7 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
 	@Override
 	public Group getGroupByCompanyName(final String companyName)
 	{
-		String sql = "select * FROM users.user_group INNER JOIN users.users ON user_group.user_id=users.user_id where users.company_name=?";
+		String sql = "select * FROM users.user_group INNER JOIN users.user ON user_group.user_id=users.user_id where users.company_name=?";
 		Group group = null;
         Connection conn = null;
         
@@ -671,7 +604,7 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
 	@Override
 	public int getRoleIdByCompanyName(final String companyName)
 	{
-		String sql = "select role_id FROM users.user_roles INNER JOIN users.users ON user_roles.user_id=user.user_id where users.company_name=?";
+		String sql = "select role_id FROM users.user_roles INNER JOIN users.user ON user_roles.user_id=user.user_id where users.company_name=?";
 		Connection conn = null;
 		
 		try 
@@ -744,75 +677,104 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
 
 	@Override
     public boolean updateUser(User user) {
-        String sql = "UPDATE users.users SET first_name=?,last_name=?,telephone=?,user_password=? WHERE user_id=?";
-        
-        Connection conn = null;
- 
-        try {
-            conn = datasource.getConnection();
-            PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setString(1, user.getFirstName());
-            ps.setString(2, user.getLastName());
-            ps.setString(3, user.getTelephone());
-            ps.setString(4, user.getPassword());
-            ps.setLong(5, user.getUserID());
-            ps.executeUpdate();
-            ps.close();
-        } catch (SQLException e) {
-            logger.error(e.getMessage());
-            throw new RuntimeException(e);
-        } finally {
-            if (conn != null) {
-                try {
-                conn.close();
-                } catch (SQLException e) {
-                    logger.error(e.getMessage());
-                }
-            }
-        }
-        return true;
+		boolean success = false;
+		try {
+			if (user != null) {
+				// merging should make sure that entity
+				// should be obtained using entity manager
+				user = em.merge(user);
+				em.flush();
+				success = true;
+			}
+		} catch (Exception e) {
+			logger.error("Error updating user : " + user.getUserName(), e);
+		}
+		return success;
+		// String sql =
+		// "UPDATE users.user SET first_name=?,last_name=?,telephone=?,user_password=? WHERE user_id=?";
+		//
+		// Connection conn = null;
+		//
+		// try {
+		// conn = datasource.getConnection();
+		// PreparedStatement ps = conn.prepareStatement(sql);
+		// ps.setString(1, user.getFirstName());
+		// ps.setString(2, user.getLastName());
+		// ps.setString(3, user.getTelephone());
+		// ps.setString(4, user.getPassword());
+		// ps.setLong(5, user.getUserID());
+		// ps.executeUpdate();
+		// ps.close();
+		// } catch (SQLException e) {
+		// logger.error(e.getMessage());
+		// throw new RuntimeException(e);
+		// } finally {
+		// if (conn != null) {
+		// try {
+		// conn.close();
+		// } catch (SQLException e) {
+		// logger.error(e.getMessage());
+		// }
+		// }
+		// }
     }
 
     @Override
     public User getUserByName(String userName) {
-        String sql = "SELECT * FROM users.users WHERE user_name=?";
-        Connection conn = null;
-        User user = null;
-        try {
-            conn = datasource.getConnection();
-            PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setString(1, userName);
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                user = new User();
-                user.setUserID(rs.getLong("user_id"));
-                user.setUserName(rs.getString("user_name"));
-                user.setPassword(rs.getString("user_password"));
-                user.setEnabled(rs.getBoolean("enabled"));
-                user.setFirstName(rs.getString("first_name"));
-                user.setLastName(rs.getString("last_name"));
-                user.setLastName(rs.getString("last_name"));
-                user.setJoiningDate(rs.getDate("joining_date"));
-                user.setTelephone(rs.getString("telephone"));
-                ArrayList<Group> groups = getUserGroups(user.getUserID());
-                user.setGroups(groups);
-                UserRoleCollection roles = getUserRoles(user.getUserID());
-                user.setRoles(roles);
-            }
-            rs.close();
-            ps.close();
-        } catch (SQLException e) {
-            logger.error(e.getMessage());
-            throw new RuntimeException(e);
-        } finally {
-            if (conn != null) {
-                try {
-                conn.close();
-                } catch (SQLException e) {
-                    logger.error(e.getMessage());
-                }
-            }
-        }
+		// String sql = "SELECT * FROM users.user WHERE user_name=?";
+		// Connection conn = null;
+		User user = null;
+
+		try {
+			TypedQuery<User> typedQuery = em.createQuery(
+					"from " + User.class.getName()
+							+ " WHERE user_name= :username",
+					User.class);
+			user = typedQuery.setParameter("username", userName)
+					.getSingleResult();
+		} catch (NoResultException noresult) {
+			// if there is no result
+			logger.error("No user found with user name : " + userName);
+		} catch (NonUniqueResultException notUnique) {
+			// if more than one result
+			logger.error("More than one users found with user name : "
+					+ userName);
+		}
+		// try {
+		// conn = datasource.getConnection();
+		// PreparedStatement ps = conn.prepareStatement(sql);
+		// ps.setString(1, userName);
+		// ResultSet rs = ps.executeQuery();
+		// while (rs.next()) {
+		// user = new User();
+		// user.setUserID(rs.getLong("user_id"));
+		// user.setUserName(rs.getString("user_name"));
+		// user.setPassword(rs.getString("user_password"));
+		// user.setEnabled(rs.getBoolean("enabled"));
+		// user.setFirstName(rs.getString("first_name"));
+		// user.setLastName(rs.getString("last_name"));
+		// user.setLastName(rs.getString("last_name"));
+		// user.setJoiningDate(rs.getDate("joining_date"));
+		// user.setTelephone(rs.getString("telephone"));
+		// ArrayList<Group> groups = getUserGroups(user.getUserID());
+		// user.setGroups(groups);
+		// UserRoleCollection roles = getUserRoles(user.getUserID());
+		// user.setRoles(roles);
+		// }
+		// rs.close();
+		// ps.close();
+		// } catch (SQLException e) {
+		// logger.error(e.getMessage());
+		// throw new RuntimeException(e);
+		// } finally {
+		// if (conn != null) {
+		// try {
+		// conn.close();
+		// } catch (SQLException e) {
+		// logger.error(e.getMessage());
+		// }
+		// }
+		// }
 
         return user;
     }
@@ -992,7 +954,8 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
 	public List<Group> getAllGroupsWithUsers() {
 		String sql = "SELECT groups.group_id,groups.group_name,groups.auto_pass, array_to_string(array_agg(users.user_id), ',')  as users" +
 				"  FROM users.groups INNER JOIN users.user_group ON user_group.group_id=groups.group_id" +
-				"        INNER JOIN users.users ON user_group.user_ID=users.user_ID" +
+ "        INNER JOIN users.user ON user_group.user_ID=users.user_ID"
+				+
 				" GROUP BY users.groups.group_id,groups.group_name,groups.auto_pass "+
 				" UNION SELECT groups.group_id,groups.group_name,groups.auto_pass, NULL as users from users.groups"+
 				" WHERE users.groups.group_id NOT IN (SELECT group_id FROM users.user_group)";
@@ -1038,7 +1001,7 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
 
     @Override
     public boolean enableDisableUser(long userID, boolean enabled) {
-        String sql = "UPDATE users.users SET enabled=? WHERE user_id=?";
+		String sql = "UPDATE users.user SET enabled=? WHERE user_id=?";
         
         Connection conn = null;
  
@@ -1094,7 +1057,7 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
     @Override
     public boolean usernameAvailablility(String username) {
 
-        String sql = "select user_id from users.users where users.user_name=?";
+		String sql = "select user_id from users.user where users.user_name=?";
         Connection conn = null;
         
         try 
@@ -1157,7 +1120,7 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
 
     @Override
     public boolean activateUser(String username) {
-    	   String sql = "UPDATE users.users SET enabled=? WHERE user_name=?";
+		String sql = "UPDATE users.user SET enabled=? WHERE user_name=?";
            
            Connection conn = null;
     
@@ -1233,7 +1196,7 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
 
     @Override
     public List<User> getAllUsers() {
-        String sql = "select * FROM users.users";
+		String sql = "select * FROM users.user";
         Connection conn = null;
         ArrayList<User> users = new ArrayList<User>();
         try {
@@ -1267,7 +1230,7 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
     @Override
     public boolean checkUserActivationId(String username, String activationCode) {
 
-        String sql = "select activation_id from users.users where users.user_name=?";
+		String sql = "select activation_id from users.user where users.user_name=?";
         Connection conn = null;
         
         try 
@@ -1308,23 +1271,4 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
         
         return false;        
     }
-
-	public boolean updateUserNavigation(UserNavigation navigation) {
-		boolean success = false;
-		if (em.find(UserNavigation.class, navigation.getId()) == null) {
-			em.persist(navigation);
-			em.flush();
-			success = true;
-			navigation = em.find(UserNavigation.class,
-					navigation.getId());
-		} else {
-			System.out.println("Updating");
-			navigation = em.merge(navigation);
-			em.flush();
-			success = true;
-		}
-		System.out.println(navigation);
-		return success;
-	}
-
 }

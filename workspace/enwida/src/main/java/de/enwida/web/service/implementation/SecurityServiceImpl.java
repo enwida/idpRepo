@@ -11,11 +11,11 @@ import org.springframework.transaction.annotation.Transactional;
 import de.enwida.transport.Aspect;
 import de.enwida.web.dao.interfaces.IDataAutorizationDao;
 import de.enwida.web.dao.interfaces.IDataAvailibilityDao;
+import de.enwida.web.db.model.CalendarRange;
 import de.enwida.web.model.DataAuthorization;
 import de.enwida.web.model.User;
 import de.enwida.web.model.UserRole;
 import de.enwida.web.service.interfaces.ISecurityService;
-import de.enwida.web.utils.CalendarRange;
 import de.enwida.web.utils.EnwidaUtils;
 import de.enwida.web.utils.ProductRestriction;
 

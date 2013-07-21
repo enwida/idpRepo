@@ -12,11 +12,13 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
+import de.enwida.web.utils.Constants;
+
 public abstract class AbstractBaseDao<T> {
 
 	private Class<T> modelClass;
 	protected JdbcTemplate jdbcTemplate;
-	@PersistenceContext
+	@PersistenceContext(unitName = Constants.ENWIDA_USERS_JPA_CONTEXT)
 	protected EntityManager em;
 	
 	@SuppressWarnings("unchecked")

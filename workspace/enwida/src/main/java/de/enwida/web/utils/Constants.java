@@ -12,6 +12,23 @@ public class Constants {
 	// Rights
 	
 	// DB constants
+	public static final String ENWIDA_USERS_JPA_CONTEXT = "enwida-users-jpa";
+	public static final String USERS_SCHEMA_NAME = "users";
+
+	// Table with schema names
+	public static final String NAVIGATION_DEFAULTS_TABLE_NAME = "navigation_defaults";
+	public static final String NAVIGATION_DEFAULTS_TABLE_SCHEMA_NAME = USERS_SCHEMA_NAME;
+	public static final String USER_NAVIGATION_SETTINGS_TABLE_NAME = "user_navigation_settings";
+	public static final String USER_NAVIGATION_SETTINGS_TABLE_SCHEMA_NAME = USERS_SCHEMA_NAME;
+	public static final String USER_NAVIGATION_DISABLED_LINES_TABLE_NAME = "navigation_defaults_disabled_lines";
+	public static final String USER_NAVIGATION_DISABLED_LINES_TABLE_SCHEMA_NAME = USERS_SCHEMA_NAME;
+
+	public static final String USER_TABLE_NAME = "user";
+	public static final String USER_TABLE_SCHEMA_NAME = USERS_SCHEMA_NAME;
+	public static final String GROUP_TABLE_NAME = "group";
+	public static final String GROUP_TABLE_SCHEMA_NAME = USERS_SCHEMA_NAME;
+	public static final String USER_GROUP_TABLE_NAME = "user_group";
+	public static final String USER_GROUP_TABLE_SCHEMA_NAME = USERS_SCHEMA_NAME;
 
 	// Cookie Constants
 	public static final String ENWIDA_CHART_COOKIE_ANONYMOUS = "enwida_chart_cookie_anonymous";

@@ -8,15 +8,22 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 
 import de.enwida.web.service.interfaces.ICookieSecurityService;
+import de.enwida.web.service.interfaces.IUserService;
 import de.enwida.web.utils.Constants;
 
 public class LoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
 
+	@Autowired
+	private UserSessionManager userSession;
+	@Autowired
+	private IUserService userService;
+	@Autowired
     private ICookieSecurityService cookieSecurityService;
 
     @Override
@@ -42,6 +49,8 @@ public class LoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessH
         }
             
         response.addCookie(cookie);
+		// Fetch User details and save in session
+		userSession.setUser(userService.getUser(auth.getName()));
         
         if (url != null) {
 
@@ -55,13 +64,5 @@ public class LoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessH
                 e.printStackTrace();
             }
         }
-    }
-
-    public ICookieSecurityService getCookieSecurityService() {
-        return cookieSecurityService;
-    }
-
-    public void setCookieSecurityService(ICookieSecurityService cookieSecurityService) {
-        this.cookieSecurityService = cookieSecurityService;
     }
 }

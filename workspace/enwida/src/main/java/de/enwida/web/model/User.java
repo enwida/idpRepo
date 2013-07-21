@@ -1,39 +1,115 @@
 package de.enwida.web.model;
 
+import java.io.Serializable;
 import java.sql.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import javax.persistence.UniqueConstraint;
+
+import de.enwida.web.db.model.NavigationDefaults;
+import de.enwida.web.db.model.NavigationSettings;
+import de.enwida.web.utils.Constants;
 
 @Entity
-@Table(name = "users", schema = "users")
-public class User {
-    
-    @Id
-    @Column(name="user_id")
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
-    private Long userID;
+@Table(name = Constants.USER_TABLE_NAME, schema = Constants.USER_TABLE_SCHEMA_NAME)
+public class User implements Serializable {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -7333400626851874286L;
+
+	public static final String USER_ID = "USER_ID";
+	public static final String CLIENT_ID = "CLIENT_ID";
+	public static final String USER_NAME = "USER_NAME";
+	public static final String FIRST_NAME = "FIRST_NAME";
+	public static final String LAST_NAME = "LAST_NAME";
+	public static final String PASSWORD = "USER_PASSWORD";
+	public static final String JOINING_DATE = "JOINING_DATE";
+	public static final String COMPANY_NAME = "COMPANY_NAME";
+	public static final String COMPANY_LOGO = "COMPANY_LOGO";
+	public static final String ACTIVATION_ID = "ACTIVATION_ID";
+	public static final String ENABLED = "ENABLED";
+	public static final String LOGIN_COUNT = "LOGIN_COUNT";
+	public static final String LAST_LOGIN = "LAST_LOGIN";
+	public static final String TELEPHONE = "TELEPHONE";
+
+	@Id
+	@Column(name = USER_ID)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private int userId;
+
+	@Column(name = USER_NAME, nullable = false, unique = true)
     private String userName;
+
+	@Column(name = LAST_NAME)
     private String lastName;
+
+	@Column(name = FIRST_NAME)
     private String firstName;
+
+	@Column(name = PASSWORD)
     private String password;
     private String confirmPassword;
+
+	@Column(name = COMPANY_NAME)
     private String companyName;
+
+	@Column(name = COMPANY_LOGO)
     private String companyLogo;
+
+	@Column(name = ENABLED)
     private boolean enabled;
+
+	@Column(name = JOINING_DATE)
     private Date joiningDate;
-    private Date loginCount;
-    private String lastLogin;
-    private List<Group> groups;
+
+	@Column(name = LOGIN_COUNT)
+	private int loginCount;
+
+	@Column(name = LAST_LOGIN)
+	private Date lastLogin;
+
+	@Column(name = TELEPHONE)
+	private String telephone;
+
+	@Column(name = ACTIVATION_ID)
+	private String activationKey;
+
+	@ManyToMany(cascade = CascadeType.ALL)
+	@ElementCollection(targetClass = Group.class, fetch = FetchType.EAGER)
+	@JoinTable(name = Constants.USER_GROUP_TABLE_NAME, schema = Constants.USER_GROUP_TABLE_SCHEMA_NAME, uniqueConstraints = { @UniqueConstraint(columnNames = {
+			User.USER_ID, Group.GROUP_ID }) }, joinColumns = { @JoinColumn(name = USER_ID, referencedColumnName = USER_ID) }, inverseJoinColumns = { @JoinColumn(name = Group.GROUP_ID, referencedColumnName = Group.GROUP_ID) })
+	private List<Group> groups;
+
+	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "user")
+	@ElementCollection(targetClass = NavigationSettings.class)
+	private Set<NavigationSettings> navigationSettings;
+
+	@Transient
+	private Map<Integer, NavigationDefaults> chartDefaults;
+
+	@Transient
     private UserRoleCollection roles;
-    private String telephone;
-    private String activationKey;
+
+	@Transient
     private UserRoleCollection userPermissionCollection;
 
     public User(long userID, String userName, String password,
@@ -51,11 +127,14 @@ public class User {
         this(userID, userName, password, null, null, enabled);
     }
 
+	public User(String userName, String password, boolean enabled) {
+		this(0, userName, password, null, null, enabled);
+	}
+
     public User() {
         // TODO Auto-generated constructor stub
     }
 
-    @Column(name = "last_name")
     public String getLastName() {
         return lastName;
     }
@@ -64,7 +143,6 @@ public class User {
         this.lastName = lastName;
     }
 
-    @Column(name = "first_name")
     public String getFirstName() {
         return firstName;
     }
@@ -73,7 +151,7 @@ public class User {
         this.firstName = firstName;
     }
 
-    @Column(name = "user_password")
+
     public String getPassword() {
         return password;
     }
@@ -82,7 +160,7 @@ public class User {
         this.password = password;
     }
 
-    @Column(name = "user_name")
+
     public String getUserName() {
         return userName;
     }
@@ -91,17 +169,23 @@ public class User {
         this.userName = userName;
     }
 
-    @Id
-    @Column(name = "user_id")
-    public Long getUserID() {
-        return userID;
+	public Long getUserID() {
+		return new Long(userId);
     }
 
-    public void setUserID(Long userID) {
-        this.userID = userID;
+	public void setUserID(Long userID) {
+		this.userId = userID.intValue();
     }
 
-    @Override
+	public int getUserId() {
+		return userId;
+	}
+
+	public void setUserId(int userId) {
+		this.userId = userId;
+	}
+
+	@Override
     public String toString() {
         return this.getUserName();
     }
@@ -128,7 +212,7 @@ public class User {
         this.enabled = enabled;
     }
 
-    @Column(name = "joining_date")
+
     public Date getJoiningDate() {
         return joiningDate;
     }
@@ -138,24 +222,24 @@ public class User {
     }
 
     @Transient
-    public Date getLoginCount() {
+	public int getLoginCount() {
         return loginCount;
     }
 
-    public void setLoginCount(Date loginCount) {
+	public void setLoginCount(int loginCount) {
         this.loginCount = loginCount;
     }
 
     @Transient
-    public String getLastLogin() {
+	public Date getLastLogin() {
         return lastLogin;
     }
 
-    public void setLastLogin(String lastLogin) {
+	public void setLastLogin(Date lastLogin) {
         this.lastLogin = lastLogin;
     }
 
-    @Column(name = "company_name")
+
     public String getCompanyName() {
         return companyName;
     }
@@ -164,7 +248,6 @@ public class User {
         this.companyName = companyName;
     }
 
-    @Column(name = "telephone")
     public String getTelephone() {
         return telephone;
     }
@@ -182,7 +265,6 @@ public class User {
         this.roles = roles;
     }
 
-    @Column(name = "company_logo")
     public String getCompanyLogo() {
         return companyLogo;
     }
@@ -200,7 +282,6 @@ public class User {
         this.confirmPassword = confirmPassword;
     }
 
-    @Column(name = "activation_id")
     public String getActivationKey() {
         return activationKey;
     }
@@ -209,7 +290,7 @@ public class User {
         this.activationKey = activationKey;
     }
 
-    @Transient
+	@Transient
     public List<Group> getGroups() {
         return groups;
     }
@@ -217,4 +298,57 @@ public class User {
     public void setGroups(List<Group> groups) {
         this.groups = groups;
     }
+
+	@Transient
+	public Map<Integer, NavigationDefaults> getChartDefaults() {
+		if (chartDefaults == null) {
+			chartDefaults = new HashMap<Integer, NavigationDefaults>();
+			for (NavigationSettings setting : getNavigationSettings()) {
+					chartDefaults.put(setting.getChartId(),
+							setting.getSettingsData());
+			}
+		}
+		return chartDefaults;
+	}
+
+	public void setChartDefaults(Map<Integer, NavigationDefaults> chartDefaults) {
+		this.chartDefaults = chartDefaults;
+	}
+
+	@Transient
+	public Set<NavigationSettings> getNavigationSettings() {
+		if (navigationSettings == null) {
+			navigationSettings = new HashSet<NavigationSettings>();
+		}
+		return navigationSettings;
+	}
+
+	public void setNavigationSettings(Set<NavigationSettings> navigationSettings) {
+		this.navigationSettings = navigationSettings;
+	}
+
+	public void addNavigationSettings(int chartId,
+			NavigationDefaults updateddefaults) {
+		if (getChartDefaults().containsKey(chartId)) {
+			for (NavigationSettings setting : getNavigationSettings()) {
+				if (setting.getChartId() == chartId) {
+					setting.setSettingsData(updateddefaults);
+				}
+			}
+		} else {
+			getNavigationSettings().add(
+					new NavigationSettings(chartId, updateddefaults, this, -1));
+		}
+	}
+
+	public void removeNavigationSettings(int chartId,
+			NavigationDefaults updateddefaults) {
+		if (getChartDefaults().containsKey(chartId)) {
+			// Navigation settings must override equals method and for same
+			// chartId and same user object should be equal
+			getNavigationSettings().remove(new NavigationSettings(chartId));
+		}
+	}
+
+
 }

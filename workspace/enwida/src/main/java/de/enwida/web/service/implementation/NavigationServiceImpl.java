@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import javax.annotation.PostConstruct;
 
@@ -22,6 +23,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.cedarsoftware.util.io.JsonReader;
 
 import de.enwida.transport.Aspect;
+import de.enwida.web.dao.interfaces.INavigationDao;
+import de.enwida.web.db.model.NavigationSettings;
 import de.enwida.web.model.ChartNavigationData;
 import de.enwida.web.model.ProductTree;
 import de.enwida.web.model.ProductTree.ProductAttributes;
@@ -44,6 +47,9 @@ public class NavigationServiceImpl implements INavigationService {
 	@Autowired
 	private IAvailibilityService availibilityService;
 	
+	@Autowired
+	private INavigationDao navigationDao;
+
 	@Autowired
 	private MessageSource messageSource;
 	
@@ -175,4 +181,22 @@ public class NavigationServiceImpl implements INavigationService {
     private String getChartMessage(String property, int chartId, Locale locale) {
 	    return messageSource.getMessage("de.enwida.chart." + chartId + "." + property, null, "", locale);
     }
+
+	@Override
+	public Set<NavigationSettings> getNavigationSettingsByUserId(
+			int userId) throws IOException {
+		return navigationDao.getUserNavigationSettings(userId);
+	}
+
+	@Override
+	public boolean saveUserNavigationSettings(
+			NavigationSettings navigationSettings) {
+		return navigationDao.saveUserNavigationSettings(navigationSettings);
+	}
+
+	@Override
+	public NavigationSettings getUserNavigationSettings(int id,
+			int chartId, boolean isClient) {
+		return navigationDao.getUserNavigationSettings(id, chartId, isClient);
+	}
 }

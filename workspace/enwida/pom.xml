@@ -188,11 +188,18 @@
 			<scope>runtime</scope>
 		</dependency>
 
-		<!-- Moved to datamanager so please do not include here <dependency> <groupId>org.hibernate</groupId> 
-			<artifactId>hibernate-core</artifactId> <version>${hibernate.version}</version> 
-			</dependency> <dependency> <groupId>org.hibernate.javax.persistence</groupId> 
-			<artifactId>hibernate-jpa-2.0-api</artifactId> <version>1.0.0.Final</version> 
-			</dependency> -->
+		<!-- Moved to datamanager so please do not include here 
+		<dependency> 
+			<groupId>org.hibernate</groupId> 
+			<artifactId>hibernate-core</artifactId> 
+			<version>${hibernate.version}</version> 
+		</dependency> 
+		<dependency> 
+			<groupId>org.hibernate.javax.persistence</groupId> 
+			<artifactId>hibernate-jpa-2.0-api</artifactId> 
+			<version>1.0.0.Final</version> 
+		</dependency> 
+		-->
 
 		<!-- Hibernate library dependecy start -->
 		<dependency>

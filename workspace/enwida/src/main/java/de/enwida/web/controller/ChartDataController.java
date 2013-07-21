@@ -1,15 +1,16 @@
 package de.enwida.web.controller;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.security.Principal;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -22,25 +23,20 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.cedarsoftware.util.io.JsonReader;
-import com.cedarsoftware.util.io.JsonWriter;
-
 import de.enwida.chart.LineManager;
 import de.enwida.transport.Aspect;
 import de.enwida.transport.DataResolution;
 import de.enwida.transport.IDataLine;
 import de.enwida.transport.LineRequest;
+import de.enwida.web.db.model.CalendarRange;
+import de.enwida.web.db.model.NavigationDefaults;
+import de.enwida.web.db.model.NavigationSettings;
 import de.enwida.web.model.ChartNavigationData;
 import de.enwida.web.model.User;
 import de.enwida.web.service.implementation.LineServiceImpl;
 import de.enwida.web.service.implementation.NavigationServiceImpl;
-import de.enwida.web.service.interfaces.ICookieSecurityService;
 import de.enwida.web.service.interfaces.INavigationService;
 import de.enwida.web.service.interfaces.IUserService;
-import de.enwida.web.utils.CalendarRange;
-import de.enwida.web.utils.ChartDefaults;
-import de.enwida.web.utils.Constants;
-import de.enwida.web.utils.NavigationDefaults;
 
 /**
  * Handles chart data requests
@@ -52,15 +48,15 @@ public class ChartDataController {
     @Autowired
     private LineServiceImpl lineService;
 
-    @Autowired
-    private INavigationService navigationService;
+	@Autowired
+	private IUserService userService;
 
     @Autowired
-    private ICookieSecurityService cookieSecurityService;
+    private INavigationService navigationService;
     
-    @Autowired
-    private IUserService userService;
-    
+	@Autowired
+	private UserSessionManager userSession;
+
     private static org.apache.log4j.Logger logger = Logger.getLogger(AdminController.class);
 
 
@@ -76,9 +72,10 @@ public class ChartDataController {
 
     	final ChartNavigationData chartNavigationData = navigationService.getNavigationData(chartId, getUser(principal), locale);
 
-    	// Try to set the defaults from the cookie
+		// Try to set the defaults from the database
     	try {
-        	final NavigationDefaults defaults = getNavigationDefaultsFromCookie(chartId, request, principal);
+			final NavigationDefaults defaults = getNavigationDefaults(chartId,
+					request);
         	if (defaults != null) {
             	chartNavigationData.setDefaults(defaults);
         	}
@@ -144,21 +141,22 @@ public class ChartDataController {
         HttpServletResponse response,
         Principal principal) {
         
-        // Try to update the cookie data
+		// Try to update the navigation settings data
         try {
-            final NavigationDefaults defaults = getNavigationDefaultsFromCookie(chartId, request, principal);
+			final NavigationDefaults defaults = getNavigationDefaults(chartId,
+					request);
             if (lines.isEmpty()) {
-                defaults.setDisabledLines(new ArrayList<Integer>());
+				defaults.setDisabledLines(new ArrayList<Integer>());
             } else {
                 final String[] lineIds = lines.split(",");
-                final List<Integer> disabledLines = new ArrayList<>();
+				final List<Integer> disabledLines = new ArrayList<Integer>();
     
                 for (final String lineId : lineIds) {
                     disabledLines.add(Integer.parseInt(lineId));
                 }
                 defaults.setDisabledLines(disabledLines);
             }
-            updateChartDefaultsCookie(chartId, defaults, request, response, principal);
+			updateChartDefaults(chartId, defaults, request);
         } catch (Exception ignored) { 
             logger.info(ignored.getMessage());
         }
@@ -166,7 +164,8 @@ public class ChartDataController {
     
     private User getUser(Principal principal) {
         try {
-            return userService.getUser(principal.getName());
+			return userSession.getUser();
+			// return userService.getUser(principal.getName());
         } catch (Exception e) {
             logger.error(e.getMessage());
             return null;
@@ -198,10 +197,13 @@ public class ChartDataController {
 
     	// Try to get the navigation defaults from the cookie
     	try {
-    	    final String cookieValue = getChartDefaultsCookie(request, principal);
-    	    final JsonReader jsonReader = new JsonReader(new ByteArrayInputStream(cookieValue.getBytes()));
-    	    final ChartDefaults chartDefaults = (ChartDefaults) jsonReader.readObject();
-    	    jsonReader.close();
+			Map<Integer, NavigationDefaults> chartDefaults = getUserSettings(request);
+			/*
+			 * final JsonReader jsonReader = new JsonReader( new
+			 * ByteArrayInputStream(navigationSettings.getBytes())); final
+			 * ChartDefaults chartDefaults = (ChartDefaults)
+			 * jsonReader.readObject(); jsonReader.close();
+			 */
 
     	    final NavigationDefaults defaults = chartDefaults.get(chartId);
     	    if (defaults != null) {
@@ -242,7 +244,7 @@ public class ChartDataController {
     	    }
     	}
     	
-    	// Update cookie data
+		// Update navigation settings data
     	final NavigationDefaults defaults = new NavigationDefaults(
     	        tso,
     	        resolution,
@@ -250,7 +252,7 @@ public class ChartDataController {
     	        new CalendarRange(startTime, endTime));
 
     	try {
-            updateChartDefaultsCookie(chartId, defaults, request, response, principal);
+			updateChartDefaults(chartId, defaults, request);
         } catch (Exception e) {
             // Don't reply with an error if saving the defaults failed
             e.printStackTrace();
@@ -259,99 +261,75 @@ public class ChartDataController {
     	return result;
     }
     
-    private NavigationDefaults getNavigationDefaultsFromCookie(int chartId, HttpServletRequest request, Principal principal) throws IOException {
-	    final String cookieValue = getChartDefaultsCookie(request, principal);
-	    final JsonReader jsonReader = new JsonReader(new ByteArrayInputStream(cookieValue.getBytes()));
-	    final ChartDefaults chartDefaults = (ChartDefaults) jsonReader.readObject();
-	    jsonReader.close();
+	private NavigationDefaults getNavigationDefaults(int chartId,
+			HttpServletRequest request)
+			throws IOException {
+		Map<Integer, NavigationDefaults> chartDefaults = getUserSettings(request);
 	    return chartDefaults.get(chartId);
     }
 
-    private void updateChartDefaultsCookie(int chartId, NavigationDefaults defaults, HttpServletRequest request,
-	    HttpServletResponse response, Principal principal) throws IOException {
-
-        // Get the current chart defaults
-        final String cookieValue = getChartDefaultsCookie(request, principal);
-        ChartDefaults chartDefaults;
-        try {
-            final JsonReader jsonReader = new JsonReader(new ByteArrayInputStream(cookieValue.getBytes()));
-            chartDefaults = (ChartDefaults) jsonReader.readObject();
-            jsonReader.close();
-        } catch (Exception e) {
-            chartDefaults = new ChartDefaults(); 
-            logger.error(e.getMessage());
-
-        }
-        
-        // Set the defaults for our chart ID
-        chartDefaults.set(chartId, defaults);
-		if (principal != null) {
-			chartDefaults.setUsername(principal.getName());
-		}
-        final String defaultsJson = JsonWriter.objectToJson(chartDefaults);
-        
-    	// Create/update cookie
-    	if (principal != null) {
-			// Insert / Update user chart navigation settings in database
-
-    	    setUserSettingsInCookie(defaultsJson, response,
-    		    Constants.ENWIDA_CHART_COOKIE_USER);
-    	} else {
-    	    setUserSettingsInCookie(defaultsJson, response,
-    		    Constants.ENWIDA_CHART_COOKIE_ANONYMOUS);
-    	}
+	private void updateChartDefaults(int chartId, NavigationDefaults defaults,
+			HttpServletRequest request)
+			throws IOException {
+		setUserSettings(defaults, chartId, request);
     }
     
-    private String getChartDefaultsCookie(HttpServletRequest request, Principal principal) {
-        if (principal == null) {
-            return getUserSettingsFromCookie(request, Constants.ENWIDA_CHART_COOKIE_ANONYMOUS);
-        }
-        return getUserSettingsFromCookie(request, Constants.ENWIDA_CHART_COOKIE_USER);
-    }
+	public void setUserSettings(NavigationDefaults defaults, int chartId,
+			HttpServletRequest request) {
 
-    /**
-     * This method is used to set the chart settings of user in a {@link Cookie}
-     * 
-     * @param user
-     *            User which is used for setting user name in cookie data
-     * @param response
-     *            {@link HttpServletResponse}
-     */
-	public void setUserSettingsInCookie(final String userSettingsJson,
-			final HttpServletResponse response, String cookieName) {
-
-		final String encryptedData = cookieSecurityService.encryptJsonString(
-				userSettingsJson, Constants.ENCRYPTION_KEY);
-		final Cookie chartcookie = new Cookie(cookieName, encryptedData);
-		// works only for SSL connection
-		// chartcookie.setSecure(true);
-		chartcookie.setMaxAge(Constants.ENWIDA_CHART_COOKIE_EXPIRY_TIME);
-		response.addCookie(chartcookie);
+		if (userSession.getUser() != null) {
+			// update database with navigation settings
+			userSession.getUser().addNavigationSettings(chartId, defaults);
+			userService.updateUser(userSession.getUser());
+		} else {
+			// set anonymous user settings with userId
+			Integer clientId = (Integer) request.getAttribute("clientId");
+			NavigationSettings settings = navigationService
+					.getUserNavigationSettings(clientId, chartId, true);
+			if (settings == null) {
+				settings = new NavigationSettings(chartId, defaults, null,
+						clientId);
+			} else {
+				settings.setSettingsData(defaults);
+			}
+			navigationService.saveUserNavigationSettings(settings);
+		}
 	}
 
-    /**
-     * This method is used to get the chart settings of user in a {@link Cookie}
-     * 
-     * @param user
-     *            User which is used for setting user name in cookie data
-     * @param response
-     *            {@link HttpServletResponse}
-     */
-    public String getUserSettingsFromCookie(HttpServletRequest request,
-			String cookieName) {
+	public Map<Integer, NavigationDefaults> getUserSettings(
+			HttpServletRequest request) {
 
-		String decryptString = null;
-		final Cookie[] cookies = request.getCookies();
-		for (final Cookie cookie : cookies) {
-			// System.out.println(cookie.getValue());
-			if (((cookie.getName() != null) && cookie.getName().equals(
-					cookieName))
-					&& (cookie.getValue() != null)) {
-				decryptString = cookieSecurityService.decryptJsonString(
-						cookie.getValue(), Constants.ENCRYPTION_KEY);
+		Map<Integer, NavigationDefaults> navigationSettings = null;
+		if (userSession.getUser() != null) {
+			// logged in user navigation settings
+			navigationSettings = userSession.getUser().getChartDefaults();
+		} else {
+			// anonymous user navigation settings
+			Integer clientId = (Integer) request.getAttribute("clientId");
+			try {
+				Set<NavigationSettings> navigationSettingsSet = navigationService
+						.getNavigationSettingsByUserId(clientId);
+				navigationSettings = getNavigationDefaultsMap(navigationSettingsSet);
+
+			} catch (IOException e) {
+				logger.error("Unable to get data for clientId : " + clientId, e);
 			}
 		}
-		return decryptString;
+		return navigationSettings;
+	}
+
+	private Map<Integer, NavigationDefaults> getNavigationDefaultsMap(
+			Set<NavigationSettings> navigationSettingsSet) {
+		Map<Integer, NavigationDefaults> chartDefaults = new HashMap<Integer, NavigationDefaults>();
+
+		if (navigationSettingsSet != null) {
+			for (NavigationSettings setting : navigationSettingsSet) {
+				chartDefaults.put(setting.getChartId(),
+						setting.getSettingsData());
+			}
+		}
+
+		return chartDefaults;
 	}
 
 }
