@@ -4,6 +4,7 @@
 package de.enwida.web.db.model;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -32,7 +33,7 @@ import de.enwida.web.utils.Constants;
 @Entity
 @Table(name = Constants.UPLOADED_FILE_TABLE_NAME, schema = Constants.UPLOADED_FILE_TABLE_SCHEMA_NAME)
 @SequenceGenerator(name = "FILE_SEQ", initialValue = 1, allocationSize = 1, sequenceName = Constants.UPLOADED_FILE_SEQUENCE_NAME, schema = Constants.UPLOADED_FILE_SEQUENCE_SCHEMA_NAME)
-public class UploadedFile implements Serializable {
+public class UploadedFile implements Serializable, Comparable<UploadedFile> {
 
 	/**
 	 * 
@@ -44,7 +45,8 @@ public class UploadedFile implements Serializable {
 	public static final String MODIFICATION_DATE = "MODIFICATION_DATE";
 	public static final String FORMAT = "FORMAT";
 	public static final String FILE_PATH = "FILE_PATH";
-
+	public static final SimpleDateFormat formatter = new SimpleDateFormat(
+			Constants.DISPLAY_DATE_FORMAT);
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "FILE_SEQ")
 	@Column(name = ID)
@@ -96,6 +98,9 @@ public class UploadedFile implements Serializable {
 		this.uploader = uploader;
 	}
 
+	public String getDisplayUploadDate() {
+		return formatter.format(uploadDate);
+	}
 	public Date getUploadDate() {
 		return uploadDate;
 	}
@@ -126,6 +131,41 @@ public class UploadedFile implements Serializable {
 
 	public void setFilePath(String filePath) {
 		this.filePath = filePath;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + id;
+		result = prime * result
+				+ ((uploadDate == null) ? 0 : uploadDate.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		UploadedFile other = (UploadedFile) obj;
+		if (id != other.id)
+			return false;
+		if (uploadDate == null) {
+			if (other.uploadDate != null)
+				return false;
+		} else if (!uploadDate.equals(other.uploadDate))
+			return false;
+		return true;
+	}
+
+	@Override
+	public int compareTo(UploadedFile o) {
+		// Sort based on upload date descending order
+		return o.getUploadDate().compareTo(this.uploadDate);
 	}
 
 }

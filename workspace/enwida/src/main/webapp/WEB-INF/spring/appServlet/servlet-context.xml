@@ -72,7 +72,6 @@
 	    <beans:property name="locations">
 	    	<beans:list>
 	            <beans:value>/WEB-INF/configProperties/enwida.jdbc.config</beans:value>
-	            <beans:value>/WEB-INF/configProperties/application.properties</beans:value>
 	        </beans:list>
 	    </beans:property>
 	</beans:bean>

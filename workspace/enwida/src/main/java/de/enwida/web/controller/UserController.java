@@ -2,17 +2,23 @@ package de.enwida.web.controller;
 
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileWriter;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,6 +27,7 @@ import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -56,7 +63,7 @@ public class UserController {
 
     private static org.apache.log4j.Logger logger = Logger.getLogger(AdminController.class);
 	
-	@Value("${fileUploadDirectory}")
+	@Value("#{applicationProperties['fileUploadDirectory']}")
 	protected String fileUploadDirectory;
 
 	@RequestMapping(value="/user", method = RequestMethod.GET)
@@ -246,9 +253,14 @@ public class UserController {
 	}
 	
 	@RequestMapping(value="/upload", method = RequestMethod.GET)
-	public ModelAndView getUplaodUserData() {
-
-		return new ModelAndView("user/upload");
+	public ModelAndView getUplaodUserData(ModelMap model) {
+		User user = userService.getUser("username1");
+		List<UploadedFile> filetable = new ArrayList<UploadedFile>(
+				user.getUploadedFiles());
+		Collections.sort(filetable);
+		model.put("uploadedfiletable", filetable);
+		model.put("fileUpload", new FileUpload());
+		return new ModelAndView("user/upload", model);
 	}
 	
 	@RequestMapping(value="/upload", method = RequestMethod.POST)
@@ -258,7 +270,9 @@ public class UserController {
 		
 		boolean isMultipart = ServletFileUpload.isMultipartContent(request);
 		// fetch all files related to user
-		List<File> filetable = new ArrayList<File>();
+		User user = userService.getUser("username1");
+		List<UploadedFile> filetable = new ArrayList<UploadedFile>(
+				user.getUploadedFiles());
 
 		String displayfileName = null;
 		if (isMultipart) {
@@ -306,19 +320,21 @@ public class UserController {
 					file.setFormat(fileFormat);
 					file.setUploadDate(new Date());
 
-					User user = userService.getUser("username1");
+
 					file.setUploader(user);
 					// User user = userSession.getUser();
 					user.addUploadedFile(file);
 					userService.updateUser(user);
 
+					file = userService.getFileByFilePath(file.getFilePath());
 					// update uploaded files list
-					filetable.add(uploadedFile);
+					filetable.add(file);
 	            }
             } catch (Exception e) {
 				logger.error("Unable to upload file : " + displayfileName, e);
             }
         }
+		Collections.sort(filetable);
 		model.put("uploadedfiletable", filetable);
 		model.put("fileUpload", new FileUpload());
 		return new ModelAndView("user/upload", model);
@@ -377,5 +393,37 @@ public class UserController {
 		}
 
 		return fnameParts[fnameParts.length - 1];
+	}
+
+	@RequestMapping(value = "/files/{fileId}", method = RequestMethod.GET)
+	@ResponseBody
+	public String downloadFile(@PathVariable("fileId") String fileId,
+			HttpServletResponse reponse) {
+		if (fileId != null) {
+			int fileid = Integer.parseInt(fileId);
+			// System.out.println("File Id : " + userService.getFile(fileid));
+			UploadedFile downloadFile = userService.getFile(fileid);
+			if (downloadFile == null)
+				return null;
+			String filePath = downloadFile.getFilePath();
+			File file = new File(filePath);
+			reponse.setHeader("Content-Disposition", "attachment; filename=\""
+					+ downloadFile.getDisplayFileName() + "\"");
+			OutputStream out = null;
+			try {
+				out = reponse.getOutputStream();
+				reponse.setContentType("text/plain; charset=utf-8");
+				FileInputStream fi = new FileInputStream(file);
+
+				IOUtils.copy(fi, out);
+				out.flush();
+				out.close();
+			} catch (IOException e) {
+				logger.error("Unable to download file : ", e);
+			} finally {
+				out = null;
+			}
+		}
+		return null;
 	}
 }

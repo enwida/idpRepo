@@ -37,7 +37,7 @@
 			<form:form method="POST" commandName="fileUpload"
 				enctype="multipart/form-data">
 				<form:errors path="*" cssClass="errorblock" element="div" />
- 				lease Select a file to upload: 
+ 				Please Select a file to upload: 
  				<input type="file" name="file" />
 				<input type="submit" value="Upload" />
 
@@ -45,6 +45,31 @@
 						value="${invalidFileMessage}"></c:out>
 				</span>
 			</form:form>
+			
+			<table border="1">
+				<tr>
+						<th>File Name</th>
+						<th>Upload Date</th>
+						<th>Options</th>
+				</tr>
+				<c:choose>
+					<c:when test="${not empty uploadedfiletable}">
+						<c:forEach var="file" items="${uploadedfiletable}">
+						<tr>
+							<td><c:out value="${file.displayFileName}"/></td>
+							<td><c:out value="${file.displayUploadDate}"/></td>
+							<td><a target="_blank" href="./files/<c:out value='${file.id}'/>">download</a></td>
+						</tr>
+						</c:forEach>
+				
+					</c:when>
+					<c:otherwise>
+						<tr>
+							<td colspan="2">No data found</td>
+						</tr>
+					</c:otherwise>
+				</c:choose>
+			</table>
 			
 		</div>
 		<div style="width: 30%;"></div>

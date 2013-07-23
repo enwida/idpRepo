@@ -61,15 +61,15 @@ public class UserManagementTest {
 	}
 
 	private void createTestUser() {
-		user = new User(0, "username1", "password1", "firstname", "lastname",
+		user = new User(0, "username1", "1", "firstname1", "lastname1",
 				false);
 		// user.setJoiningDate(new
 		// Date(Calendar.getInstance().getTimeInMillis()));
 		user.setCompanyName("enwida.de");
 		userDao.save(user);
 
-		User user1 = new User(0, "username2", "password2", "firstname",
-				"lastname", false);
+		User user1 = new User(0, "username2", "1", "firstname2", "lastname2",
+				true);
 		userDao.save(user1);
 		// userDao.deleteUser(user);
 

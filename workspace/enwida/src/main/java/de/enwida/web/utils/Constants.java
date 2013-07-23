@@ -43,4 +43,6 @@ public class Constants {
 	// URLs
 	public static final String ACTIVATION_URL = "http://localhost:8080/enwida/user/activateUser?";
 	
+	public static final String DISPLAY_DATE_FORMAT = "yyyy-MM-dd hh:mm:ss aaa";
+
 }

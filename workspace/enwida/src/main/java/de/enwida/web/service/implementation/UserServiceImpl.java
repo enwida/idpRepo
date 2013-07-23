@@ -13,7 +13,9 @@ import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
 import de.enwida.web.controller.AdminController;
+import de.enwida.web.dao.interfaces.IFileDao;
 import de.enwida.web.dao.interfaces.IUserDao;
+import de.enwida.web.db.model.UploadedFile;
 import de.enwida.web.model.Group;
 import de.enwida.web.model.Role;
 import de.enwida.web.model.User;
@@ -28,6 +30,9 @@ public class UserServiceImpl implements IUserService {
 
 	@Autowired
 	private IUserDao userDao;
+
+	@Autowired
+	private IFileDao fileDao;
 
 	@Autowired
 	private MailServiceImpl mailService;
@@ -231,5 +236,15 @@ public class UserServiceImpl implements IUserService {
 			logger.error("Do nothing");
 		}
 		return value;
+	}
+
+	@Override
+	public UploadedFile getFile(int fileId) {
+		return fileDao.getFile(fileId);
+	}
+
+	@Override
+	public UploadedFile getFileByFilePath(String filePath) {
+		return fileDao.getFileByFilePath(filePath);
 	}
 }

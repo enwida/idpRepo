@@ -11,4 +11,5 @@
         
     </util:properties>
     
+    <util:properties id="applicationProperties" location="/WEB-INF/configProperties/application.properties" />
 </beans>

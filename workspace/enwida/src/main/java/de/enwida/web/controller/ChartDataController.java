@@ -256,7 +256,8 @@ public class ChartDataController {
 			updateChartDefaults(chartId, defaults, request);
         } catch (Exception e) {
             // Don't reply with an error if saving the defaults failed
-            e.printStackTrace();
+			logger.error("saving the chart navigation details failed : ", e);
+			// e.printStackTrace();
         }
     
     	return result;

@@ -63,7 +63,7 @@ public abstract class AbstractBaseDao<T> {
 		return (List<T>) this.jdbcTemplate.queryForList(sql, namedParameters);
 	}
 
-	public T findById(long id) {
+	public T findById(int id) {
 		return em.find(modelClass, id);
 	}
 
@@ -119,7 +119,7 @@ public abstract class AbstractBaseDao<T> {
 			q1.getSingleResult();
 
 		} catch (Exception e) {
-			logger.error("Unable to update sequence value : ", e);
+			logger.error("Unable to reset sequence value : ", e);
 		}
 		return nextCounter.longValue();
 	}

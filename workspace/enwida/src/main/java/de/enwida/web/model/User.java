@@ -374,5 +374,12 @@ new NavigationSettings(chartId, updateddefaults, this,
 		}
 	}
 
+	public void removeUploadedFile(UploadedFile uploadedFile) {
+		if (uploadedFile != null && uploadedFiles != null
+				&& uploadedFiles.contains(uploadedFile)) {
+			uploadedFiles.remove(uploadedFile);
+		}
+	}
+
 
 }
