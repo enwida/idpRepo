@@ -1,13 +1,21 @@
 package de.enwida.web.controller;
 
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Controller;
+import java.io.Serializable;
+
+import org.springframework.beans.factory.annotation.Autowired;
 
 import de.enwida.web.model.User;
+import de.enwida.web.service.interfaces.IUserService;
 
-@Controller
-@Scope("session")
-public class UserSessionManager {
+public class UserSessionManager implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4849809441855791343L;
+
+	@Autowired
+	private IUserService userService;
 
 	/**
 	 * This user is set when user logs in.
@@ -22,5 +30,9 @@ public class UserSessionManager {
 		this.user = user;
 	}
 
+	public void setUserInSession(String username) {
+		User user = userService.getUser(username);
+		setUser(user);
+	}
 
 }

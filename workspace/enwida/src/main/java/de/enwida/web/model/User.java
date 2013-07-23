@@ -26,6 +26,7 @@ import javax.persistence.UniqueConstraint;
 
 import de.enwida.web.db.model.NavigationDefaults;
 import de.enwida.web.db.model.NavigationSettings;
+import de.enwida.web.db.model.UploadedFile;
 import de.enwida.web.utils.Constants;
 
 @Entity
@@ -102,6 +103,10 @@ public class User implements Serializable {
 	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "user")
 	@ElementCollection(targetClass = NavigationSettings.class)
 	private Set<NavigationSettings> navigationSettings;
+
+	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "uploader")
+	@ElementCollection(targetClass = UploadedFile.class)
+	private Set<UploadedFile> uploadedFiles;
 
 	@Transient
 	private Map<Integer, NavigationDefaults> chartDefaults;
@@ -337,7 +342,8 @@ public class User implements Serializable {
 			}
 		} else {
 			getNavigationSettings().add(
-					new NavigationSettings(chartId, updateddefaults, this, -1));
+new NavigationSettings(chartId, updateddefaults, this,
+							null));
 		}
 	}
 
@@ -347,6 +353,24 @@ public class User implements Serializable {
 			// Navigation settings must override equals method and for same
 			// chartId and same user object should be equal
 			getNavigationSettings().remove(new NavigationSettings(chartId));
+		}
+	}
+
+	@Transient
+	public Set<UploadedFile> getUploadedFiles() {
+		return uploadedFiles;
+	}
+
+	public void setUploadedFiles(Set<UploadedFile> uploadedFiles) {
+		this.uploadedFiles = uploadedFiles;
+	}
+
+	public void addUploadedFile(UploadedFile uploadedFile) {
+		if (uploadedFile != null) {
+			if (uploadedFiles == null) {
+				this.uploadedFiles = new HashSet<UploadedFile>();
+			}
+			this.uploadedFiles.add(uploadedFile);
 		}
 	}
 

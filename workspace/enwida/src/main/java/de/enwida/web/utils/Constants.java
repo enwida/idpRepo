@@ -22,6 +22,10 @@ public class Constants {
 	public static final String USER_NAVIGATION_SETTINGS_TABLE_SCHEMA_NAME = USERS_SCHEMA_NAME;
 	public static final String USER_NAVIGATION_DISABLED_LINES_TABLE_NAME = "navigation_defaults_disabled_lines";
 	public static final String USER_NAVIGATION_DISABLED_LINES_TABLE_SCHEMA_NAME = USERS_SCHEMA_NAME;
+	public static final String UPLOADED_FILE_TABLE_NAME = "uploaded_files";
+	public static final String UPLOADED_FILE_TABLE_SCHEMA_NAME = USERS_SCHEMA_NAME;
+	public static final String UPLOADED_FILE_SEQUENCE_NAME = "uploaded_file_sequence";
+	public static final String UPLOADED_FILE_SEQUENCE_SCHEMA_NAME = USERS_SCHEMA_NAME;
 
 	public static final String USER_TABLE_NAME = "user";
 	public static final String USER_TABLE_SCHEMA_NAME = USERS_SCHEMA_NAME;

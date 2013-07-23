@@ -22,7 +22,7 @@ import de.enwida.web.utils.Constants;
 import de.enwida.web.utils.EnwidaUtils;
 
 @Service("userService")
-@TransactionConfiguration(defaultRollback = true)
+@TransactionConfiguration(transactionManager = "jpaTransactionManager", defaultRollback = true)
 @Transactional
 public class UserServiceImpl implements IUserService {
 
@@ -220,5 +220,16 @@ public class UserServiceImpl implements IUserService {
 		}
 
 		return false;
+	}
+
+	@Override
+	public Long getNextSequence(String schema, String sequenceName) {
+		Long value = null;
+		try {
+			value = userDao.getNextSequence(schema, sequenceName);
+		} catch (Exception e) {
+			logger.error("Do nothing");
+		}
+		return value;
 	}
 }

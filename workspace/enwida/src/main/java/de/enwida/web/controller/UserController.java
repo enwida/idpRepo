@@ -1,7 +1,12 @@
 package de.enwida.web.controller;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.security.Principal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
@@ -10,6 +15,7 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -20,10 +26,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import de.enwida.web.db.model.UploadedFile;
 import de.enwida.web.model.FileUpload;
 import de.enwida.web.model.User;
 import de.enwida.web.service.implementation.MailServiceImpl;
 import de.enwida.web.service.interfaces.IUserService;
+import de.enwida.web.utils.Constants;
 import de.enwida.web.utils.LogoFinder;
 import de.enwida.web.validator.UserValidator;
 
@@ -38,6 +46,9 @@ public class UserController {
 	private IUserService userService;
 	
 	@Autowired
+	private UserSessionManager userSession;
+
+	@Autowired
 	private UserValidator userValidator;
  
 	@Autowired	
@@ -45,6 +56,9 @@ public class UserController {
 
     private static org.apache.log4j.Logger logger = Logger.getLogger(AdminController.class);
 	
+	@Value("${fileUploadDirectory}")
+	protected String fileUploadDirectory;
+
 	@RequestMapping(value="/user", method = RequestMethod.GET)
 	public String displayDashboard(Model model, Locale locale) {
 		
@@ -238,31 +252,130 @@ public class UserController {
 	}
 	
 	@RequestMapping(value="/upload", method = RequestMethod.POST)
-	public ModelAndView postUplaodUserData(@ModelAttribute(value="fileUpload") FileUpload fileUpload, BindingResult result, HttpServletRequest request) {
+	public ModelAndView postUplaodUserData(ModelMap model,
+			@ModelAttribute(value = "fileUpload") FileUpload fileUpload,
+			BindingResult result, HttpServletRequest request) {
 		
 		boolean isMultipart = ServletFileUpload.isMultipartContent(request);
+		// fetch all files related to user
+		List<File> filetable = new ArrayList<File>();
 
-        if (isMultipart) {
+		String displayfileName = null;
+		if (isMultipart) {
             try {
             	FileItem item = fileUpload.getFile().getFileItem();
-            	
             	if (!item.isFormField()) {
-	                String fileName = item.getName();
-	
-	                String root = request.getSession().getServletContext().getRealPath("/");
-	                File path = new File(root + "/uploads");
-	                if (!path.exists()) {
-	                    boolean status = path.mkdirs();
-	                }
-	
-	                File uploadedFile = new File(path + "/" + fileName);
-	                System.out.println(uploadedFile.getAbsolutePath());
-	                //item.write(uploadedFile);
+					displayfileName = item.getName();
+
+					// Get the next generated value of file sequence
+					Long generatedId = null;
+					try {
+						generatedId = userService.getNextSequence(
+								Constants.UPLOADED_FILE_SEQUENCE_SCHEMA_NAME,
+								Constants.UPLOADED_FILE_SEQUENCE_NAME);
+					} catch (Exception e) {
+						// TODO: handle exception
+						generatedId = new Long(1);
+					}
+					String fileFormat = extractFileFormat(displayfileName);
+					String fileName = "file";
+					if (fileFormat != null && generatedId != null)
+						fileName += "_" + generatedId + "." + fileFormat;
+					else {
+						throw new Exception("No file format");
+					}
+					// make sure that file directory is present
+					// before uploading file
+					createDirectory(fileUploadDirectory);
+
+					// upload file
+					File uploadedFile = new File(fileUploadDirectory
+							+ File.separator + fileName);
+					item.write(uploadedFile);
+
+					// update file manifest data
+					File manifestFile = new File(fileUploadDirectory
+							+ File.separator + fileName + ".mfst");
+					writeAllText(manifestFile, displayfileName);
+
+					// create entry in file upload table
+					UploadedFile file = new UploadedFile();
+					file.setDisplayFileName(displayfileName);
+					file.setFilePath(fileUploadDirectory + File.separator
+							+ fileName);
+					file.setFormat(fileFormat);
+					file.setUploadDate(new Date());
+
+					User user = userService.getUser("username1");
+					file.setUploader(user);
+					// User user = userSession.getUser();
+					user.addUploadedFile(file);
+					userService.updateUser(user);
+
+					// update uploaded files list
+					filetable.add(uploadedFile);
 	            }
             } catch (Exception e) {
-                e.printStackTrace();
+				logger.error("Unable to upload file : " + displayfileName, e);
             }
         }
-		return new ModelAndView("user/upload", "fileUpload", new FileUpload() );
+		model.put("uploadedfiletable", filetable);
+		model.put("fileUpload", new FileUpload());
+		return new ModelAndView("user/upload", model);
+	}
+
+	/**
+	 * Creates a new directory depending on the input path given
+	 * 
+	 * @param path
+	 *            directory path that needs to be created
+	 * @return success status of directory creation
+	 */
+	public boolean createDirectory(String path) {
+		boolean status = false;
+
+		if (path != null && !path.trim().isEmpty()) {
+			File f = new File(path);
+			f.setWritable(true);
+
+			if (!f.exists()) {
+				status = f.mkdirs();
+			}
+		}
+		return status;
+	}
+
+	/**
+	 * Writes given content to a file.
+	 * 
+	 * @param file
+	 *            the file to write to
+	 * @param text
+	 *            the text to write.
+	 */
+	public void writeAllText(File file, String text) {
+		try {
+			BufferedWriter out = new BufferedWriter(new FileWriter(file));
+			out.write(text);
+			out.close();
+		} catch (Exception e) {
+			logger.error(
+					"Update Manifest data for uploaded File: " + file.getName(),
+					e);
+		}
+	}
+
+	private String extractFileFormat(String completeName) {
+		String[] fnameParts = completeName.split("\\\\");
+		String fname = fnameParts[fnameParts.length - 1];
+		// this.displayFileName = fname;
+
+		fnameParts = completeName.split("\\.");
+		if (fnameParts.length < 2) {
+			// file without format.
+			return null;
+		}
+
+		return fnameParts[fnameParts.length - 1];
 	}
 }

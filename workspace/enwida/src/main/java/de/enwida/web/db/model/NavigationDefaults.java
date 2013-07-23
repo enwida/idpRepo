@@ -17,15 +17,15 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import javax.persistence.UniqueConstraint;
 
 import de.enwida.transport.DataResolution;
 import de.enwida.web.utils.Constants;
 
 @Entity
-@Table(name = Constants.NAVIGATION_DEFAULTS_TABLE_NAME, schema = Constants.NAVIGATION_DEFAULTS_TABLE_SCHEMA_NAME, uniqueConstraints = { @UniqueConstraint(columnNames = {
-		"TSO_ID", "RESOLUTION", "PRODUCT", CalendarRange.FROM,
- CalendarRange.TO }) })
+@Table(name = Constants.NAVIGATION_DEFAULTS_TABLE_NAME, schema = Constants.NAVIGATION_DEFAULTS_TABLE_SCHEMA_NAME)
+// , uniqueConstraints = { @UniqueConstraint(columnNames = {
+// "TSO_ID", "RESOLUTION", "PRODUCT", CalendarRange.FROM,
+// CalendarRange.TO }) })
 public class NavigationDefaults implements Cloneable,Serializable {
     
 	/**

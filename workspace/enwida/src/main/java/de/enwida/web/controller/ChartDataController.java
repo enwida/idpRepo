@@ -34,8 +34,7 @@ import de.enwida.web.db.model.NavigationDefaults;
 import de.enwida.web.db.model.NavigationSettings;
 import de.enwida.web.model.ChartNavigationData;
 import de.enwida.web.model.User;
-import de.enwida.web.service.implementation.LineServiceImpl;
-import de.enwida.web.service.implementation.NavigationServiceImpl;
+import de.enwida.web.service.interfaces.ILineService;
 import de.enwida.web.service.interfaces.INavigationService;
 import de.enwida.web.service.interfaces.IUserService;
 
@@ -47,7 +46,7 @@ import de.enwida.web.service.interfaces.IUserService;
 public class ChartDataController {
 
     @Autowired
-    private LineServiceImpl lineService;
+	private ILineService lineService;
 
 	@Autowired
 	private IUserService userService;
@@ -194,7 +193,8 @@ public class ChartDataController {
 	    Principal principal, Locale locale, HttpServletRequest request,
 	    HttpServletResponse response) throws ParseException {
 
-        final ChartNavigationData result = ((NavigationServiceImpl) navigationService).getNavigationDataUNSECURE(chartId, getUser(principal), locale);
+		final ChartNavigationData result = navigationService
+				.getNavigationDataUNSECURE(chartId, getUser(principal), locale);
 
     	// Try to get the navigation defaults from the cookie
     	try {
@@ -284,7 +284,8 @@ public class ChartDataController {
 			userService.updateUser(userSession.getUser());
 		} else {
 			// set anonymous user settings with userId
-			Integer clientId = (Integer) request.getAttribute("clientId");
+			logger.debug(request.getAttribute("clientId"));
+			String clientId = (String) request.getAttribute("clientId");
 			NavigationSettings settings = navigationService
 					.getUserNavigationSettings(clientId, chartId, true);
 			if (settings == null) {

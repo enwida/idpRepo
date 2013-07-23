@@ -37,6 +37,13 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
 	private static org.apache.log4j.Logger logger = Logger
 			.getLogger(AdminController.class);
 	
+	/**
+	 * 
+	 */
+	public UserDaoImpl() {
+		setModelClass(User.class);
+	}
+
 	@Override
 	public List<User> findAllUsersWithPermissions(){
 		TypedQuery<User> typedQuery = em.createQuery(
@@ -176,8 +183,7 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
 		User exisinguser = getUserByName(user.getUserName());
 		try {
 			if (exisinguser == null) {
-				em.persist(user);
-				em.flush();
+				create(user);
 			}
 			user = getUserByName(user.getUserName());
 		} catch (Exception e) {
@@ -674,7 +680,6 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
 		
 	}
 	
-
 	@Override
     public boolean updateUser(User user) {
 		boolean success = false;
@@ -682,41 +687,13 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
 			if (user != null) {
 				// merging should make sure that entity
 				// should be obtained using entity manager
-				user = em.merge(user);
-				em.flush();
+				update(user);
 				success = true;
 			}
 		} catch (Exception e) {
 			logger.error("Error updating user : " + user.getUserName(), e);
 		}
 		return success;
-		// String sql =
-		// "UPDATE users.user SET first_name=?,last_name=?,telephone=?,user_password=? WHERE user_id=?";
-		//
-		// Connection conn = null;
-		//
-		// try {
-		// conn = datasource.getConnection();
-		// PreparedStatement ps = conn.prepareStatement(sql);
-		// ps.setString(1, user.getFirstName());
-		// ps.setString(2, user.getLastName());
-		// ps.setString(3, user.getTelephone());
-		// ps.setString(4, user.getPassword());
-		// ps.setLong(5, user.getUserID());
-		// ps.executeUpdate();
-		// ps.close();
-		// } catch (SQLException e) {
-		// logger.error(e.getMessage());
-		// throw new RuntimeException(e);
-		// } finally {
-		// if (conn != null) {
-		// try {
-		// conn.close();
-		// } catch (SQLException e) {
-		// logger.error(e.getMessage());
-		// }
-		// }
-		// }
     }
 
     @Override
@@ -1196,79 +1173,91 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
 
     @Override
     public List<User> getAllUsers() {
-		String sql = "select * FROM users.user";
-        Connection conn = null;
-        ArrayList<User> users = new ArrayList<User>();
-        try {
-            conn = datasource.getConnection();
-            PreparedStatement ps = conn.prepareStatement(sql);
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                User user = new User();
-                user.setUserID(rs.getLong("user_id"));
-                user.setUserName(rs.getString("user_name"));
-                users.add(user);
-            }
-            rs.close();
-            ps.close();
-        } catch (SQLException e) {
-            logger.error(e.getMessage());
-            throw new RuntimeException(e);
-        } finally {
-            if (conn != null) {
-                try {
-                conn.close();
-                } catch (SQLException e) {
-                    logger.error(e.getMessage());
-                }
-            }
-        }
-        return users;
+
+		return super.findAll();
+		// String sql = "select * FROM users.user";
+		// Connection conn = null;
+		// ArrayList<User> users = new ArrayList<User>();
+		// try {
+		// conn = datasource.getConnection();
+		// PreparedStatement ps = conn.prepareStatement(sql);
+		// ResultSet rs = ps.executeQuery();
+		// while (rs.next()) {
+		// User user = new User();
+		// user.setUserID(rs.getLong("user_id"));
+		// user.setUserName(rs.getString("user_name"));
+		// users.add(user);
+		// }
+		// rs.close();
+		// ps.close();
+		// } catch (SQLException e) {
+		// logger.error(e.getMessage());
+		// throw new RuntimeException(e);
+		// } finally {
+		// if (conn != null) {
+		// try {
+		// conn.close();
+		// } catch (SQLException e) {
+		// logger.error(e.getMessage());
+		// }
+		// }
+		// }
+		// return users;
     }
     
     
     @Override
     public boolean checkUserActivationId(String username, String activationCode) {
 
-		String sql = "select activation_id from users.user where users.user_name=?";
-        Connection conn = null;
-        
-        try 
-        {
-            conn = datasource.getConnection();
-            PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setString(1, username);
-            ResultSet rs = ps.executeQuery();
-            
-            if (rs.next()) 
-            {
-                if(rs.getString(1).equals(activationCode))
-                {
-                	return true;
-                }                
-            }
-            
-            rs.close();
-            ps.close();
-        } 
-        catch (SQLException e) 
-        {
-            logger.error(e.getMessage());
-            throw new RuntimeException(e);
-        } 
-        finally 
-        {
-            if (conn != null) 
-            {
-                try 
-                {
-                	conn.close();
-                } catch (SQLException e) {
-                    logger.error(e.getMessage());
-                }
-            }
-        }
+		User user = getUserByName(username);
+		if (user.getActivationKey().equals(activationCode)) {
+			return true;
+		}
+		// String sql =
+		// "select activation_id from users.user where users.user_name=?";
+		// Connection conn = null;
+		//
+		// try
+		// {
+		// conn = datasource.getConnection();
+		// PreparedStatement ps = conn.prepareStatement(sql);
+		// ps.setString(1, username);
+		// ResultSet rs = ps.executeQuery();
+		//
+		// if (rs.next())
+		// {
+		// if(rs.getString(1).equals(activationCode))
+		// {
+		// return true;
+		// }
+		// }
+		//
+		// rs.close();
+		// ps.close();
+		// }
+		// catch (SQLException e)
+		// {
+		// logger.error(e.getMessage());
+		// throw new RuntimeException(e);
+		// }
+		// finally
+		// {
+		// if (conn != null)
+		// {
+		// try
+		// {
+		// conn.close();
+		// } catch (SQLException e) {
+		// logger.error(e.getMessage());
+		// }
+		// }
+		// }
         
         return false;        
     }
+
+	@Override
+	public Long getNextSequence(String schema, String sequenceName) {
+		return super.getNextSequenceNumber(schema, sequenceName);
+	}
 }

@@ -16,7 +16,7 @@ import de.enwida.web.service.interfaces.IAvailibilityService;
 import de.enwida.web.service.interfaces.ILineService;
 import de.enwida.web.service.interfaces.ISecurityService;
 
-@TransactionConfiguration(defaultRollback = true)
+@TransactionConfiguration(transactionManager = "jpaTransactionManager", defaultRollback = true)
 @Transactional
 @Service("lineService")
 public class LineServiceImpl implements ILineService {

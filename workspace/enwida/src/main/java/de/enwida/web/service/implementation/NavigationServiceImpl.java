@@ -80,6 +80,7 @@ public class NavigationServiceImpl implements INavigationService {
         return navigationData;
     }
     
+	@Override
     public ChartNavigationData getNavigationDataUNSECURE(int chartId, User user, Locale locale) {
 	    // Get basic navigation data from hash table and apply
 	    // internationalized properties
@@ -195,7 +196,7 @@ public class NavigationServiceImpl implements INavigationService {
 	}
 
 	@Override
-	public NavigationSettings getUserNavigationSettings(int id,
+	public NavigationSettings getUserNavigationSettings(Object id,
 			int chartId, boolean isClient) {
 		return navigationDao.getUserNavigationSettings(id, chartId, isClient);
 	}

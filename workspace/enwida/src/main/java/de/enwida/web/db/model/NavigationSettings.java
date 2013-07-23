@@ -52,7 +52,7 @@ public class NavigationSettings implements Serializable {
 	private User user;
 
 	@Column(name = User.CLIENT_ID)
-	private int clientId;
+	private String clientId;
 
 	/**
 	 * 
@@ -74,7 +74,7 @@ public class NavigationSettings implements Serializable {
 	 * @param clientId
 	 */
 	public NavigationSettings(int chartId, NavigationDefaults settingsData,
-			User user, int clientId) {
+			User user, String clientId) {
 		this.chartId = chartId;
 		this.settingsData = settingsData;
 		this.user = user;
@@ -132,9 +132,6 @@ public class NavigationSettings implements Serializable {
 	 */
 	@Transient
 	public User getUser() {
-		if (user != null) {
-			clientId = -1;
-		}
 		return user;
 	}
 
@@ -143,17 +140,14 @@ public class NavigationSettings implements Serializable {
 	 *            the user to set
 	 */
 	public void setUser(User user) {
-		if (user != null) {
-			clientId = -1;
-		}
 		this.user = user;
 	}
 
-	public int getClientId() {
+	public String getClientId() {
 		return clientId;
 	}
 
-	public void setClientId(int clientId) {
+	public void setClientId(String clientId) {
 		this.clientId = clientId;
 	}
 

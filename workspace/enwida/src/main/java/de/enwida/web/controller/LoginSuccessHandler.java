@@ -14,17 +14,15 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 
 import de.enwida.web.service.interfaces.ICookieSecurityService;
-import de.enwida.web.service.interfaces.IUserService;
 import de.enwida.web.utils.Constants;
 
-public class LoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
+public class LoginSuccessHandler extends
+		SavedRequestAwareAuthenticationSuccessHandler {
 
 	@Autowired
-	private UserSessionManager userSession;
-	@Autowired
-	private IUserService userService;
-	@Autowired
     private ICookieSecurityService cookieSecurityService;
+	@Autowired
+	private UserSessionManager userSession;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request,
@@ -47,11 +45,16 @@ public class LoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessH
             for (int i = 0; i < cookies.length; i++) {
              cookies[i].setMaxAge(0);
         }
+
+		// update user session value if not present
+		if (userSession.getUser() == null) {
+			// Fetch User details and save in session
+			// System.out.println(userService.getUser(auth.getName()));
+			userSession.setUserInSession(auth.getName());
+		}
             
         response.addCookie(cookie);
-		// Fetch User details and save in session
-		userSession.setUser(userService.getUser(auth.getName()));
-        
+
         if (url != null) {
 
             response.sendRedirect(url);
@@ -65,4 +68,22 @@ public class LoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessH
             }
         }
     }
+
+	// public ICookieSecurityService getCookieSecurityService() {
+	// return cookieSecurityService;
+	// }
+	//
+	// public void setCookieSecurityService(
+	// ICookieSecurityService cookieSecurityService) {
+	// this.cookieSecurityService = cookieSecurityService;
+	// }
+	//
+	// public UserSessionManager getUserSession() {
+	// return userSession;
+	// }
+	//
+	// public void setUserSession(UserSessionManager userSession) {
+	// this.userSession = userSession;
+	// }
+
 }

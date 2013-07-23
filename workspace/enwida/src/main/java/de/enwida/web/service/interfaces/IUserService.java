@@ -59,4 +59,6 @@ public interface IUserService {
 	public boolean enableDisableAspect(int rightID, boolean enabled);
 
 	public boolean activateUser(String username, String activationCode);
+
+	Long getNextSequence(String schema, String sequenceName);
 }

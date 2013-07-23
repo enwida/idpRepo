@@ -1,4 +1,5 @@
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%>
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+	pageEncoding="ISO-8859-1"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
@@ -27,24 +28,24 @@
 	<div style="text-align: center;">
 		<h2>Import CSV File</h2>
 	</div>
-	
+
 	<div style="clear: both"></div>
 	<div style="width: 100%">
 		<div style="width: 30%; float: left;"></div>
 		<div style="text-align: center; width: 40%; margin-left: 35%">
-		
-		<form:form method="POST" commandName="fileUpload" enctype="multipart/form-data">
-			<form:errors path="*" cssClass="errorblock" element="div" />
- 			Please Select a file to upload: 
- 			<input type="file" name="file" />
- 			<input type="submit" value="Upload" />
- 			
-			<span>
-				<form:errors path="file" cssClass="error" />
-				<c:out value="${invalidFileMessage}"></c:out> 
-			</span> 
-		</form:form>
-				
+
+			<form:form method="POST" commandName="fileUpload"
+				enctype="multipart/form-data">
+				<form:errors path="*" cssClass="errorblock" element="div" />
+ 				lease Select a file to upload: 
+ 				<input type="file" name="file" />
+				<input type="submit" value="Upload" />
+
+				<span> <form:errors path="file" cssClass="error" /> <c:out
+						value="${invalidFileMessage}"></c:out>
+				</span>
+			</form:form>
+			
 		</div>
 		<div style="width: 30%;"></div>
 	</div>

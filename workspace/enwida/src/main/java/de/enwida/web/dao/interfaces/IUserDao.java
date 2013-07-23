@@ -81,4 +81,5 @@ public interface IUserDao {
     
     public boolean activateUser(String username);
 
+	public Long getNextSequence(String schema, String sequenceName);
 }

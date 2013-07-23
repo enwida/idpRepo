@@ -73,7 +73,7 @@ public class UserNavigationServiceTest {
 	private void test2() {
 		NavigationSettings navSet = new NavigationSettings();
 		navSet.setChartId(100);
-		navSet.setClientId(112455);
+		navSet.setClientId("112455");
 		NavigationDefaults data = new NavigationDefaults(12,
 				DataResolution.WEEKLY, 120, new CalendarRange(
 						Calendar.getInstance(), Calendar.getInstance()));

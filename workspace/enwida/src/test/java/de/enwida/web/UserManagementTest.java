@@ -56,19 +56,32 @@ public class UserManagementTest {
 	public void userTest() {
 		createTestUser();
 		findUser();
+		updateTestUser();
 		// deleteTestUser();
 	}
 
 	private void createTestUser() {
 		user = new User(0, "username1", "password1", "firstname", "lastname",
 				false);
-		user.setJoiningDate(new Date(Calendar.getInstance().getTimeInMillis()));
+		// user.setJoiningDate(new
+		// Date(Calendar.getInstance().getTimeInMillis()));
 		user.setCompanyName("enwida.de");
 		userDao.save(user);
 
 		User user1 = new User(0, "username2", "password2", "firstname",
 				"lastname", false);
 		userDao.save(user1);
+		// userDao.deleteUser(user);
+
+	}
+
+	private void updateTestUser() {
+		user = userDao.getUserByName(user.getUserName());
+		user.setJoiningDate(new Date(Calendar.getInstance().getTimeInMillis()));
+		user.setCompanyName("de.enwida");
+		user.setEnabled(true);
+		userDao.updateUser(user);
+
 		// userDao.deleteUser(user);
 
 	}

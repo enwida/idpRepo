@@ -14,7 +14,7 @@ public interface INavigationDao {
 
 	boolean saveUserNavigationSettings(NavigationSettings navigationSettings);
 
-	NavigationSettings getUserNavigationSettings(int id, int chartId,
+	NavigationSettings getUserNavigationSettings(Object id, int chartId,
 			boolean isClient);
 
 }

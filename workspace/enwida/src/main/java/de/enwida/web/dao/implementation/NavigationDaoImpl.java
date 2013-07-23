@@ -104,7 +104,9 @@ public class NavigationDaoImpl extends AbstractBaseDao<User> implements INavigat
 
 	@Override
 	public Set<NavigationSettings> getUserNavigationSettings(int userId) {
-		TypedQuery<NavigationSettings> typedQuery = em.createQuery("from "
+		TypedQuery<NavigationSettings> typedQuery = em
+				.createQuery(
+						"from "
 				+ NavigationSettings.class.getName() + " where " + User.USER_ID
 				+ " =:userId", NavigationSettings.class);
 		typedQuery.setParameter("userId", userId);
@@ -114,7 +116,7 @@ public class NavigationDaoImpl extends AbstractBaseDao<User> implements INavigat
 	}
 
 	@Override
-	public NavigationSettings getUserNavigationSettings(int id,
+	public NavigationSettings getUserNavigationSettings(Object id,
 			int chartId, boolean isClient) {
 		NavigationSettings settings = null;
 		TypedQuery<NavigationSettings> typedQuery = null;
@@ -155,12 +157,18 @@ public class NavigationDaoImpl extends AbstractBaseDao<User> implements INavigat
 			NavigationSettings existingNavigationSetting = getUserNavigationSettings(
 					navigationSettings.getUser().getUserId(),
 					navigationSettings.getChartId(), false);
+			logger.debug("Updating navigation settings for user : "
+					+ navigationSettings.getUser().getUserId() + ", chartId:"
+					+ navigationSettings.getChartId());
 			success = persistOrMerge(existingNavigationSetting,
 					navigationSettings);
 		} else {
 			NavigationSettings existingNavigationSetting = getUserNavigationSettings(
 					navigationSettings.getClientId(),
 					navigationSettings.getChartId(), true);
+			logger.debug("Updating navigation settings for Client : "
+					+ navigationSettings.getClientId() + ", chartId:"
+					+ navigationSettings.getChartId());
 			success = persistOrMerge(existingNavigationSetting,
 					navigationSettings);
 		}

@@ -9,6 +9,7 @@
 	<url>http://maven.apache.org</url>
 
 	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<spring.version>3.2.1.RELEASE</spring.version>
 		<spring.security.version>3.1.2.RELEASE</spring.security.version>
 		<jpa.version>2.0.0</jpa.version>
@@ -267,6 +268,13 @@
 					<target>1.7</target>
 				</configuration>
 			</plugin>
+			<plugin>
+                <artifactId>maven-war-plugin</artifactId>
+                <version>2.1.1</version>
+                <configuration>
+                    <packagingExcludes>WEB-INF/web.xml</packagingExcludes>
+                </configuration>
+            </plugin>
 		</plugins>
 	</build>
 
