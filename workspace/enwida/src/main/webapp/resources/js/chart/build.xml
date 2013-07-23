@@ -1,0 +1,56 @@
+<project name="Enwida Frontend" default="all">
+  <description>
+    Compiles CoffeeScript to JavaScript, minifies JavaScript assets, and minifies require.js modules
+  </description>
+
+  <target name="all" depends="compileAssets,compileCoffee,compileRjs" />
+
+  <target name="dev" depends="compileAssets,compileCoffee" />
+
+  <target name="compileAssets">
+    <apply executable="uglifyjs" parallel="true">
+      <arg value="-o" />
+      <arg value="assets.js" />
+      <filelist dir="assets">
+        <file name="jquery-1.9.1.min.js" />
+        <file name="es5-sham.min.js" />
+        <file name="es5-shim.min.js" />
+        <file name="flight.js" />
+        <file name="tipsy.js" />
+        <file name="d3.v3.min.js" />
+        <file name="d3-legend.js" />
+        <file name="underscore-min.js" />
+        <file name="bootstrap.min.js" />
+        <file name="bootstrap-datepicker.js" />
+        <file name="require.js" />
+      </filelist>
+    </apply>
+  </target>
+
+  <target name="compileCoffee">
+    <exec executable="coffee">
+      <arg value="-c" />
+      <arg value="." />
+    </exec>
+  </target>
+
+  <target name="compileRjs">
+    <exec executable="r.js">
+      <arg value="-o" />
+      <arg value="baseUrl=lib" />
+      <arg value="name=../charts" />
+      <arg value="out=charts.js" />
+    </exec>
+  </target>
+
+  <target name="clean">
+    <delete>
+      <fileset dir=".">
+        <include name="assets.js" />
+        <include name="charts.js" />
+        <include name="lib/**/*.js" />
+      </fileset>
+    </delete>
+  </target>
+
+</project>
