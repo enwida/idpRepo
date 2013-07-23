@@ -1,22 +1,23 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="message"%>
 <%@ page session="false"%>
 
 <table id="tblUsers" class="tablesorter">
 	<thead>
 		<tr>
-			<th>User</th>
-			<th>Enable/Disabled</th>
-			<th>Name LastName</th>
-			<th>Last Login</th>
-			<th>Tel</th>
-			<th>Company Name</th>
-			<th>Operations</th>
+			<th><message:message code="de.enwida.userManagement.users" /></th>
+			<th><message:message code="de.enwida.userManagement.enabled" /></th>
+			<th><message:message code="de.enwida.userManagement.firstName" /></th>
+			<th><message:message code="de.enwida.userManagement.lastLogin" /></th>
+			<th><message:message code="de.enwida.userManagement.company" /></th>
+			<th><message:message code="de.enwida.userManagement.telephone" /></th>
+			<th><message:message code="de.enwida.userManagement.operation" /></th>
 		</tr>
 	</thead>
 	<tbody>
 		<c:forEach var="user" items="${users}">
 			<tr>
-				<td><a href='user?userID=${user.userID}'>${user.userName}</a></td>
+				<td><a href='admin_user.html?userID=${user.userID}'>${user.userName}</a></td>
 				<td><input type="checkbox"
 					onclick="enableDisableUser(${user.userID},this.checked);"
 					${user.enabled == 'true' ? 'checked' : ''}></td>
@@ -24,8 +25,8 @@
 				<td>${user.loginCount+user.lastLogin}</td>
 				<td>${user.telephone}</td>
 				<td>${user.companyName}</td>
-				<td><a href='editGroup?userID=${user.userID}'> Edit Group</a>
-					<a href='user?userID=${user.userID}'> Details</a></td>
+				<td><a href='admin_editgroup.html?userID=${user.userID}'><message:message code="de.enwida.userManagement.userList.editGroup" /></a>
+					<a href='admin_user.html?userID=${user.userID}'> <message:message code="de.enwida.userManagement.details" /></a></td>
 			</tr>
 		</c:forEach>
 	</tbody>
