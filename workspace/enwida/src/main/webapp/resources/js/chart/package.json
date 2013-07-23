@@ -1,0 +1,9 @@
+{
+  "name": "js_build_dependencies",
+  "version": "0.0.1",
+  "dependencies": {
+    "coffee-script": "*",
+    "uglify-js": "*",
+    "requirejs": "*"
+  }
+}
