@@ -7,35 +7,61 @@
 
   <target name="dev" depends="compileAssets,compileCoffee" />
 
-  <target name="compileAssets">
-    <apply executable="uglifyjs" parallel="true">
+  <filelist id="jsAssets" dir="assets">
+    <file name="jquery-1.9.1.min.js" />
+    <file name="es5-sham.min.js" />
+    <file name="es5-shim.min.js" />
+    <file name="flight.js" />
+    <file name="tipsy.js" />
+    <file name="d3.v3.min.js" />
+    <file name="d3-legend.js" />
+    <file name="underscore-min.js" />
+    <file name="bootstrap.min.js" />
+    <file name="bootstrap-datepicker.js" />
+    <file name="require.js" />
+  </filelist>
+
+  <target name="compileAssets" depends="npmDependencies">
+    <!-- Unix command -->
+    <apply executable="node_modules/.bin/uglifyjs" parallel="true" osfamily="unix">
       <arg value="-o" />
       <arg value="assets.js" />
-      <filelist dir="assets">
-        <file name="jquery-1.9.1.min.js" />
-        <file name="es5-sham.min.js" />
-        <file name="es5-shim.min.js" />
-        <file name="flight.js" />
-        <file name="tipsy.js" />
-        <file name="d3.v3.min.js" />
-        <file name="d3-legend.js" />
-        <file name="underscore-min.js" />
-        <file name="bootstrap.min.js" />
-        <file name="bootstrap-datepicker.js" />
-        <file name="require.js" />
-      </filelist>
+      <filelist refid="jsAssets" />
+    </apply>
+
+    <!-- Windows command -->
+    <apply executable="node_modules\.bin\uglifyjs.cmd" parallel="true" osfamily="windows">
+      <arg value="-o" />
+      <arg value="assets.js" />
+      <filelist refid="jsAssets" />
     </apply>
   </target>
 
-  <target name="compileCoffee">
-    <exec executable="coffee">
+  <target name="compileCoffee" depends="npmDependencies">
+    <!-- Unix command -->
+    <exec executable="node_modules/.bin/coffee" osfamily="unix">
+      <arg value="-c" />
+      <arg value="." />
+    </exec>
+
+    <!-- Windows command -->
+    <exec executable="node_modules\.bin\coffee.cmd" osfamily="windows">
       <arg value="-c" />
       <arg value="." />
     </exec>
   </target>
 
-  <target name="compileRjs">
-    <exec executable="r.js">
+  <target name="compileRjs" depends="npmDependencies">
+    <!-- Unix command -->
+    <exec executable="node_modules/.bin/r.js" osfamily="unix">
+      <arg value="-o" />
+      <arg value="baseUrl=lib" />
+      <arg value="name=../charts" />
+      <arg value="out=charts.js" />
+    </exec>
+
+    <!-- Windows command -->
+    <exec executable="node_modules\.bin\r.js.cmd" osfamily="windows">
       <arg value="-o" />
       <arg value="baseUrl=lib" />
       <arg value="name=../charts" />
@@ -51,6 +77,19 @@
         <include name="lib/**/*.js" />
       </fileset>
     </delete>
+  </target>
+
+  <target name="npmDependencies">
+    <!-- Unix command -->
+    <exec executable="npm" osfamily="unix">
+      <arg value="install" />
+    </exec>
+
+    <!-- Windows command -->
+    <exec executable="cmd" osfamily="windows">
+      <arg value="/C" />
+      <arg line="npm install" />
+    </exec>
   </target>
 
 </project>
