@@ -30,7 +30,7 @@
     </apply>
 
     <!-- Windows command -->
-    <apply executable="node_modules\.bin\uglifyjs" parallel="true" osfamily="windows">
+    <apply executable="node_modules\.bin\uglifyjs.cmd" parallel="true" osfamily="windows">
       <arg value="-o" />
       <arg value="assets.js" />
       <filelist refid="jsAssets" />
