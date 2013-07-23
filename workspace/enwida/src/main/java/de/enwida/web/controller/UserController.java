@@ -198,7 +198,7 @@ public class UserController {
 	}
 
 	@RequestMapping(value="/activateUser",method=RequestMethod.GET)
-	public @ResponseBody String activateUser(ModelMap model, String username, String actId){
+	public String activateUser(ModelMap model, String username, String actId){
 		
 		boolean activated = userService.activateUser(username, actId);
 		if(activated)

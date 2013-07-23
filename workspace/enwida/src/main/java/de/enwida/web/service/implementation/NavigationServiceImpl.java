@@ -162,6 +162,14 @@ public class NavigationServiceImpl implements INavigationService {
 		final Pattern fileNamePattern = Pattern.compile("^(\\d+)\\.json$");
 		final File dir = new File(jsonDir);
 		
+		// Create the containing directory if it does not exist
+		if (!dir.exists()) {
+			dir.mkdir();
+			
+			// There won't be any files in the newly created directory
+			return;
+		}
+		
 		for (final File file : dir.listFiles()) {
 			if (file.isDirectory()) {
 				continue;

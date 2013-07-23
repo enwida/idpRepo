@@ -1,0 +1,7 @@
+{
+  "name": "css_assets_dependencies",
+  "version": "0.0.1",
+  "dependencies": {
+    "clean-css": "*"
+  }
+}
