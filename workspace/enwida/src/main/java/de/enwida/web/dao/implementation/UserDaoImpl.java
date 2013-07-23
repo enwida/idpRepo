@@ -12,6 +12,7 @@ import javax.sql.DataSource;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.PreparedStatementCreator;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
@@ -118,11 +119,20 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
         return this.findAll();
     }
     
-    @Override
+    @SuppressWarnings("unchecked")
+	@Override
     public boolean checkUserActivationId(String username, String activationCode) {
 
-        String sql = "select activation_id from users.users where users.user_name="+username;
-        String activationID=(String)this.jdbcTemplate.queryForObject(sql,  String.class);
+        String sql = "select activation_id from users.users where users.user_name=?";
+        String activationID = (String) this.jdbcTemplate.queryForObject(sql, new Object[] { username }, new RowMapper() {
+
+			@Override
+			public String mapRow(ResultSet rs, int arg1) throws SQLException {
+				return rs.getString("activation_id");
+			}
+		});
+        
+        //String activationID=(String)this.jdbcTemplate.queryForObject(sql, new Object[] { username }, String.class);
         return activationID.equalsIgnoreCase(activationCode);
     }
 
@@ -172,7 +182,7 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
     @Override
     public boolean activateUser(String username) {
         String sql = "UPDATE users.users SET enabled=? WHERE user_name=?";
-        this.jdbcTemplate.update(sql, username);
+        this.jdbcTemplate.update(sql, true, username);
         return true;
     }
 
