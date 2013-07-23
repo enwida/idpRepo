@@ -50,7 +50,7 @@ public class RoleDaoImpl extends AbstractBaseDao<Role> implements IRoleDao {
 	@Override
 	public Role getRoleByID(Long id) {
 	    String sql = "SELECT * FROM users.roles where roles.role_id=?;";
-	    return this.jdbcTemplate.queryForObject(sql, new Object[] { id }, new BeanPropertyRowMapper(Role.class));
+	    return this.jdbcTemplate.queryForObject(sql, new Object[] { id }, new BeanPropertyRowMapper<>(Role.class));
 	}
 	
     @Override
