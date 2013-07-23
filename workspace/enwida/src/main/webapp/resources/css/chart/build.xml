@@ -15,18 +15,19 @@
 
     <!-- Windows command-->
     <exec executable="cmd" osfamily="windows">
+      <arg value="/C" />
       <arg line="type assets\bootstrap.css assets\datepicker.css assets\tipsy.css | node_modules\.bin\cleancss.cmd -o assets.css" />
     </exec>
   </target>
 
   <target name="npmDependencies">
     <!-- Unix command-->
-    <exec executable="npm">
+    <exec executable="npm" osfamily="unix">
       <arg value="install" />
     </exec>
 
     <!-- Windows command-->
-    <exec executable="cmd">
+    <exec executable="cmd" osfamily="windows">
       <arg value="/C" />
       <arg line="npm install" />
     </exec>
