@@ -315,6 +315,7 @@ public class UserController {
 					// create entry in file upload table
 					UploadedFile file = new UploadedFile();
 					file.setDisplayFileName(displayfileName);
+					file.setFileName(fileName);
 					file.setFilePath(fileUploadDirectory + File.separator
 							+ fileName);
 					file.setFormat(fileFormat);
@@ -383,7 +384,7 @@ public class UserController {
 
 	private String extractFileFormat(String completeName) {
 		String[] fnameParts = completeName.split("\\\\");
-		String fname = fnameParts[fnameParts.length - 1];
+		// String fname = fnameParts[fnameParts.length - 1];
 		// this.displayFileName = fname;
 
 		fnameParts = completeName.split("\\.");

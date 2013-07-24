@@ -3,6 +3,7 @@
  */
 package de.enwida.web.db.model;
 
+import java.io.File;
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -41,6 +42,7 @@ public class UploadedFile implements Serializable, Comparable<UploadedFile> {
 	private static final long serialVersionUID = -2646705236947755657L;
 	public static final String ID = "ID";
 	public static final String DISPLAY_FILE_NAME = "DISPLAY_FILE_NAME";
+	public static final String FILE_NAME = "FILE_NAME";
 	public static final String UPLOAD_DATE = "UPLOAD_DATE";
 	public static final String MODIFICATION_DATE = "MODIFICATION_DATE";
 	public static final String FORMAT = "FORMAT";
@@ -54,6 +56,9 @@ public class UploadedFile implements Serializable, Comparable<UploadedFile> {
 
 	@Column(name = DISPLAY_FILE_NAME, unique = false, nullable = false, length = 255)
 	private String displayFileName;
+
+	@Column(name = FILE_NAME, unique = true, nullable = false, length = 255)
+	private String fileName;
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = User.USER_ID, nullable = false)
@@ -73,6 +78,9 @@ public class UploadedFile implements Serializable, Comparable<UploadedFile> {
 	@Column(name = FILE_PATH, length = 256)
 	private String filePath;
 
+	@Transient
+	private File actualFile;
+
 	public int getId() {
 		return id;
 	}
@@ -87,6 +95,14 @@ public class UploadedFile implements Serializable, Comparable<UploadedFile> {
 
 	public void setDisplayFileName(String displayFileName) {
 		this.displayFileName = displayFileName;
+	}
+
+	public String getFileName() {
+		return fileName;
+	}
+
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
 	}
 
 	@Transient
@@ -131,6 +147,13 @@ public class UploadedFile implements Serializable, Comparable<UploadedFile> {
 
 	public void setFilePath(String filePath) {
 		this.filePath = filePath;
+	}
+
+	public File getActualFile() {
+		if (actualFile == null) {
+			actualFile = new File(this.filePath);
+		}
+		return actualFile;
 	}
 
 	@Override
