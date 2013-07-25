@@ -20,6 +20,7 @@
 	<!-- Scans the classpath of this application for @Components to deploy as beans -->
 	<context:annotation-config />
 	<context:component-scan base-package="de.enwida.web.controller" scoped-proxy="interfaces"/>
+	<context:component-scan base-package="de.enwida.web.validator" scoped-proxy="targetClass"/>
   
 	<!-- Handles HTTP GET requests for /resources/** by efficiently serving 
 		up static resources in the ${webappRoot}/resources directory -->
@@ -95,5 +96,5 @@
 	     <beans:property name="password" value="${mail.smtp.password}"/>
 	</beans:bean>
 	
-	<beans:bean id="userValidator" class="de.enwida.web.validator.UserValidator" />
+	
 </beans:beans>

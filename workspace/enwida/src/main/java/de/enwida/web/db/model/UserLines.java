@@ -50,6 +50,24 @@ public class UserLines implements Serializable {
 	@OneToOne(mappedBy = "lineId", targetEntity = UserLinesMetaData.class)
 	private UserLinesMetaData lineMetaData;
 
+	/**
+	 * 
+	 */
+	public UserLines() {
+	}
+
+	/**
+	 * @param timestamp
+	 * @param value
+	 * @param lineMetaData
+	 */
+	public UserLines(Calendar timestamp, double value,
+			UserLinesMetaData lineMetaData) {
+		this.timestamp = timestamp;
+		this.value = value;
+		this.lineMetaData = lineMetaData;
+	}
+
 	public int getId() {
 		return id;
 	}
@@ -81,6 +99,38 @@ public class UserLines implements Serializable {
 
 	public void setLineMetaData(UserLinesMetaData lineMetaData) {
 		this.lineMetaData = lineMetaData;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((timestamp == null) ? 0 : timestamp.hashCode());
+		long temp;
+		temp = Double.doubleToLongBits(value);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		UserLines other = (UserLines) obj;
+		if (timestamp == null) {
+			if (other.timestamp != null)
+				return false;
+		} else if (!timestamp.equals(other.timestamp))
+			return false;
+		if (Double.doubleToLongBits(value) != Double
+				.doubleToLongBits(other.value))
+			return false;
+		return true;
 	}
 
 	@Override

@@ -16,6 +16,18 @@
 		<property name="password" value="${db.pw}" />
 	</bean>
 	
+	<!-- <bean id="dataSource"
+        class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+	    <property name="driverClass" value="${db.driver}"/>
+	    <property name="jdbcUrl" value="${db1.url}"/>
+	    <property name="user" value="${db.user}"/>
+	    <property name="password" value="${db.pw}"/>
+	    <property name="acquireIncrement" value="5" />
+        <property name="minPoolSize" value="5" />
+        <property name="maxPoolSize" value="600" />
+        <property name="maxIdleTime" value="1800" />
+	</bean> -->
+	
 	<bean id="lineManager" class="de.enwida.chart.LineManager">	
 		<property name="messageSource" ref="messageSource" />
 	</bean>

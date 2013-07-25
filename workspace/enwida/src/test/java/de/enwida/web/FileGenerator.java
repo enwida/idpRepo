@@ -1,0 +1,94 @@
+package de.enwida.web;
+
+import java.io.FileWriter;
+import java.io.IOException;
+import java.text.DecimalFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Random;
+
+import org.junit.Before;
+import org.junit.Test;
+
+public class FileGenerator {
+
+
+
+	private static final String dateformat = "yyyy-MM-dd HH:mm:ss.SSSZ";
+	public static SimpleDateFormat formatter = new SimpleDateFormat(dateformat);
+	public static DecimalFormat df = new DecimalFormat("####.########");
+
+	@Before
+	public void setUp() {
+	}
+
+	@Test
+	public void generateFile() {
+		// TODO Auto-generated method stub
+		for (int i = 1; i <= 5; i++) {
+			String filePath = "C://Users//Jitin//Desktop//sample-" + i + ".csv";
+			int numberOfDataLines = 400;
+			try {
+				generateCsvFile(filePath, numberOfDataLines);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			System.out.println("File generated : sample-" + i + ".csv ");
+		}
+	}
+
+	private void generateCsvFile(String sFileName, int lines) throws Exception {
+		try {
+			FileWriter writer = new FileWriter(sFileName);
+
+			generateInfo(writer);
+			writer.append("Time");
+			writer.append(';');
+			writer.append("Data");
+			writer.append(";\n");
+			writer.append("{");
+
+			for (int i = 0; i < lines; i++) {
+				String formattedDate = formatter.format(getRandomDate());
+				writer.append(formattedDate);
+				writer.append(';');
+				writer.append(df.format(getRandomNumber()));
+				writer.append(";\n");
+			}
+			writer.append("}");
+			// generate whatever data you want
+
+			writer.flush();
+			writer.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private Date getRandomDate() throws ParseException {
+		long start2012 = new SimpleDateFormat("yyyy").parse("2012").getTime();
+		final long millisInYear2012 = 1000 * 60 * 60 * 24 * 365 + 1000;
+		long millis = Math.round(millisInYear2012 * Math.random());
+		return new Date(start2012 + millis);
+	}
+
+	private Double getRandomNumber() {
+		Random r = new Random();
+		return (Double) (r.nextDouble() * 30000 + r.nextDouble() * 10);
+	}
+
+	public void generateInfo(FileWriter writer) throws IOException {
+		writer.append("######################################\n");
+		writer.append("######################################\n");
+		writer.append("######################################\n");
+		writer.append("#####Name : something#################\n");
+		writer.append("#####Comment : something##############\n");
+		writer.append("#####Unit : something#################\n");
+		writer.append("#####Country : DE#####################\n");
+		writer.append("#####Resolution : something###########\n");
+		writer.append("#####Interpolation style : average####\n");
+		writer.append("######################################\n");
+		writer.append("######################################\n");
+	}
+}
