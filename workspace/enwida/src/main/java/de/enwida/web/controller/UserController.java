@@ -12,12 +12,14 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +28,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.DataBinder;
+import org.springframework.validation.Validator;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -40,6 +44,7 @@ import de.enwida.web.service.implementation.MailServiceImpl;
 import de.enwida.web.service.interfaces.IUserService;
 import de.enwida.web.utils.Constants;
 import de.enwida.web.utils.LogoFinder;
+import de.enwida.web.validator.FileValidator;
 import de.enwida.web.validator.UserValidator;
 
 /**
@@ -57,6 +62,9 @@ public class UserController {
 
 	@Autowired
 	private UserValidator userValidator;
+
+	@Autowired
+	private FileValidator fileValidator;
  
 	@Autowired	
 	private MailServiceImpl mail;	
@@ -278,58 +286,28 @@ public class UserController {
 		if (isMultipart) {
             try {
             	FileItem item = fileUpload.getFile().getFileItem();
+				File filetobeuploaded = null;
             	if (!item.isFormField()) {
-					displayfileName = item.getName();
+					// save file in temporary directory
+					filetobeuploaded = getTemporaryFile(item);
+					// do validation here
+					BindingResult results = validateFile(filetobeuploaded,
+							fileValidator);
+					Map<String, Object> map = result.getModel();
+					Object returnedObject = results.getTarget();
+					if (results.hasErrors()) {
 
-					// Get the next generated value of file sequence
-					Long generatedId = null;
-					try {
-						generatedId = userService.getNextSequence(
-								Constants.UPLOADED_FILE_SEQUENCE_SCHEMA_NAME,
-								Constants.UPLOADED_FILE_SEQUENCE_NAME);
-					} catch (Exception e) {
-						// TODO: handle exception
-						generatedId = new Long(1);
+					} else {
+
+						// If validation succeeds save it in database
+						UploadedFile file = saveFile(filetobeuploaded, user);
+						// update uploaded files list
+						filetable.add(file);
+						// upload datalines in userlines and userlinesmetadata
+						// table
+
+						removeTemporaryFile(filetobeuploaded);
 					}
-					String fileFormat = extractFileFormat(displayfileName);
-					String fileName = "file";
-					if (fileFormat != null && generatedId != null)
-						fileName += "_" + generatedId + "." + fileFormat;
-					else {
-						throw new Exception("No file format");
-					}
-					// make sure that file directory is present
-					// before uploading file
-					createDirectory(fileUploadDirectory);
-
-					// upload file
-					File uploadedFile = new File(fileUploadDirectory
-							+ File.separator + fileName);
-					item.write(uploadedFile);
-
-					// update file manifest data
-					File manifestFile = new File(fileUploadDirectory
-							+ File.separator + fileName + ".mfst");
-					writeAllText(manifestFile, displayfileName);
-
-					// create entry in file upload table
-					UploadedFile file = new UploadedFile();
-					file.setDisplayFileName(displayfileName);
-					file.setFileName(fileName);
-					file.setFilePath(fileUploadDirectory + File.separator
-							+ fileName);
-					file.setFormat(fileFormat);
-					file.setUploadDate(new Date());
-
-
-					file.setUploader(user);
-					// User user = userSession.getUser();
-					user.addUploadedFile(file);
-					userService.updateUser(user);
-
-					file = userService.getFileByFilePath(file.getFilePath());
-					// update uploaded files list
-					filetable.add(file);
 	            }
             } catch (Exception e) {
 				logger.error("Unable to upload file : " + displayfileName, e);
@@ -341,6 +319,16 @@ public class UserController {
 		return new ModelAndView("user/upload", model);
 	}
 
+	public BindingResult validateFile(File file, Validator validator) {
+		// Map<String, Object> objectMap = new LinkedHashMap<String, Object>();
+		// objectMap.put("file", file);
+		DataBinder binder = new DataBinder(file);
+		binder.setValidator(validator);
+		// validate the target object
+		binder.validate();
+		// get BindingResult that includes any validation errors
+		return binder.getBindingResult();
+	}
 	/**
 	 * Creates a new directory depending on the input path given
 	 * 
@@ -362,6 +350,76 @@ public class UserController {
 		return status;
 	}
 
+	private File getTemporaryFile(FileItem item) throws Exception {
+		String tempFile = fileUploadDirectory + File.separator + "temp"
+				+ File.separator + item.getName();
+		createDirectory(fileUploadDirectory + File.separator + "temp");
+		// do validation here
+		File filetobeuploaded = new File(tempFile);
+		item.write(filetobeuploaded);
+		return filetobeuploaded;
+	}
+
+	private boolean removeTemporaryFile(File fileTORemove) throws Exception {
+		fileTORemove.delete();
+		return true;
+	}
+
+	private UploadedFile saveFile(File file, User user) throws Exception {
+		String displayfileName = file.getName();
+
+		// Get the next generated value of file sequence
+		Long generatedId = null;
+		try {
+			generatedId = userService.getNextSequence(
+					Constants.UPLOADED_FILE_SEQUENCE_SCHEMA_NAME,
+					Constants.UPLOADED_FILE_SEQUENCE_NAME);
+		} catch (Exception e) {
+			// TODO: handle exception
+			generatedId = new Long(1);
+		}
+		String fileFormat = extractFileFormat(displayfileName);
+		String fileName = "file";
+		if (fileFormat != null && generatedId != null)
+			fileName += "_" + generatedId + "." + fileFormat;
+		else {
+			throw new Exception("No file format");
+		}
+		// make sure that file directory is present
+		// before uploading file
+		createDirectory(fileUploadDirectory);
+
+		// upload file
+		File uploadedFile = new File(fileUploadDirectory + File.separator
+				+ fileName);
+		FileUtils.copyFile(file, uploadedFile);
+		// IOUtils.copyLarge(new FileInputStream(file), new FileOutputStream(
+		// uploadedFile));
+		// item.write(uploadedFile);
+
+		// update file manifest data
+		File manifestFile = new File(fileUploadDirectory + File.separator
+				+ fileName + ".mfst");
+		writeAllText(manifestFile, displayfileName);
+
+		// create entry in file upload table
+		UploadedFile uploadedfile = new UploadedFile();
+		uploadedfile.setDisplayFileName(displayfileName);
+		uploadedfile.setFileName(fileName);
+		uploadedfile.setFilePath(fileUploadDirectory + File.separator
+				+ fileName);
+		uploadedfile.setFormat(fileFormat);
+		uploadedfile.setUploadDate(new Date());
+
+		uploadedfile.setUploader(user);
+		// User user = userSession.getUser();
+		user.addUploadedFile(uploadedfile);
+		userService.updateUser(user);
+
+		uploadedfile = userService
+				.getFileByFilePath(uploadedfile.getFilePath());
+		return uploadedfile;
+	}
 	/**
 	 * Writes given content to a file.
 	 * 
