@@ -1,7 +1,11 @@
 package de.enwida.web;
 
+import java.beans.BeanInfo;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -9,7 +13,10 @@ import java.util.Date;
 import java.util.Random;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
+
+import de.enwida.web.db.model.UserLinesMetaData;
 
 public class FileGenerator {
 
@@ -24,6 +31,31 @@ public class FileGenerator {
 	}
 
 	@Test
+	public void setValueReflection() {
+		UserLinesMetaData metaData = new UserLinesMetaData();
+		try {
+
+		BeanInfo info = Introspector.getBeanInfo(metaData.getClass(),
+					Object.class);
+		PropertyDescriptor[] props = info.getPropertyDescriptors();
+		for (PropertyDescriptor pd : props) {
+			String name = pd.getName();
+			if (name.equals("name")) {
+				Method setter = pd.getWriteMethod();
+				// Method getter = pd.getReadMethod();
+				// Class<?> type = pd.getPropertyType();
+
+				setter.invoke(metaData, "somename");
+			}
+		}
+		} catch (Exception e) {
+			System.out.println(e);
+		}
+		System.out.println(metaData.getName());
+	}
+
+	@Test
+	@Ignore
 	public void generateFile() {
 		// TODO Auto-generated method stub
 		for (int i = 1; i <= 5; i++) {

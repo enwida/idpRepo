@@ -18,6 +18,7 @@
     		<property name="javax.persistence.validation.mode" value="ddl"/>
     		<property name="hibernate.show_sql" value="false" />
     		<property name="hibernate.default_schema" value="users" />
+    		<property name="hibernate.jdbc.batch_size" value="50" />
     	</properties>
     </persistence-unit>
     
