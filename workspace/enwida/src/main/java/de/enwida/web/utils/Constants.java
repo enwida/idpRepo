@@ -30,6 +30,8 @@ public class Constants {
 	public static final String USER_LINES_TABLE_SCHEMA_NAME = USERS_SCHEMA_NAME;
 	public static final String USER_LINES_METADATA_TABLE_NAME = "user_lines_metadata";
 	public static final String USER_LINES_METADATA_TABLE_SCHEMA_NAME = USERS_SCHEMA_NAME;
+	public static final String USER_LINES_METADATA_MAPPING_TABLE_NAME = "user_lines_metadata_mapping";
+	public static final String USER_LINES_METADATA_MAPPING_SCHEMA_NAME = USERS_SCHEMA_NAME;
 
 	public static final String USER_TABLE_NAME = "user";
 	public static final String USER_TABLE_SCHEMA_NAME = USERS_SCHEMA_NAME;
@@ -37,6 +39,7 @@ public class Constants {
 	public static final String GROUP_TABLE_SCHEMA_NAME = USERS_SCHEMA_NAME;
 	public static final String USER_GROUP_TABLE_NAME = "user_group";
 	public static final String USER_GROUP_TABLE_SCHEMA_NAME = USERS_SCHEMA_NAME;
+
 
 	// Cookie Constants
 	public static final String ENWIDA_CHART_COOKIE_ANONYMOUS = "enwida_chart_cookie_anonymous";
@@ -50,5 +53,6 @@ public class Constants {
 	public static final String DISPLAY_DATE_FORMAT = "yyyy-MM-dd hh:mm:ss aaa";
 	public static final String UPLOAD_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss.SSSZ";
 	public static final String UPLOAD_LINES_KEY = "uploadedlines";
+	public static final String UPLOAD_LINES_METADATA_KEY = "uploadedlinesmetadata";
 
 }

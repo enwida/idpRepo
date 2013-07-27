@@ -8,7 +8,7 @@ import de.enwida.web.model.Role;
 import de.enwida.web.model.User;
 import de.enwida.web.model.UserRoleCollection;
 
-public interface IUserDao {
+public interface IUserDao extends IDao<User> {
     public long save(User user);
 
     public String getPassword(String email);

@@ -40,9 +40,11 @@ import org.springframework.web.servlet.ModelAndView;
 
 import de.enwida.web.db.model.UploadedFile;
 import de.enwida.web.db.model.UserLines;
+import de.enwida.web.db.model.UserLinesMetaData;
 import de.enwida.web.model.FileUpload;
 import de.enwida.web.model.User;
 import de.enwida.web.service.implementation.MailServiceImpl;
+import de.enwida.web.service.interfaces.IUserLinesService;
 import de.enwida.web.service.interfaces.IUserService;
 import de.enwida.web.utils.Constants;
 import de.enwida.web.utils.LogoFinder;
@@ -59,6 +61,9 @@ public class UserController {
 	@Autowired
 	private IUserService userService;
 	
+	@Autowired
+	private IUserLinesService userLineService;
+
 	@Autowired
 	private UserSessionManager userSession;
 
@@ -308,14 +313,21 @@ public class UserController {
 								.getArguments()[0];
 						List<UserLines> userlines = (List<UserLines>) parsedData
 								.get(Constants.UPLOAD_LINES_KEY);
+						UserLinesMetaData metaData = (UserLinesMetaData) parsedData
+								.get(Constants.UPLOAD_LINES_METADATA_KEY);
 						logger.debug("Number of lines to insert :"
 								+ userlines.size());
-						// If validation succeeds save it in database
-						// UploadedFile file = saveFile(filetobeuploaded, user);
+						// If validation succeeds upload file in uploads
+						// directory
+						UploadedFile file = saveFile(filetobeuploaded, user);
+						// upload datalines in userlines
+						// and userlinesmetadata table
+						// metaData.setUserLines(new
+						// HashSet<UserLines>(userlines));
+						userLineService.createUserLines(userlines, metaData,
+								user, file);
 						// update uploaded files list
-						// filetable.add(file);
-						// upload datalines in userlines and userlinesmetadata
-						// table
+						filetable.add(file);
 
 						removeTemporaryFile(filetobeuploaded);
 

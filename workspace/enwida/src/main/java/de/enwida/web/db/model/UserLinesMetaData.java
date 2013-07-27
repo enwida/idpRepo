@@ -4,14 +4,21 @@
 package de.enwida.web.db.model;
 
 import java.io.Serializable;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import de.enwida.web.model.User;
 import de.enwida.web.utils.Constants;
@@ -28,6 +35,7 @@ public class UserLinesMetaData implements Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = -4956441651030174844L;
+	public static final String LINE_METADATA_ID = "LINE_METADATA_ID";
 	public static final String LINE_ID = "LINE_ID";
 	public static final String OWNER = "OWNER";
 	public static final String TYPE = "TYPE";
@@ -41,9 +49,14 @@ public class UserLinesMetaData implements Serializable{
 	public static final String RESOLUTION = "RESOLUTION";
 	
 	@Id
-	@OneToOne
-	@JoinColumn(name = LINE_ID, referencedColumnName = UserLines.ID)
-	private UserLines lineId;
+	@Column(name = LINE_METADATA_ID)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private int metaDataId;
+
+	@OneToMany(cascade = CascadeType.ALL)
+	@ElementCollection(targetClass = UserLines.class, fetch = FetchType.EAGER)
+	@JoinTable(name = Constants.USER_LINES_METADATA_MAPPING_TABLE_NAME, schema = Constants.USER_LINES_METADATA_MAPPING_SCHEMA_NAME, joinColumns = { @JoinColumn(name = LINE_METADATA_ID, referencedColumnName = LINE_METADATA_ID) }, inverseJoinColumns = { @JoinColumn(name = LINE_ID, referencedColumnName = UserLines.ID) })
+	private Set<UserLines> userLines;
 
 	@OneToOne
 	@JoinColumn(name = OWNER, referencedColumnName = User.USER_ID)
@@ -77,13 +90,20 @@ public class UserLinesMetaData implements Serializable{
 	@Column(name = RESOLUTION)
 	private String resolution;
 
-	@Transient
-	public UserLines getLineId() {
-		return lineId;
+	public int getMetaDataId() {
+		return metaDataId;
 	}
 
-	public void setLineId(UserLines lineId) {
-		this.lineId = lineId;
+	public void setMetaDataId(int metaDataId) {
+		this.metaDataId = metaDataId;
+	}
+
+	public Set<UserLines> getUserLines() {
+		return userLines;
+	}
+
+	public void setUserLines(Set<UserLines> userLines) {
+		this.userLines = userLines;
 	}
 
 	public User getOwner() {
@@ -168,8 +188,10 @@ public class UserLinesMetaData implements Serializable{
 
 	@Override
 	public String toString() {
-		return "UserLinesMetaData ["
-				+ (lineId != null ? "lineId=" + lineId + ", " : "")
+		return "UserLinesMetaData [metaDataId="
+				+ metaDataId
+				+ ", "
+				+ (userLines != null ? "userLines=" + userLines + ", " : "")
 				+ (owner != null ? "owner=" + owner + ", " : "")
 				+ (file != null ? "file=" + file + ", " : "")
 				+ (type != null ? "type=" + type + ", " : "")

@@ -6,12 +6,15 @@ package de.enwida.web.db.model;
 import java.io.Serializable;
 import java.util.Calendar;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToOne;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -47,7 +50,8 @@ public class UserLines implements Serializable {
 	@Column(name = VALUE)
 	private double value;
 
-	@OneToOne(mappedBy = "lineId", targetEntity = UserLinesMetaData.class)
+	@ManyToOne(cascade = CascadeType.ALL, targetEntity = UserLinesMetaData.class)
+	@JoinTable(name = Constants.USER_LINES_METADATA_MAPPING_TABLE_NAME, schema = Constants.USER_LINES_METADATA_MAPPING_SCHEMA_NAME, joinColumns = { @JoinColumn(name = UserLinesMetaData.LINE_ID, referencedColumnName = UserLines.ID) }, inverseJoinColumns = { @JoinColumn(name = UserLinesMetaData.LINE_METADATA_ID, referencedColumnName = UserLinesMetaData.LINE_METADATA_ID) })
 	private UserLinesMetaData lineMetaData;
 
 	/**
