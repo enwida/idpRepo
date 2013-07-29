@@ -30,8 +30,6 @@ public class Constants {
 	public static final String USER_LINES_TABLE_SCHEMA_NAME = USERS_SCHEMA_NAME;
 	public static final String USER_LINES_METADATA_TABLE_NAME = "user_lines_metadata";
 	public static final String USER_LINES_METADATA_TABLE_SCHEMA_NAME = USERS_SCHEMA_NAME;
-	public static final String USER_LINES_METADATA_MAPPING_TABLE_NAME = "user_lines_metadata_mapping";
-	public static final String USER_LINES_METADATA_MAPPING_SCHEMA_NAME = USERS_SCHEMA_NAME;
 
 	public static final String USER_TABLE_NAME = "user";
 	public static final String USER_TABLE_SCHEMA_NAME = USERS_SCHEMA_NAME;

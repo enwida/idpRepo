@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
@@ -22,6 +23,7 @@ import org.springframework.stereotype.Repository;
 import de.enwida.web.controller.AdminController;
 import de.enwida.web.dao.interfaces.AbstractBaseDao;
 import de.enwida.web.dao.interfaces.IUserDao;
+import de.enwida.web.db.model.UploadedFile;
 import de.enwida.web.model.Group;
 import de.enwida.web.model.Role;
 import de.enwida.web.model.User;
@@ -1255,6 +1257,20 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
         
         return false;        
     }
+
+	@Override
+	public int getUploadedFileVersion(UploadedFile uplaodedfile, User user) {
+		int revision = 1;
+		User latestuser = getUserByName(user.getUserName());
+		Set<UploadedFile> uploadedFiles = latestuser.getUploadedFiles();
+		for (UploadedFile file : uploadedFiles) {
+			if (file.getDisplayFileName().equals(
+					uplaodedfile.getDisplayFileName())) {
+				revision += 1;
+			}
+		}
+		return revision;
+	}
 
 	@Override
 	public Long getNextSequence(String schema, String sequenceName) {

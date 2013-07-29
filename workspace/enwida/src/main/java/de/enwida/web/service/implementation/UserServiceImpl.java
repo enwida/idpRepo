@@ -247,4 +247,9 @@ public class UserServiceImpl implements IUserService {
 	public UploadedFile getFileByFilePath(String filePath) {
 		return fileDao.getFileByFilePath(filePath);
 	}
+
+	@Override
+	public int getUploadedFileVersion(UploadedFile file, User user) {
+		return userDao.getUploadedFileVersion(file, user);
+	}
 }

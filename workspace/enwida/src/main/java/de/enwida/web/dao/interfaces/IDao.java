@@ -23,4 +23,6 @@ public interface IDao <T> {
 	public void delete(T entity);
 
 	public void deleteById(long entityId);
+
+	public Long getNextSequenceNumber(String schema, String sequenceName);
 }

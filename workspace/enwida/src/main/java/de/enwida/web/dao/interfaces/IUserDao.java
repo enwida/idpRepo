@@ -3,6 +3,7 @@ package de.enwida.web.dao.interfaces;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.enwida.web.db.model.UploadedFile;
 import de.enwida.web.model.Group;
 import de.enwida.web.model.Role;
 import de.enwida.web.model.User;
@@ -82,4 +83,6 @@ public interface IUserDao extends IDao<User> {
     public boolean activateUser(String username);
 
 	public Long getNextSequence(String schema, String sequenceName);
+
+	int getUploadedFileVersion(UploadedFile file, User user);
 }

@@ -13,7 +13,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -53,7 +52,7 @@ public class UserLines implements Serializable {
 	private double value;
 
 	@ManyToOne(cascade = CascadeType.ALL, targetEntity = UserLinesMetaData.class)
-	@JoinTable(name = Constants.USER_LINES_METADATA_MAPPING_TABLE_NAME, schema = Constants.USER_LINES_METADATA_MAPPING_SCHEMA_NAME, joinColumns = { @JoinColumn(name = UserLinesMetaData.LINE_ID, referencedColumnName = UserLines.ID) }, inverseJoinColumns = { @JoinColumn(name = UserLinesMetaData.LINE_METADATA_ID, referencedColumnName = UserLinesMetaData.LINE_METADATA_ID) })
+	@JoinColumn(name = UserLinesMetaData.LINE_METADATA_ID)
 	private UserLinesMetaData lineMetaData;
 
 	/**

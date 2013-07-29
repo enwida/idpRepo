@@ -51,6 +51,7 @@
 						<th>Id</th>
 						<th>File Name</th>
 						<th>Upload Date</th>
+						<th>Revision</th>
 						<th>Options</th>
 				</tr>
 				<c:choose>
@@ -60,6 +61,7 @@
 							<td><c:out value="${file.id}"/></td>
 							<td><c:out value="${file.displayFileName}"/></td>
 							<td><c:out value="${file.displayUploadDate}"/></td>
+							<td><c:out value="${file.revision}"/></td>
 							<td><a target="_blank" href="./files/<c:out value='${file.id}'/>">download</a></td>
 						</tr>
 						</c:forEach>
@@ -67,7 +69,7 @@
 					</c:when>
 					<c:otherwise>
 						<tr>
-							<td colspan="4">No data found</td>
+							<td colspan="5">No data found</td>
 						</tr>
 					</c:otherwise>
 				</c:choose>

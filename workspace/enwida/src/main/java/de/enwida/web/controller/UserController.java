@@ -306,8 +306,8 @@ public class UserController {
 							fileValidator);
 					ObjectError status = results.getGlobalError();
 
-					if (status.getCode()
-							.equalsIgnoreCase("file.upload.success")) {
+					if (status.getCode().equalsIgnoreCase(
+							"file.upload.parse.success")) {
 
 						Map<String, Object> parsedData = (Map<String, Object>) status
 								.getArguments()[0];
@@ -315,25 +315,25 @@ public class UserController {
 								.get(Constants.UPLOAD_LINES_KEY);
 						UserLinesMetaData metaData = (UserLinesMetaData) parsedData
 								.get(Constants.UPLOAD_LINES_METADATA_KEY);
-						logger.debug("Number of lines to insert :"
-								+ userlines.size());
-						// If validation succeeds upload file in uploads
-						// directory
-						UploadedFile file = saveFile(filetobeuploaded, user);
-						// upload datalines in userlines
-						// and userlinesmetadata table
-						// metaData.setUserLines(new
-						// HashSet<UserLines>(userlines));
-						userLineService.createUserLines(userlines, metaData,
-								user, file);
-						// update uploaded files list
-						filetable.add(file);
 
-						removeTemporaryFile(filetobeuploaded);
-
-						model.put("successmsg", uploadsuccessmsg);
+						boolean recordsInserted = userLineService
+								.createUserLines(userlines, metaData);
+						if (recordsInserted) {
+							// if atleast one record is written then upload
+							// file.
+							UploadedFile file = saveFile(filetobeuploaded, user);
+							// update file Id (which already have owner details)
+							metaData.setFile(file);
+							userLineService.updateUserLineMetaData(metaData);
+							// update uploaded files list
+							filetable.add(file);
+							model.put("successmsg", uploadsuccessmsg);
+							removeTemporaryFile(filetobeuploaded);
+						} else {
+							model.put("errormsg", "Duplicate file uploaded");
+						}
 					} else if (status.getCode().equalsIgnoreCase(
-							"file.upload.error")) {
+							"file.upload.parse.error")) {
 						model.put("errormsg", status.getDefaultMessage());
 					}
 	            }
@@ -441,6 +441,10 @@ public class UserController {
 
 		uploadedfile.setUploader(user);
 		// User user = userSession.getUser();
+		user.addUploadedFile(uploadedfile);
+		// update revision based on
+		int revision = userService.getUploadedFileVersion(uploadedfile, user);
+		uploadedfile.setRevision(revision);
 		user.addUploadedFile(uploadedfile);
 		userService.updateUser(user);
 

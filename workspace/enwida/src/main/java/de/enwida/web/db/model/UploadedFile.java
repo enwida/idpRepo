@@ -47,6 +47,7 @@ public class UploadedFile implements Serializable, Comparable<UploadedFile> {
 	public static final String MODIFICATION_DATE = "MODIFICATION_DATE";
 	public static final String FORMAT = "FORMAT";
 	public static final String FILE_PATH = "FILE_PATH";
+	public static final String REVISION = "REVISION";
 	public static final SimpleDateFormat formatter = new SimpleDateFormat(
 			Constants.DISPLAY_DATE_FORMAT);
 	@Id
@@ -77,6 +78,9 @@ public class UploadedFile implements Serializable, Comparable<UploadedFile> {
 
 	@Column(name = FILE_PATH, length = 256)
 	private String filePath;
+
+	@Column(name = REVISION)
+	private int revision;
 
 	@Transient
 	private File actualFile;
@@ -147,6 +151,14 @@ public class UploadedFile implements Serializable, Comparable<UploadedFile> {
 
 	public void setFilePath(String filePath) {
 		this.filePath = filePath;
+	}
+
+	public int getRevision() {
+		return revision;
+	}
+
+	public void setRevision(int revision) {
+		this.revision = revision;
 	}
 
 	public File getActualFile() {

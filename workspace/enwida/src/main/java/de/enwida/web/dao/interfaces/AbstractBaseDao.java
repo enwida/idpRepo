@@ -17,7 +17,7 @@ import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import de.enwida.web.utils.Constants;
 
-public abstract class AbstractBaseDao<T> {
+public abstract class AbstractBaseDao<T> implements IDao<T> {
 
 	private Logger logger = Logger.getLogger(getClass());
 
@@ -74,14 +74,18 @@ public abstract class AbstractBaseDao<T> {
 
 	public void create(T entity) {
 		em.persist(entity);
+		em.flush();
 	}
 
 	public T update(T entity) {
-		return em.merge(entity);
+		entity = em.merge(entity);
+		em.flush();
+		return entity;
 	}
 
 	public void delete(T entity) {
 		em.remove(entity);
+		em.flush();
 	}
 
 	public void deleteById(long entityId) {

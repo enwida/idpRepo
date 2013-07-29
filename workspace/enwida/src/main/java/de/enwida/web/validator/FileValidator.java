@@ -63,19 +63,20 @@ public class FileValidator implements Validator {
 
 			if (dataMap.containsKey(ERROR_LINE_NUMBER)
 					&& dataMap.containsKey(ERROR_COLUMN_NUMBER)) {
-				errors.reject("file.upload.error",
+				errors.reject("file.upload.parse.error",
 						"Parse error at : (" + dataMap.get(ERROR_LINE_NUMBER)
 								+ "," + dataMap.get(ERROR_COLUMN_NUMBER)
 								+ ")");
 
 			} else if (dataMap.containsKey(ERROR_LINE_NUMBER)) {
 				errors.reject(
-						"file.upload.error",
+						"file.upload.parse.error",
 						"Parse error at line number : "
 								+ dataMap.get(ERROR_LINE_NUMBER));
 			} else {
 				// returning successfully parsed data in global errorobject
-				errors.reject("file.upload.success", new Object[] { dataMap },
+				errors.reject("file.upload.parse.success",
+						new Object[] { dataMap },
 						"Parsed successfully");
 			}
 		}

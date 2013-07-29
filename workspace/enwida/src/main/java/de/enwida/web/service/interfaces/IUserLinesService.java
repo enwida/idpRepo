@@ -5,18 +5,18 @@ import java.util.List;
 import de.enwida.web.db.model.UploadedFile;
 import de.enwida.web.db.model.UserLines;
 import de.enwida.web.db.model.UserLinesMetaData;
-import de.enwida.web.model.User;
 
 public interface IUserLinesService {
 
-	void createUserLines(List<UserLines> lines, UserLinesMetaData metaData,
-			User user, UploadedFile file);
+	boolean createUserLines(List<UserLines> lines, UserLinesMetaData metaData);
 
-	void createUserLine(UserLines line);
+	boolean createUserLine(UserLines line);
 
 	void createUserLineMetaData(UserLinesMetaData metaData);
 
-	void createUserLineMetaData(UserLinesMetaData metaData, User user,
+	void createUserLineMetaData(UserLinesMetaData metaData,
 			UploadedFile file);
+
+	void updateUserLineMetaData(UserLinesMetaData metaData);
 
 }

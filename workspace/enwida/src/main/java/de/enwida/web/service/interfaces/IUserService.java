@@ -66,4 +66,6 @@ public interface IUserService {
 	UploadedFile getFile(int fileId);
 
 	UploadedFile getFileByFilePath(String filePath);
+
+	public int getUploadedFileVersion(UploadedFile file, User user);
 }

@@ -12,6 +12,10 @@ import de.enwida.web.db.model.UserLinesMetaData;
  */
 public interface IUserLinesDao extends IDao<UserLines> {
 
-	void create(UserLinesMetaData metaData);
+	boolean createUserLineMetaData(UserLinesMetaData metaData);
+
+	UserLines getUserLine(UserLines userline);
+
+	boolean updateUserLineMetaData(UserLinesMetaData metaData);
 
 }
