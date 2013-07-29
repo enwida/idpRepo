@@ -1,3 +1,4 @@
 name: Enwida Web Documentation
 markdown: redcarpet
 pygments: true
+baseurl: /idpRepo
