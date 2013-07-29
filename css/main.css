@@ -29,10 +29,6 @@ h6 { font-size: 100%; }
 h1 { margin-bottom: 1em; }
 p { margin: 1em 0; }
 
-a         { color: #00a; }
-a:hover   { color: #000; }
-a:visited { color: #a0a; }
-
 table {
   font-size: inherit;
   font: 100%;
@@ -180,7 +176,16 @@ ul.posts span {
 
 #home li a {
   font-size: 22px;
+}
+
+a {
   color: #aa0000;
   text-decoration: none;
+  border-bottom: 1px dotted #aa0000;
+}
+
+a:hover {
+  color: #dd0000;
+  border-bottom: none;
 }
 
