@@ -1,4 +1,7 @@
-# Enwida Charts Frontend Documentation
+---
+layout: docu
+title: Enwida Charts Frontend Documentation
+---
 
 ## Location
 The charts frontend code is located within the web resources of the Spring web project:
@@ -98,11 +101,15 @@ tl;dr: `name = "John"` is an assignment in CoffeeScript which uses local variabl
 ##### Functions
 The CoffeeScript expression
 
-``(name, age) -> console.log name + " is " age + " years old"``
+```coffeescript
+(name, age) -> console.log name + " is " age + " years old"
+```
 
 translates to the following JavaScript:
 
-``function(name, age) { console.log(name + " is " + age + " years old"); }``
+```js
+function(name, age) { console.log(name + " is " + age + " years old"); }
+```
 
 As you can see, the function syntax contains less boilerplate and has the form `(arguments) -> body`,
 whereas function application does not require parenthesis if there is more than one argument
@@ -111,68 +118,74 @@ The following example shows how to write nested functions with more than one lin
 how function application binds tightly. It also shows the comment syntax, indentation rules, implicit
 returns, string interpolation and a bit of functional programming.
 
-    # Simple function definition
-    add = (a, b) -> a + b
+```coffeescript
+# Simple function definition
+add = (a, b) -> a + b
 
-    # Function with a multi-line body
-    curriedAdd = (a) ->
-      # Indention matters!
-      console.log parseInt a
+# Function with a multi-line body
+curriedAdd = (a) ->
+  # Indention matters!
+  console.log parseInt a
 
-      # Return a function
-      (b) ->
-        # Indention matters!
-        # String interpolation with #{expr}
-        console.log "b is: #{parseInt b}"
-        # The last statement of a function body
-        # is it's return value. But you can use
-        # an explicit return, too.
-        return a + b
+  # Return a function
+  (b) ->
+    # Indention matters!
+    # String interpolation with #{expr}
+    console.log "b is: #{parseInt b}"
+    # The last statement of a function body
+    # is it's return value. But you can use
+    # an explicit return, too.
+    return a + b
 
-    add 1, 2                 # yields 3
-    add(1,2)                 # yields 3
-    add 1, parseInt "2"      # yields 3
-    add 1, parseInt("2")     # yields 3
-    add parseInt("1"), 2     # yields 3
-    add (parseInt "1"), 2    # yields 3
-    add parseInt "1", 2      # not what you want! (add(parseInt("1", 2))
+add 1, 2                 # yields 3
+add(1,2)                 # yields 3
+add 1, parseInt "2"      # yields 3
+add 1, parseInt("2")     # yields 3
+add parseInt("1"), 2     # yields 3
+add (parseInt "1"), 2    # yields 3
+add parseInt "1", 2      # not what you want! (add(parseInt("1", 2))
 
-    curriedAdd(1)(2)         # yields 3
-    curriedAdd(1) 2          # yields 3
-    curriedAdd 1, 2          # not what you want! (curriedAdd(1,2))
+curriedAdd(1)(2)         # yields 3
+curriedAdd(1) 2          # yields 3
+curriedAdd 1, 2          # not what you want! (curriedAdd(1,2))
 
-    addThree = curriedAdd 3  # returns a function
-    addThree 5               # yields 8
-    addThree 8               # yields 11
+addThree = curriedAdd 3  # returns a function
+addThree 5               # yields 8
+addThree 8               # yields 11
 
-    console.log [1,2,3,4].map (i) -> i + 1 # prints [2,3,4,5]
-    console.log [1,2,3,4].map addThree     # prints [4,5,6,7]
+console.log [1,2,3,4].map (i) -> i + 1 # prints [2,3,4,5]
+console.log [1,2,3,4].map addThree     # prints [4,5,6,7]
 
-    hello = -> console.log "hello"
-    hello()       # prints hello
-    hello         # not what you want (returns the function)
-    hello "world" # prints hello (function ignores parameters)
+hello = -> console.log "hello"
+hello()       # prints hello
+hello         # not what you want (returns the function)
+hello "world" # prints hello (function ignores parameters)
+```
 
 The functions are translated to (an equivilant of) the following:
 
-    function add(a, b) { return a + b; }
+```js
+function add(a, b) { return a + b; }
 
-    function curriedAdd(a) {
-      console.log(parseInt(a));
-      return function(b) {
-        console.log("b is: " + parseInt(b));
-        return a + b;
-      };
-    }
+function curriedAdd(a) {
+  console.log(parseInt(a));
+  return function(b) {
+    console.log("b is: " + parseInt(b));
+    return a + b;
+  };
+}
+```
 
 Some of the function applications in JavaScript:
 
-    console.log(add(1,2));
-    console.log(curriedAdd(1)(2));
-    var addThree = curriedAdd(3);
-    console.log(addThree(4));
-    console.log([1,2,3].map(function(i) { return i + 1 }));
-    console.log([1,2,3].map(addThree));
+```js
+console.log(add(1,2));
+console.log(curriedAdd(1)(2));
+var addThree = curriedAdd(3);
+console.log(addThree(4));
+console.log([1,2,3].map(function(i) { return i + 1 }));
+console.log([1,2,3].map(addThree));
+```
 
 #### RequireJS
 
@@ -180,25 +193,31 @@ RequireJS provides means to define and load JavaScript modules which sadly is no
 of the language.
 Writing a module is as simple as (using CoffeeScript syntax):
 
-    define ->
+```coffeescript
+define ->
 
-      # The importer of the module will see
-      # whatever you return here. In this
-      # case an object containing two functions
-      functionA: -> console.log "hello"
-      functionB: -> console.log "world"
+  # The importer of the module will see
+  # whatever you return here. In this
+  # case an object containing two functions
+  functionA: -> console.log "hello"
+  functionB: -> console.log "world"
+```
 
 Using the path of the module file, you can now import it:
 
-    require ["dummy"], (Dummy) ->
-      # Say hello and world
-      Dummy.functionA()
-      Dummy.functionB()
+```coffeescript
+require ["dummy"], (Dummy) ->
+  # Say hello and world
+  Dummy.functionA()
+  Dummy.functionB()
+```
 
 To define the dependencies of a module use the following syntax:
 
-    define ["dependencyA", "dependencyB"], (DepA, DepB) ->
-      # Can access DepA and DepB here
+```coffeescript
+define ["dependencyA", "dependencyB"], (DepA, DepB) ->
+  # Can access DepA and DepB here
+```
 
 Normally, RequireJS loads the modules from the server when they are needed the first time. However,
 it is also possible to minify all modules into a single .js file using the `r.js` utility. The
@@ -211,23 +230,25 @@ The only way these components can communicate is by triggering events.
 
 Using RequireJS and Flight, a component is defined like this:
 
-    define ->
+```coffeescript
+define ->
 
-      flight.component ->
+  flight.component ->
 
-        @hello = -> console.log "hello"
+    @hello = -> console.log "hello"
 
-        @after "initialize", ->
-          console.log "I'm assigned to the following element:"
-          console.log @node  # DOM element
-          console.log @$node # jQuery-wrapped element
+    @after "initialize", ->
+      console.log "I'm assigned to the following element:"
+      console.log @node  # DOM element
+      console.log @$node # jQuery-wrapped element
 
-          @on "sayHello", ->
-            @hello()
-            @$node.text "hello"
-          @on "sayBye", ->
-            @$node.fadeOut()
-            @trigger "refresh"
+      @on "sayHello", ->
+        @hello()
+        @$node.text "hello"
+      @on "sayBye", ->
+        @$node.fadeOut()
+        @trigger "refresh"
+```
 
 This component listens to two events: "sayHello" and "sayBye". It also trigger a "refresh" event
 after it received the latter. An event travel up the DOM elements until a component handles it.
@@ -250,25 +271,27 @@ the desired chart ID. Other (optional) attributes are:
 
 Example:
 
-    <!doctype html>
-    <html>
-      <head>
-        <title>Charts</title>
-        <link rel="stylesheet" href="/enwida/resources/css/chart/assets.css" >
-        <link rel="stylesheet" href="/enwida/resources/css/chart/chart.css" >
-        <script src="/enwida/resources/js/chart/assets.js"></script>
-        <script src="/enwida/resources/js/chart/charts.js"></script>
-      </head>
-      <body>
-        <div class="chart" data-chart-id="0"></div>
-        <div class="chart" data-chart-id="0" data-chart-type="bar"></div>
-        <div class="chart"
-             data-chart-id="1"
-             data-chart-type="carpet"
-             data-width="1200">
-        </div>
-      </body>
-    </html>
+```html
+<!doctype html>
+<html>
+  <head>
+    <title>Charts</title>
+    <link rel="stylesheet" href="/enwida/resources/css/chart/assets.css" >
+    <link rel="stylesheet" href="/enwida/resources/css/chart/chart.css" >
+    <script src="/enwida/resources/js/chart/assets.js"></script>
+    <script src="/enwida/resources/js/chart/charts.js"></script>
+  </head>
+  <body>
+    <div class="chart" data-chart-id="0"></div>
+    <div class="chart" data-chart-id="0" data-chart-type="bar"></div>
+    <div class="chart"
+         data-chart-id="1"
+         data-chart-type="carpet"
+         data-width="1200">
+    </div>
+  </body>
+</html>
+```
     
 ## The Charts Frontend Implementation
 
@@ -276,7 +299,7 @@ Example:
 An overview of the architecture and the communication between the frontend components and the 
 web server is visualized in the following diagram ([high resolution version](frontend_overview.pdf)).
 
-<img src="frontend_overview.png" />
+<a href="img/frontend_overview.png"><img width="800" src="img/frontend_overview.png" /></a>
 
 #### Directory Structure
 Important files/directories in `js/chart`:
@@ -366,41 +389,47 @@ Every chart module exports an `init` method which takes an options object as its
 returns the corresponding chart object which exports a `draw` method.
 The options object has the following form:
 
-    { 
-      parent: element       # The element the SVG is drawn into
-      lines: [line]         # The lines to draw
-      disabledLines: [int]  # Disabled lines as indices (optional)
-      xLabel: string        # X axis label (optional)
-      yLabel: string        # Y axis label (optional)
-      width: int            # SVG width (optional)
-      height: int           # SVG height (optional)
-      scale: {              # Scale setup (optional)
-               x: scaleOptions
-               y: scaleOptions
-             }              
-    }
+```
+{ 
+  parent: element       # The element the SVG is drawn into
+  lines: [line]         # The lines to draw
+  disabledLines: [int]  # Disabled lines as indices (optional)
+  xLabel: string        # X axis label (optional)
+  yLabel: string        # Y axis label (optional)
+  width: int            # SVG width (optional)
+  height: int           # SVG height (optional)
+  scale: {              # Scale setup (optional)
+           x: scaleOptions
+           y: scaleOptions
+         }              
+}
+```
 
 A line object has the following form:
 
-    {
-      title: string
-      dataPoints: [{ x: double, y: double }]
-      # dataPoints for carpet chart: [{ x: double, y: double, v: double }]
-    }
+```
+{
+  title: string
+  dataPoints: [{ x: double, y: double }]
+  # dataPoints for carpet chart: [{ x: double, y: double, v: double }]
+}
+```
 
 The scale options have the following format:
 
-    {
-      type: scaleType              # Supported: "linear", "ordinal", "date"
-      dateFormats: [               # Adaptive date formats when using date scale
-                     [compareFormat, showFormat]
-                   ]
-      domain: {                    # Domain setup
-                type: [domainType] # Supported: "extent", "map", "stretch", "fixed"
-                high: double       # Upper bound for fixed domain
-                low: double        # Lower bound for fixed domain       
-              }
-    }
+```
+{
+  type: scaleType              # Supported: "linear", "ordinal", "date"
+  dateFormats: [               # Adaptive date formats when using date scale
+                 [compareFormat, showFormat]
+               ]
+  domain: {                    # Domain setup
+            type: [domainType] # Supported: "extent", "map", "stretch", "fixed"
+            high: double       # Upper bound for fixed domain
+            low: double        # Lower bound for fixed domain       
+          }
+}
+```
 
 ##### Scale Types
 A _linear_ scale maps every value between its lower and upper bound to the corresponding position
