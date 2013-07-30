@@ -190,5 +190,12 @@ public class UserManagement {
         rightsDao.enableDisableAspect(1, true);
         rightsDao.enableDisableAspect(1, false);
 	}
+	
+   @Test
+    public void testEnableLine() {
+     //   rightsDao.enableLine(dataAuthorization);
+        
+   }
+
 
 }

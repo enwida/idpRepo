@@ -46,7 +46,7 @@ CREATE TABLE users.rights (
     time2 character(50),
     aspect_id integer,
     enabled boolean NOT NULL,
-	CONSTRAINT "FK_roles_rights" FOREIGN KEY (role_id) REFERENCES users.roles(role_id)
+	CONSTRAINT "FK_roles_rights" FOREIGN KEY (role_id) REFERENCES users.roles(role_id)  ON DELETE CASCADE
 );
 
 
@@ -57,8 +57,8 @@ CREATE TABLE users.user_group (
 	id SERIAL PRIMARY KEY,
     user_id integer NOT NULL,
     group_id integer NOT NULL,
-	CONSTRAINT "FK_user_usergroup" FOREIGN KEY (user_id) REFERENCES users.users(user_id),
-	CONSTRAINT "FK_group_usergroup" FOREIGN KEY (group_id) REFERENCES users.groups(group_id)
+	CONSTRAINT "FK_user_usergroup" FOREIGN KEY (user_id) REFERENCES users.users(user_id) ON DELETE CASCADE,
+	CONSTRAINT "FK_group_usergroup" FOREIGN KEY (group_id) REFERENCES users.groups(group_id) ON DELETE CASCADE
 );
 
 
@@ -66,8 +66,8 @@ CREATE TABLE users.group_role (
 	id SERIAL PRIMARY KEY,
     group_id integer NOT NULL,
     role_id integer,
-	CONSTRAINT "FK_group_group" FOREIGN KEY (group_id) REFERENCES users.groups(group_id),
-	CONSTRAINT "FK_roles_rights" FOREIGN KEY (role_id) REFERENCES users.roles(role_id)
+	CONSTRAINT "FK_group_group" FOREIGN KEY (group_id) REFERENCES users.groups(group_id)  ON DELETE CASCADE,
+	CONSTRAINT "FK_roles_rights" FOREIGN KEY (role_id) REFERENCES users.roles(role_id)  ON DELETE CASCADE
 	);
 	
 -- Before inserting any data in any of the tables make sure all the DDL commands are executed	
