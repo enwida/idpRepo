@@ -12,6 +12,10 @@
 		<property name="password" value="${db.pw}" />
 	</bean>
 
+	<bean id="isoDateFormat" class="java.text.SimpleDateFormat">
+		<constructor-arg value="yyyy-MM-dd" />
+	</bean>
+
 	<bean id="userDao" class="de.enwida.web.dao.implementation.UserDaoImpl">
 	</bean>
 	<bean id="roleDao" class="de.enwida.web.dao.implementation.RoleDaoImpl">
@@ -19,6 +23,25 @@
 	<bean id="groupDao" class="de.enwida.web.dao.implementation.GroupDaoImpl">
 	</bean>
 	<bean id="rightsDao" class="de.enwida.web.dao.implementation.RightsDaoImpl">
+	</bean>
+	<bean id="dataAuthorizationDao" class="de.enwida.web.dao.implementation.DataAuthorizationDaoImpl">
+	</bean>
+	<bean id="dataAvailibilityDao" class="de.enwida.web.dao.implementation.DataAvailibilityDaoImpl">
+	</bean>
+
+    <bean scope="singleton" id="securityService" class="de.enwida.web.service.implementation.SecurityServiceImpl">
+    </bean>
+    <bean scope="singleton" id="availabilityService" class="de.enwida.web.service.implementation.AvailibilityServiceImpl">
+    </bean>
+    <bean scope="singleton" id="objectMapperFactory" class="de.enwida.web.utils.ObjectMapperFactory">
+    	<constructor-arg ref="isoDateFormat" />
+    </bean>
+    <bean scope="singleton" id="chartNavigationLocalizer" class="de.enwida.web.utils.ChartNavigationLocalizer">
+    </bean>
+	<bean scope="singleton" id="navigationService" class="de.enwida.web.service.implementation.NavigationServiceImpl">
+		<constructor-arg>
+			<value>${ENWIDA_HOME}/conf/navigation</value>
+		</constructor-arg>
 	</bean>
 	
 	<bean id="mailService" class="de.enwida.web.service.implementation.MailServiceImpl">
