@@ -16,7 +16,7 @@ public class LogoFinder {
     public String getImages(String companyName) {
         final WebClient webClient = new WebClient();
         HtmlPage page;
-        String companyLink="https://"+companyName+"/";
+        String companyLink="https://www."+companyName+"/";
         String images="";
         try {
             page = webClient.getPage(companyLink);
