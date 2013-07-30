@@ -64,6 +64,17 @@ public class NavigationServiceImpl implements INavigationService {
 		readJsonNavigationFiles();
 	}
 	
+	@Override
+	public Hashtable<Integer, ChartNavigationData> getAllDefaultNavigationData() {
+		// Clone every stored NavigationData instance
+		final Hashtable<Integer, ChartNavigationData> result = new Hashtable<>();
+		
+		for (final int key : defaultNavigationData.keySet()) {
+			result.put(key, defaultNavigationData.get(key).clone());
+		}
+		return result;
+	}
+
 	public ChartNavigationData getDefaultNavigationData(int chartId) {
 		final ChartNavigationData result = defaultNavigationData.get(chartId);
 		if (result == null) {
@@ -186,5 +197,5 @@ public class NavigationServiceImpl implements INavigationService {
 			}
 		}
 	}
-
+	
 }
