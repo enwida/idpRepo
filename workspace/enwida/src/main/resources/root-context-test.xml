@@ -24,11 +24,11 @@
 	</bean>
 	<bean id="rightsDao" class="de.enwida.web.dao.implementation.RightsDaoImpl">
 	</bean>
-	<bean id="dataAuthorizationDao" class="de.enwida.web.dao.implementation.DataAuthorizationDaoImpl">
-	</bean>
 	<bean id="dataAvailibilityDao" class="de.enwida.web.dao.implementation.DataAvailibilityDaoImpl">
 	</bean>
 
+    <bean scope="singleton" id="userService" class="de.enwida.web.service.implementation.UserServiceImpl">
+    </bean>
     <bean scope="singleton" id="securityService" class="de.enwida.web.service.implementation.SecurityServiceImpl">
     </bean>
     <bean scope="singleton" id="availabilityService" class="de.enwida.web.service.implementation.AvailibilityServiceImpl">
