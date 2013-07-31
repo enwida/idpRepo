@@ -17,6 +17,7 @@ CREATE TABLE users.users
   company_name character varying(45) NOT NULL,
   company_logo character varying(45),
   activation_id character varying(45),
+  username character varying(45),
   CONSTRAINT users_pkey PRIMARY KEY (user_id)
 )
 ;

@@ -7,13 +7,13 @@ import de.enwida.web.model.Group;
 import de.enwida.web.model.User;
 
 public interface IUserDao {
-    public long save(User user);
+    public long save(User user) throws Exception;
 
     public User getUserByID(Long id);
 
     public ArrayList<Group> getUserGroups(long userID);
 
-    public void deleteUser(User user);
+    public String deleteUser(User user);
 
     List<User> findAllUsers();
 

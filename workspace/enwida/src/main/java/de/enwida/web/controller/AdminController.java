@@ -148,12 +148,12 @@ public class AdminController {
         return userService.enableDisableAspect(rightID,enabled);
     }   
     
-    @RequestMapping(value="/user", method = RequestMethod.GET)
+    @RequestMapping(value="/admin_user", method = RequestMethod.GET)
     public String user(Model model,long userID) {
         
         User user= userService.getUser(userID);
         model.addAttribute("user", user);
-        model.addAttribute("content", "user");
+        model.addAttribute("content", "admin_user");
         //save userID into session
         ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
         HttpSession session = attr.getRequest().getSession(true);
@@ -162,7 +162,7 @@ public class AdminController {
         return "user/admin/master";
     }
     
-    @RequestMapping(value="/user",method=RequestMethod.POST, params = "save")
+    @RequestMapping(value="/admin_user",method=RequestMethod.POST, params = "save")
     public String processForm(@ModelAttribute(value="USER")User user,long userID,HttpSession session, ModelMap model)
     {
         User newUser=userService.getUser(userID);
@@ -171,7 +171,7 @@ public class AdminController {
         newUser.setTelephone(user.getTelephone());
         userService.updateUser(newUser);
         model.addAttribute("user", newUser);
-        model.addAttribute("content", "user");
+        model.addAttribute("content", "admin_user");
         return "user/admin/master";
     }
 

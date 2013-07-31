@@ -154,7 +154,7 @@ public class UserController {
 
             if (!result.hasErrors())
             {
-                if(userService.saveUser(user))
+                if(userService.saveUser(user,null))
                 {                           
                     String name = user.getFirstName() + " " + user.getLastName();
                     String userStatus="logout";

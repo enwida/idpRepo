@@ -28,15 +28,7 @@
 				<td><form:input path="telephone" value="${user.telephone}" /></td>
 			</tr>
 			<tr>
-				<td>Login Info</td>
-				<td></td>
-			</tr>
-			<tr>
-				<td>Cookie ID</td>
-				<td></td>
-			</tr>
-			<tr>
-				<td>Last Login Information</td>
+				<td>Joined On</td>
 				<td>${user.joiningDate}</td>
 			</tr>
 			<tr>

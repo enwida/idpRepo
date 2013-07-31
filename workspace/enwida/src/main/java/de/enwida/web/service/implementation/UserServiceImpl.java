@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,88 +46,97 @@ public class UserServiceImpl implements IUserService {
     private MailServiceImpl mailService;
     
     private static org.apache.log4j.Logger logger = Logger.getLogger(AdminController.class);
-	
+    
     public User getUser(Long id) {
-		
-		User user = userDao.getUserByID(id);
-		user.setRoles(roleDao.getUserRoles(user.getUserID()));
-		return user;
-	}
+        
+        User user = userDao.getUserByID(id);
+        if (user==null)
+            return null;
+        user.setRoles(roleDao.getUserRoles(user.getUserID()));
+        user.setGroups(groupDao.getUserGroups(user.getUserID()));
+        return user;
+    }
 
-	public List<User> getUsers() {
-	    return userDao.findAllUsers();
-	}
+    public List<User> getUsers() {
+        return userDao.findAllUsers();
+    }
 
-	@Transactional
-	public boolean saveUser(User user) 
-	{
-		
-		Date date = new Date(Calendar.getInstance().getTimeInMillis());
-		user.setJoiningDate(date);
-		user.setEnabled(false);
-		
-		// Generating activation Id for User
-		EnwidaUtils activationIdGenerator = new EnwidaUtils();
-		user.setActivationKey(activationIdGenerator.getActivationId());
-		
-		// Saving user in the user table
-		long userId = userDao.save(user);
-				
-		if(userId != -1)
-		{			
-			Group group = groupDao.getGroupByCompanyName(user.getCompanyName());
-			
-			if(group != null && group.isAutoPass())
-			{
-		        Group newGroup = groupDao.getGroupByGroupId(group.getGroupID());
+    @Transactional
+    public boolean saveUser(User user, String activationHost) 
+    {
+        
+        Date date = new Date(Calendar.getInstance().getTimeInMillis());
+        user.setJoiningDate(date);
+        user.setEnabled(false);
+        
+        // Generating activation Id for User
+        EnwidaUtils activationIdGenerator = new EnwidaUtils();
+        user.setActivationKey(activationIdGenerator.getActivationId());
+        
+        // Saving user in the user table
+        long userId;
+        try {
+            userId = userDao.save(user);
+        } catch (Exception e) {
+            logger.info(e.getMessage());
+            return false;
+        }
+                
+        if(userId != -1)
+        {           
+            Group group = groupDao.getGroupByCompanyName(user.getCompanyName());
+            
+            if(group != null && group.isAutoPass())
+            {
+                Group newGroup = groupDao.getGroupByGroupId(group.getGroupID());
                 userDao.assignUserToGroup(userId, newGroup.getGroupID());
 
-			}
-			else
-			{
-				// saving in default group (Anonymous)
-			    Group anonymousGroup = groupDao.getGroupByName("anonymous");
-			    if(anonymousGroup == null)
-			    {
-			    	anonymousGroup = new Group();
-			    	anonymousGroup.setGroupName("anonymous");
-			    	anonymousGroup.setAutoPass(true);
+            }
+            else
+            {
+                // saving in default group (Anonymous)
+                Group anonymousGroup = groupDao.getGroupByName("anonymous");
+                if(anonymousGroup == null)
+                {
+                    anonymousGroup = new Group();
+                    anonymousGroup.setGroupName("anonymous");
+                    anonymousGroup.setAutoPass(true);
                     anonymousGroup = groupDao.addGroup(anonymousGroup);
-			    }
+                }
                 userDao.assignUserToGroup(userId, anonymousGroup.getGroupID());
-			}
-			
-			try 
-			{
-				mailService.SendEmail(user.getUserName(), "Activation Link", Constants.ACTIVATION_URL + "username=" + user.getUserName() + "&actId=" + user.getActivationKey());
-			}
-			catch (Exception e) {
-			    logger.error(e.getMessage());
-				return false;
-			}
-			
-			return true;
-		}
-		else
-		{
-			return false;
-		}		 
-	}
+            }
+            
+            try 
+            {
+                mailService.SendEmail(user.getUserName(), "Activation Link", activationHost + "activateuser.html?username=" + user.getUserName() + "&actId=" + user.getActivationKey());
+            }
+            catch (Exception e) {
+                logger.error(e.getMessage());
+                return false;
+            }
+            
+            return true;
+        }
+        else
+        {
+            return false;
+        }        
+    }
 
-	public String getPassword(String email) {
-		return userDao.getUserByName(email).getPassword();
-	}
-	
-	public List<Group> getUserGroups(long userID) {
-		return userDao.getUserGroups(userID);
-	}
+    public String getPassword(String email) {
+        return userDao.getUserByName(email).getPassword();
+    }
+    
+    public List<Group> getUserGroups(long userID) {
+        return userDao.getUserGroups(userID);
+    }
 
-	public List<Group> getAllGroups() {
-		return groupDao.getAllGroups();
-	}
+    public List<Group> getAllGroups() {
+        return groupDao.getAllGroups();
+    }
 
     public Group addGroup(Group newGroup) {
-    	newGroup.setAutoPass(false);
+        newGroup.setAutoPass(false);
         return groupDao.addGroup(newGroup);
     }
 
@@ -138,33 +148,38 @@ public class UserServiceImpl implements IUserService {
         return roleDao.getAllRoles();
     }
     
-	public boolean checkEmailAvailability(String email) {	
-		return userDao.getUserByName(email)==null;
-	}
-	
+    public boolean checkEmailAvailability(String email) {   
+        return userDao.getUserByName(email)==null;
+    }
+    
     public boolean updateUser(User user) {
         return userDao.updateUser(user);
     }
 
     public User getUser(String userName) {
-        return userDao.getUserByName(userName);
+        User user= userDao.getUserByName(userName);
+        if (user==null)
+            return null;
+        user.setRoles(roleDao.getUserRoles(user.getUserID()));
+        user.setGroups(groupDao.getUserGroups(user.getUserID()));
+        return user;
     }
 
     public void resetPassword(long userID) {
         SecureRandom random = new SecureRandom();
         String newPassword=new BigInteger(130, random).toString(32);
         User user=userDao.getUserByID(userID);
-        user.setPassword(newPassword);
         userDao.updateUser(user);
         try {
             mailService.SendEmail(user.getUserName(),"New Password","Your new Password:"+newPassword);
         } catch (Exception e) {
             throw new RuntimeException(e);
-        }
+        }       
+        user.setPassword(newPassword);
     }
 
-    public void deleteUser(User user) {
-        userDao.deleteUser(user);
+    public String deleteUser(User user) {
+        return userDao.deleteUser(user);
     }
 
     public String assignUserToGroup(int userID, int groupID) {
@@ -223,15 +238,22 @@ public class UserServiceImpl implements IUserService {
         return rightsDao.enableDisableAspect(rightID,enabled);
     }
 
-	@Override
-	public boolean activateUser(String username, String activationCode) 
-	{
-		if(userDao.checkUserActivationId(username, activationCode))
-		{
-			return userDao.activateUser(username);
-			
-		}
-		
-		return false;
-	}
+    @Override
+    public boolean activateUser(String username, String activationCode) 
+    {
+        if(userDao.checkUserActivationId(username, activationCode))
+        {
+            return userDao.activateUser(username);
+            
+        }
+        
+        return false;
+    }
+
+    @Override
+    public User getCurrentUser() {
+        String userName = SecurityContextHolder.getContext().getAuthentication().getName();
+        return this.getUser(userName);
+    }
+
 }
