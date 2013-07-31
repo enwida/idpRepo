@@ -9,8 +9,9 @@
 
 <h1><message:message code="de.enwida.userManagement.registrationForm" /></h1><br />
 <form:form commandName="USER" name="registrationForm">
+<label id="userErrorLabel" cssStyle="color : red;">${emailAvailabilityError}</label> 
 <table>
-	<tr><td><message:message code="de.enwida.userManagement.mailAddress" />(*) : </td><td><form:input path="userName" onchange="getCompany(this.value)"/><label id="userErrorLabel" cssStyle="color : red;">${emailAvailabilityError}</label> <form:errors id="userError" path="userName" cssStyle="color : red;"/></td></tr>
+	<tr><td><message:message code="de.enwida.userManagement.mailAddress" />(*) : </td><td><form:input path="userName" onchange="getCompany(this.value)"/><form:errors id="userError" path="userName" cssStyle="color : red;"/></td></tr>
 	<tr><td><message:message code="de.enwida.userManagement.firstName" />(*) : </td><td><form:input path="firstName" /><form:errors path="firstName" cssStyle="color : red;"/></td></tr>
 	<tr><td><message:message code="de.enwida.userManagement.lastName" />(*) : </td><td><form:input path="lastName" /><form:errors path="lastName" cssStyle="color : red;"/></td></tr>
 	<tr><td><message:message code="de.enwida.userManagement.password" />(*) : </td><td><form:password path="password" /><form:errors path="password" cssStyle="color : red;"/></td></tr>

@@ -15,7 +15,7 @@ CREATE TABLE users.users
   joining_date date NOT NULL,
   telephone character varying(20),
   company_name character varying(45) NOT NULL,
-  company_logo character varying(45),
+  company_logo character varying(200),
   activation_id character varying(45),
   username character varying(45),
   CONSTRAINT users_pkey PRIMARY KEY (user_id)
@@ -80,6 +80,9 @@ VALUES ('micha', 'ach1m', 'Michael', 'Steck', true, '2013-07-02', '0049 89 12345
 
 INSERT INTO users.roles( role_name, description)
     VALUES ('admin','adminstrator');
+
+INSERT INTO users.roles( role_name, description)
+    VALUES ('anonymous','all anonymous users');
 	
 INSERT INTO users.groups(group_name, auto_pass)
 VALUES ('adminGroup', TRUE);

@@ -1,6 +1,5 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page session="false" %>
-
 <div>
 	<h1>
 	<form action="admin_editaspect.html" method="GET">
@@ -11,6 +10,9 @@
 					</select>
 	</form>
 	</h1>
+	<script>
+$("#myselect").val(get_url_parameter('roleID'));
+</script>
 	<table id="tblAspects" class="tablesorter">
 	<thead>
 		<tr>

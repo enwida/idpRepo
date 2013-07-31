@@ -46,7 +46,7 @@ public class AdminController {
     private static org.apache.log4j.Logger logger = Logger.getLogger(AdminController.class);
 	
 	
-	@RequestMapping(value="/admin_editAspect", method = RequestMethod.GET)
+	@RequestMapping(value="/admin_editaspect", method = RequestMethod.GET)
 	public String editAspect(Model model,long roleID) {
 	    
 	    List<AspectRight> aspectRights= aspectService.getAllAspects(roleID);
@@ -58,13 +58,13 @@ public class AdminController {
 		model.addAttribute("content", "admin/admin_editAspect");
 		return "user/master";
 	}
-	@RequestMapping(value="/admin_userList", method = RequestMethod.GET)
+	@RequestMapping(value="/admin_userlist", method = RequestMethod.GET)
 	public String userList(Model model) {
         
 		return admin(model);
 	}
     
-    @RequestMapping(value="/admin_editGroup", method = RequestMethod.GET)
+    @RequestMapping(value="/admin_editgroup", method = RequestMethod.GET)
     public String editGroup(Model model,String action,Integer groupID,String newGroup) {    
         try {
             if( action!=null){
@@ -94,7 +94,7 @@ public class AdminController {
     }
        
     
-    @RequestMapping(value="/admin_roleList", method = RequestMethod.GET)
+    @RequestMapping(value="/admin_rolelist", method = RequestMethod.GET)
     public String roleList(Model model) {
         
         List<Role> roles= userService.getAllRoles();
@@ -121,7 +121,7 @@ public class AdminController {
         return "user/master";
     }
     
-    @RequestMapping(value="/admin_userLog", method = RequestMethod.GET)
+    @RequestMapping(value="/admin_userlog", method = RequestMethod.GET)
     public String  userLog(Model model,String user) {
         File file;
         try {
@@ -206,7 +206,7 @@ public class AdminController {
         return userList(model);
     }
     
-    @RequestMapping(value="/admin_editGroup",method=RequestMethod.POST, params = "assign")
+    @RequestMapping(value="/admin_editgroup",method=RequestMethod.POST, params = "assign")
     public String assignUserToGroup(Model model,int selectedUser,int selectedGroup)
     {
         String result= userService.assignUserToGroup(selectedUser,selectedGroup);
@@ -214,7 +214,7 @@ public class AdminController {
         return editGroup(model,null,0,null);
     }
     
-    @RequestMapping(value="/admin_editGroup",method=RequestMethod.POST, params = "deassign")
+    @RequestMapping(value="/admin_editgroup",method=RequestMethod.POST, params = "deassign")
     public String deassignUserToGroup(Model model,int selectedUser,int selectedGroup)
     {
         String result= userService.deassignUserToGroup(selectedUser,selectedGroup);
@@ -222,7 +222,7 @@ public class AdminController {
         return editGroup(model,null,0,null);
     }
     
-    @RequestMapping(value="/admin_editGroup",method=RequestMethod.POST, params = "addGroup")
+    @RequestMapping(value="/admin_editgroup",method=RequestMethod.POST, params = "addGroup")
     public String addGroup(Model model,String newGroup,boolean autoPass)
     {
         Group group=new Group();
@@ -238,7 +238,7 @@ public class AdminController {
         return editGroup(model,null,0,null);
     }
     
-    @RequestMapping(value="/admin_roleList",method=RequestMethod.POST, params = "assign")
+    @RequestMapping(value="/admin_rolelist",method=RequestMethod.POST, params = "assign")
     public String assignRoleToGroup(Model model,int selectedRole,int selectedGroup)
     {
         String result=  userService.assignRoleToGroup(selectedRole,selectedGroup);
@@ -246,7 +246,7 @@ public class AdminController {
         return roleList(model);
     }
     
-    @RequestMapping(value="/admin_roleList",method=RequestMethod.POST, params = "deassign")
+    @RequestMapping(value="/admin_rolelist",method=RequestMethod.POST, params = "deassign")
     public String deassignRoleToGroup(Model model,int selectedRole,int selectedGroup)
     {
         String result= userService.deassignRoleToGroup(selectedRole,selectedGroup);

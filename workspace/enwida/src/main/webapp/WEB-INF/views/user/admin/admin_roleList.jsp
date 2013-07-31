@@ -38,14 +38,14 @@
 				<td>${role.description}</td>
 				<td><c:forEach var="group" items="${role.assignedGroups}"><a href="editGroup">${group.groupName}</a>,</c:forEach></td>
 				<td>
-					<a href='editAspect?roleID=${role.roleID}'> Details</a>
+					<a href='admin_editaspect?roleID=${role.roleID}'> Details</a>
 				</td>
 			<tr>
 		</c:forEach>
 	</tbody>
 </table>
 
-	<table  id="tblRoleMap" class="tablesorter">
+	<table  id="tblRoleMap">
 		<thead>
 			<tr>
 				<th>Group Name</th>
@@ -73,8 +73,8 @@
 		<tr>
 			<td></td>
 			<td>
-				<input type="submit" name="assign" value="assign"/>
-				<input type="submit" name="deassign" value="deassign"/>
+				<input type="submit" class="btn btn-primary" name="assign" value="assign"/>
+				<input type="submit" class="btn btn-primary"  name="deassign" value="deassign"/>
 			</td>
 		</tr>
 	</table>

@@ -21,13 +21,7 @@
 					<button type="button" class="btn prev"><i class="icon-arrow-left"></i></button>
 					<span class="pagedisplay"></span> <!-- this can be any element, including an input -->
 					<button type="button" class="btn next"><i class="icon-arrow-right"></i></button>
-					<button type="button" class="btn last"><i class="icon-step-forward"></i></button>
-					<select class="pagesize input-mini" title="Select page size">
-						<option selected="selected" value="10">10</option>
-						<option value="20">20</option>
-						<option value="30">30</option>
-						<option value="40">40</option>
-					</select>
+					<button type="button" class="btn last"><i class="icon-step-forward"></i></button>	
 					<select class="pagenum input-mini" title="Select page number"></select>
 				</th>
 			</tr>
@@ -50,7 +44,7 @@
 				<td><input name="newGroup" type='text' placeholder=" <message:message code="de.enwida.userManagement.addGroup" />" /></td>
 				<td></td>
 				<td><input name="autoPass" type='checkbox' /></td>
-				<td><input type="submit" name="addGroup" value=" <message:message code="de.enwida.userManagement.add" />"/></td>
+				<td><input type="submit" class="btn btn-primary"  name="addGroup" value=" <message:message code="de.enwida.userManagement.add" />"/></td>
 			<tr>
 		<tfoot>
 	</table>
@@ -59,7 +53,7 @@ $(function() {
 	$('#selectedUser option[value='+QueryString.userID+']').attr('selected','selected');
 });
 </script>
-	<table  id="tblGroupMap" class="tablesorter">
+	<table  id="tblGroupMap">
 		<thead>
 			<tr>
 				<th><message:message code="de.enwida.userManagement.groupName" /></th>
@@ -87,8 +81,8 @@ $(function() {
 		<tr>
 			<td></td>
 			<td>
-				<input type="submit" name="assign" value="<message:message code="de.enwida.userManagement.assign" />"/>
-				<input type="submit" name="deassign" value="<message:message code="de.enwida.userManagement.deAssign" />"/>
+				<input type="submit" class="btn btn-primary"  name="assign" value="<message:message code="de.enwida.userManagement.assign" />"/>
+				<input type="submit" class="btn btn-primary"  name="deassign" value="<message:message code="de.enwida.userManagement.deAssign" />"/>
 			</td>
 		</tr>
 	</table>

@@ -13,9 +13,9 @@
 			<div class="nav-collapse collapse">
 				<ul class="nav navbar-nav">
 					<li><a href="http://localhost:8080/enwida/user/">Enwida</a></li>
-					<li><a href="admin_userList">Users</a></li>
-					<li><a href="admin_editGroup">Groups</a></li>
-					<li><a href="admin_roleList">Roles</a></li>
+					<li><a href="admin_userlist">Users</a></li>
+					<li><a href="admin_editgroup">Groups</a></li>
+					<li><a href="admin_rolelist">Roles</a></li>
 				</ul>
 			</div>
 			<!--/.nav-collapse -->

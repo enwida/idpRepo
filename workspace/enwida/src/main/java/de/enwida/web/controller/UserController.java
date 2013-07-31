@@ -146,7 +146,7 @@ public class UserController {
 	    if(request.getMethod().equalsIgnoreCase("GET")){  
 	        User user=new User();
             model.addAttribute("USER", user);
-            model.addAttribute("content", "register");
+            model.addAttribute("content", "user/register");
 	    }else{
 	        User user=(User) model.get("USER");
 	        BindingResult result =new BeanPropertyBindingResult(user, "USER");
@@ -154,7 +154,7 @@ public class UserController {
 
             if (!result.hasErrors())
             {
-                if(userService.saveUser(user,null))
+                if(userService.saveUser(user,"http://localhost:8080/enwida/user/"))
                 {                           
                     String name = user.getFirstName() + " " + user.getLastName();
                     String userStatus="logout";
@@ -165,7 +165,7 @@ public class UserController {
                     model.addAttribute("userStatusURL", userStatusURL);             
                 }
             }
-            model.addAttribute("content","register");
+            model.addAttribute("content","user/register");
             model.addAllAttributes(result.getModel());
 	    }
 	}
@@ -174,14 +174,14 @@ public class UserController {
     public String showForm(ModelMap model, HttpServletRequest request){
 	    preProcessRegisterForm(request,model);
 	    
-        return "user/master";
+        return "master";
     }
 	
 	@RequestMapping(value="/register",method=RequestMethod.POST)
 	public String processForm(@ModelAttribute(value="USER") User user, ModelMap model, HttpServletRequest request)
 	{
 		preProcessRegisterForm(request,model);
-        return "user/master";
+        return "master";
 	}
 	
 	@RequestMapping(value="/checkEmail",method=RequestMethod.GET)
@@ -197,7 +197,7 @@ public class UserController {
 		return availabilityCheck + "";
 	}
 
-	@RequestMapping(value="/activateUser",method=RequestMethod.GET)
+	@RequestMapping(value="/activateuser",method=RequestMethod.GET)
 	public String activateUser(ModelMap model, String username, String actId){
 		
 		boolean activated = userService.activateUser(username, actId);
