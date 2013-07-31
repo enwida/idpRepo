@@ -3,7 +3,7 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ page session="false"%>
 
-<form:form commandName="USER" modelAttribute="user">
+<form:form commandName="USER" modelAttribute="user" onsubmit="return confirm('Are you sure?');">
 	<h1><message:message code="de.enwida.userManagement.user" /> :${user.userName}</h1>
 	<div>
 		<table>
