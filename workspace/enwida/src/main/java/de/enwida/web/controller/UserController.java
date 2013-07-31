@@ -141,7 +141,7 @@ public class UserController {
 		return "user/download";
 	}
 	
-	public void methodTest(HttpServletRequest request,ModelMap model){
+	public void preProcessRegisterForm(HttpServletRequest request,ModelMap model){
 	    
 	    if(request.getMethod().equalsIgnoreCase("GET")){  
 	        User user=new User();
@@ -172,7 +172,7 @@ public class UserController {
 	
 	@RequestMapping(value="/register",method=RequestMethod.GET)
     public String showForm(ModelMap model, HttpServletRequest request){
-	    methodTest(request,model);
+	    preProcessRegisterForm(request,model);
 	    
         return "user/master";
     }
@@ -180,7 +180,7 @@ public class UserController {
 	@RequestMapping(value="/register",method=RequestMethod.POST)
 	public String processForm(@ModelAttribute(value="USER") User user, ModelMap model, HttpServletRequest request)
 	{
-		methodTest(request,model);
+		preProcessRegisterForm(request,model);
         return "user/master";
 	}
 	

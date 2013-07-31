@@ -10,12 +10,12 @@
 <body>
 	<div class="navbar navbar-inverse navbar-fixed-top">
 		<div class="container">
-			<a class="navbar-brand" href="http://localhost:8080/enwida/user/">Enwida</a>
 			<div class="nav-collapse collapse">
 				<ul class="nav navbar-nav">
-					<li><a href="userList">Users</a></li>
-					<li><a href="editGroup">Groups</a></li>
-					<li><a href="roleList">Roles</a></li>
+					<li><a href="http://localhost:8080/enwida/user/">Enwida</a></li>
+					<li><a href="admin_userList">Users</a></li>
+					<li><a href="admin_editGroup">Groups</a></li>
+					<li><a href="admin_roleList">Roles</a></li>
 				</ul>
 			</div>
 			<!--/.nav-collapse -->
