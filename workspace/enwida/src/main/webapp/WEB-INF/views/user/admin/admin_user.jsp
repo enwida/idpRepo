@@ -46,9 +46,9 @@
 				<td>${user.roles}</td>
 			</tr>
 		</table>
-		<input type="submit" name="delete" value="<message:message code="de.enwida.userManagement.delete" />" />
-	     <input	type="submit" name="resetPassword" value="<message:message code="de.enwida.userManagement.resetPassword" />" />
-	    <input	type="submit" name="save" value="<message:message code="de.enwida.userManagement.save" />" />
+		<input type="submit" class="btn btn-primary" name="delete" value="<message:message code="de.enwida.userManagement.delete" />" />
+	     <input	type="submit" class="btn btn-primary" name="resetPassword" value="<message:message code="de.enwida.userManagement.resetPassword" />" />
+	    <input	type="submit" class="btn btn-primary" name="save" value="<message:message code="de.enwida.userManagement.save" />" />
 	</div>
 </form:form>
    

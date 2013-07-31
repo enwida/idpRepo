@@ -55,8 +55,8 @@ public class AdminController {
         List<Role> roles= userService.getAllRoles();
         model.addAttribute("roles", roles);
 	    
-		model.addAttribute("content", "editAspect");
-		return "user/admin/master";
+		model.addAttribute("content", "admin/editAspect");
+		return "user/master";
 	}
 	@RequestMapping(value="/userList", method = RequestMethod.GET)
 	public String userList(Model model) {
@@ -89,8 +89,8 @@ public class AdminController {
         List<User> users= userService.getUsers();
         model.addAttribute("users", users);
         
-        model.addAttribute("content", "editGroup");
-        return "user/admin/master";
+        model.addAttribute("content", "admin/editGroup");
+        return "user/master";
     }
        
     
@@ -106,8 +106,8 @@ public class AdminController {
         List<Group> groups= userService.getAllGroups();
         model.addAttribute("groups", groups);
         
-        model.addAttribute("content", "roleList");
-        return "user/admin/master";
+        model.addAttribute("content", "admin/roleList");
+        return "user/master";
     }
     
     
@@ -117,8 +117,8 @@ public class AdminController {
         model.addAttribute("users", users);
         List<Group> groups= userService.getAllGroups();
         model.addAttribute("groups", groups);
-        model.addAttribute("content", "userList");
-        return "user/admin/master";
+        model.addAttribute("content", "admin/userList");
+        return "user/master";
     }
     
     @RequestMapping(value="/userLog", method = RequestMethod.GET)
@@ -131,8 +131,8 @@ public class AdminController {
             model.addAttribute("error", "File can not be read");
             logger.error(e.getMessage());
         } 
-        model.addAttribute("content", "userLog");
-        return "user/admin/master";
+        model.addAttribute("content", "admin/userLog");
+        return "user/master";
     }
     
     
@@ -153,13 +153,13 @@ public class AdminController {
         
         User user= userService.getUser(userID);
         model.addAttribute("user", user);
-        model.addAttribute("content", "admin_user");
+        model.addAttribute("content", "admin/admin_user");
         //save userID into session
         ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
         HttpSession session = attr.getRequest().getSession(true);
         
         session.setAttribute("userID", userID);
-        return "user/admin/master";
+        return "user/master";
     }
     
     @RequestMapping(value="/admin_user",method=RequestMethod.POST, params = "save")
@@ -171,8 +171,8 @@ public class AdminController {
         newUser.setTelephone(user.getTelephone());
         userService.updateUser(newUser);
         model.addAttribute("user", newUser);
-        model.addAttribute("content", "admin_user");
-        return "user/admin/master";
+        model.addAttribute("content", "admin/admin_user");
+        return "user/master";
     }
 
     @RequestMapping(value="/user",method=RequestMethod.POST, params = "resetPassword")
