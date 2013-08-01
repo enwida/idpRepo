@@ -73,6 +73,9 @@ public class FileValidator implements Validator {
 						"file.upload.parse.error",
 						"Parse error at line number : "
 								+ dataMap.get(ERROR_LINE_NUMBER));
+			} else if (dataMap.containsKey(Constants.GENERAL_ERROR_MESSAGE)) {
+				errors.reject("file.upload.parse.error",
+						(String) dataMap.get(Constants.GENERAL_ERROR_MESSAGE));
 			} else {
 				// returning successfully parsed data in global errorobject
 				errors.reject("file.upload.parse.success",
@@ -97,15 +100,18 @@ public class FileValidator implements Validator {
 			while ((line = br.readLine()) != null) {
 				// logger.debug("Reading line : " + linenumber);
 				// process the line.
-				if (line.contains("{")) {
-					line = line.replace("{", "");
+				if (!processbody && !line.contains("#")) {
+					// either data or header
+					metadata.setHeader1(line);
+					metadata.setHeader2(br.readLine());
 					processbody = true;
 					processheaders = false;
+					continue;
 				}
-				if (line.contains("}")) {
-					logger.debug("File end delimiter encountered");
-					break;
-				}
+				// if (line.contains("}")) {
+				// logger.debug("File end delimiter encountered");
+				// break;
+				// }
 				// process all headers and continue until
 				// process headers is not reset
 				if (processheaders) {
@@ -147,6 +153,10 @@ public class FileValidator implements Validator {
 		if (dataLines.size() > 0) {
 			dataMap.put(Constants.UPLOAD_LINES_KEY, dataLines);
 			dataMap.put(Constants.UPLOAD_LINES_METADATA_KEY, metadata);
+		} else if (processheaders) {
+			// update datamap
+			dataMap.put(Constants.GENERAL_ERROR_MESSAGE,
+					"Data starter not found");
 		}
 
 		return dataMap;
@@ -181,41 +191,49 @@ public class FileValidator implements Validator {
 	private UserLines processBody(String line, int linenumber,
 			Map<String, Object> dataMap) {
 		UserLines userline = null;
-		String[] content = line.split(";");
-		if (content != null && content.length == 2) {
-			Calendar timestamp = null;
-			double value = -1;
-			try {
-				timestamp = Calendar.getInstance();
-				Date date = new SimpleDateFormat(
+		Calendar timestamp = null;
+		double value = -1;
+		if (line != null && !line.trim().isEmpty()) {
+			String[] content = line.split(";");
+			if (content != null && content.length == 2) {
+				try {
+					timestamp = Calendar.getInstance();
+					Date date = new SimpleDateFormat(
 							Constants.UPLOAD_DATE_FORMAT, Locale.ENGLISH)
 							.parse(content[0].trim());
 					timestamp.setTime(date);
 
-			} catch (Exception e) {
-				dataMap.put(ERROR_COLUMN_NUMBER, (line.indexOf(content[0]) + 1));
+				} catch (Exception e) {
+					dataMap.put(ERROR_COLUMN_NUMBER,
+							(line.indexOf(content[0]) + 1));
+					dataMap.put(ERROR_LINE_NUMBER, linenumber);
+					return null;
+				}
+				try {
+					value = Double.parseDouble(content[1].trim());
+				} catch (Exception e) {
+					dataMap.put(ERROR_COLUMN_NUMBER,
+							(line.indexOf(content[1]) + 1));
+					dataMap.put(ERROR_LINE_NUMBER, linenumber);
+					return null;
+				}
+
+				userline = new UserLines(timestamp, value, null);
+			} else if (content != null && content.length == 1) {
+				dataMap.put(ERROR_LINE_NUMBER, linenumber);
+				dataMap.put(ERROR_COLUMN_NUMBER, (line.indexOf(";") + 1));
+
+			} else if (line.trim().equalsIgnoreCase(";;")) {
+				// handling black record
+				userline = new UserLines(null, -1, null);
+			} else {
+				// incorrect data encountered at line number
 				dataMap.put(ERROR_LINE_NUMBER, linenumber);
 				return null;
 			}
-			try {
-				value = Double.parseDouble(content[1].trim());
-			} catch (Exception e) {
-				dataMap.put(ERROR_COLUMN_NUMBER, (line.indexOf(content[1]) + 1));
-				dataMap.put(ERROR_LINE_NUMBER, linenumber);
-				return null;
-			}
-
-			userline = new UserLines(timestamp, value, null);
-		} else if (content != null && content.length == 1) {
-			dataMap.put(ERROR_LINE_NUMBER, linenumber);
-			dataMap.put(ERROR_COLUMN_NUMBER, (line.indexOf(";") + 1));
-
-		} else if (line.trim().equalsIgnoreCase(";;")) {
-			userline = new UserLines(null, -1, null);
 		} else {
-			// incorrect data encountered at line number
-			dataMap.put(ERROR_LINE_NUMBER, linenumber);
-			return null;
+			// Hnadling blank lines
+			userline = new UserLines(null, -1, null);
 		}
 		return userline;
 	}

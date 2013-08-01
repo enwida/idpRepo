@@ -32,13 +32,15 @@ public class UserLinesServiceImpl implements IUserLinesService {
 
 	@Override
 	public boolean createUserLine(UserLines line) {
-		if (userLinesDao.getUserLine(line) == null) {
-			userLinesDao.create(line);
-			return true;
-		} else {
-			// User line already present donot write
-			return false;
-		}
+		// if (userLinesDao.getUserLine(line) == null) {
+		// userLinesDao.create(line);
+		// return true;
+		// } else {
+		// // User line already present donot write
+		// return false;
+		// }
+		userLinesDao.create(line);
+		return true;
 	}
 
 	@Override

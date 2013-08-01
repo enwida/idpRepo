@@ -16,6 +16,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -64,6 +65,9 @@ public class UploadedFile implements Serializable, Comparable<UploadedFile> {
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = User.USER_ID, nullable = false)
 	private User uploader;
+
+	@OneToOne(mappedBy = "file")
+	private UserLinesMetaData metaData;
 
 	@Column(name = UPLOAD_DATE, nullable = false)
 	@Temporal(TemporalType.TIMESTAMP)
@@ -116,6 +120,14 @@ public class UploadedFile implements Serializable, Comparable<UploadedFile> {
 
 	public void setUploader(User uploader) {
 		this.uploader = uploader;
+	}
+
+	public UserLinesMetaData getMetaData() {
+		return metaData;
+	}
+
+	public void setMetaData(UserLinesMetaData metaData) {
+		this.metaData = metaData;
 	}
 
 	public String getDisplayUploadDate() {
@@ -202,5 +214,4 @@ public class UploadedFile implements Serializable, Comparable<UploadedFile> {
 		// Sort based on upload date descending order
 		return o.getUploadDate().compareTo(this.uploadDate);
 	}
-
 }

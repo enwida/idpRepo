@@ -46,34 +46,42 @@
 				</span>
 			</form:form>
 			
-			<table border="1">
-				<tr>
-						<th>Id</th>
-						<th>File Name</th>
-						<th>Upload Date</th>
-						<th>Revision</th>
-						<th>Options</th>
-				</tr>
-				<c:choose>
-					<c:when test="${not empty uploadedfiletable}">
-						<c:forEach var="file" items="${uploadedfiletable}">
-						<tr>
-							<td><c:out value="${file.id}"/></td>
-							<td><c:out value="${file.displayFileName}"/></td>
-							<td><c:out value="${file.displayUploadDate}"/></td>
-							<td><c:out value="${file.revision}"/></td>
-							<td><a target="_blank" href="./files/<c:out value='${file.id}'/>">download</a></td>
-						</tr>
-						</c:forEach>
-				
-					</c:when>
-					<c:otherwise>
-						<tr>
-							<td colspan="5">No data found</td>
-						</tr>
-					</c:otherwise>
-				</c:choose>
-			</table>
+			<form:form method="POST" commandName="fileReplace"
+				enctype="multipart/form-data">
+				<table border="1">
+					<tr>
+							<th>Id</th>
+							<th>File Name</th>
+							<th>Upload Date</th>
+							<th>Revision</th>
+							<th>Delete</th>
+							<th>Replace</th>
+							<th>Download</th>
+					</tr>
+					<c:choose>
+						<c:when test="${not empty uploadedfiletable}">
+							<c:forEach var="file" items="${uploadedfiletable}">
+							<tr>
+								<td><c:out value="${file.id}"/></td>
+								<td><c:out value="${file.displayFileName}"/></td>
+								<td><c:out value="${file.displayUploadDate}"/></td>
+								<td><c:out value="${file.revision}"/></td>
+								<td><input type="submit" value="Delete" /></td>
+								<td><input type="file" name="file" />
+								<input type="submit" value="Replace" /></td>
+								<td><a target="_blank" href="./files/<c:out value='${file.id}'/>">download</a></td>
+							</tr>
+							</c:forEach>
+					
+						</c:when>
+						<c:otherwise>
+							<tr>
+								<td colspan="7">No data found</td>
+							</tr>
+						</c:otherwise>
+					</c:choose>
+				</table>
+			</form:form>
 			<c:if test="${not empty errormsg}">
 			   <small><font color="red">
 			     <c:out value="${errormsg}"/>

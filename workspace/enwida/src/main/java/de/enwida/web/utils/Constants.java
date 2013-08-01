@@ -52,5 +52,6 @@ public class Constants {
 	public static final String UPLOAD_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss.SSSZ";
 	public static final String UPLOAD_LINES_KEY = "uploadedlines";
 	public static final String UPLOAD_LINES_METADATA_KEY = "uploadedlinesmetadata";
+	public static final String GENERAL_ERROR_MESSAGE = "errormesessage";
 
 }

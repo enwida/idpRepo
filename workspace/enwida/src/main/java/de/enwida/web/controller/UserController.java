@@ -281,8 +281,8 @@ public class UserController {
 		return new ModelAndView("user/upload", model);
 	}
 	
-	@RequestMapping(value="/upload", method = RequestMethod.POST)
 	@SuppressWarnings("unchecked")
+	@RequestMapping(value="/upload", method = RequestMethod.POST)
 	public ModelAndView postUplaodUserData(ModelMap model,
 			@ModelAttribute(value = "fileUpload") FileUpload fileUpload,
 			BindingResult result, HttpServletRequest request) {
@@ -341,6 +341,34 @@ public class UserController {
 				logger.error("Unable to upload file : " + displayfileName, e);
             }
         }
+		Collections.sort(filetable);
+		model.put("uploadedfiletable", filetable);
+		model.put("fileUpload", new FileUpload());
+		return new ModelAndView("user/upload", model);
+	}
+
+	@RequestMapping(value = "/replaceupload", method = RequestMethod.POST)
+	public ModelAndView replaceUplaodUserData(ModelMap model,
+			@ModelAttribute(value = "fileReplace") FileUpload fileUpload,
+			BindingResult result, HttpServletRequest request) {
+
+		boolean isMultipart = ServletFileUpload.isMultipartContent(request);
+		// fetch all files related to user
+		User user = userService.getUser("username1");
+		List<UploadedFile> filetable = new ArrayList<UploadedFile>(
+				user.getUploadedFiles());
+
+		String displayfileName = null;
+		if (isMultipart) {
+			try {
+				FileItem item = fileUpload.getFile().getFileItem();
+				if (!item.isFormField()) {
+
+				}
+			} catch (Exception e) {
+				logger.error("Unable to upload file : " + displayfileName, e);
+			}
+		}
 		Collections.sort(filetable);
 		model.put("uploadedfiletable", filetable);
 		model.put("fileUpload", new FileUpload());
@@ -443,8 +471,9 @@ public class UserController {
 		// User user = userSession.getUser();
 		user.addUploadedFile(uploadedfile);
 		// update revision based on
-		int revision = userService.getUploadedFileVersion(uploadedfile, user);
-		uploadedfile.setRevision(revision);
+		// int revision = userService.getUploadedFileVersion(uploadedfile,
+		// user);
+		uploadedfile.setRevision(1);
 		user.addUploadedFile(uploadedfile);
 		userService.updateUser(user);
 

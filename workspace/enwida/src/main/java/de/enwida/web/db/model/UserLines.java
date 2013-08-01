@@ -18,7 +18,6 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
-import javax.persistence.UniqueConstraint;
 
 import de.enwida.web.utils.Constants;
 
@@ -27,8 +26,7 @@ import de.enwida.web.utils.Constants;
  *
  */
 @Entity
-@Table(name = Constants.USER_LINES_TABLE_NAME, schema = Constants.USER_LINES_TABLE_SCHEMA_NAME, uniqueConstraints = { @UniqueConstraint(columnNames = {
-		UserLines.TIMESTAMP, UserLines.VALUE }) })
+@Table(name = Constants.USER_LINES_TABLE_NAME, schema = Constants.USER_LINES_TABLE_SCHEMA_NAME)
 public class UserLines implements Serializable {
 
 	/**

@@ -23,6 +23,7 @@ public class FileGenerator {
 
 
 	private static final String dateformat = "yyyy-MM-dd HH:mm:ss.SSSZ";
+	private static final String valueformat = "KWh";
 	public static SimpleDateFormat formatter = new SimpleDateFormat(dateformat);
 	public static DecimalFormat df = new DecimalFormat("####.########");
 
@@ -31,6 +32,7 @@ public class FileGenerator {
 	}
 
 	@Test
+	@Ignore
 	public void setValueReflection() {
 		UserLinesMetaData metaData = new UserLinesMetaData();
 		try {
@@ -55,7 +57,6 @@ public class FileGenerator {
 	}
 
 	@Test
-	@Ignore
 	public void generateFile() {
 		// TODO Auto-generated method stub
 		for (int i = 1; i <= 5; i++) {
@@ -75,11 +76,16 @@ public class FileGenerator {
 			FileWriter writer = new FileWriter(sFileName);
 
 			generateInfo(writer);
+			// first header
 			writer.append("Time");
 			writer.append(';');
 			writer.append("Data");
 			writer.append(";\n");
-			writer.append("{");
+			// second header
+			writer.append(dateformat);
+			writer.append(';');
+			writer.append(valueformat);
+			writer.append(";\n");
 
 			for (int i = 0; i < lines; i++) {
 				String formattedDate = formatter.format(getRandomDate());
@@ -88,7 +94,6 @@ public class FileGenerator {
 				writer.append(df.format(getRandomNumber()));
 				writer.append(";\n");
 			}
-			writer.append("}");
 			// generate whatever data you want
 
 			writer.flush();
@@ -112,15 +117,13 @@ public class FileGenerator {
 
 	public void generateInfo(FileWriter writer) throws IOException {
 		writer.append("######################################\n");
-		writer.append("######################################\n");
-		writer.append("######################################\n");
 		writer.append("#####Name : something#################\n");
-		writer.append("#####Comment : something##############\n");
-		writer.append("#####Unit : something#################\n");
+		writer.append("#####Comments : something##############\n");
+		writer.append("#####Units : KWh#######################\n");
 		writer.append("#####Country : DE#####################\n");
 		writer.append("#####Resolution : something###########\n");
-		writer.append("#####Interpolation style : average####\n");
-		writer.append("######################################\n");
+		writer.append("#####Interpolation style : left#######\n");
+		writer.append("#####Aspect : PowerConsumption########\n");
 		writer.append("######################################\n");
 	}
 }

@@ -43,6 +43,9 @@ public class UserLinesMetaData implements Serializable{
 	public static final String INTERPOLATION_STYLE = "INTERPOLATION_STYLE";
 	public static final String FILE_ID = "FILE_ID";
 	public static final String RESOLUTION = "RESOLUTION";
+	public static final String HEADER1 = "HEADER1";
+	public static final String HEADER2 = "HEADER2";
+	public static final String ASPECT = "ASPECT";
 	
 	@Id
 	@Column(name = LINE_METADATA_ID)
@@ -77,6 +80,15 @@ public class UserLinesMetaData implements Serializable{
 
 	@Column(name = RESOLUTION)
 	private String resolution;
+
+	@Column(name = HEADER1)
+	private String header1;
+
+	@Column(name = HEADER2)
+	private String header2;
+
+	@Column(name = ASPECT)
+	private String aspect;
 
 	public int getMetaDataId() {
 		return metaDataId;
@@ -158,6 +170,30 @@ public class UserLinesMetaData implements Serializable{
 		this.resolution = resolution;
 	}
 
+	public String getHeader1() {
+		return header1;
+	}
+
+	public void setHeader1(String header1) {
+		this.header1 = header1;
+	}
+
+	public String getHeader2() {
+		return header2;
+	}
+
+	public void setHeader2(String header2) {
+		this.header2 = header2;
+	}
+
+	public String getAspect() {
+		return aspect;
+	}
+
+	public void setAspect(String aspect) {
+		this.aspect = aspect;
+	}
+
 	@Override
 	public String toString() {
 		return "UserLinesMetaData [metaDataId="
@@ -172,7 +208,10 @@ public class UserLinesMetaData implements Serializable{
 				+ (country != null ? "country=" + country + ", " : "")
 				+ (interpolation != null ? "interpolation=" + interpolation
 						+ ", " : "")
-				+ (resolution != null ? "resolution=" + resolution : "") + "]";
+				+ (resolution != null ? "resolution=" + resolution + ", " : "")
+				+ (header1 != null ? "header1=" + header1 + ", " : "")
+				+ (header2 != null ? "header2=" + header2 + ", " : "")
+				+ (aspect != null ? "aspect=" + aspect : "") + "]";
 	}
 
 }
