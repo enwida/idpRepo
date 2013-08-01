@@ -68,7 +68,7 @@ public class UserManagement {
 	private User user;
 	
 	@Before
-	public void testUser() {
+	public void testUser() throws Exception {
 	    user=new User(100,"test1","test","test","test",false);
 	    user.setJoiningDate(new Date(Calendar.getInstance().getTimeInMillis()));
 	    user.setCompanyName("enwida.de");
@@ -96,7 +96,7 @@ public class UserManagement {
     }
    
    @Test
-   public void updateUser() {
+   public void updateUser() throws Exception {
       userDao.save(user);
       user.setCompanyName("test");
       userDao.updateUser(user);
@@ -190,5 +190,12 @@ public class UserManagement {
         rightsDao.enableDisableAspect(1, true);
         rightsDao.enableDisableAspect(1, false);
 	}
+	
+   @Test
+    public void testEnableLine() {
+     //   rightsDao.enableLine(dataAuthorization);
+        
+   }
+
 
 }

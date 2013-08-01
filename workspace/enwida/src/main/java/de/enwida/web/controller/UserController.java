@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
+import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -140,35 +141,47 @@ public class UserController {
 		return "user/download";
 	}
 	
+	public void preProcessRegisterForm(HttpServletRequest request,ModelMap model){
+	    
+	    if(request.getMethod().equalsIgnoreCase("GET")){  
+	        User user=new User();
+            model.addAttribute("USER", user);
+            model.addAttribute("content", "user/register");
+	    }else{
+	        User user=(User) model.get("USER");
+	        BindingResult result =new BeanPropertyBindingResult(user, "USER");
+	        userValidator.validate(user, result);       
+
+            if (!result.hasErrors())
+            {
+                if(userService.saveUser(user,"http://localhost:8080/enwida/user/"))
+                {                           
+                    String name = user.getFirstName() + " " + user.getLastName();
+                    String userStatus="logout";
+                    String userStatusURL="../j_spring_security_logout";
+    
+                    model.addAttribute("username", name);
+                    model.addAttribute("userStatus", userStatus);
+                    model.addAttribute("userStatusURL", userStatusURL);             
+                }
+            }
+            model.addAttribute("content","user/register");
+            model.addAllAttributes(result.getModel());
+	    }
+	}
+	
 	@RequestMapping(value="/register",method=RequestMethod.GET)
-    public String showForm(ModelMap model){
-		User user = new User();
-        model.addAttribute("USER", user);
-        model.addAttribute("content", "register");
-        return "user/master";
+    public String showForm(ModelMap model, HttpServletRequest request){
+	    preProcessRegisterForm(request,model);
+	    
+        return "master";
     }
 	
 	@RequestMapping(value="/register",method=RequestMethod.POST)
-	public String processForm(@ModelAttribute(value="USER") User user, BindingResult result, ModelMap model)
+	public String processForm(@ModelAttribute(value="USER") User user, ModelMap model, HttpServletRequest request)
 	{
-		userValidator.validate(user, result);	    
-
-		if (!result.hasErrors())
-		{
-	        if(userService.saveUser(user))
-	        {	        		        
-        		String name = user.getFirstName() + " " + user.getLastName();
-        		String userStatus="logout";
-        		String userStatusURL="../j_spring_security_logout";
-
-        		model.addAttribute("username", name);
-        		model.addAttribute("userStatus", userStatus);
-        		model.addAttribute("userStatusURL", userStatusURL);
-        		return "user/index";        		
-	        }
-	    }
-		model.addAttribute("content","register");
-        return "user/master";
+		preProcessRegisterForm(request,model);
+        return "master";
 	}
 	
 	@RequestMapping(value="/checkEmail",method=RequestMethod.GET)
@@ -184,8 +197,8 @@ public class UserController {
 		return availabilityCheck + "";
 	}
 
-	@RequestMapping(value="/activateUser",method=RequestMethod.GET)
-	public @ResponseBody String activateUser(ModelMap model, String username, String actId){
+	@RequestMapping(value="/activateuser",method=RequestMethod.GET)
+	public String activateUser(ModelMap model, String username, String actId){
 		
 		boolean activated = userService.activateUser(username, actId);
 		if(activated)

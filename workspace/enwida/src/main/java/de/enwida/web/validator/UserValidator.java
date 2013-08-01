@@ -15,64 +15,77 @@ public class UserValidator implements Validator {
     @Autowired
     private IUserService userService;
 
-	public boolean supports(Class<?> clazz) {
+	public boolean supports(Class clazz) {
 		return clazz.equals(User.class);
+	}
+	
+	public void validateUser(User user,Errors errors,boolean updated){
+	    if (!updated){
+    	    if(user.getUserName().isEmpty())
+            {
+                errors.rejectValue("userName", "de.enwida.field.empty");
+            }
+            else if (!user.getUserName().matches(Constants.EMAIL_REGULAR_EXPRESSION))
+            {
+                errors.rejectValue("userName", "de.enwida.email.invalid");
+            }
+            
+            else if( userService.usernameAvailablility(user.getUserName()))
+            {
+                errors.rejectValue("userName", "de.enwida.email.inuse");
+            }
+            
+            // Checking password field
+            if(user.getPassword().isEmpty())
+            {
+                errors.rejectValue("password", "de.enwida.field.empty");
+            }
+            
+            // Checking confirm password field
+            if(user.getConfirmPassword().isEmpty())
+            {
+                errors.rejectValue("confirmPassword", "de.enwida.field.empty");
+            }
+            
+            if(!user.getConfirmPassword().isEmpty() && !user.getPassword().isEmpty())
+            {
+                if(!user.getPassword().equals(user.getConfirmPassword()))
+                {
+                    errors.rejectValue("password", "de.enwida.password.mismatch");
+                }
+            }
+	    }else{
+            
+            if(!user.getOldPassword().isEmpty() && updated)
+            {
+                if(!user.getOldPassword().equals(user.getConfirmPassword()))
+                {
+                    errors.rejectValue("password", "de.enwida.password.mismatch");
+                }
+            }
+	    }
+	    
+        if(user.getFirstName().isEmpty())
+        {
+            errors.rejectValue("firstName", "de.enwida.field.empty");
+        }
+        else if(!user.getFirstName().matches("[a-zA-Z.? ]*"))
+        {
+            errors.rejectValue("firstName", "de.enwida.field.inavlidChar");
+        }
+        if(user.getLastName().isEmpty())
+        {
+            errors.rejectValue("lastName", "de.enwida.field.empty");
+        }
+        else if(!user.getLastName().matches("[a-zA-Z.? ]*"))
+        {
+            errors.rejectValue("lastName", "de.enwida.field.inavlidChar");
+        }
 	}
 	
 	public void validate(Object target, Errors errors) {
 		User user = (User)target;
-
-
-		if(user.getUserName().isEmpty())
-		{
-			errors.rejectValue("userName", "de.enwida.field.empty");
-		}
-		else if (!user.getUserName().matches(Constants.EMAIL_REGULAR_EXPRESSION))
-		{
-			errors.rejectValue("userName", "de.enwida.email.invalid");
-		}
-		
-		else if(userService.usernameAvailablility(user.getUserName()))
-        {
-            errors.rejectValue("userName", "de.enwida.email.inuse");
-        }
-		
-		// Checking password field
-		if(user.getPassword().isEmpty())
-		{
-			errors.rejectValue("password", "de.enwida.field.empty");
-		}
-		
-		// Checking confirm password field
-		if(user.getConfirmPassword().isEmpty())
-		{
-			errors.rejectValue("confirmPassword", "de.enwida.field.empty");
-		}
-		
-		if(!user.getConfirmPassword().isEmpty() && !user.getPassword().isEmpty())
-		{
-			if(!user.getPassword().equals(user.getConfirmPassword()))
-			{
-				errors.rejectValue("password", "de.enwida.password.mismatch");
-			}
-		}
-		
-		if(user.getFirstName().isEmpty())
-		{
-			errors.rejectValue("firstName", "de.enwida.field.empty");
-		}
-		else if(!user.getFirstName().matches("[a-zA-Z.? ]*"))
-		{
-			errors.rejectValue("firstName", "de.enwida.field.inavlidChar");
-		}
-		if(user.getLastName().isEmpty())
-		{
-			errors.rejectValue("lastName", "de.enwida.field.empty");
-		}
-		else if(!user.getLastName().matches("[a-zA-Z.? ]*"))
-		{
-			errors.rejectValue("lastName", "de.enwida.field.inavlidChar");
-		}
+		validateUser(user,errors,false);
 	}
 
 }

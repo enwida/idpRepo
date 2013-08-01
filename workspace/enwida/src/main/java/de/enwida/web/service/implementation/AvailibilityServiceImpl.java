@@ -7,8 +7,8 @@ import org.springframework.stereotype.Service;
 
 import de.enwida.transport.Aspect;
 import de.enwida.transport.DataResolution;
-import de.enwida.web.dao.interfaces.IDataAutorizationDao;
 import de.enwida.web.dao.interfaces.IDataAvailibilityDao;
+import de.enwida.web.dao.interfaces.IRightsDao;
 import de.enwida.web.model.DataAvailibility;
 import de.enwida.web.model.User;
 import de.enwida.web.service.interfaces.IAvailibilityService;
@@ -23,7 +23,7 @@ public class AvailibilityServiceImpl implements IAvailibilityService {
 	private IDataAvailibilityDao dataAvailibilityDao;
 	
 	@Autowired
-	private IDataAutorizationDao dataAuthorizationDao;
+	private IRightsDao rightsDao;
 
 	public boolean isAvailable(DataAvailibility dataAvailibility) {
 		return dataAvailibilityDao.isAvailableByExample(dataAvailibility);

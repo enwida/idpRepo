@@ -64,6 +64,17 @@ public class NavigationServiceImpl implements INavigationService {
 		readJsonNavigationFiles();
 	}
 	
+	@Override
+	public Hashtable<Integer, ChartNavigationData> getAllDefaultNavigationData() {
+		// Clone every stored NavigationData instance
+		final Hashtable<Integer, ChartNavigationData> result = new Hashtable<>();
+		
+		for (final int key : defaultNavigationData.keySet()) {
+			result.put(key, defaultNavigationData.get(key).clone());
+		}
+		return result;
+	}
+
 	public ChartNavigationData getDefaultNavigationData(int chartId) {
 		final ChartNavigationData result = defaultNavigationData.get(chartId);
 		if (result == null) {
@@ -162,6 +173,14 @@ public class NavigationServiceImpl implements INavigationService {
 		final Pattern fileNamePattern = Pattern.compile("^(\\d+)\\.json$");
 		final File dir = new File(jsonDir);
 		
+		// Create the containing directory if it does not exist
+		if (!dir.exists()) {
+			dir.mkdir();
+			
+			// There won't be any files in the newly created directory
+			return;
+		}
+		
 		for (final File file : dir.listFiles()) {
 			if (file.isDirectory()) {
 				continue;
@@ -178,5 +197,5 @@ public class NavigationServiceImpl implements INavigationService {
 			}
 		}
 	}
-
+	
 }

@@ -7,8 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import de.enwida.transport.Aspect;
-import de.enwida.web.dao.interfaces.IDataAutorizationDao;
 import de.enwida.web.dao.interfaces.IDataAvailibilityDao;
+import de.enwida.web.dao.interfaces.IRightsDao;
 import de.enwida.web.model.DataAuthorization;
 import de.enwida.web.model.Role;
 import de.enwida.web.model.User;
@@ -24,10 +24,10 @@ public class SecurityServiceImpl implements ISecurityService {
 	private IDataAvailibilityDao dataAvailibilityDao;
 	
 	@Autowired
-	private IDataAutorizationDao dataAuthorizationDao;
+	private IRightsDao rightsDao;
 
 	public boolean isAllowed(DataAuthorization dataAuthorization) {
-		return dataAuthorizationDao.isAuthorizedByExample(dataAuthorization);
+		return rightsDao.isAuthorizedByExample(dataAuthorization);
 	}
 
     public ProductRestriction getProductRestriction(int productId, int tso, Aspect aspect, int role) {
@@ -40,7 +40,7 @@ public class SecurityServiceImpl implements ISecurityService {
 		dataAuthorization.setEnabled(true);
 		
 		ProductRestriction pR = new ProductRestriction();
-		List<DataAuthorization> dataAuthorizationResult = dataAuthorizationDao.getListByExample(dataAuthorization); 
+		List<DataAuthorization> dataAuthorizationResult = rightsDao.getListByExample(dataAuthorization); 
 		for (DataAuthorization dA : dataAuthorizationResult) {
 			pR.getResolutions().add(EnwidaUtils.getDataResolution(dA.getResolution()));
 			pR.setTimeRange(new CalendarRange(dA.getTimeFrom(), dA.getTimeTo()));
@@ -66,6 +66,6 @@ public class SecurityServiceImpl implements ISecurityService {
 		dataAuthorization.setTso(tso);
 		dataAuthorization.setEnabled(enable);
 		
-		dataAuthorizationDao.enableLine(dataAuthorization); 
+		rightsDao.enableLine(dataAuthorization); 
 	}	
 }

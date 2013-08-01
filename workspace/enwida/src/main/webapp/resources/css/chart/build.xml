@@ -1,0 +1,37 @@
+<project name="Enwida CSS Assets" default="all">
+  <description>
+    Minify CSS assets
+  </description>
+
+  <target name="all" depends="minifyCss" />
+
+  <target name="minifyCss" depends="npmDependencies">
+
+    <!-- Unix command-->
+    <exec executable="bash" osfamily="unix">
+      <arg value="-c" />
+      <arg value="cat assets/bootstrap.css assets/datepicker.css assets/tipsy.css | node_modules/.bin/cleancss -o assets.css" />
+    </exec>
+
+    <!-- Windows command-->
+    <exec executable="cmd" osfamily="windows">
+      <arg value="/C" />
+      <arg line="type assets\bootstrap.css assets\datepicker.css assets\tipsy.css | node_modules\.bin\cleancss.cmd -o assets.css" />
+    </exec>
+  </target>
+
+  <target name="npmDependencies">
+    <!-- Unix command-->
+    <exec executable="npm" osfamily="unix">
+      <arg value="install" />
+    </exec>
+
+    <!-- Windows command-->
+    <exec executable="cmd" osfamily="windows">
+      <arg value="/C" />
+      <arg line="npm install" />
+    </exec>
+
+  </target>
+</project>
+

@@ -2,7 +2,7 @@
 <%@ page session="false" %>
 <div>
 	<h1>
-	<form action="editAspect" method="GET">
+	<form action="admin_editaspect.html" method="GET">
 		Role: <select name="roleID" id="myselect" onchange="this.form.submit()">
 						<c:forEach var="role" items="${roles}">
 							<option value="${role.roleID}">${role.roleName}</option>
@@ -10,6 +10,9 @@
 					</select>
 	</form>
 	</h1>
+	<script>
+$("#myselect").val(get_url_parameter('roleID'));
+</script>
 	<table id="tblAspects" class="tablesorter">
 	<thead>
 		<tr>

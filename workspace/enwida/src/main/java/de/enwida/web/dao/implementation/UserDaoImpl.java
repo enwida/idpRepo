@@ -12,6 +12,7 @@ import javax.sql.DataSource;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.PreparedStatementCreator;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
@@ -58,51 +59,46 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
     }
 		
 	@Override
-	public void deleteUser(User user) {
+	public String deleteUser(User user) {
 	    String sql = "DELETE FROM  users.users WHERE user_name=?";
         try {
             this.jdbcTemplate.update(sql,user.getUserName());
         }catch (Exception e) {
-            logger.error(e.getMessage());
+            logger.info(e.getMessage());
+            return e.getMessage();
         }
+        return "OK";
 	}
 	
     @Override
-	public long save(final User user) 
+	public long save(final User user) throws Exception  
 	{
 		KeyHolder keyHolder = new GeneratedKeyHolder();	
 		Number id = -1;
 
-		try 
-		{
-			final String sql = "INSERT INTO users.users ( user_name, user_password, first_name, last_name, enabled, joining_date, telephone, company_name, company_logo, activation_id )" +
-					" VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";	    			
-			this.jdbcTemplate.update(
-				    new PreparedStatementCreator() {
-				        public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
-				            PreparedStatement ps = connection.prepareStatement(sql, new String[] {"user_id"});
-				            ps.setString(1, user.getUserName());
-				            ps.setString(2, user.getPassword());
-				            ps.setString(3, user.getFirstName());
-				            ps.setString(4, user.getLastName());
-				            ps.setBoolean(5, user.isEnabled());
-				            ps.setDate(6, user.getJoiningDate());
-				            ps.setString(7, user.getTelephone());
-                            ps.setString(8, user.getCompanyName());
-                            ps.setString(9, user.getCompanyLogo());
-                            ps.setString(10, user.getActivationKey());
-				            return ps;
-				        }
-				    },
-				    keyHolder);
-				
-		    id = keyHolder.getKey();
-		}
-		catch (Exception e) 
-		{
-            logger.error(e.getMessage());
-			e.printStackTrace();
-		}      
+		final String sql = "INSERT INTO users.users ( user_name, user_password, first_name, last_name, enabled, joining_date, telephone, company_name, company_logo, activation_id )" +
+				" VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";	    			
+		this.jdbcTemplate.update(
+			    new PreparedStatementCreator() {
+			        public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
+			            PreparedStatement ps = connection.prepareStatement(sql, new String[] {"user_id"});
+			            ps.setString(1, user.getUserName());
+			            ps.setString(2, user.getPassword());
+			            ps.setString(3, user.getFirstName());
+			            ps.setString(4, user.getLastName());
+			            ps.setBoolean(5, user.isEnabled());
+			            ps.setDate(6, user.getJoiningDate());
+			            ps.setString(7, user.getTelephone());
+                        ps.setString(8, user.getCompanyName());
+                        ps.setString(9, user.getCompanyLogo());
+                        ps.setString(10, user.getActivationKey());
+			            return ps;
+			        }
+			    },
+			    keyHolder);
+			
+	    id = keyHolder.getKey();
+     
 		return id.intValue();
 	}
 
@@ -118,11 +114,19 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
         return this.findAll();
     }
     
+    @SuppressWarnings("unchecked")
     @Override
     public boolean checkUserActivationId(String username, String activationCode) {
 
-        String sql = "select activation_id from users.users where users.user_name="+username;
-        String activationID=(String)this.jdbcTemplate.queryForObject(sql,  String.class);
+        String sql = "select activation_id from users.users where users.user_name=?";
+        String activationID = (String) this.jdbcTemplate.queryForObject(sql, new Object[] { username }, new RowMapper() {
+            @Override
+            public String mapRow(ResultSet rs, int arg1) throws SQLException {
+                return rs.getString("activation_id");
+            }
+        });
+        
+        //String activationID=(String)this.jdbcTemplate.queryForObject(sql, new Object[] { username }, String.class);
         return activationID.equalsIgnoreCase(activationCode);
     }
 
@@ -148,7 +152,7 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
         try {
             this.jdbcTemplate.update(sql, userId,groupID);
         }catch (Exception e) {
-            logger.error(e.getMessage());
+            logger.info(e.getMessage());
             return e.getLocalizedMessage();
         }
         return "OK";
@@ -163,7 +167,7 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
         try {
             this.jdbcTemplate.update(sql, userId,groupID);
         }catch (Exception e) {
-            logger.error(e.getMessage());
+            logger.info(e.getMessage());
             return e.getLocalizedMessage();
         }
         return "OK";
@@ -172,7 +176,7 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
     @Override
     public boolean activateUser(String username) {
         String sql = "UPDATE users.users SET enabled=? WHERE user_name=?";
-        this.jdbcTemplate.update(sql, username);
+        this.jdbcTemplate.update(sql, true, username);
         return true;
     }
 

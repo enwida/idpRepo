@@ -22,10 +22,11 @@ import de.enwida.web.controller.AdminController;
 import de.enwida.web.dao.interfaces.AbstractBaseDao;
 import de.enwida.web.dao.interfaces.IGroupDao;
 import de.enwida.web.model.Group;
+import de.enwida.web.model.Role;
 import de.enwida.web.model.User;
 
 @Repository
-public class GroupDaoImpl extends AbstractBaseDao<User> implements IGroupDao {
+public class GroupDaoImpl extends AbstractBaseDao<Group> implements IGroupDao {
 	
 	@Autowired
 	private DataSource datasource;
@@ -49,11 +50,20 @@ public class GroupDaoImpl extends AbstractBaseDao<User> implements IGroupDao {
             Group group = new Group();
             group.setGroupID(Long.parseLong(row.get("group_id").toString()));
             group.setGroupName((String) row.get("group_name"));
-            group.setAutoPass((boolean) row.get("auto_pass"));
+            group.setAutoPass((Boolean) row.get("auto_pass"));
             groups.add(group);
         }
 	    return groups;
 	}
+	
+   @Override
+    public Group mapRow(ResultSet rs, int rowNum) throws SQLException {
+        Group group = new Group();
+        group.setGroupID(rs.getLong("group_id"));
+        group.setGroupName(rs.getString("group_name"));
+        group.setAutoPass(rs.getBoolean("auto_pass"));
+        return group;
+    }
 	
 	@Override
     public Group addGroup(final Group newGroup) 
@@ -277,10 +287,10 @@ public class GroupDaoImpl extends AbstractBaseDao<User> implements IGroupDao {
     @Override
     public void removeGroup(long groupID) throws Exception {
 
-        String sql = "delete FROM users.user_group where group_id=?;" +
+        String sql = "delete FROM users.user_group where group_id=?; delete FROM users.group_role where group_id=?;" +
         		"delete FROM users.groups where group_id=?";
 
-        this.jdbcTemplate.update(sql,new Object[] { groupID, groupID });
+        this.jdbcTemplate.update(sql,new Object[] { groupID, groupID , groupID });
     }
    
    
@@ -292,7 +302,7 @@ public class GroupDaoImpl extends AbstractBaseDao<User> implements IGroupDao {
             Group group = new Group();
             group.setGroupID(Long.parseLong(row.get("group_id").toString()));
             group.setGroupName((String) row.get("group_name"));
-            group.setAutoPass((boolean) row.get("auto_pass"));
+            group.setAutoPass((Boolean) row.get("auto_pass"));
             return group;
         }
         return null;
@@ -305,4 +315,14 @@ public class GroupDaoImpl extends AbstractBaseDao<User> implements IGroupDao {
         List<Group> groups  = this.jdbcTemplate.query(sql,new BeanPropertyRowMapper(Group.class));
         return groups;
     }
+
+    @Override
+    public List<Group> getUserGroups(long userID) {
+        
+        String sql = " SELECT users.groups.group_id, group_name,auto_pass FROM users.groups"
+                + " INNER JOIN users.user_group ON users.user_group.group_id=users.groups.group_id where users.user_group.user_id=?";
+        
+        return this.jdbcTemplate.query(sql,new Object[]{userID},this);
+    }
+    
 }

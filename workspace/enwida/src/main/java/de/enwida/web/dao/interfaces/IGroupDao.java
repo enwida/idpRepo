@@ -29,4 +29,6 @@ public interface IGroupDao {
     
     public List<Group> getGroupsByRole(long roleID);
 
+    public List<Group> getUserGroups(long userID);
+
 }

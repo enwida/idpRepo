@@ -1,17 +1,29 @@
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ page session="false" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ page session="false"%>
+<!doctype html>
 <html>
 <head>
-	<title>Enwida Admin Page</title>
-	<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
-	<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
-	<script src="../resources/js/admin/jquery.tablesorter.js"></script>
-	<script src="../resources/js/admin/enwida.js"></script>
-	<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
-	<link rel="stylesheet" href="../resources/css/table.css" />
+<title>Enwida Admin Page</title>
+<script src="../resources/js/admin/assets/assets.js"></script>
+<link rel="stylesheet" href="../resources/css/admin/assets/assets.css" />
 </head>
 <body>
-	<img src="../resources/images/banner2.jpg">
-	<jsp:include page="${content}.jsp"></jsp:include>
+	<div class="navbar navbar-inverse navbar-fixed-top">
+		<div class="container">
+			<div class="nav-collapse collapse">
+				<ul class="nav navbar-nav">
+					<li><a href="http://localhost:8080/enwida/user/">Enwida</a></li>
+					<li><a href="admin/admin_userlist">Users</a></li>
+					<li><a href="admin/admin_editgroup">Groups</a></li>
+					<li><a href="admin/admin_rolelist">Roles</a></li>
+				</ul>
+			</div>
+			<!--/.nav-collapse -->
+		</div>
+	</div>
+	<div>
+		<a Style="color: red;">${error}</a><br> <a Style="color: blue;">${info}</a><br>
+		<jsp:include page="${content}.jsp"></jsp:include>
+	</div>
 </body>
 </html>

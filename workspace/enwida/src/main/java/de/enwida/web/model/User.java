@@ -11,6 +11,7 @@ public class User {
     private String firstName;
 	private String password;
     private String confirmPassword;
+    private String oldPassword;
     private String companyName;
     private String companyLogo;
 	private boolean enabled;
@@ -171,5 +172,13 @@ public class User {
 
     public void setRoles(List<Role> roles) {
         this.roles = roles;
+    }
+
+    public String getOldPassword() {
+        return oldPassword;
+    }
+
+    public void setOldPassword(String oldPassword) {
+        this.oldPassword = oldPassword;
     }
 }
