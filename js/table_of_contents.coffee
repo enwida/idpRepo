@@ -1,3 +1,6 @@
+# Author: Daniel Strittmatter
+# License: MIT
+
 $(document).ready ->
   setupTableOfContents()
 
