@@ -299,7 +299,7 @@ Example:
 An overview of the architecture and the communication between the frontend components and the 
 web server is visualized in the following diagram ([high resolution version](frontend_overview.pdf)).
 
-<a href="img/frontend_overview.png"><img width="800" src="img/frontend_overview.png" /></a>
+<a href="../img/frontend_overview.png"><img width="800" src="../img/frontend_overview.png" /></a>
 
 #### Directory Structure
 Important files/directories in `js/chart`:

@@ -19,7 +19,7 @@ Please follow these steps to install Enwida IDP application
 
 
 - Set Enwida Environment Variable. Ex:
-<img src="img/env_var.png" />
+<img src="../img/env_var.png" />
 
 
 
@@ -53,14 +53,14 @@ We use postgreSQL as a database and db.user.sql(should be found under database d
 Spring security is used for login management. Page permission configuration will be configured by security-app-context.xml. Users will be retrieved from the database according the configuration sql commands.
 
 Database Schema
-<center><img src="img/db_diagram.png" /></center>
+<center><img src="../img/db_diagram.png" /></center>
 
 
 ##Security structure
-<img src="img/securitySequenceDiagram.png" width="600px" />
+<img src="../img/securitySequenceDiagram.png" width="600px" />
    
 ##DAO structure
-<img src="img/daoInherit.png" width="600px" />
+<img src="../img/daoInherit.png" width="600px" />
 ###ADMIN PAGES
 
 **Page Name: User** 
@@ -238,7 +238,7 @@ Same Chart Request workflow will be used in Download page
 ##Upload
 Users can upload cvs formatted files to the webpage. This data is parsed and saved into database and displayed on a chart
 
-<img src="img/userManagementUML.png" width="600px" />
+<img src="../img/userManagementUML.png" width="600px" />
 
 ###Testing
 ####Testing Web page availability and functionality
