@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<project basedir=".">
+	<property name="js.dir" location="src/main/webapp/resources/js/admin/assets" />
+	<property name="css.dir" location="src/main/webapp/resources/css/admin/assets" />
+
+	<target name="clean">
+		<delete dir="build"/>
+	</target>
+
+	<!-- uglify JS  -->
+	<target name="uglify">
+		<exec dir="${js.dir}" executable="uglifyjs.cmd">
+			<arg line="jquery.js jquery.tablesorter.js jquery.tablesorter.widgets.js jquery.tablesorter.pager.js enwida.js -o assets.js"/>
+		</exec>
+	</target>
+
+	<!-- clean CSS  -->
+	<target name="cleancss">
+		<exec dir="${css.dir}" executable="cleancss.cmd">
+			<arg line="shadow.css bootstrap.min.css jquery-ui.css jquery.tablesorter.pager.css theme.bootstrap.css -o assets.css"/>
+		</exec>
+	</target>
+
+</project>
