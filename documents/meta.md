@@ -83,5 +83,5 @@ The `--watch` option causes Jekyll to recompile whenever you edit one of the doc
 
 ## Publishing
 If you are satisfied with the results, just commit and push your changes to the *gh-pages* branch.
-After around 5-10 minutes you can see the changes our github page under [enwida.github.com/idpRepo](http://enwida.github.com/idpRepo).
+After around 5-10 minutes you can see the changes on our github page under [enwida.github.com/idpRepo](http://enwida.github.com/idpRepo).
 
