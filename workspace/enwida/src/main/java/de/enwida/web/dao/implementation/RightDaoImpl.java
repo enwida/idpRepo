@@ -13,11 +13,11 @@ import org.springframework.stereotype.Repository;
 import de.enwida.transport.Aspect;
 import de.enwida.web.controller.AdminController;
 import de.enwida.web.dao.interfaces.AbstractBaseDao;
-import de.enwida.web.dao.interfaces.IRightsDao;
+import de.enwida.web.dao.interfaces.IRightDao;
 import de.enwida.web.model.Right;
 
 @Repository
-public class RightsDaoImpl extends AbstractBaseDao<Right> implements IRightsDao {
+public class RightDaoImpl extends AbstractBaseDao<Right> implements IRightDao {
 	
 	@Autowired
 	private DataSource datasource;

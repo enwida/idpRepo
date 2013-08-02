@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import de.enwida.web.controller.AdminController;
 import de.enwida.web.dao.interfaces.IGroupDao;
-import de.enwida.web.dao.interfaces.IRightsDao;
+import de.enwida.web.dao.interfaces.IRightDao;
 import de.enwida.web.dao.interfaces.IRoleDao;
 import de.enwida.web.dao.interfaces.IUserDao;
 import de.enwida.web.model.Group;
@@ -53,7 +53,7 @@ public class UserServiceImpl implements IUserService {
      * Rights Data Access Object
      */
     @Autowired
-    private IRightsDao rightsDao;
+    private IRightDao rightDao;
     /**
      * Mailing Service to send activation link or password
      */
@@ -321,7 +321,7 @@ public class UserServiceImpl implements IUserService {
      */
     @Override
     public void enableDisableAspect(int rightID, boolean enabled)throws Exception  {
-        rightsDao.enableDisableAspect(rightID,enabled);
+        rightDao.enableDisableAspect(rightID,enabled);
     }
     /**
      * Activates the user

@@ -39,7 +39,7 @@
 	<beans:bean id="userDao" class="de.enwida.web.dao.implementation.UserDaoImpl">
 	</beans:bean>
 	
-	<beans:bean id="aspectDao" class="de.enwida.web.dao.implementation.AspectDaoImpl">
+	<beans:bean id="rightDao" class="de.enwida.web.dao.implementation.RightDaoImpl">
 	</beans:bean>
 
 	<beans:bean scope="singleton" id="navigationLocalizer" class="de.enwida.web.utils.ChartNavigationLocalizer">

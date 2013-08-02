@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 
 import de.enwida.transport.Aspect;
 import de.enwida.web.dao.interfaces.IDataAvailibilityDao;
-import de.enwida.web.dao.interfaces.IRightsDao;
+import de.enwida.web.dao.interfaces.IRightDao;
 import de.enwida.web.model.Right;
 import de.enwida.web.model.Role;
 import de.enwida.web.model.User;
@@ -24,10 +24,10 @@ public class SecurityServiceImpl implements ISecurityService {
 	private IDataAvailibilityDao dataAvailibilityDao;
 	
 	@Autowired
-	private IRightsDao rightsDao;
+	private IRightDao rightDao;
 
 	public boolean isAllowed(Right dataAuthorization) throws Exception {
-		return rightsDao.isAuthorizedByExample(dataAuthorization);
+		return rightDao.isAuthorizedByExample(dataAuthorization);
 	}
 
     public ProductRestriction getProductRestriction(int productId, int tso, Aspect aspect, int role) throws Exception {
@@ -40,7 +40,7 @@ public class SecurityServiceImpl implements ISecurityService {
 		dataAuthorization.setEnabled(true);
 		
 		ProductRestriction pR = new ProductRestriction();
-		List<Right> dataAuthorizationResult = rightsDao.getListByExample(dataAuthorization); 
+		List<Right> dataAuthorizationResult = rightDao.getListByExample(dataAuthorization); 
 		for (Right dA : dataAuthorizationResult) {
 			pR.getResolutions().add(EnwidaUtils.getDataResolution(dA.getResolution()));
 			pR.setTimeRange(new CalendarRange(dA.getTimeFrom(), dA.getTimeTo()));
@@ -67,6 +67,6 @@ public class SecurityServiceImpl implements ISecurityService {
 		dataAuthorization.setEnabled(enable);
 		
 		
-		rightsDao.enableLine(dataAuthorization); 
+		rightDao.enableLine(dataAuthorization); 
 	}	
 }

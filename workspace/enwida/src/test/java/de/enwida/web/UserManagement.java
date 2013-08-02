@@ -32,7 +32,7 @@ import org.w3c.dom.NodeList;
 
 import de.enwida.web.controller.AdminController;
 import de.enwida.web.dao.implementation.GroupDaoImpl;
-import de.enwida.web.dao.implementation.RightsDaoImpl;
+import de.enwida.web.dao.implementation.RightDaoImpl;
 import de.enwida.web.dao.implementation.RoleDaoImpl;
 import de.enwida.web.dao.implementation.UserDaoImpl;
 import de.enwida.web.model.Group;
@@ -60,7 +60,7 @@ public class UserManagement {
     private RoleDaoImpl roleDao;   
     
     @Autowired
-    private RightsDaoImpl rightsDao;     
+    private RightDaoImpl rightsDao;     
 
     private static org.apache.log4j.Logger logger = Logger.getLogger(AdminController.class);
 

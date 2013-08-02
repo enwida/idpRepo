@@ -4,7 +4,7 @@ import java.util.List;
 
 import de.enwida.web.model.Right;
 
-public interface IRightsDao {
+public interface IRightDao {
 
     boolean enableDisableAspect(long rightID, boolean enabled)throws Exception;
     public void enableLine(Right dataAuthorization)throws Exception;
