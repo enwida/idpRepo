@@ -2,10 +2,19 @@
 <project basedir=".">
 	<property name="js.dir" location="src/main/webapp/resources/js/admin/assets" />
 	<property name="css.dir" location="src/main/webapp/resources/css/admin/assets" />
-
-	<target name="clean">
-		<delete dir="build"/>
-	</target>
+	<property name="lib.dir"     value="lib"/>
+	<property environment="env" />
+	<property file="${env.ENWIDA_HOME}/conf/enwida.config" />
+	
+	<echo message="Start"/>
+	
+	<!-- TODO:Include maven classpath here  -->
+	<path id="classpath">
+		<fileset dir="${lib.dir}" includes="**/*.jar"/>
+	</path>
+	<manifestclasspath property="manifest.classpath" jarfile="${jarfile}">
+		<classpath refid="classpath"/>
+	</manifestclasspath>
 
 	<!-- uglify JS  -->
 	<target name="uglify">
@@ -13,12 +22,21 @@
 			<arg line="jquery.js jquery.tablesorter.js jquery.tablesorter.widgets.js jquery.tablesorter.pager.js enwida.js -o assets.js"/>
 		</exec>
 	</target>
-
 	<!-- clean CSS  -->
 	<target name="cleancss">
 		<exec dir="${css.dir}" executable="cleancss.cmd">
 			<arg line="shadow.css bootstrap.min.css jquery-ui.css jquery.tablesorter.pager.css theme.bootstrap.css -o assets.css"/>
 		</exec>
 	</target>
-
+	
+	<!--Create DB tables for users-->
+	<target name="createTables">
+		<sql driver="org.postgresql.Driver"
+	            classpath="postgresql.jar"
+	            url="${db.url}"
+	            userid="${db.user}"
+	            password="${db.pw}"
+				src="src/main/resources/db.user.sql">
+	       </sql>
+	</target>
 </project>
