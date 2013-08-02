@@ -60,19 +60,25 @@ public class ChartNavigationTest {
 		setupRoles();
 	}
 	
-	private Group setupGroup() {
-		for (final Group group : userService.getAllGroups()) {
-			if (group.getGroupID() == 42) {
-				// Test group is already there
-				return group;
-			}
-		}
+	private Group setupGroup() throws Exception {
+		
+        for (final Group group : userService.getAllGroups()) {
+        	if (group.getGroupID() == 42) {
+        		// Test group is already there
+        		return group;
+        	}
+        }
 		
 		final Group group = new Group();
 		group.setGroupID(groupId);
 		group.setGroupName("navigationTestGroup");
-		userService.addGroup(group);
-		userService.assignUserToGroup(userId, group.getGroupID().intValue());
+		try {
+            userService.addGroup(group);
+            userService.assignUserToGroup(userId, group.getGroupID().intValue());
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
 		
 		return group;
 	}
@@ -119,7 +125,7 @@ public class ChartNavigationTest {
 	}
 	
 	@Test
-	public void defaultRestrictionsArentExtended() {
+	public void defaultRestrictionsArentExtended() throws Exception {
 		final User user = userService.getUser(username);
 		Assert.assertNotNull(user);
 		
@@ -200,7 +206,7 @@ public class ChartNavigationTest {
 		checkNavigationDataDefaults(navigationData.getDefaults());
 		
 		// Only one tree for a specific TSO
-		final Set<Integer> tsos = new HashSet<>();
+		final Set<Integer> tsos = new HashSet<Integer>();
 		for (final ProductTree tree : navigationData.getProductTrees()) {
 			// Tree isn't empty
 			Assert.assertNotNull(tree.getRoot());

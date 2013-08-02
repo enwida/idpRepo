@@ -2,8 +2,8 @@ package de.enwida.web.service.interfaces;
 
 import java.util.List;
 
-import de.enwida.web.model.AspectRight;
+import de.enwida.web.model.Right;
 
 public interface IAspectService {
-    public List<AspectRight> getAllAspects(long roleID);
+    public List<Right> getAllAspects(long roleID) throws Exception;
 }

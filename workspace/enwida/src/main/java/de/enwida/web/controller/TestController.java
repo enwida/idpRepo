@@ -67,7 +67,12 @@ public class TestController {
 		da.setTimeTo(new Date(cal.getTimeInMillis()));	
 		da.setEnabled(true);
 		
-		boolean isAuthorized = securityService.isAllowed(da);
+		try {
+            boolean isAuthorized = securityService.isAllowed(da);
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
 		
 		return "user";
 	}

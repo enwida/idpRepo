@@ -67,7 +67,7 @@ public class NavigationServiceImpl implements INavigationService {
 	@Override
 	public Hashtable<Integer, ChartNavigationData> getAllDefaultNavigationData() {
 		// Clone every stored NavigationData instance
-		final Hashtable<Integer, ChartNavigationData> result = new Hashtable<>();
+		final Hashtable<Integer, ChartNavigationData> result = new Hashtable<Integer, ChartNavigationData>();
 		
 		for (final int key : defaultNavigationData.keySet()) {
 			result.put(key, defaultNavigationData.get(key).clone());
@@ -83,7 +83,7 @@ public class NavigationServiceImpl implements INavigationService {
 	    return defaultNavigationData.get(chartId).clone();
 	}
 
-    public ChartNavigationData getNavigationData(int chartId, User user, Locale locale) {
+    public ChartNavigationData getNavigationData(int chartId, User user, Locale locale) throws Exception {
 	    // Get basic navigation data from hash table and apply
 	    // internationalized properties
         final ChartNavigationData navigationData = getDefaultNavigationData(chartId);
@@ -123,10 +123,10 @@ public class NavigationServiceImpl implements INavigationService {
 	}
 
     private interface IProductRestrictionGetter {
-        public ProductRestriction getProductRestriction(int productId, int tso, Aspect aspect);
+        public ProductRestriction getProductRestriction(int productId, int tso, Aspect aspect) throws Exception;
     }
     
-    private void shrinkNavigation(ChartNavigationData navigationData, IProductRestrictionGetter service) {
+    private void shrinkNavigation(ChartNavigationData navigationData, IProductRestrictionGetter service) throws Exception {
         for (final ProductTree productTree : navigationData.getProductTrees()) {
             final List<ProductAttributes> products = productTree.flatten();
             
@@ -151,16 +151,16 @@ public class NavigationServiceImpl implements INavigationService {
         }
     }
     
-    private void shrinkNavigationOnSecurity(ChartNavigationData navigationData, final User user) {
+    private void shrinkNavigationOnSecurity(ChartNavigationData navigationData, final User user) throws Exception {
         shrinkNavigation(navigationData, new IProductRestrictionGetter() {
             
-            public ProductRestriction getProductRestriction(int productId, int tso, Aspect aspect) {
+            public ProductRestriction getProductRestriction(int productId, int tso, Aspect aspect) throws Exception {
                 return securityService.getProductRestriction(productId, tso, aspect, user);
             }
         });
     }
 
-    private void shrinkNavigationOnAvailibility(ChartNavigationData navigationData, final User user) {
+    private void shrinkNavigationOnAvailibility(ChartNavigationData navigationData, final User user) throws Exception {
         shrinkNavigation(navigationData, new IProductRestrictionGetter() {
             
             public ProductRestriction getProductRestriction(int productId, int tso, Aspect aspect) {

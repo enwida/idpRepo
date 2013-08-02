@@ -75,10 +75,10 @@ public class ChartDataController {
     public ChartNavigationData getNavigationData(@RequestParam int chartId,
 	    HttpServletRequest request, Principal principal, Locale locale) {
 
-    	final ChartNavigationData chartNavigationData = navigationService.getNavigationData(chartId, getUser(principal), locale);
-
-    	// Try to set the defaults from the cookie
+    	ChartNavigationData chartNavigationData = null;
     	try {
+            chartNavigationData = navigationService.getNavigationData(chartId, getUser(principal), locale);
+            // Try to set the defaults from the cookie
         	final NavigationDefaults defaults = getNavigationDefaultsFromCookie(chartId, request, principal);
         	if (defaults != null) {
             	chartNavigationData.setDefaults(defaults);
@@ -102,7 +102,7 @@ public class ChartDataController {
 	    Locale locale,
 	    Principal principal) {
         
-        final List<IDataLine> result = new ArrayList<>();
+        final List<IDataLine> result = new ArrayList<IDataLine>();
         final List<Aspect> aspects = navigationService.getDefaultNavigationData(chartId).getAspects();
         
         for (final Aspect aspect : aspects) {
@@ -152,7 +152,7 @@ public class ChartDataController {
                 defaults.setDisabledLines(new ArrayList<Integer>());
             } else {
                 final String[] lineIds = lines.split(",");
-                final List<Integer> disabledLines = new ArrayList<>();
+                final List<Integer> disabledLines = new ArrayList<Integer>();
     
                 for (final String lineId : lineIds) {
                     disabledLines.add(Integer.parseInt(lineId));

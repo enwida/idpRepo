@@ -84,7 +84,7 @@ public class UserManagement {
 	}
 	
    @Test
-    public void saveUserGroup() {
+    public void saveUserGroup() throws Exception {
        Group group = groupDao.getAllGroups().get(0);
        //save user in any group
        userDao.assignUserToGroup(user.getUserID(),group.getGroupID());
@@ -112,7 +112,7 @@ public class UserManagement {
    }
    
    @Test
-   public void testRightsDao() {
+   public void testRightsDao() throws Exception {
       List<Right> rights=  rightsDao.findAll();
       rightsDao.enableDisableAspect(rights.get(0).getRightID(), false);
       List<Right> rights2=  rightsDao.findAll();
@@ -186,7 +186,7 @@ public class UserManagement {
 
 	
 	@Test
-	public void testEnabledDisableAspect() {
+	public void testEnabledDisableAspect() throws Exception {
         rightsDao.enableDisableAspect(1, true);
         rightsDao.enableDisableAspect(1, false);
 	}

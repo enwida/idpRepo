@@ -8,26 +8,27 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
-import de.enwida.web.model.AspectRight;
 import de.enwida.web.model.Group;
+import de.enwida.web.model.Right;
 import de.enwida.web.model.Role;
 import de.enwida.web.model.User;
 import de.enwida.web.service.interfaces.IAspectService;
 import de.enwida.web.service.interfaces.IUserService;
 import de.enwida.web.validator.UserValidator;
 
+
 /**
  * Handles requests for the user service.
+ * @author olcay tarazan
+ *
  */
 @Controller
 @RequestMapping("/user/admin")
@@ -42,93 +43,144 @@ public class AdminController {
 	@Autowired
 	private UserValidator userValidator;
 	
+	@Autowired
+	private MessageSource messageSource;
+	
 
     private static org.apache.log4j.Logger logger = Logger.getLogger(AdminController.class);
 	
 	
 	@RequestMapping(value="/admin_editaspect", method = RequestMethod.GET)
 	public String editAspect(Model model,long roleID) {
-	    
-	    List<AspectRight> aspectRights= aspectService.getAllAspects(roleID);
-        model.addAttribute("aspectRights", aspectRights);
-        
-        List<Role> roles= userService.getAllRoles();
-        model.addAttribute("roles", roles);
-	    
+	    List<Right> aspectRights;
+        List<Role> roles = null;
+        try {
+            aspectRights = aspectService.getAllAspects(roleID);
+            roles = userService.getAllRoles();
+            //Get all roles
+            model.addAttribute("roles", roles);
+            //Get all aspects status of requested role
+            model.addAttribute("aspectRights", aspectRights);
+        } catch (Exception e) {
+            model.addAttribute("Info", "Not Allowed");
+        }
+	    //Present the page
 		model.addAttribute("content", "admin/admin_editAspect");
 		return "user/master";
 	}
+	/**
+	 * Gets all the groups and user and present
+	 * @param model
+	 * @return
+	 */
 	@RequestMapping(value="/admin_userlist", method = RequestMethod.GET)
 	public String userList(Model model) {
-        
-		return admin(model);
+	    //Gets all the users
+	    List<User> users;
+        try { 
+            //Get all the groups
+            List<Group> groups=userService.getAllGroups();
+            users = userService.getAllUsers();
+            model.addAttribute("users", users);  
+            model.addAttribute("groups", groups);
+        } catch (Exception e) {
+            logger.info(e.getMessage());
+            model.addAttribute("error", "Not allowed");
+        }
+
+        model.addAttribute("content", "admin/admin_userList");
+        return "user/master";
 	}
-    
+    /**
+     * Handles editGroup page reuqests
+     * @param model
+     * @param action delete or add is allowed when it presents
+     * @param groupID
+     * @param newGroup
+     * @return
+     */
     @RequestMapping(value="/admin_editgroup", method = RequestMethod.GET)
     public String editGroup(Model model,String action,Integer groupID,String newGroup) {    
         try {
-            if( action!=null){
-                switch(action){
-                    case "delete":
-                        userService.removeGroup(groupID);
-                        break;
-                    case "add":
-                        Group group=new Group();
-                        group.setGroupName(newGroup);            
-                        userService.addGroup(group);
+            if (action!=null){
+                //Check which action to be executed
+                if( action.equalsIgnoreCase("delete")){
+                            userService.removeGroup(groupID);
+                }else if (action.equalsIgnoreCase("add")){
+                            Group group=new Group();
+                            group.setGroupName(newGroup);            
+                            userService.addGroup(group);
                 }
+                //Print info message
+                //TODO:These messages will be localized
                 model.addAttribute("info", "OK");
             }
+            //Get groups with user information attached
+            List<Group> groupsWithUsers= userService.getAllGroupsWithUsers();
+            model.addAttribute("groupsWithUsers", groupsWithUsers);
+            //Get all the users
+            List<User> users= userService.getUsers();
+            model.addAttribute("users", users);
+            
         } catch (Exception e) {
-            model.addAttribute("error", e.getMessage());
+            logger.info(e.getMessage());
+            model.addAttribute("error", "Not allowed");
         }
-        
-        List<Group> groupsWithUsers= userService.getAllGroupsWithUsers();
-        model.addAttribute("groupsWithUsers", groupsWithUsers);
-        
-        List<User> users= userService.getUsers();
-        model.addAttribute("users", users);
         
         model.addAttribute("content", "admin/admin_editGroup");
         return "user/master";
     }
        
-    
+    /**
+     * Handles role list page requests
+     * @param model
+     * @return
+     */
     @RequestMapping(value="/admin_rolelist", method = RequestMethod.GET)
     public String roleList(Model model) {
-        
-        List<Role> roles= userService.getAllRoles();
-        model.addAttribute("roles", roles);
-        
-        List<Role> rolesWithGroups= userService.getAllRolesWithGroups();
-        model.addAttribute("rolesWithGroups", rolesWithGroups);
-        
-        List<Group> groups= userService.getAllGroups();
-        model.addAttribute("groups", groups);
-        
+        try {
+            List<Role> roles= userService.getAllRoles();
+            model.addAttribute("roles", roles);
+            
+            List<Role> rolesWithGroups= userService.getAllRolesWithGroups();
+            model.addAttribute("rolesWithGroups", rolesWithGroups);
+            
+            List<Group> groups= userService.getAllGroups();
+            model.addAttribute("groups", groups);
+        } catch (Exception e) {
+            model.addAttribute("error", "Not allowed");
+            logger.error(e.getMessage());
+        }
+       
         model.addAttribute("content", "admin/admin_roleList");
         return "user/master";
     }
     
-    
+    /**
+     * Default user list page is displayed
+     * @param model
+     * @return
+     */
     @RequestMapping(value="/", method = RequestMethod.GET)
     public String admin(Model model) {
-        List<User> users= userService.findAllUsers();
-        model.addAttribute("users", users);
-        List<Group> groups= userService.getAllGroups();
-        model.addAttribute("groups", groups);
-        model.addAttribute("content", "admin/admin_userList");
-        return "user/master";
+        return userList(model);
     }
     
+    /**
+     * User actions log will be displayed by reading the user log file
+     * @param model
+     * @param user
+     * @return
+     */
     @RequestMapping(value="/admin_userlog", method = RequestMethod.GET)
     public String  userLog(Model model,String user) {
         File file;
         try {
+            //read the user log file and display it
             file=new File(System.getenv("ENWIDA_HOME")+"/log/"+user+".log");
             model.addAttribute("userLog",FileUtils.readFileToString(file));
         } catch (Exception e) {
-            model.addAttribute("error", "File can not be read");
+            model.addAttribute("error", "Not allowed");
             logger.error(e.getMessage());
         } 
         model.addAttribute("content", "admin/admin_userLog");
@@ -139,37 +191,69 @@ public class AdminController {
     @RequestMapping(value = "/enableDisableUser", method = RequestMethod.GET)
     @ResponseBody
     public boolean enableDisableUser(int userID,boolean enabled) {
-        return userService.enableDisableUser(userID,enabled);
+        try {
+            userService.enableDisableUser(userID,enabled); 
+            return true;       
+        } catch (Exception e) {   
+            logger.info(e.getMessage());
+            return false;      
+        }
     }   
     
     @RequestMapping(value = "/enableDisableAspect", method = RequestMethod.GET)
     @ResponseBody
     public boolean enableDisableAspect(int rightID,boolean enabled) {
-        return userService.enableDisableAspect(rightID,enabled);
+        try {
+            userService.enableDisableAspect(rightID,enabled);
+            return true;       
+        } catch (Exception e) {   
+            logger.info(e.getMessage());
+            return false;      
+        }
     }   
     
     @RequestMapping(value="/admin_user", method = RequestMethod.GET)
     public String user(Model model,long userID) {
         
-        User user= userService.getUser(userID);
+        User user = null;
+        try {
+            user = userService.getUser(userID);
+        } catch (Exception e) {
+            logger.info(e.getMessage());
+        }
+        if (user==null){
+            model.addAttribute("Info", "User not found");
+            //This shouldnt happen
+            logger.info("User is not found:userID:"+userID);
+            //Redirect user to main page;
+            return admin(model);            
+        }
         model.addAttribute("user", user);
         model.addAttribute("content", "admin/admin_user");
-        //save userID into session
-        ServletRequestAttributes attr = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
-        HttpSession session = attr.getRequest().getSession(true);
-        
-        session.setAttribute("userID", userID);
         return "user/master";
     }
     
     @RequestMapping(value="/admin_user",method=RequestMethod.POST, params = "save")
-    public String processForm(@ModelAttribute(value="USER")User user,long userID,HttpSession session, ModelMap model)
+    public String processForm(@ModelAttribute(value="USER")User user,long userID,HttpSession session, Model model)
     {
-        User newUser=userService.getUser(userID);
-        newUser.setFirstName(user.getFirstName());
-        newUser.setLastName(user.getLastName());
-        newUser.setTelephone(user.getTelephone());
-        userService.updateUser(newUser);
+        User newUser = null;
+        try {
+            newUser = userService.getUser(userID);
+            newUser.setFirstName(user.getFirstName());
+            newUser.setLastName(user.getLastName());
+            newUser.setTelephone(user.getTelephone());
+            userService.updateUser(newUser);
+        } catch (Exception e) {
+            logger.info(e.getMessage());
+        }
+        if (user==null){
+            model.addAttribute("Info", "User not found");
+            //This shouldnt happen
+            logger.info("User is not found:userID:"+userID);
+            //Redirect user to main page;
+            return admin(model);            
+        }
+
         model.addAttribute("user", newUser);
         model.addAttribute("content", "admin/admin_user");
         return "user/master";
@@ -194,12 +278,12 @@ public class AdminController {
     public String deleteUser(Model model,long userID)
     {
         System.out.println("DeleteUser");
-        User user=userService.getUser(userID);
         try {
+            User user=userService.getUser(userID);
             userService.deleteUser(user);
             
         } catch (Exception e) {
-            model.addAttribute("error", "Deassign all groups to delete user");
+            model.addAttribute("Info", "Not Allowed");
             logger.info(e.getMessage());
             return user(model,userID);
         }
@@ -209,16 +293,26 @@ public class AdminController {
     @RequestMapping(value="/admin_editgroup",method=RequestMethod.POST, params = "assign")
     public String assignUserToGroup(Model model,int selectedUser,int selectedGroup)
     {
-        String result= userService.assignUserToGroup(selectedUser,selectedGroup);
-        model.addAttribute("info", result);
+        try {
+            userService.assignUserToGroup(selectedUser,selectedGroup);
+            model.addAttribute("info", "OK");       
+        } catch (Exception e) {   
+            logger.info(e.getMessage());
+            model.addAttribute("Error", "Not Allowed");       
+        }
         return editGroup(model,null,0,null);
     }
     
     @RequestMapping(value="/admin_editgroup",method=RequestMethod.POST, params = "deassign")
     public String deassignUserToGroup(Model model,int selectedUser,int selectedGroup)
     {
-        String result= userService.deassignUserToGroup(selectedUser,selectedGroup);
-        model.addAttribute("info", result);
+        try {
+            userService.deassignUserToGroup(selectedUser,selectedGroup); 
+            model.addAttribute("info", "OK");       
+        } catch (Exception e) {   
+            logger.info(e.getMessage());
+            model.addAttribute("Error", "Not Allowed");       
+        }
         return editGroup(model,null,0,null);
     }
     
@@ -241,16 +335,26 @@ public class AdminController {
     @RequestMapping(value="/admin_rolelist",method=RequestMethod.POST, params = "assign")
     public String assignRoleToGroup(Model model,int selectedRole,int selectedGroup)
     {
-        String result=  userService.assignRoleToGroup(selectedRole,selectedGroup);
-        model.addAttribute("info", result);
+        try {
+            userService.assignRoleToGroup(selectedRole,selectedGroup);     
+            model.addAttribute("info", "OK");       
+        } catch (Exception e) {   
+            logger.info(e.getMessage());
+            model.addAttribute("Error", "Not Allowed");       
+        }
         return roleList(model);
     }
     
     @RequestMapping(value="/admin_rolelist",method=RequestMethod.POST, params = "deassign")
     public String deassignRoleToGroup(Model model,int selectedRole,int selectedGroup)
     {
-        String result= userService.deassignRoleToGroup(selectedRole,selectedGroup);
-        model.addAttribute("info", result);
+        try {
+            userService.deassignRoleToGroup(selectedRole,selectedGroup);  
+            model.addAttribute("info", "OK");       
+        } catch (Exception e) {   
+            logger.info(e.getMessage());
+            model.addAttribute("Error", "Not Allowed");       
+        }
         return roleList(model);
     }
 }

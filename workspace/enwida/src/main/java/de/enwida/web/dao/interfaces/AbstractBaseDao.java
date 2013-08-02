@@ -34,39 +34,39 @@ public abstract class AbstractBaseDao<T> implements RowMapper<T> {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
-    public T findById(Long id) {
+    public T findById(Long id) throws Exception{
         String sql = "SELECT * FROM " + this.getDbTableName() + " WHERE id = "
                 + id;
         return this.jdbcTemplate.queryForObject(sql, this.modelClass);
     }
     
-    public void save(String sql,T obj){
+    public void save(String sql,T obj)throws Exception{
         this.jdbcTemplate.update(sql,obj);
     }
     
-    public T deleteById(Long id) {
+    public T deleteById(Long id)throws Exception {
         String sql = "DELETE FROM " + this.getDbTableName() + " WHERE id = "
                 + id;
         return this.jdbcTemplate.queryForObject(sql, this.modelClass);
     }
 
-    public List<T> findAll() {
+    public List<T> findAll() throws Exception{
         String sql = "SELECT * FROM " + this.getDbTableName();
         return this.jdbcTemplate.query(sql,this);
     }
     
-    public List<T> findByColumn(String columnName,int columnValue) {
+    public List<T> findByColumn(String columnName,int columnValue)throws Exception {
         String sql = "SELECT * FROM " + this.getDbTableName()+ " WHERE "+columnName+"=?";
         return this.jdbcTemplate.query(sql,new Object[]{columnValue},this);
     }
     
-    public List<T> findByColumn(String columnName,String columnValue) {
+    public List<T> findByColumn(String columnName,String columnValue)throws Exception {
         String sql = "SELECT * FROM " + this.getDbTableName()+ " WHERE "+columnName+"=?";
         return this.jdbcTemplate.query(sql,new Object[]{columnValue},this);
     }
     
 
-    public List<T> findByExample(T obj) {
+    public List<T> findByExample(T obj)throws Exception {
         String sql = "SELECT * FROM users."
                 + this.modelClass.getSimpleName().toUpperCase()
                 + " where first_name = :firstName and last_name = :lastName";

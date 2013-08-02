@@ -11,7 +11,7 @@ import de.enwida.web.model.ChartNavigationData;
 import de.enwida.web.model.User;
 
 public interface INavigationService {
-	ChartNavigationData getNavigationData(int chartId, User user, Locale locale);
+	ChartNavigationData getNavigationData(int chartId, User user, Locale locale) throws Exception;
 	ChartNavigationData getDefaultNavigationData(int chartId);
 	ChartNavigationData getNavigationDataFromJsonFile(int chartId) throws IOException;
 	Hashtable<Integer, ChartNavigationData> getAllDefaultNavigationData();

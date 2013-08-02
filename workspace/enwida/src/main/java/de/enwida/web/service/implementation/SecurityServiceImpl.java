@@ -26,11 +26,11 @@ public class SecurityServiceImpl implements ISecurityService {
 	@Autowired
 	private IRightsDao rightsDao;
 
-	public boolean isAllowed(DataAuthorization dataAuthorization) {
+	public boolean isAllowed(DataAuthorization dataAuthorization) throws Exception {
 		return rightsDao.isAuthorizedByExample(dataAuthorization);
 	}
 
-    public ProductRestriction getProductRestriction(int productId, int tso, Aspect aspect, int role) {
+    public ProductRestriction getProductRestriction(int productId, int tso, Aspect aspect, int role) throws Exception {
     	
     	DataAuthorization dataAuthorization = new DataAuthorization();
 		dataAuthorization.setRole(role);
@@ -48,8 +48,8 @@ public class SecurityServiceImpl implements ISecurityService {
 		return pR;
     }
     
-    public ProductRestriction getProductRestriction(int productId, int tso, Aspect aspect, User user) {
-        final List<ProductRestriction> restrictions = new ArrayList<>();
+    public ProductRestriction getProductRestriction(int productId, int tso, Aspect aspect, User user) throws Exception {
+        final List<ProductRestriction> restrictions = new ArrayList<ProductRestriction>();
         for (final Role role : user.getRoles()) {
             final ProductRestriction restriction = getProductRestriction(productId, tso, aspect, (int) role.getRoleID());
             restrictions.add(restriction);
@@ -57,7 +57,7 @@ public class SecurityServiceImpl implements ISecurityService {
         return ProductRestriction.combineMaximum(restrictions);
     }
 
-	public void authorizeDataLine(int productId, int tso, Aspect aspect, int role, boolean enable) {
+	public void authorizeDataLine(int productId, int tso, Aspect aspect, int role, boolean enable) throws Exception {
 		
 		DataAuthorization dataAuthorization = new DataAuthorization();
 		dataAuthorization.setRole(role);
@@ -65,6 +65,7 @@ public class SecurityServiceImpl implements ISecurityService {
 		dataAuthorization.setAspect(aspect.name());
 		dataAuthorization.setTso(tso);
 		dataAuthorization.setEnabled(enable);
+		
 		
 		rightsDao.enableLine(dataAuthorization); 
 	}	

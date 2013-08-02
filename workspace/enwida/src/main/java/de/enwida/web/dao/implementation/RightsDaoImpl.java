@@ -34,7 +34,7 @@ public class RightsDaoImpl extends AbstractBaseDao<Right> implements IRightsDao 
 	 * Enables or disables the Aspects in the database.So that right won't see that aspect 
 	 */
     @Override
-    public boolean enableDisableAspect(long rightID, boolean enabled) {
+    public boolean enableDisableAspect(long rightID, boolean enabled) throws Exception{
         String sql = "UPDATE users.rights SET enabled=? WHERE right_id=?";
         try{
         this.jdbcTemplate.update(sql,enabled,rightID);
@@ -56,7 +56,7 @@ public class RightsDaoImpl extends AbstractBaseDao<Right> implements IRightsDao 
     }
     
 
-    public boolean isAuthorizedByExample(DataAuthorization dataAuthorization) {
+    public boolean isAuthorizedByExample(DataAuthorization dataAuthorization) throws Exception{
         String SELECT_QUERY = "SELECT COUNT(*) FROM users.rights WHERE role_id = ? AND tso = ? AND product = ? AND aspect_id = ? AND resolution = ? AND time_from >= ? AND time_to <= ? AND enabled = ?;";
         
         Object[] param = new Object[8];
@@ -77,7 +77,7 @@ public class RightsDaoImpl extends AbstractBaseDao<Right> implements IRightsDao 
         return count > 0 ? true : false;
     }
 
-    public List<DataAuthorization> getListByExample(DataAuthorization dataAuthorization) {
+    public List<DataAuthorization> getListByExample(DataAuthorization dataAuthorization)throws Exception {
         String SELECT_QUERY = "SELECT * FROM users.rights WHERE role_id = ? AND tso = ? AND product = ? AND aspect_id = ? AND enabled = ?;";
         
         Object[] param = new Object[5];
@@ -91,7 +91,7 @@ public class RightsDaoImpl extends AbstractBaseDao<Right> implements IRightsDao 
         return dAuthorizartion; 
     }
 
-    public void enableLine(DataAuthorization dataAuthorization) {
+    public void enableLine(DataAuthorization dataAuthorization) throws Exception{
         String UPDATET_QUERY = "UPDATE users.rights SET enabled = ? WHERE role_id = ? AND tso = ? AND product = ? AND aspect_id = ?;";
         
         Object[] param = new Object[4];

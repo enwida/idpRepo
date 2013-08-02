@@ -1,40 +1,41 @@
 package de.enwida.web.dao.interfaces;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import de.enwida.web.model.Group;
 import de.enwida.web.model.User;
 
+/**
+ * User DAO
+ * @author olcay tarazan
+ *
+ */
 public interface IUserDao {
-    public long save(User user) throws Exception;
+    long save(User user) throws Exception;
 
-    public User getUserByID(Long id);
+    User getUserByID(Long id) throws Exception;
 
-    public ArrayList<Group> getUserGroups(long userID);
+    void deleteUser(User user) throws Exception;
 
-    public String deleteUser(User user);
+    List<User> findAllUsers() throws Exception;
 
-    List<User> findAllUsers();
+    List<User> getAllUsers() throws Exception;
 
-    List<User> getAllUsers();
+    boolean checkUserActivationId(String username, String activationCode) throws Exception;
 
-    boolean checkUserActivationId(String username, String activationCode);
+    void assignUserToGroup(long userId, long groupID) throws Exception;
 
-    public String assignUserToGroup(long userId, long groupID);
+    void activateUser(String username) throws Exception;
 
-    public boolean activateUser(String username);
+    void updateUser(User user) throws Exception;
 
-    public boolean updateUser(User user);
+    void deassignUserFromGroup(long userID, long groupID) throws Exception;
 
-    public String deassignUserFromGroup(long userID, long groupID);
+    void enableDisableUser(long userID, boolean enabled) throws Exception;
 
-    public boolean enableDisableUser(long userID, boolean enabled);
+    boolean usernameAvailablility(String username) throws Exception;
 
-    public boolean usernameAvailablility(String username);
+    List<User> getUsersByGroupID(Long groupID) throws Exception;
 
-    public List<User> getUsersByGroupID(Long groupID);
-
-    User getUserByName(String userName);
+    User getUserByName(String userName) throws Exception;
 
 }

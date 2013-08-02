@@ -33,7 +33,7 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
     private static org.apache.log4j.Logger logger = Logger.getLogger(AdminController.class);
 	
 	@Override
-	public List<User> findAllUsers(){
+	public List<User> findAllUsers() throws Exception{
         return this.findAll();
 	}
 	
@@ -59,15 +59,9 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
     }
 		
 	@Override
-	public String deleteUser(User user) {
+	public void deleteUser (User user) throws Exception {
 	    String sql = "DELETE FROM  users.users WHERE user_name=?";
-        try {
-            this.jdbcTemplate.update(sql,user.getUserName());
-        }catch (Exception e) {
-            logger.info(e.getMessage());
-            return e.getMessage();
-        }
-        return "OK";
+        this.jdbcTemplate.update(sql,user.getUserName());
 	}
 	
     @Override
@@ -103,14 +97,14 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
 	}
 
     @Override
-    public User getUserByID(Long id) {
+    public User getUserByID(Long id) throws Exception{
         String sql = "SELECT * FROM users.users WHERE user_id=?";
         List<User> users = this.jdbcTemplate.query(sql,new Object[]{id}, this);
         return ((users.size() > 0) ? users.get(0) : null);
     }
   
     @Override
-    public List<User> getAllUsers() {
+    public List<User> getAllUsers() throws Exception {
         return this.findAll();
     }
     
@@ -129,12 +123,6 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
         //String activationID=(String)this.jdbcTemplate.queryForObject(sql, new Object[] { username }, String.class);
         return activationID.equalsIgnoreCase(activationCode);
     }
-
-    @Override
-    public ArrayList<Group> getUserGroups(long userID) {
-        // TODO Auto-generated method stub
-        return null;
-    }
     
     @Override
     public User getUserByName(String userName) {
@@ -144,54 +132,40 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
     }
 
     @Override
-    public String assignUserToGroup(long userId, long groupID) {
-        if(userId==0 || groupID==0){
+    public void assignUserToGroup(long userId, long groupID) throws Exception {
+        if (userId == 0 || groupID == 0) {
             throw new RuntimeException("Invalid userID or GroupID");
         }
         String sql = "INSERT INTO users.user_group(user_id,group_id) VALUES (?, ?)";
-        try {
-            this.jdbcTemplate.update(sql, userId,groupID);
-        }catch (Exception e) {
-            logger.info(e.getMessage());
-            return e.getLocalizedMessage();
-        }
-        return "OK";
+        this.jdbcTemplate.update(sql, userId, groupID);
     }
-    
+
     @Override
-    public String deassignUserFromGroup(long userId, long groupID) {
-        if(userId==0 || groupID==0){
+    public void deassignUserFromGroup(long userId, long groupID)
+            throws Exception {
+        if (userId == 0 || groupID == 0) {
             throw new RuntimeException("Invalid userID or GroupID");
         }
         String sql = "DELETE FROM users.user_group WHERE (user_id=? and group_id=?)";
-        try {
-            this.jdbcTemplate.update(sql, userId,groupID);
-        }catch (Exception e) {
-            logger.info(e.getMessage());
-            return e.getLocalizedMessage();
-        }
-        return "OK";
+        this.jdbcTemplate.update(sql, userId, groupID);
     }
 
     @Override
-    public boolean activateUser(String username) {
+    public void activateUser(String username)throws Exception  {
         String sql = "UPDATE users.users SET enabled=? WHERE user_name=?";
         this.jdbcTemplate.update(sql, true, username);
-        return true;
     }
 
     @Override
-    public boolean updateUser(User user) {
+    public void updateUser(User user) throws Exception  {
         String sql = "UPDATE users.users SET first_name=?,last_name=?,telephone=?,user_password=?,company_name=? WHERE user_name=?";
         this.jdbcTemplate.update(sql,new Object[]{ user.getFirstName(),user.getLastName(),user.getTelephone(),user.getPassword(),user.getCompanyName(),user.getUserName()});
-        return true;
     }
 
     @Override
-    public boolean enableDisableUser(long userID, boolean enabled) {
+    public void enableDisableUser(long userID, boolean enabled) throws Exception {
         String sql = "UPDATE users.users SET enabled=? WHERE user_id=?";
         this.jdbcTemplate.update(sql, new Object[] {enabled,userID});
-        return true;
     }
     
     @Override

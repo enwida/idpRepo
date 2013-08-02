@@ -48,9 +48,12 @@ public class UserController {
 	
 	@RequestMapping(value="/user", method = RequestMethod.GET)
 	public String displayDashboard(Model model, Locale locale) {
-		
-		User u = userService.getUser(new Long(0));
-		model.addAttribute("user", u);
+		try{
+	        User u = userService.getUser(new Long(0));
+	        model.addAttribute("user", u);		    
+		}catch(Exception e){
+		    
+		}
 		
 		return "user";
 	}
@@ -141,7 +144,7 @@ public class UserController {
 		return "user/download";
 	}
 	
-	public void preProcessRegisterForm(HttpServletRequest request,ModelMap model){
+	public void preProcessRegisterForm(HttpServletRequest request,ModelMap model) throws Exception{
 	    
 	    if(request.getMethod().equalsIgnoreCase("GET")){  
 	        User user=new User();
@@ -172,7 +175,12 @@ public class UserController {
 	
 	@RequestMapping(value="/register",method=RequestMethod.GET)
     public String showForm(ModelMap model, HttpServletRequest request){
-	    preProcessRegisterForm(request,model);
+	    try {
+            preProcessRegisterForm(request,model);
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
 	    
         return "master";
     }
@@ -180,14 +188,25 @@ public class UserController {
 	@RequestMapping(value="/register",method=RequestMethod.POST)
 	public String processForm(@ModelAttribute(value="USER") User user, ModelMap model, HttpServletRequest request)
 	{
-		preProcessRegisterForm(request,model);
+		try {
+            preProcessRegisterForm(request,model);
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
         return "master";
 	}
 	
 	@RequestMapping(value="/checkEmail",method=RequestMethod.GET)
 	public @ResponseBody String checkEmail(ModelMap model,String email){
 		
-		boolean availabilityCheck = userService.usernameAvailablility(email);
+		boolean availabilityCheck = false;
+        try {
+            availabilityCheck = userService.userNameAvailability(email);
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
 		
 		if(availabilityCheck)
 		{
@@ -200,7 +219,13 @@ public class UserController {
 	@RequestMapping(value="/activateuser",method=RequestMethod.GET)
 	public String activateUser(ModelMap model, String username, String actId){
 		
-		boolean activated = userService.activateUser(username, actId);
+		boolean activated = false;
+        try {
+            activated = userService.activateUser(username, actId);
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
 		if(activated)
 		{
 			String name = "Test Test";
@@ -230,7 +255,12 @@ public class UserController {
 	@RequestMapping(value="/forgotPassword",method=RequestMethod.POST)
 	public String forgotPassword(ModelMap model,String email){
 		
-		String password=userService.getPassword(email);
+		String password = null;
+        try {
+            password = userService.getPassword(email);
+        } catch (Exception e) {
+            logger.error(e.getMessage());
+        }
 		if(password==null){
 			model.addAttribute("error", "User is not found");
 		}else{

@@ -7,8 +7,8 @@ import de.enwida.web.utils.ProductRestriction;
 
 public interface ISecurityService {
 	
-	public boolean isAllowed(DataAuthorization dataAuthorization);
-	public void authorizeDataLine(int productId, int tso, Aspect aspect, int role, boolean enable);
+	public boolean isAllowed(DataAuthorization dataAuthorization) throws Exception;
+	public void authorizeDataLine(int productId, int tso, Aspect aspect, int role, boolean enable) throws Exception;
 	
-	public ProductRestriction getProductRestriction(int productId, int tso, Aspect aspect, User user);
+	public ProductRestriction getProductRestriction(int productId, int tso, Aspect aspect, User user) throws Exception;
 }
