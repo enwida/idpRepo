@@ -53,10 +53,10 @@ public class RightDaoImpl extends AbstractBaseDao<Right> implements IRightDao {
         right.setEnabled(rs.getBoolean("enabled"));
         right.setTso(rs.getInt("tso"));
         right.setProduct(rs.getInt("product"));
-        right.setAspect(rs.getString("aspect"));
+        right.setAspect(rs.getString("aspect_id"));
         right.setResolution(rs.getString("resolution"));
-        right.setTimeFrom(rs.getTimestamp("time1"));
-        right.setTimeTo(rs.getTimestamp("time2"));
+        right.setTimeFrom(rs.getDate("time1"));
+        right.setTimeTo(rs.getDate("time2"));
         return right;
     }
     
@@ -110,9 +110,9 @@ public class RightDaoImpl extends AbstractBaseDao<Right> implements IRightDao {
     }
 
     @Override
-    public List<Right> getAllAspects(long roleID) {
+    public List<Right> getAllAspects(long roleID) throws Exception{
         String sql = "SELECT * FROM users.rights WHERE role_id=?";
-        return jdbcTemplate.queryForList(sql, new Object[]{roleID}, Right.class);
+        return jdbcTemplate.query(sql, new Object[]{roleID}, this);
     }
     
 }

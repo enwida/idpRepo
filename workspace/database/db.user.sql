@@ -43,8 +43,8 @@ CREATE TABLE users.rights (
     tso integer,
     product integer,
     resolution character(50),
-    time1 character(50),
-    time2 character(50),
+    time1 date,
+    time2 date,
     aspect_id integer,
     enabled boolean NOT NULL,
 	CONSTRAINT "FK_roles_rights" FOREIGN KEY (role_id) REFERENCES users.roles(role_id)  ON DELETE CASCADE

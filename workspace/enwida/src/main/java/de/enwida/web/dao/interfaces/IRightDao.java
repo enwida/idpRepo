@@ -10,6 +10,6 @@ public interface IRightDao {
     public void enableLine(Right dataAuthorization)throws Exception;
     public boolean isAuthorizedByExample(Right dataAuthorization)throws Exception;
     public List<Right> getListByExample(Right dataAuthorization)throws Exception;
-    List<Right> getAllAspects(long roleID);
+    List<Right> getAllAspects(long roleID) throws Exception;
 
 }

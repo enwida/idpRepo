@@ -28,10 +28,10 @@ $("#myselect").val(get_url_parameter('roleID'));
 	<tbody>
 		<c:forEach var="right" items="${aspectRights}">
 			<tr>
-				<td>${right.aspectName}</td>
+				<td>${right.aspect}</td>
 				<td>${right.product}</td>
-				<td>${right.t1}</td>
-				<td>${right.t2}</td>
+				<td>${right.timeFrom}</td>
+				<td>${right.timeTo}</td>
 				<td>${right.resolution}</td>
 				<td>${right.tso}</td>
 				<td><input type="checkbox"
