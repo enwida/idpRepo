@@ -75,7 +75,7 @@ CREATE TABLE users.group_role (
 INSERT INTO users.users(
 		user_name, user_password, first_name, last_name, enabled, 
 		joining_date, telephone, company_name)
-VALUES ('micha', 'ach1m', 'Michael', 'Steck', true, '2013-07-02', '0049 89 1234567','enwida');
+VALUES ('micha', '123', 'Michael', 'Steck', true, '2013-07-02', '0049 89 1234567','enwida');
 
 
 INSERT INTO users.roles( role_name, description)

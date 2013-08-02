@@ -2,7 +2,6 @@
 <project basedir=".">
 	<property name="js.dir" location="src/main/webapp/resources/js/admin/assets" />
 	<property name="css.dir" location="src/main/webapp/resources/css/admin/assets" />
-	<property name="lib.dir"     value="lib"/>
 	<property environment="env" />
 	<property file="${env.ENWIDA_HOME}/conf/enwida.config" />
 	
@@ -10,7 +9,7 @@
 	
 	<!-- TODO:Include maven classpath here  -->
 	<path id="classpath">
-		<fileset dir="${lib.dir}" includes="**/*.jar"/>
+		<fileset dir="." includes="**/*.jar"/>
 	</path>
 	<manifestclasspath property="manifest.classpath" jarfile="${jarfile}">
 		<classpath refid="classpath"/>

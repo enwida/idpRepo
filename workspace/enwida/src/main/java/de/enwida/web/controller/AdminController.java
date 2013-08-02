@@ -3,6 +3,7 @@ package de.enwida.web.controller;
 import java.io.File;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.FileUtils;
@@ -74,7 +75,7 @@ public class AdminController {
 	 * @return
 	 */
 	@RequestMapping(value="/admin_userlist", method = RequestMethod.GET)
-	public String userList(Model model) {
+	public String userList(HttpServletRequest request, Model model) {
 	    //Gets all the users
 	    List<User> users;
         try { 
@@ -85,7 +86,7 @@ public class AdminController {
             model.addAttribute("groups", groups);
         } catch (Exception e) {
             logger.info(e.getMessage());
-            model.addAttribute("error", "Not allowed");
+            model.addAttribute("error", messageSource.getMessage("de.enwida.userManagement.error.notAllowed", null, request.getLocale()));
         }
 
         model.addAttribute("content", "admin/admin_userList");
@@ -162,8 +163,8 @@ public class AdminController {
      * @return
      */
     @RequestMapping(value="/", method = RequestMethod.GET)
-    public String admin(Model model) {
-        return userList(model);
+    public String admin(HttpServletRequest request,Model model) {
+        return userList(request,model);
     }
     
     /**
@@ -213,7 +214,7 @@ public class AdminController {
     }   
     
     @RequestMapping(value="/admin_user", method = RequestMethod.GET)
-    public String user(Model model,long userID) {
+    public String user(HttpServletRequest request,Model model,long userID) {
         
         User user = null;
         try {
@@ -226,7 +227,7 @@ public class AdminController {
             //This shouldnt happen
             logger.info("User is not found:userID:"+userID);
             //Redirect user to main page;
-            return admin(model);            
+            return admin(request,model);            
         }
         model.addAttribute("user", user);
         model.addAttribute("content", "admin/admin_user");
@@ -234,7 +235,7 @@ public class AdminController {
     }
     
     @RequestMapping(value="/admin_user",method=RequestMethod.POST, params = "save")
-    public String processForm(@ModelAttribute(value="USER")User user,long userID,HttpSession session, Model model)
+    public String processForm(@ModelAttribute(value="USER")User user,long userID,HttpSession session, Model model,HttpServletRequest request)
     {
         User newUser = null;
         try {
@@ -251,7 +252,7 @@ public class AdminController {
             //This shouldnt happen
             logger.info("User is not found:userID:"+userID);
             //Redirect user to main page;
-            return admin(model);            
+            return admin(request,model);            
         }
 
         model.addAttribute("user", newUser);
@@ -260,7 +261,7 @@ public class AdminController {
     }
 
     @RequestMapping(value="/admin_user",method=RequestMethod.POST, params = "resetPassword")
-    public String reset(Model model,long userID)
+    public String reset(HttpServletRequest request,Model model,long userID)
     {
         System.out.println("ResetPassword");
         try {
@@ -270,12 +271,12 @@ public class AdminController {
             model.addAttribute("error", "Error:"+e.getLocalizedMessage());
             logger.error(e.getMessage());
         }
-        return user(model,userID);
+        return user(request,model,userID);
     }
     
     
     @RequestMapping(value="/admin_user",method=RequestMethod.POST, params = "delete")
-    public String deleteUser(Model model,long userID)
+    public String deleteUser(HttpServletRequest request,Model model,long userID)
     {
         System.out.println("DeleteUser");
         try {
@@ -285,9 +286,9 @@ public class AdminController {
         } catch (Exception e) {
             model.addAttribute("Info", "Not Allowed");
             logger.info(e.getMessage());
-            return user(model,userID);
+            return user(request,model,userID);
         }
-        return userList(model);
+        return userList(request,model);
     }
     
     @RequestMapping(value="/admin_editgroup",method=RequestMethod.POST, params = "assign")
