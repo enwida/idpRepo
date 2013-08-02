@@ -9,8 +9,8 @@
 </head>
 <body>
 	<div class="navbar navbar-inverse navbar-fixed-top">
-		<div class="container">
-			<div class="nav-collapse collapse">
+		<div>
+			<div>
 				<ul class="nav navbar-nav">
 					<li><a href="http://localhost:8080/enwida/user/">Enwida</a></li>
 					<li><a href="admin/admin_userlist">Users</a></li>
@@ -21,7 +21,7 @@
 			<!--/.nav-collapse -->
 		</div>
 	</div>
-	<div>
+	<div><br><br>
 		<a Style="color: red;">${error}</a><br> <a Style="color: blue;">${info}</a><br>
 		<jsp:include page="${content}.jsp"></jsp:include>
 	</div>

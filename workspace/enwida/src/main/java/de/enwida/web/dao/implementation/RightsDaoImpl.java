@@ -14,7 +14,6 @@ import de.enwida.transport.Aspect;
 import de.enwida.web.controller.AdminController;
 import de.enwida.web.dao.interfaces.AbstractBaseDao;
 import de.enwida.web.dao.interfaces.IRightsDao;
-import de.enwida.web.model.DataAuthorization;
 import de.enwida.web.model.Right;
 
 @Repository
@@ -49,20 +48,26 @@ public class RightsDaoImpl extends AbstractBaseDao<Right> implements IRightsDao 
     public Right mapRow(ResultSet rs, int rowNum) throws SQLException {
         Right right = new Right();
         right.setRightID(rs.getLong("right_id"));
-        right.setAspectID(rs.getLong("aspect_id"));
+        right.setAspect(rs.getString("aspect_id"));
         right.setRoleID(rs.getLong("role_id"));
         right.setEnabled(rs.getBoolean("enabled"));
+        right.setTso(rs.getInt("tso"));
+        right.setProduct(rs.getInt("product"));
+        right.setAspect(rs.getString("aspect"));
+        right.setResolution(rs.getString("resolution"));
+        right.setTimeFrom(rs.getTimestamp("time1"));
+        right.setTimeTo(rs.getTimestamp("time2"));
         return right;
     }
     
 
-    public boolean isAuthorizedByExample(DataAuthorization dataAuthorization) throws Exception{
+    public boolean isAuthorizedByExample(Right dataAuthorization) throws Exception{
         String SELECT_QUERY = "SELECT COUNT(*) FROM users.rights WHERE role_id = ? AND tso = ? AND product = ? AND aspect_id = ? AND resolution = ? AND time_from >= ? AND time_to <= ? AND enabled = ?;";
         
         Object[] param = new Object[8];
-        param[0] = dataAuthorization.getRole();
+        param[0] = dataAuthorization.getRoleID();
         param[1] = dataAuthorization.getTso();
-        param[2] = dataAuthorization.getProductId();
+        param[2] = dataAuthorization.getProduct();
         param[3] = Aspect.valueOf(dataAuthorization.getAspect()).ordinal();
         param[4] = dataAuthorization.getResolution();
         java.sql.Timestamp t1 = new java.sql.Timestamp(dataAuthorization.getTimeFrom().getTime());
@@ -77,31 +82,37 @@ public class RightsDaoImpl extends AbstractBaseDao<Right> implements IRightsDao 
         return count > 0 ? true : false;
     }
 
-    public List<DataAuthorization> getListByExample(DataAuthorization dataAuthorization)throws Exception {
+    public List<Right> getListByExample(Right dataAuthorization)throws Exception {
         String SELECT_QUERY = "SELECT * FROM users.rights WHERE role_id = ? AND tso = ? AND product = ? AND aspect_id = ? AND enabled = ?;";
         
         Object[] param = new Object[5];
-        param[0] = dataAuthorization.getRole();
+        param[0] = dataAuthorization.getRoleID();
         param[1] = dataAuthorization.getTso();
-        param[2] = dataAuthorization.getProductId();
+        param[2] = dataAuthorization.getProduct();
         param[3] = Aspect.valueOf(dataAuthorization.getAspect()).ordinal();
         param[4] = dataAuthorization.isEnabled();
         
-        List<DataAuthorization> dAuthorizartion = jdbcTemplate.queryForList(SELECT_QUERY, param, DataAuthorization.class);
+        List<Right> dAuthorizartion = jdbcTemplate.queryForList(SELECT_QUERY, param, Right.class);
         return dAuthorizartion; 
     }
 
-    public void enableLine(DataAuthorization dataAuthorization) throws Exception{
+    public void enableLine(Right dataAuthorization) throws Exception{
         String UPDATET_QUERY = "UPDATE users.rights SET enabled = ? WHERE role_id = ? AND tso = ? AND product = ? AND aspect_id = ?;";
         
         Object[] param = new Object[4];
         param[0] = dataAuthorization.isEnabled();
-        param[1] = dataAuthorization.getRole();
+        param[1] = dataAuthorization.getRoleID();
         param[2] = dataAuthorization.getTso();
-        param[3] = dataAuthorization.getProductId();
+        param[3] = dataAuthorization.getProduct();
         param[4] = Aspect.valueOf(dataAuthorization.getAspect()).ordinal();
         
         jdbcTemplate.update(UPDATET_QUERY, param);
+    }
+
+    @Override
+    public List<Right> getAllAspects(long roleID) {
+        String sql = "SELECT * FROM users.rights WHERE role_id=?";
+        return jdbcTemplate.queryForList(sql, new Object[]{roleID}, Right.class);
     }
     
 }

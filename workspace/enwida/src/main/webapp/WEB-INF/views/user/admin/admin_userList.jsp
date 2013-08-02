@@ -44,8 +44,9 @@
 				<td>${user.lastLogin}</td>
 				<td>${user.telephone}</td>
 				<td>${user.companyName}</td>
-				<td><a href='admin_editgroup.html?userID=${user.userID}'><message:message code="de.enwida.userManagement.userList.editGroup" /></a>
-					<a href='admin_user.html?userID=${user.userID}'> <message:message code="de.enwida.userManagement.details" /></a></td>
+				<td>
+					<a href='admin_editgroup.html?userID=${user.userID}'><message:message code="de.enwida.userManagement.userList.editGroup" /></a>
+				</td>
 			</tr>
 		</c:forEach>
 	</tbody>

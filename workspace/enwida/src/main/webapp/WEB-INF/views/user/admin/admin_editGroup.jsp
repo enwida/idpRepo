@@ -51,6 +51,7 @@
 <script>
 $(function() {
 	$('#selectedUser option[value='+QueryString.userID+']').attr('selected','selected');
+	$('#selectedGroup option[value='+QueryString.groupID+']').attr('selected','selected');
 });
 </script>
 	<table  id="tblGroupMap">
@@ -63,7 +64,7 @@ $(function() {
 		<tbody>
 		<tr>
 			<td>
-				<select name="selectedGroup">
+				<select id="selectedGroup">
 						<c:forEach var="group" items="${groupsWithUsers}">
 							<option value="${group.groupID}">${group.groupName}</option>
 						</c:forEach>

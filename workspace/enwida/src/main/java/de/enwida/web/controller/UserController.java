@@ -52,7 +52,8 @@ public class UserController {
 	        User u = userService.getUser(new Long(0));
 	        model.addAttribute("user", u);		    
 		}catch(Exception e){
-		    
+            logger.info(e.getMessage());
+            model.addAttribute("Error", "Not Allowed"); 		    
 		}
 		
 		return "user";
@@ -165,10 +166,12 @@ public class UserController {
     
                     model.addAttribute("username", name);
                     model.addAttribute("userStatus", userStatus);
-                    model.addAttribute("userStatusURL", userStatusURL);             
+                    model.addAttribute("userStatusURL", userStatusURL);     
+                    model.addAttribute("content","user/index");        
                 }
+            }else{
+                model.addAttribute("content","user/register");
             }
-            model.addAttribute("content","user/register");
             model.addAllAttributes(result.getModel());
 	    }
 	}
@@ -178,8 +181,8 @@ public class UserController {
 	    try {
             preProcessRegisterForm(request,model);
         } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            logger.info(e.getMessage());
+            model.addAttribute("Error", "Not Allowed");
         }
 	    
         return "master";
@@ -191,8 +194,8 @@ public class UserController {
 		try {
             preProcessRegisterForm(request,model);
         } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            logger.info(e.getMessage());
+            model.addAttribute("Error", "Not Allowed");
         }
         return "master";
 	}
@@ -204,8 +207,8 @@ public class UserController {
         try {
             availabilityCheck = userService.userNameAvailability(email);
         } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            logger.info(e.getMessage());
+            model.addAttribute("Error", "Not Allowed");
         }
 		
 		if(availabilityCheck)
@@ -216,15 +219,15 @@ public class UserController {
 		return availabilityCheck + "";
 	}
 
-	@RequestMapping(value="/activateuser",method=RequestMethod.GET)
+	@RequestMapping(value="/activateuser.html",method=RequestMethod.GET)
 	public String activateUser(ModelMap model, String username, String actId){
 		
 		boolean activated = false;
         try {
             activated = userService.activateUser(username, actId);
         } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            logger.info(e.getMessage());
+            model.addAttribute("Error", "Not Allowed");
         }
 		if(activated)
 		{
@@ -235,10 +238,13 @@ public class UserController {
     		model.addAttribute("username", name);
     		model.addAttribute("userStatus", userStatus);
     		model.addAttribute("userStatusURL", userStatusURL);
-    		return "user/index";  
+            model.addAttribute("info", "Activated");  
+		}else{
+	        model.addAttribute("error", "Not Allowed");  
 		}
-				
-		return "";
+   
+        model.addAttribute("content", "user/index");
+        return "master";
 	}
 	
 	@RequestMapping(value="/forgotPassword",method=RequestMethod.GET)
