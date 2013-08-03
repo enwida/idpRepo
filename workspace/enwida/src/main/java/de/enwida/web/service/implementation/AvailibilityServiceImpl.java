@@ -40,7 +40,17 @@ public class AvailibilityServiceImpl implements IAvailibilityService {
 		List<DataAvailibility> dataAvailibilityResult = dataAvailibilityDao.getListByExample(dataAvailibility); 
 		for (DataAvailibility dA : dataAvailibilityResult) {
 			if (dA.getTableName().contains("analysis")) {
-				pR.getResolutions().add(EnwidaUtils.getDataResolution(dA.getTableName().split("_")[1]));
+				// Add resolution
+				final DataResolution resolution = EnwidaUtils.getDataResolution(dA.getTableName().split("_")[1]);
+				if (resolution != null) {
+					pR.getResolutions().add(resolution);
+				}
+				
+				// Set time range there is none
+				if (pR.getTimeRange() == null) {
+					pR.setTimeRange(new CalendarRange(dA.getTimeFrom(), dA.getTimeTo()));
+				}
+				// Set the most accurate time range, if possible
 				if (EnwidaUtils.getDataResolution(dA.getTableName().split("_")[1]) == DataResolution.QUATER_HOURLY) {
 					pR.setTimeRange(new CalendarRange(dA.getTimeFrom(), dA.getTimeTo()));
 				}
@@ -48,7 +58,6 @@ public class AvailibilityServiceImpl implements IAvailibilityService {
 				pR.getResolutions().add(DataResolution.QUATER_HOURLY);
 				pR.setTimeRange(new CalendarRange(dA.getTimeFrom(), dA.getTimeTo()));
 			}
-			
 		}
 		return pR;
     }
