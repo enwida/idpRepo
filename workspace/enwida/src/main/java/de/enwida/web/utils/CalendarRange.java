@@ -36,6 +36,9 @@ public class CalendarRange {
 	    Calendar to = null;
 	    
 	    for (final CalendarRange range : ranges) {
+	    	if (range == null) {
+	    		continue;
+	    	}
 	        if (from == null || range.getFrom().compareTo(from) < 0) {
 	            from = range.getFrom();
 	        }

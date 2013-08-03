@@ -1,6 +1,7 @@
 package de.enwida.web.service.implementation;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,18 +33,27 @@ public class SecurityServiceImpl implements ISecurityService {
 
     public ProductRestriction getProductRestriction(int productId, int tso, Aspect aspect, int role) throws Exception {
     	
-        Right dataAuthorization = new Right();
+        final Right dataAuthorization = new Right();
 		dataAuthorization.setRoleID(role);
 		dataAuthorization.setProduct(productId);
 		dataAuthorization.setAspect(aspect.name());
 		dataAuthorization.setTso(tso);
 		dataAuthorization.setEnabled(true);
 		
-		ProductRestriction pR = new ProductRestriction();
+		final ProductRestriction pR = new ProductRestriction();
 		List<Right> dataAuthorizationResult = rightDao.getListByExample(dataAuthorization); 
 		for (Right dA : dataAuthorizationResult) {
 			pR.getResolutions().add(EnwidaUtils.getDataResolution(dA.getResolution()));
-			pR.setTimeRange(new CalendarRange(dA.getTimeFrom(), dA.getTimeTo()));
+
+			final CalendarRange timeRange = new CalendarRange(dA.getTimeFrom(), dA.getTimeTo());
+			if (pR.getTimeRange() == null) {
+				pR.setTimeRange(timeRange);
+			} else {
+				final List<CalendarRange> ranges = Arrays.asList(new CalendarRange[] { pR.getTimeRange(), timeRange });
+
+				// TODO: Or minimum or separate for each aspect
+				pR.setTimeRange(CalendarRange.getMaximum(ranges));
+			}
 		}		
 		return pR;
     }
