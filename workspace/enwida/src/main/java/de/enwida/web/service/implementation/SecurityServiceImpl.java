@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import de.enwida.transport.Aspect;
+import de.enwida.transport.DataResolution;
 import de.enwida.web.dao.interfaces.IDataAvailibilityDao;
 import de.enwida.web.dao.interfaces.IRightDao;
 import de.enwida.web.model.Right;
@@ -15,7 +16,6 @@ import de.enwida.web.model.Role;
 import de.enwida.web.model.User;
 import de.enwida.web.service.interfaces.ISecurityService;
 import de.enwida.web.utils.CalendarRange;
-import de.enwida.web.utils.EnwidaUtils;
 import de.enwida.web.utils.ProductRestriction;
 
 @Service
@@ -41,9 +41,9 @@ public class SecurityServiceImpl implements ISecurityService {
 		dataAuthorization.setEnabled(true);
 		
 		final ProductRestriction pR = new ProductRestriction();
-		List<Right> dataAuthorizationResult = rightDao.getListByExample(dataAuthorization); 
+		final List<Right> dataAuthorizationResult = rightDao.getListByExample(dataAuthorization); 
 		for (Right dA : dataAuthorizationResult) {
-			pR.getResolutions().add(EnwidaUtils.getDataResolution(dA.getResolution()));
+			pR.getResolutions().add(DataResolution.valueOf(dA.getResolution().trim()));
 
 			final CalendarRange timeRange = new CalendarRange(dA.getTimeFrom(), dA.getTimeTo());
 			if (pR.getTimeRange() == null) {

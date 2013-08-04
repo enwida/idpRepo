@@ -83,7 +83,7 @@ define ["util/resolution"], (Resolution) ->
         else {}
 
     @getNavigationData = (callback) ->
-      $.ajax "navigation.test",
+      $.ajax "navigation",
         data: chartId: @attr.id
         success: (data) =>
           console.log data
@@ -94,6 +94,10 @@ define ["util/resolution"], (Resolution) ->
     @refresh = ->
       @getNavigationData (err, data) =>
         throw err if err?
+        unless typeof data is "object" and data?.allResolutions?.length > 0
+          @trigger "errorMessage", msg: "Sorry, you do not have the permission to see this chart."
+          return
+
         dateLimits =
           from : new Date data.timeRangeMax.from
           to   : new Date data.timeRangeMax.to

@@ -61,7 +61,7 @@ public class RightDaoImpl extends AbstractBaseDao<Right> implements IRightDao {
     
 
     public boolean isAuthorizedByExample(Right dataAuthorization) throws Exception{
-        String SELECT_QUERY = "SELECT COUNT(*) FROM users.rights WHERE role_id = ? AND tso = ? AND product = ? AND aspect_id = ? AND resolution = ? AND time_from >= ? AND time_to <= ? AND enabled = ?;";
+        String SELECT_QUERY = "SELECT COUNT(*) FROM users.rights WHERE role_id = ? AND tso = ? AND product = ? AND aspect_id = ? AND resolution = ? AND time1 <= ? AND time2 >= ? AND enabled = ?;";
         
         Object[] param = new Object[8];
         param[0] = dataAuthorization.getRoleID();

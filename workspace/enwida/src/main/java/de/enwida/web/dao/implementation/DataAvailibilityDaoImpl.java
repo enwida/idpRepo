@@ -8,7 +8,6 @@ import org.springframework.stereotype.Repository;
 
 import de.enwida.web.dao.interfaces.AbstractBaseDao;
 import de.enwida.web.dao.interfaces.IDataAvailibilityDao;
-import de.enwida.web.dao.rowmapper.DataAvailabilityRowMapper;
 import de.enwida.web.model.DataAvailibility;
 
 @Repository
@@ -27,7 +26,7 @@ public class DataAvailibilityDaoImpl extends AbstractBaseDao<DataAvailibility> i
 
 	public boolean isAvailableByExample(DataAvailibility dataAvailibility) {
 		
-		String SELECT_QUERY = "SELECT COUNT(*) FROM availability WHERE product = ? AND timefrom >= ? AND timeto <= ? AND tablename SIMILAR TO ?;";
+		String SELECT_QUERY = "SELECT COUNT(*) FROM availability WHERE product = ? AND timefrom <= ? AND timeto >= ? AND tablename SIMILAR TO ?;";
 		
 		Object[] param = new Object[4];
 		param[0] = dataAvailibility.getProduct();
@@ -40,7 +39,7 @@ public class DataAvailibilityDaoImpl extends AbstractBaseDao<DataAvailibility> i
 	}
 
 	public DataAvailibility getByExample(DataAvailibility dataAvailibility) {
-		String SELECT_QUERY = "SELECT * FROM availability WHERE product = ? AND timefrom >= ? AND timeto <= ? AND tablename SIMILAR TO ?;";
+		String SELECT_QUERY = "SELECT * FROM availability WHERE product = ? AND timefrom <= ? AND timeto >= ? AND tablename SIMILAR TO ?;";
 		
 		Object[] param = new Object[4];
 		param[0] = dataAvailibility.getProduct();

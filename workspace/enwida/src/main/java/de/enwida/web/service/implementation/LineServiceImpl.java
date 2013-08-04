@@ -12,6 +12,7 @@ import de.enwida.web.model.User;
 import de.enwida.web.service.interfaces.IAvailibilityService;
 import de.enwida.web.service.interfaces.ILineService;
 import de.enwida.web.service.interfaces.ISecurityService;
+import de.enwida.web.utils.EnwidaUtils;
 
 public class LineServiceImpl implements ILineService {
     
@@ -66,8 +67,7 @@ public class LineServiceImpl implements ILineService {
         result.setProduct(request.getProduct());
         result.setTimeFrom(request.getStartTime().getTime());
         result.setTimeTo(request.getEndTime().getTime());
-        // FIXME: Get table name from aspect/resolution
-        result.setTableName("");
+        result.setTableName(EnwidaUtils.getTableNameByAspect(request.getAspect()));
         
         return result;
     }
