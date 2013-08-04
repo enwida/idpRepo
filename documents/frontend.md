@@ -353,9 +353,13 @@ new elements to the DOM (just like any other HTML elements as div, h1, etc.).
 The line chart can show several lines of data at once using linear interpolation between the
 data points.
 
+<img width="800" src="../img/line_chart.png" />
+
 ##### Bar Chart
 The bar chart can show several lines of data at once whereby the different lines are represented
 by differently colored bars located next to each other for each data point.
+
+<img width="800" src="../img/bar_chart.png" />
 
 ##### Min-Max Chart
 This chart type works for exactly three lines of data. The first and the last line represent the
@@ -363,18 +367,22 @@ minimun and the maximum values respectively whereas the second line contains the
 The second line is drawn as in an ordinary line chart.
 Additionally, a bar ranging from the minimun to the maximum value is drawn for each data point.
 
+<img width="800" src="../img/minmax_chart.png" />
+
 ##### Positive-Negative Chart
 This chart type takes exactly two lines of data whereby the first line contains positive values 
 while the last one contains negative values.
 The lines are drawn as bars one below the other in different colors ranging from 0 to the positive
 value and from 0 to the negative value, respectively.
 
-##### Carpet Chart
+<img width="800" src="../img/posneg_chart.png" />
+
+##### Carpet Plot
 This chart works with exactly one line of three-dimensional data (x, y, v). For every (x, y)-pair
 one bar is drawn at the corresponding coordinate. The color of the bars is governed by the v value.
 Futhermore, a scale is drawn on the right side which maps colors to v values.
 
-[TODO: pictures]
+<img width="800" src="../img/carpet_plot.png" />
 
 #### Implementation
 Each of these charts are implemented as a RequireJS module in the `drawable` subdirectory.
