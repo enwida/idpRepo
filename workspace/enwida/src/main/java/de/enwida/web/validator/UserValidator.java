@@ -19,7 +19,7 @@ public class UserValidator implements Validator {
 		return clazz.equals(User.class);
 	}
 	
-	public void validateUser(User user,Errors errors,boolean updated){
+	public void validateUser(User user,Errors errors,boolean updated) throws Exception{
 	    if (!updated){
     	    if(user.getUserName().isEmpty())
             {
@@ -30,7 +30,7 @@ public class UserValidator implements Validator {
                 errors.rejectValue("userName", "de.enwida.email.invalid");
             }
             
-            else if( userService.usernameAvailablility(user.getUserName()))
+            else if( userService.userNameAvailability(user.getUserName()))
             {
                 errors.rejectValue("userName", "de.enwida.email.inuse");
             }
@@ -85,7 +85,12 @@ public class UserValidator implements Validator {
 	
 	public void validate(Object target, Errors errors) {
 		User user = (User)target;
-		validateUser(user,errors,false);
+		try {
+            validateUser(user,errors,false);
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
 	}
 
 }

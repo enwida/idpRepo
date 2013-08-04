@@ -2,7 +2,6 @@ package de.enwida.web.controller;
 
 import java.io.IOException;
 import java.security.Principal;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -23,19 +22,15 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import de.enwida.chart.LineManager;
 import de.enwida.transport.Aspect;
 import de.enwida.transport.DataResolution;
 import de.enwida.transport.IDataLine;
 import de.enwida.transport.LineRequest;
 import de.enwida.web.model.ChartNavigationData;
-import de.enwida.web.model.User;
 import de.enwida.web.service.implementation.LineServiceImpl;
-import de.enwida.web.service.implementation.NavigationServiceImpl;
 import de.enwida.web.service.interfaces.ICookieSecurityService;
 import de.enwida.web.service.interfaces.INavigationService;
 import de.enwida.web.service.interfaces.IUserService;
-import de.enwida.web.utils.CalendarRange;
 import de.enwida.web.utils.ChartDefaults;
 import de.enwida.web.utils.Constants;
 import de.enwida.web.utils.NavigationDefaults;
@@ -75,10 +70,10 @@ public class ChartDataController {
     public ChartNavigationData getNavigationData(@RequestParam int chartId,
 	    HttpServletRequest request, Principal principal, Locale locale) {
 
-    	final ChartNavigationData chartNavigationData = navigationService.getNavigationData(chartId, getUser(principal), locale);
-
-    	// Try to set the defaults from the cookie
+    	ChartNavigationData chartNavigationData = null;
     	try {
+            chartNavigationData = navigationService.getNavigationData(chartId, userService.getCurrentUser(), locale);
+            // Try to set the defaults from the cookie
         	final NavigationDefaults defaults = getNavigationDefaultsFromCookie(chartId, request, principal);
         	if (defaults != null) {
             	chartNavigationData.setDefaults(defaults);
@@ -99,17 +94,16 @@ public class ChartDataController {
 	    @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Calendar startTime,
 	    @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Calendar endTime,
 	    @RequestParam DataResolution resolution,
-	    Locale locale,
-	    Principal principal) {
+	    Locale locale) {
         
-        final List<IDataLine> result = new ArrayList<>();
+        final List<IDataLine> result = new ArrayList<IDataLine>();
         final List<Aspect> aspects = navigationService.getDefaultNavigationData(chartId).getAspects();
         
         for (final Aspect aspect : aspects) {
         	final LineRequest request = new LineRequest(aspect, product, tso, startTime, endTime, resolution, locale);
 
         	try {
-                final IDataLine line = lineService.getLine(request, getUser(principal));
+                final IDataLine line = lineService.getLine(request, userService.getCurrentUser());
                 result.add(line);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -127,12 +121,11 @@ public class ChartDataController {
 	    @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Calendar startTime,
 	    @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Calendar endTime,
 	    @RequestParam DataResolution resolution,
-	    Locale locale,
-	    Principal principal) throws Exception {
+	    Locale locale) throws Exception {
         
         final Aspect aspect = Aspect.valueOf(strAspect);
     	final LineRequest request = new LineRequest(aspect, product, tso, startTime, endTime, resolution, locale);
-        return lineService.getLine(request, getUser(principal));
+        return lineService.getLine(request, userService.getCurrentUser());
     }
 
 
@@ -152,7 +145,7 @@ public class ChartDataController {
                 defaults.setDisabledLines(new ArrayList<Integer>());
             } else {
                 final String[] lineIds = lines.split(",");
-                final List<Integer> disabledLines = new ArrayList<>();
+                final List<Integer> disabledLines = new ArrayList<Integer>();
     
                 for (final String lineId : lineIds) {
                     disabledLines.add(Integer.parseInt(lineId));
@@ -163,96 +156,6 @@ public class ChartDataController {
         } catch (Exception ignored) { 
             logger.info(ignored.getMessage());
         }
-    }
-    
-    private User getUser(Principal principal) {
-        try {
-            return userService.getUser(principal.getName());
-        } catch (Exception e) {
-            logger.error(e.getMessage());
-            return null;
-        }
-    }
-    
-
-    /*
-     * ==========================================================================
-     * ============= CAUTION: ! Never ever leave the methods below in production
-     * code !
-     * 
-     * These get navigation data and lines bypassing the security layer in order
-     * to test frontend JavaScript code
-     * ==========================================
-     * =============================================
-     */
-
-    @Autowired
-    private LineManager lineManager;
-
-    @RequestMapping(value = "/navigation.test", method = RequestMethod.GET)
-    @ResponseBody
-    public ChartNavigationData getNavigationDataTest(@RequestParam int chartId,
-	    Principal principal, Locale locale, HttpServletRequest request,
-	    HttpServletResponse response) throws ParseException {
-
-        final ChartNavigationData result = ((NavigationServiceImpl) navigationService).getNavigationDataUNSECURE(chartId, getUser(principal), locale);
-
-    	// Try to get the navigation defaults from the cookie
-    	try {
-    		final NavigationDefaults defaults = getNavigationDefaultsFromCookie(chartId, request, principal);
-    	    if (defaults != null) {
-    	        result.setDefaults(defaults);
-    	    }
-    	} catch (Exception ignored) {
-            logger.info(ignored.getMessage());
-    	}
-    	
-    	return result;
-    }
-
-    @RequestMapping(value = "/lines.test", method = RequestMethod.GET)
-    @ResponseBody
-    public List<IDataLine> getLinesTest(
-	    @RequestParam int chartId,
-	    @RequestParam int product,
-	    @RequestParam int tso,
-	    @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Calendar startTime,
-	    @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Calendar endTime,
-	    @RequestParam DataResolution resolution,
-	    Locale locale,
-	    HttpServletRequest request,
-	    HttpServletResponse response,
-	    Principal principal) {
-
-    	final List<IDataLine> result = new ArrayList<IDataLine>();
-    	final ChartNavigationData navigationData = navigationService.getDefaultNavigationData(chartId);
-
-    	for (final Aspect aspect : navigationData.getAspects()) {
-
-    	    final LineRequest req = new LineRequest(aspect, product, tso,
-    		    startTime, endTime, resolution, locale);
-    	    try {
-        		result.add(lineManager.getLine(req));
-    	    } catch (Exception e) {
-        		e.printStackTrace();
-    	    }
-    	}
-    	
-    	// Update cookie data
-    	final NavigationDefaults defaults = new NavigationDefaults(
-    	        tso,
-    	        resolution,
-    	        product,
-    	        new CalendarRange(startTime, endTime));
-
-    	try {
-            updateChartDefaultsCookie(chartId, defaults, request, response, principal);
-        } catch (Exception e) {
-            // Don't reply with an error if saving the defaults failed
-            e.printStackTrace();
-        }
-    
-    	return result;
     }
     
     private ChartDefaults getChartDefaultsFromCookie(HttpServletRequest request, Principal principal) throws Exception {

@@ -219,69 +219,27 @@ public class GroupDaoImpl extends AbstractBaseDao<Group> implements IGroupDao {
 		return group;
 		
 	}
-	
-	@Override
-	public int getRoleIdByCompanyName(final String companyName)
-	{
-		String sql = "select role_id FROM users.user_roles INNER JOIN users.users ON user_roles.user_id=user.user_id where users.company_name=?";
-		Connection conn = null;
-		
-		try 
-		{
-			conn = datasource.getConnection();
-			PreparedStatement ps = conn.prepareStatement(sql);
-			ps.setString(1, companyName);
-			ResultSet rs = ps.executeQuery();
-			
-			if (rs.next()) 
-			{
-				return rs.getInt(1);
-			}
-			
-			rs.close();
-			ps.close();
-    	} catch (SQLException e) {
-            logger.error(e.getMessage());
-            throw new RuntimeException(e);
-        } finally {
-            if (conn != null) {
-                try {
-                conn.close();
-                } catch (SQLException e) {
-
-                    logger.error(e.getMessage());
-                }
-            }
-        }
-		
-		return -1;
-	}
 
     @Override
-    public String assignRoleToGroup(long roleID, long groupID) {
+    public void assignRoleToGroup(long roleID, long groupID) throws Exception {
         if(roleID==0 || groupID==0){
-            return "Invalid roleID  or groupID ";
+            throw new Exception("Invalid roleID or group ID Argument");
         }        
         
         String sql = "INSERT INTO users.group_role(role_id,group_id) VALUES (?, ?)";
-         try {
-             this.jdbcTemplate.update(sql,new Object[] { roleID, groupID });   
-        } catch (Exception e) {
-            return e.getLocalizedMessage();
-        }    
-        return "OK"; 
+        this.jdbcTemplate.update(sql,new Object[] { roleID, groupID });   
+     
     }
 
     @Override
-    public String deassignRoleFromGroup(long roleID, long groupID) {
+    public void deassignRoleFromGroup(long roleID, long groupID) throws Exception {
         if(roleID==0 || groupID==0){
-            return "Invalid roleID  or groupID ";
+            throw new Exception("Invalid roleID or group ID Argument");
         }
         
         String sql = "DELETE FROM users.group_role WHERE (group_id=? and role_id=?)";
  
         this.jdbcTemplate.update(sql,new Object[] { groupID, roleID });       
-        return "OK";
     }
 
     @Override

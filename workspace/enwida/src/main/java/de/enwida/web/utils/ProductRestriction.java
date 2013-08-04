@@ -1,7 +1,6 @@
 package de.enwida.web.utils;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -15,7 +14,7 @@ public class ProductRestriction {
 
     public ProductRestriction() {
     	this.resolutions = new ArrayList<DataResolution>();
-    	this.timeRange = new CalendarRange(Calendar.getInstance(), Calendar.getInstance());
+    	this.timeRange = null;
     } 
     
     public ProductRestriction(List<DataResolution> resolutions, CalendarRange timeRange) {

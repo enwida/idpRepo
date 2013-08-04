@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import de.enwida.web.model.ChartNavigationData;
-import de.enwida.web.model.DataAuthorization;
 import de.enwida.web.model.DataAvailibility;
+import de.enwida.web.model.Right;
 import de.enwida.web.service.interfaces.IAvailibilityService;
 import de.enwida.web.service.interfaces.INavigationService;
 import de.enwida.web.service.interfaces.ISecurityService;
@@ -55,10 +55,10 @@ public class TestController {
 		
 		Calendar cal = Calendar.getInstance();
 		
-		DataAuthorization da = new DataAuthorization();
-		da.setRole(3);
+		Right da = new Right();
+		da.setRoleID(3);
 		da.setTso(99);
-		da.setProductId(321);
+		da.setProduct(321);
 		da.setAspect("rl_ab1");
 		da.setResolution("15min");
 		cal.set(2010, 00, 1, 00, 00, 00);
@@ -67,7 +67,12 @@ public class TestController {
 		da.setTimeTo(new Date(cal.getTimeInMillis()));	
 		da.setEnabled(true);
 		
-		boolean isAuthorized = securityService.isAllowed(da);
+		try {
+            boolean isAuthorized = securityService.isAllowed(da);
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
 		
 		return "user";
 	}

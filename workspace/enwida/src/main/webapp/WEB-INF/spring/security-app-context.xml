@@ -9,18 +9,8 @@
 <authentication-manager>
 	   <authentication-provider>
 		<jdbc-user-service data-source-ref="dataSource"
- 
-		   users-by-username-query="
-		      select user_name,user_password, enabled 
-		      from users.users where user_name=?" 
- 
-		   authorities-by-username-query="     
-				SELECT users.user_name, roles.role_name FROM users.users
-	    		 INNER JOIN users.user_group ON user_group.user_id=users.user_id 
-	    		 INNER JOIN users.group_role ON group_role.group_id=user_group.group_id
-	    		 INNER JOIN users.roles ON roles.role_ID=group_role.role_id
-	    		 WHERE user_name=?" 
- 
+		   users-by-username-query="SELECT * FROM users.allUsers where user_name=?;" 
+		   authorities-by-username-query="SELECT * FROM users.allRoles WHERE user_name=?;" 
 		/>
 	   </authentication-provider>
 	</authentication-manager>

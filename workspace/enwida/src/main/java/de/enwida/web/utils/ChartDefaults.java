@@ -8,7 +8,7 @@ public class ChartDefaults {
     private Hashtable<Integer, NavigationDefaults> chartDefaults;
     
     public ChartDefaults() {
-        this.chartDefaults = new Hashtable<>();
+        this.chartDefaults = new Hashtable<Integer, NavigationDefaults>();
     }
     
     public void set(int id, NavigationDefaults defaults) {

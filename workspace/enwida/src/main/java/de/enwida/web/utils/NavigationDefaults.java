@@ -20,7 +20,7 @@ public class NavigationDefaults implements Cloneable {
         this.resolution = resolution;
         this.product = product;
         this.timeRange = timeRange;
-        this.disabledLines = new ArrayList<>();
+        this.disabledLines = new ArrayList<Integer>();
     }
     
     public NavigationDefaults clone() {

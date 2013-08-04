@@ -6,8 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import de.enwida.web.dao.interfaces.IAspectsDao;
-import de.enwida.web.model.AspectRight;
+import de.enwida.web.dao.interfaces.IRightDao;
+import de.enwida.web.model.Right;
 import de.enwida.web.service.interfaces.IAspectService;
 
 @Service("AspectService")
@@ -15,9 +15,9 @@ import de.enwida.web.service.interfaces.IAspectService;
 public class AspectServiceImpl implements IAspectService {
 
 	@Autowired
-	private IAspectsDao aspectDao;
+	private IRightDao rightDao;
 
-    public List<AspectRight> getAllAspects(long roleID) {
-        return aspectDao.getAllAspects(roleID);
+    public List<Right> getAllAspects(long roleID) throws Exception {
+        return rightDao.getAllAspects(roleID);
     }
 }

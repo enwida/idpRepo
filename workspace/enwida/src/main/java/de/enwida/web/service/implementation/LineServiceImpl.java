@@ -5,13 +5,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import de.enwida.chart.LineManager;
 import de.enwida.transport.IDataLine;
 import de.enwida.transport.LineRequest;
-import de.enwida.web.model.DataAuthorization;
 import de.enwida.web.model.DataAvailibility;
+import de.enwida.web.model.Right;
 import de.enwida.web.model.Role;
 import de.enwida.web.model.User;
 import de.enwida.web.service.interfaces.IAvailibilityService;
 import de.enwida.web.service.interfaces.ILineService;
 import de.enwida.web.service.interfaces.ISecurityService;
+import de.enwida.web.utils.EnwidaUtils;
 
 public class LineServiceImpl implements ILineService {
     
@@ -34,11 +35,11 @@ public class LineServiceImpl implements ILineService {
         return lineManager.getLine(request);
     }
     
-    private boolean isAllowed(LineRequest lineRequest, User user) {
-        final DataAuthorization authorization = getDataAuthorization(lineRequest);
+    private boolean isAllowed(LineRequest lineRequest, User user) throws Exception {
+        final Right authorization = getDataAuthorization(lineRequest);
 
         for (final Role role : user.getRoles()) {
-            authorization.setRole((int) role.getRoleID());
+            authorization.setRoleID(role.getRoleID());
             if (securityService.isAllowed(authorization)) {
                 return true;
             }
@@ -46,11 +47,11 @@ public class LineServiceImpl implements ILineService {
         return false;
     }
     
-    private DataAuthorization getDataAuthorization(LineRequest request) {
-        final DataAuthorization result = new DataAuthorization();
+    private Right getDataAuthorization(LineRequest request) {
+        final Right result = new Right();
 
         result.setAspect(request.getAspect().toString());
-        result.setProductId(request.getProduct());
+        result.setProduct(request.getProduct());
         result.setTso(request.getTso());
         result.setTimeFrom(request.getStartTime().getTime());
         result.setTimeTo(request.getEndTime().getTime());
@@ -66,8 +67,7 @@ public class LineServiceImpl implements ILineService {
         result.setProduct(request.getProduct());
         result.setTimeFrom(request.getStartTime().getTime());
         result.setTimeTo(request.getEndTime().getTime());
-        // FIXME: Get table name from aspect/resolution
-        result.setTableName("");
+        result.setTableName(EnwidaUtils.getTableNameByAspect(request.getAspect()));
         
         return result;
     }

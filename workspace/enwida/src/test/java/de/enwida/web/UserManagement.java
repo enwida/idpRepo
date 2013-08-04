@@ -32,7 +32,7 @@ import org.w3c.dom.NodeList;
 
 import de.enwida.web.controller.AdminController;
 import de.enwida.web.dao.implementation.GroupDaoImpl;
-import de.enwida.web.dao.implementation.RightsDaoImpl;
+import de.enwida.web.dao.implementation.RightDaoImpl;
 import de.enwida.web.dao.implementation.RoleDaoImpl;
 import de.enwida.web.dao.implementation.UserDaoImpl;
 import de.enwida.web.model.Group;
@@ -60,7 +60,7 @@ public class UserManagement {
     private RoleDaoImpl roleDao;   
     
     @Autowired
-    private RightsDaoImpl rightsDao;     
+    private RightDaoImpl rightsDao;     
 
     private static org.apache.log4j.Logger logger = Logger.getLogger(AdminController.class);
 
@@ -84,7 +84,7 @@ public class UserManagement {
 	}
 	
    @Test
-    public void saveUserGroup() {
+    public void saveUserGroup() throws Exception {
        Group group = groupDao.getAllGroups().get(0);
        //save user in any group
        userDao.assignUserToGroup(user.getUserID(),group.getGroupID());
@@ -112,7 +112,7 @@ public class UserManagement {
    }
    
    @Test
-   public void testRightsDao() {
+   public void testRightsDao() throws Exception {
       List<Right> rights=  rightsDao.findAll();
       rightsDao.enableDisableAspect(rights.get(0).getRightID(), false);
       List<Right> rights2=  rightsDao.findAll();
@@ -186,7 +186,7 @@ public class UserManagement {
 
 	
 	@Test
-	public void testEnabledDisableAspect() {
+	public void testEnabledDisableAspect() throws Exception {
         rightsDao.enableDisableAspect(1, true);
         rightsDao.enableDisableAspect(1, false);
 	}

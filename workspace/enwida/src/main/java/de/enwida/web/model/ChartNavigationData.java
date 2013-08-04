@@ -33,9 +33,9 @@ public class ChartNavigationData implements Cloneable {
 	private NavigationDictionary dictionary;
 
 	public ChartNavigationData() {
-		this.productTrees = new ArrayList<>();
-		this.timeRanges = new ArrayList<>();
-		this.aspects = new ArrayList<>();
+		this.productTrees = new ArrayList<ProductTree>();
+		this.timeRanges = new ArrayList<String>();
+		this.aspects = new ArrayList<Aspect>();
 		this.dictionary = new NavigationDictionary();
 	}
 	
@@ -43,7 +43,7 @@ public class ChartNavigationData implements Cloneable {
 	    final ChartNavigationData result = new ChartNavigationData();
 	    result.setDefaults(defaults.clone());
 	    result.aspects = new ArrayList<Aspect>(aspects);
-	    result.timeRanges = new ArrayList<>(timeRanges);
+	    result.timeRanges = new ArrayList<String>(timeRanges);
 	    result.dictionary = dictionary.clone();
 
 	    result.setIsDateScale(isDateScale);
@@ -109,7 +109,7 @@ public class ChartNavigationData implements Cloneable {
 	}
 	
 	public Map<Integer, String> getTsos() {
-		final Map<Integer, String> result = new HashMap<>();
+		final Map<Integer, String> result = new HashMap<Integer, String>();
 		
 		for (ProductTree tree : productTrees) {
 			final String tsoName = dictionary.getTsos().get(tree.getTso());

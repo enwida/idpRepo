@@ -16,20 +16,16 @@
 				<td><form:input path="lastName" /></td>
 			</tr>
 			<tr>
-				<td>Join date:</td>
+				<td><message:message code="de.enwida.userManagement.joinDate" />:</td>
 				<td>${user.joiningDate}</td>
 			</tr>
 			<tr>
 				<td><message:message code="de.enwida.userManagement.company" />:</td>
-				<td>${user.companyName}</td>
+				<td><form:input path="companyName" value="${user.companyName}" /></td>
 			</tr>
 			<tr>
 				<td><message:message code="de.enwida.userManagement.telephone" />:</td>
 				<td><form:input path="telephone" value="${user.telephone}" /></td>
-			</tr>
-			<tr>
-				<td>Joined On</td>
-				<td>${user.joiningDate}</td>
 			</tr>
 			<tr>
 				<td></td>

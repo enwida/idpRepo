@@ -19,10 +19,10 @@ public class NavigationDictionary implements Cloneable {
 		title = "";
 		xAxisLabel = "";
 		yAxisLabel = "";
-		tsos = new HashMap<>();
-		timeRanges = new HashMap<>();
-		resolutions = new HashMap<>();
-		infoKeys = new HashMap<>();
+		tsos = new HashMap<Integer, String>();
+		timeRanges = new HashMap<String, String>();
+		resolutions = new HashMap<DataResolution, String>();
+		infoKeys = new HashMap<String, String>();
 	}
 	
 	public NavigationDictionary clone() {
@@ -30,10 +30,10 @@ public class NavigationDictionary implements Cloneable {
 		result.title = title;
 		result.xAxisLabel = xAxisLabel;
 		result.yAxisLabel = yAxisLabel;
-		result.tsos = new HashMap<>(tsos);
-		result.timeRanges = new HashMap<>(timeRanges);
-		result.resolutions = new HashMap<>(resolutions);
-		result.infoKeys = new HashMap<>(infoKeys);
+		result.tsos = new HashMap<Integer, String>(tsos);
+		result.timeRanges = new HashMap<String, String>(timeRanges);
+		result.resolutions = new HashMap<DataResolution, String>(resolutions);
+		result.infoKeys = new HashMap<String, String>(infoKeys);
 
 		return result;
 	}

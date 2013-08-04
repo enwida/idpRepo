@@ -15,7 +15,7 @@ public class EnwidaUtils {
 	public static DataResolution getDataResolution(String legacyDataResolution) {
 		
 		DataResolution dR = null;		
-		switch (legacyDataResolution) {
+		switch (legacyDataResolution.trim()) {
 		case "15min":
 			dR = DataResolution.QUATER_HOURLY;
 			break;

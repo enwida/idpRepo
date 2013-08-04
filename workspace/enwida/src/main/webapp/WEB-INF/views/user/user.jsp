@@ -1,4 +1,6 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="message"%>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ page session="false"%>
 
 <h1>User : ${user.userName}</h1>
@@ -6,45 +8,42 @@
 	<form method='POST'>
 		<table>
 			<tr>
-				<td>Name:</td>
-				<td><input type="text" name="firstName"
-					value="${user.firstName}"></td>
+				<td><message:message code="de.enwida.userManagement.firstName" />:</td>
+				<td><form:input path="firstName" /></td>
 			</tr>
 			<tr>
-				<td>Last Name:</td>
-				<td><input type="text" name="lastName" value="${user.lastName}"></td>
+				<td><message:message code="de.enwida.userManagement.lastName" />:</td>
+				<td><form:input path="lastName" /></td>
 			</tr>
 			<tr>
 				<td>Join date:</td>
-				<td>${user.joinDate}</td>
+				<td>${user.joiningDate}</td>
 			</tr>
 			<tr>
-				<td>Email:</td>
-				<td>${user.email}</td>
+				<td><message:message code="de.enwida.userManagement.company" />:</td>
+				<td>${user.companyName}</td>
 			</tr>
 			<tr>
-				<td>company:</td>
-				<td>${user.company}</td>
+				<td><message:message code="de.enwida.userManagement.telephone" />:</td>
+				<td><form:input path="telephone" value="${user.telephone}" /></td>
 			</tr>
 			<tr>
-				<td>Tel:</td>
-				<td><input type="text" name="tel" value="${user.tel}"></td>
+				<td>Joined On</td>
+				<td>${user.joiningDate}</td>
 			</tr>
 			<tr>
-				<td>Login Info</td>
 				<td></td>
+				<td><a href="admin_userlog.html?user=${user.userName}"><message:message code="de.enwida.userManagement.more" /></a></td>
 			</tr>
 			<tr>
-				<td>Cookie ID</td>
-				<td></td>
+				<td><message:message code="de.enwida.userManagement.groups" /></td>
+				<td>${user.groups} 
+					<a href="admin_editgroup.html?userID=${user.userID}"><message:message code="de.enwida.admin_editgroup.title" /></a>
+				</td>
 			</tr>
 			<tr>
-				<td>Groups</td>
-				<td></td>
-			</tr>
-			<tr>
-				<td>Roles</td>
-				<td></td>
+				<td><message:message code="de.enwida.userManagement.roles" /></td>
+				<td>${user.roles}</td>
 			</tr>
 		</table>
 		<a href="">ResetPassword</a> <a href="">Edit Group</a> <a href="">Reset

@@ -1,4 +1,4 @@
-﻿--drop all tables	
+--drop all tables	
 DROP SCHEMA IF EXISTS users CASCADE;
 
 CREATE SCHEMA users;

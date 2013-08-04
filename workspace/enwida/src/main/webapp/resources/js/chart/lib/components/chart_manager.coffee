@@ -44,7 +44,7 @@ define [ "components/navigation"
         @getMsg().showLoading()
 
         format = d3.time.format "%Y-%m-%d"
-        $.ajax "lines.test",
+        $.ajax "lines",
           data:
             chartId: @attr.id
             product: options.product
@@ -119,6 +119,8 @@ define [ "components/navigation"
           @trigger @select("lines"), "disabledLines",
             lines: opts.data?.defaults?.disabledLines
         @on "toggleLine", @toggleLine
+        @on "errorMessage", (_, opts) ->
+          @$node.text opts.msg
 
         # Parse element attributes
         @attr.type = @$node.attr("data-chart-type") ? "line"

@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import de.enwida.web.controller.AdminController;
 import de.enwida.web.dao.interfaces.IGroupDao;
-import de.enwida.web.dao.interfaces.IRightsDao;
+import de.enwida.web.dao.interfaces.IRightDao;
 import de.enwida.web.dao.interfaces.IRoleDao;
 import de.enwida.web.dao.interfaces.IUserDao;
 import de.enwida.web.model.Group;
@@ -25,29 +25,50 @@ import de.enwida.web.utils.Constants;
 import de.enwida.web.utils.EnwidaUtils;
 
 
+/**
+ * All user related information will be provided with this service
+ * @author olcay tarazan
+ *
+ */
 @TransactionConfiguration( defaultRollback = true )
 @Transactional
 public class UserServiceImpl implements IUserService {
 
+    /**
+     * User Data Access Object
+     */
     @Autowired
     private IUserDao userDao;
-    
+    /**
+     * Group Data Access Object
+     */
     @Autowired
     private IGroupDao groupDao;
-     
+    /**
+     * Role Data Access Object
+     */   
     @Autowired
     private IRoleDao roleDao;
-    
-    
-   @Autowired
-   private IRightsDao rightsDao;
-
+    /**
+     * Rights Data Access Object
+     */
+    @Autowired
+    private IRightDao rightDao;
+    /**
+     * Mailing Service to send activation link or password
+     */
     @Autowired
     private MailServiceImpl mailService;
-    
+    /**
+     * Log4j static class
+     */
     private static org.apache.log4j.Logger logger = Logger.getLogger(AdminController.class);
-    
-    public User getUser(Long id) {
+    /**
+     * Gets the User from UserID
+     * @throws Exception 
+     */
+    @Override
+    public User getUser(Long id) throws Exception {
         
         User user = userDao.getUserByID(id);
         if (user==null)
@@ -57,12 +78,22 @@ public class UserServiceImpl implements IUserService {
         return user;
     }
 
-    public List<User> getUsers() {
+    /**
+     * Gets all the user from database
+     * @throws Exception 
+     */
+    @Override
+    public List<User> getUsers() throws Exception {
         return userDao.findAllUsers();
     }
 
+    /**
+     * Saves user into Database
+     * @throws Exception 
+     */
     @Transactional
-    public boolean saveUser(User user, String activationHost) 
+    @Override
+    public boolean saveUser(User user, String activationHost) throws Exception 
     {
         
         Date date = new Date(Calendar.getInstance().getTimeInMillis());
@@ -123,40 +154,65 @@ public class UserServiceImpl implements IUserService {
         }        
     }
 
-    public String getPassword(String email) {
+    /**
+     * Gets user Password from the mail
+     */
+    @Override
+    public String getPassword(String email)throws Exception {
         return userDao.getUserByName(email).getPassword();
     }
-    
-    public List<Group> getUserGroups(long userID) {
-        return userDao.getUserGroups(userID);
+    /**
+     * Get all user group
+     */
+    @Override
+    public List<Group> getUserGroups(long userID)throws Exception {
+        return groupDao.getUserGroups(userID);
     }
 
+    /**
+     * Gets all the groups
+     */
+    @Override
     public List<Group> getAllGroups() {
         return groupDao.getAllGroups();
     }
 
+    /**
+     * Adds new group
+     */
+    @Override
     public Group addGroup(Group newGroup) {
         newGroup.setAutoPass(false);
         return groupDao.addGroup(newGroup);
     }
 
-    public void saveRole(Role role) {
+    /**
+     * Adds new role to the DB
+     */
+    @Override
+    public void addRole(Role role)throws Exception  {
         roleDao.addRole(role);
     }
-
-    public List<Role> getAllRoles() {
+    /**
+     * Gets all Roles
+     */
+    @Override
+    public List<Role> getAllRoles()throws Exception  {
         return roleDao.getAllRoles();
     }
     
-    public boolean checkEmailAvailability(String email) {   
-        return userDao.getUserByName(email)==null;
+    /**
+     * Updates the user
+     */
+    @Override
+    public void updateUser(User user) throws Exception {
+        userDao.updateUser(user);
     }
-    
-    public boolean updateUser(User user) {
-        return userDao.updateUser(user);
-    }
-
-    public User getUser(String userName) {
+    /**
+     * Gets the user based on userName
+     */
+    @Override
+    public User getUser(String userName)throws Exception  {
         User user= userDao.getUserByName(userName);
         if (user==null)
             return null;
@@ -164,8 +220,11 @@ public class UserServiceImpl implements IUserService {
         user.setGroups(groupDao.getUserGroups(user.getUserID()));
         return user;
     }
-
-    public void resetPassword(long userID) {
+    /**
+     * Resets user Password and send an email link
+     */
+    @Override
+    public void resetPassword(long userID)throws Exception  {
         SecureRandom random = new SecureRandom();
         String newPassword=new BigInteger(130, random).toString(32);
         User user=userDao.getUserByID(userID);
@@ -173,24 +232,36 @@ public class UserServiceImpl implements IUserService {
         try {
             mailService.SendEmail(user.getUserName(),"New Password","Your new Password:"+newPassword);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new Exception("Invalid Email.Please contact info@enwida.de");
         }       
         user.setPassword(newPassword);
     }
-
-    public String deleteUser(User user) {
-        return userDao.deleteUser(user);
+    /**
+     * Deletes the user
+     */
+    @Override
+    public void deleteUser(User user) throws Exception {
+        userDao.deleteUser(user);
     }
-
-    public String assignUserToGroup(int userID, int groupID) {
-        return userDao.assignUserToGroup(userID,groupID);
+    /**
+     * Assign users into group
+     */
+    @Override
+    public void assignUserToGroup(int userID, int groupID) throws Exception{
+        userDao.assignUserToGroup(userID,groupID);
     }
-
-    public String deassignUserToGroup(int userID, int groupID) {
-        return userDao.deassignUserFromGroup(userID,groupID);
+    /**
+     * deAssign users into group
+     */
+    @Override
+    public void deassignUserToGroup(int userID, int groupID) throws Exception {
+        userDao.deassignUserFromGroup(userID,groupID);
     }
-
-    public List<Group> getAllGroupsWithUsers() {
+    /**
+     * Gets all groups with users attached
+     */
+    @Override
+    public List<Group> getAllGroupsWithUsers() throws Exception {
         List<Group> groups = groupDao.getAllGroups();
         for (Group group : groups) {
             group.setAssignedUsers(userDao.getUsersByGroupID(group.getGroupID()));
@@ -198,15 +269,21 @@ public class UserServiceImpl implements IUserService {
         return groups;
     }
 
-    public String assignRoleToGroup(int roleID, int groupID) {
-        return  groupDao.assignRoleToGroup(roleID,groupID);
+    /**
+     * Assigns role to group
+     */
+    @Override
+    public void assignRoleToGroup(int roleID, int groupID) throws Exception {
+         groupDao.assignRoleToGroup(roleID,groupID);
     }
 
-    public String deassignRoleToGroup(int roleID, int groupID) {
-        return groupDao.deassignRoleFromGroup(roleID,groupID);
+    @Override
+    public void deassignRoleToGroup(int roleID, int groupID) throws Exception {
+        groupDao.deassignRoleFromGroup(roleID,groupID);
     }
 
-    public List<Role> getAllRolesWithGroups() {
+    @Override
+    public List<Role> getAllRolesWithGroups()throws Exception  {
         List<Role> roles = roleDao.getAllRoles();
         for (Role role : roles) {
             role.setAssignedGroups(groupDao.getGroupsByRole(role.getRoleID()));
@@ -214,46 +291,73 @@ public class UserServiceImpl implements IUserService {
         return roles;
     }
 
-    public List<User> findAllUsers() {
+    @Override
+    public List<User> getAllUsers() throws Exception {
         return userDao.findAllUsers();
     }
-
+    /**
+     * Enables or Disables the user
+     */
     @Override
-    public boolean enableDisableUser(int userID, boolean enabled) {
-        return userDao.enableDisableUser(userID,enabled);
+    public void enableDisableUser(int userID, boolean enabled)throws Exception  {
+        userDao.enableDisableUser(userID,enabled);
     }
-
+    /**
+     * Removes the group
+     */
     @Override
     public void removeGroup(int groupID) throws Exception {
         groupDao.removeGroup(groupID);
     }
-    
+    /**
+     * Checks usernameAvailability
+     */
     @Override
-    public boolean usernameAvailablility(String username) {
+    public boolean userNameAvailability(String username) throws Exception {
         return userDao.usernameAvailablility(username);
     }
-
+    /**
+     * Enables or disables the aspect based on rightID
+     */
     @Override
-    public boolean enableDisableAspect(int rightID, boolean enabled) {
-        return rightsDao.enableDisableAspect(rightID,enabled);
+    public void enableDisableAspect(int rightID, boolean enabled)throws Exception  {
+        rightDao.enableDisableAspect(rightID,enabled);
     }
-
+    /**
+     * Activates the user
+     */
     @Override
-    public boolean activateUser(String username, String activationCode) 
+    public boolean activateUser(String username, String activationCode) throws Exception 
     {
         if(userDao.checkUserActivationId(username, activationCode))
         {
-            return userDao.activateUser(username);
-            
+            userDao.activateUser(username);
+            return true;
         }
-        
         return false;
     }
-
+    /**
+     * Gets the current User
+     */
     @Override
-    public User getCurrentUser() {
+    public User getCurrentUser()throws Exception  {
         String userName = SecurityContextHolder.getContext().getAuthentication().getName();
-        return this.getUser(userName);
+        User user=this.getUser(userName);
+        //If user is not found return anonymous user;
+        if (user==null){
+            user=new User();
+            user.setUserName("anonymous");
+        }
+        return user;
+    }
+
+    /**
+     * Saves the user
+     * @throws Exception 
+     */
+    @Override
+    public boolean saveUser(User user) throws Exception {
+        return saveUser(user,null);
     }
 
 }

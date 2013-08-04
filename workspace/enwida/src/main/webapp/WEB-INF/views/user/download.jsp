@@ -46,6 +46,6 @@
         
         
         <div id="chart_div"></div>
-        <a id="downloadLink" onclick="downloadCsv('rl_ab1');" href="#">download</a>
+        <a id="downloadLink" onclick="downloadCsv('rl_ab1');" href="#"><message:message code="de.enwida.userManagement.download" /></a>
     </body>	
 </html>

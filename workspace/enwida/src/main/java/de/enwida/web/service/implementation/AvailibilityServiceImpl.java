@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import de.enwida.transport.Aspect;
 import de.enwida.transport.DataResolution;
 import de.enwida.web.dao.interfaces.IDataAvailibilityDao;
-import de.enwida.web.dao.interfaces.IRightsDao;
+import de.enwida.web.dao.interfaces.IRightDao;
 import de.enwida.web.model.DataAvailibility;
 import de.enwida.web.model.User;
 import de.enwida.web.service.interfaces.IAvailibilityService;
@@ -23,7 +23,7 @@ public class AvailibilityServiceImpl implements IAvailibilityService {
 	private IDataAvailibilityDao dataAvailibilityDao;
 	
 	@Autowired
-	private IRightsDao rightsDao;
+	private IRightDao rightDao;
 
 	public boolean isAvailable(DataAvailibility dataAvailibility) {
 		return dataAvailibilityDao.isAvailableByExample(dataAvailibility);
@@ -40,7 +40,17 @@ public class AvailibilityServiceImpl implements IAvailibilityService {
 		List<DataAvailibility> dataAvailibilityResult = dataAvailibilityDao.getListByExample(dataAvailibility); 
 		for (DataAvailibility dA : dataAvailibilityResult) {
 			if (dA.getTableName().contains("analysis")) {
-				pR.getResolutions().add(EnwidaUtils.getDataResolution(dA.getTableName().split("_")[1]));
+				// Add resolution
+				final DataResolution resolution = EnwidaUtils.getDataResolution(dA.getTableName().split("_")[1]);
+				if (resolution != null) {
+					pR.getResolutions().add(resolution);
+				}
+				
+				// Set time range there is none
+				if (pR.getTimeRange() == null) {
+					pR.setTimeRange(new CalendarRange(dA.getTimeFrom(), dA.getTimeTo()));
+				}
+				// Set the most accurate time range, if possible
 				if (EnwidaUtils.getDataResolution(dA.getTableName().split("_")[1]) == DataResolution.QUATER_HOURLY) {
 					pR.setTimeRange(new CalendarRange(dA.getTimeFrom(), dA.getTimeTo()));
 				}
@@ -48,7 +58,6 @@ public class AvailibilityServiceImpl implements IAvailibilityService {
 				pR.getResolutions().add(DataResolution.QUATER_HOURLY);
 				pR.setTimeRange(new CalendarRange(dA.getTimeFrom(), dA.getTimeTo()));
 			}
-			
 		}
 		return pR;
     }
