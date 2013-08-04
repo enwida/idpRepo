@@ -16,7 +16,14 @@ Instead, this document focuses on how to add, edit and test new documentation pa
 
 ## Directory Structure
 The files which make up this documentation are located in the [gh-pages](https://github.com/enwida/idpRepo/tree/gh-pages) branch of our IDP repository.
-Since this is an orphaned branch, please do _not_ just "git checkout" it inside your main working copy of the repository whenever you want to add/edit files there. Make a new clone and check out the gh-pages branch there, instead.
+Since this is an orphaned branch, please do _not_ just "git checkout" it inside your main working copy of the repository whenever you want to add/edit files there. Make a new clone and check out the gh-pages branch there, instead:
+
+```bash
+git clone git@github.com:enwida/idpRepo.git enwida-documentation
+cd enwida-documentation
+git branch gh-pages remotes/origin/gh-pages
+git checkout gh-pages
+```
 
 The directory structure itself is based on the [Jekyll Directory Structure](http://jekyllrb.com/docs/structure) without posts and drafts:
 
