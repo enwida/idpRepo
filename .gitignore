@@ -12,3 +12,4 @@ workspace/enwida/src/main/webapp/resources/js/chart/lib/*.js
 /workspace/enwida/src/test/javascript/components
 /workspace/enwida/src/main/webapp/resources/js/chart/lib/**/*.js
 *.json
+/workspace/enwida/postgresql.jar

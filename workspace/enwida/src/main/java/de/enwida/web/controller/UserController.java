@@ -61,21 +61,7 @@ public class UserController {
 
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public String home(ModelMap model, Principal principal) {
-		String name,userStatus,userStatusURL;
-		
-		if(principal!=null){
-			name = principal.getName();
-			userStatus="logout";
-			userStatusURL="../j_spring_security_logout";
-		}else{
-			name="anonymous";
-			userStatusURL=userStatus="";
-		}
-		model.addAttribute("username", name);
-		model.addAttribute("userStatus", userStatus);
-		model.addAttribute("userStatusURL", userStatusURL);
-		model.addAttribute("content", "user/index");
-		return "master";
+		return index(model, principal);
 	}
 	
 	   @RequestMapping(value = "/index", method = RequestMethod.GET)

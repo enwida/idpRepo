@@ -1,4 +1,5 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="message"%>
 <html>
 <head>
 <title>Login Page</title>
@@ -22,12 +23,12 @@
  
 		<table>
 			<tr>
-				<td>Email:</td>
+				<td><message:message code="de.enwida.userManagement.forgotPassword" />:</td>
 				<td><input type='text' name='email' value=''>
 				</td>
 			</tr>
 			<tr>
-				<td colspan='2'><input type="submit"	value="GetPassword" />
+				<td colspan='2'><input type="submit"	value='<message:message code="de.enwida.userManagement.getPassword" />' />
 				</td>
 			</tr>
 		</table>

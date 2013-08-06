@@ -8,19 +8,6 @@
 <link rel="stylesheet" href="../resources/css/admin/assets/assets.css" />
 </head>
 <body>
-	<div class="navbar navbar-inverse navbar-fixed-top">
-		<div>
-			<div>
-				<ul class="nav navbar-nav">
-					<li><a href="http://localhost:8080/enwida/user/">Enwida</a></li>
-					<li><a href="admin/admin_userlist">Users</a></li>
-					<li><a href="admin/admin_editgroup">Groups</a></li>
-					<li><a href="admin/admin_rolelist">Roles</a></li>
-				</ul>
-			</div>
-			<!--/.nav-collapse -->
-		</div>
-	</div>
 	<div><br><br>
 		<a Style="color: red;">${error}</a><br> <a Style="color: blue;">${info}</a><br>
 		<jsp:include page="${content}.jsp"></jsp:include>

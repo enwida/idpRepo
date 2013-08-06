@@ -1,4 +1,5 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="message"%>
 <%@ page session="false"%>
 
 
@@ -7,10 +8,10 @@
 <table id="tblRoles" class="tablesorter">
 	<thead>
 		<tr>
-			<th>Role Name</th>
-			<th>Description</th>
-			<th>Groups</th>
-			<th>Operation</th>
+			<th><message:message code="de.enwida.userManagement.roleName" /></th>
+			<th><message:message code="de.enwida.userManagement.description" /></th>
+			<th><message:message code="de.enwida.userManagement.groups" /></th>
+			<th><message:message code="de.enwida.userManagement.operation" /></th>
 		<tr>
 	<thead>
 	<tfoot>
