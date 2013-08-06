@@ -116,7 +116,7 @@ public class UserController {
 	    if(principal!=null){
 	        return index(request, model, principal);
 	    }else{
-		return "user/login";
+	        return "user/login";
 	    }
 	}
 	
@@ -168,15 +168,18 @@ public class UserController {
 	}
 	
 	@RequestMapping(value="/register",method=RequestMethod.GET)
-    public String showForm(ModelMap model, HttpServletRequest request){
+    public String showForm(ModelMap model, HttpServletRequest request,Principal principal){
 	    try {
             preProcessRegisterForm(request,model);
         } catch (Exception e) {
             logger.info(e.getMessage());
             model.addAttribute("Error", messageSource.getMessage("de.enwida.userManagement.notAllowed", null, request.getLocale()));
         }
-	    
-        return "master";
+	    if(principal!=null){
+            return index(request, model, principal);
+        }else{
+            return "master";
+        }
     }
 	
 	@RequestMapping(value="/register",method=RequestMethod.POST)

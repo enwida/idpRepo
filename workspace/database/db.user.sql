@@ -7,7 +7,7 @@ CREATE SCHEMA users;
 CREATE TABLE users.users
 (
   user_id serial NOT NULL,
-  user_name character varying(45) NOT NULL,
+  user_name character varying NOT NULL,
   user_password character varying(45) NOT NULL,
   first_name character varying(45) NOT NULL,
   last_name character varying(45) NOT NULL,
@@ -17,7 +17,6 @@ CREATE TABLE users.users
   company_name character varying(45) NOT NULL,
   company_logo character varying(200),
   activation_id character varying(45),
-  username character varying(45),
   CONSTRAINT users_pkey PRIMARY KEY (user_id)
 )
 ;
@@ -75,8 +74,7 @@ CREATE TABLE users.group_role (
 INSERT INTO users.users(
 		user_name, user_password, first_name, last_name, enabled, 
 		joining_date, telephone, company_name)
-VALUES ('micha', 'ach1m', 'Michael', 'Steck', true, '2013-07-02', '0049 89 1234567','enwida');
-
+VALUES ('olcay', '123', 'olcay', 'tarazan', true, '2013-07-02', '0049 89 1234567','enwida');
 
 INSERT INTO users.roles( role_name, description)
     VALUES ('admin','adminstrator');
@@ -95,3 +93,46 @@ INSERT INTO users.group_role(
 INSERT INTO users.user_group(
             user_id, group_id)
     VALUES (1, 1);
+    
+ --Creates dummy Rights
+CREATE OR REPLACE FUNCTION getAllRights() RETURNS SETOF users.rights AS
+$BODY$
+DECLARE
+    r users.rights%rowtype;
+    DECLARE id INT=0;
+BEGIN
+    LOOP
+	id=id+1;
+        INSERT INTO users.rights(
+            right_id, role_id, tso, product, resolution, time1, time2, aspect_id,enabled)
+	VALUES (id, 1, 1, 1, 1, '2012.1.1.', '2012.1.1.', 1, true);
+	EXIT WHEN id> 100;
+    END LOOP;
+    RETURN;
+END
+$BODY$
+LANGUAGE 'plpgsql' ;
+--Deletes previous data
+delete from users.rights;
+--generates new dummy data
+SELECT  getAllRights();
+
+--If user is not using user_name, we can login him with login_name which first and lastName
+CREATE OR REPLACE VIEW users.allUsers AS 
+select user_name ,user_password,enabled
+from users.users
+UNION
+select users.first_name ||' '|| users.last_name,user_password,enabled
+from users.users;
+
+CREATE OR REPLACE VIEW users.allRoles AS 
+SELECT users.user_name, roles.role_name FROM users.users
+    		 INNER JOIN users.user_group ON user_group.user_id=users.user_id 
+    		 INNER JOIN users.group_role ON group_role.group_id=user_group.group_id
+    		 INNER JOIN users.roles ON roles.role_ID=group_role.role_id
+UNION
+	SELECT users.first_name ||' '|| users.last_name, roles.role_name  FROM users.users
+    		 INNER JOIN users.user_group ON user_group.user_id=users.user_id 
+    		 INNER JOIN users.group_role ON group_role.group_id=user_group.group_id
+    		 INNER JOIN users.roles ON roles.role_ID=group_role.role_id;
+  
