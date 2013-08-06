@@ -27,7 +27,6 @@ import de.enwida.transport.DataResolution;
 import de.enwida.transport.IDataLine;
 import de.enwida.transport.LineRequest;
 import de.enwida.web.model.ChartNavigationData;
-import de.enwida.web.model.User;
 import de.enwida.web.service.implementation.LineServiceImpl;
 import de.enwida.web.service.interfaces.ICookieSecurityService;
 import de.enwida.web.service.interfaces.INavigationService;
@@ -73,7 +72,7 @@ public class ChartDataController {
 
     	ChartNavigationData chartNavigationData = null;
     	try {
-            chartNavigationData = navigationService.getNavigationData(chartId, getUser(principal), locale);
+            chartNavigationData = navigationService.getNavigationData(chartId, userService.getCurrentUser(), locale);
             // Try to set the defaults from the cookie
         	final NavigationDefaults defaults = getNavigationDefaultsFromCookie(chartId, request, principal);
         	if (defaults != null) {
@@ -95,8 +94,7 @@ public class ChartDataController {
 	    @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Calendar startTime,
 	    @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Calendar endTime,
 	    @RequestParam DataResolution resolution,
-	    Locale locale,
-	    Principal principal) {
+	    Locale locale) {
         
         final List<IDataLine> result = new ArrayList<IDataLine>();
         final List<Aspect> aspects = navigationService.getDefaultNavigationData(chartId).getAspects();
@@ -105,7 +103,7 @@ public class ChartDataController {
         	final LineRequest request = new LineRequest(aspect, product, tso, startTime, endTime, resolution, locale);
 
         	try {
-                final IDataLine line = lineService.getLine(request, getUser(principal));
+                final IDataLine line = lineService.getLine(request, userService.getCurrentUser());
                 result.add(line);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -123,12 +121,11 @@ public class ChartDataController {
 	    @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Calendar startTime,
 	    @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Calendar endTime,
 	    @RequestParam DataResolution resolution,
-	    Locale locale,
-	    Principal principal) throws Exception {
+	    Locale locale) throws Exception {
         
         final Aspect aspect = Aspect.valueOf(strAspect);
     	final LineRequest request = new LineRequest(aspect, product, tso, startTime, endTime, resolution, locale);
-        return lineService.getLine(request, getUser(principal));
+        return lineService.getLine(request, userService.getCurrentUser());
     }
 
 
@@ -158,15 +155,6 @@ public class ChartDataController {
             updateChartDefaultsCookie(chartId, defaults, request, response, principal);
         } catch (Exception ignored) { 
             logger.info(ignored.getMessage());
-        }
-    }
-    
-    private User getUser(Principal principal) {
-        try {
-            return userService.getUser(principal.getName());
-        } catch (Exception e) {
-            logger.error(e.getMessage());
-            return null;
         }
     }
     

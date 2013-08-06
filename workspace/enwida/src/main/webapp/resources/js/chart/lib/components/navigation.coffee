@@ -3,7 +3,6 @@ define ["util/resolution"], (Resolution) ->
   flight.component ->
 
     @productParts     = ["type", "posneg", "timeslot"]
-    @treeParts        = ["type", "timeslot", "posneg"]
     @dateFormat       = d3.time.format "%Y-%m-%d"
     @datePickerFormat = "yyyy-mm-dd"
     @timeRanges       = ["Day", "Week", "Month", "Year"]
@@ -205,7 +204,7 @@ define ["util/resolution"], (Resolution) ->
         values[@productParts[i]] = id
 
       node = @getProductTree().root
-      for name, i in @treeParts
+      for name, i in @productParts
         element = @select("product").find ".#{name}"
         element.empty()
         for child in node.children
