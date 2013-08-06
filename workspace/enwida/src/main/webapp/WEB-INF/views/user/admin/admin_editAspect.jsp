@@ -4,7 +4,7 @@
 <div>
 	<h1>
 	<form action="admin_editaspect.html" method="GET">
-		Role: <select name="roleID" id="myselect" onchange="this.form.submit()">
+		<message:message code="de.enwida.userManagement.roleName" />: <select name="roleID" id="myselect" onchange="this.form.submit()">
 						<c:forEach var="role" items="${roles}">
 							<option value="${role.roleID}">${role.roleName}</option>
 						</c:forEach>
@@ -26,6 +26,24 @@ $("#myselect").val(get_url_parameter('roleID'));
 			<th><message:message code="de.enwida.userManagement.enabled" /></th>
 		<tr>
 	<thead>
+	<tfoot>
+		<tr>
+			<th colspan="7" class="pager form-horizontal">
+				<button type="button" class="btn first"><i class="icon-step-backward"></i></button>
+				<button type="button" class="btn prev"><i class="icon-arrow-left"></i></button>
+				<span class="pagedisplay"></span> <!-- this can be any element, including an input -->
+				<button type="button" class="btn next"><i class="icon-arrow-right"></i></button>
+				<button type="button" class="btn last"><i class="icon-step-forward"></i></button>
+				<select class="pagesize input-mini" title="Select page size">
+					<option selected="selected" value="10">10</option>
+					<option value="20">20</option>
+					<option value="30">30</option>
+					<option value="40">40</option>
+				</select>
+				<select class="pagenum input-mini" title="Select page number"></select>
+			</th>
+		</tr>
+	</tfoot>
 	<tbody>
 		<c:forEach var="right" items="${aspectRights}">
 			<tr>

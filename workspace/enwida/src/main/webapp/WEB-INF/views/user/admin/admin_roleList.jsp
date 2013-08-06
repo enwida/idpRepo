@@ -38,7 +38,7 @@
 				<td>${role.description}</td>
 				<td><c:forEach var="group" items="${role.assignedGroups}"><a href="admin_editgroup.html?groupID=${group.groupID}">${group.groupName}</a>,</c:forEach></td>
 				<td>
-					<a href='admin_editaspect?roleID=${role.roleID}'> Details</a>
+					<a href='admin_editaspect?roleID=${role.roleID}'> <message:message code="de.enwida.userManagement.details" /></a>
 				</td>
 			<tr>
 		</c:forEach>
@@ -48,8 +48,8 @@
 	<table  id="tblRoleMap">
 		<thead>
 			<tr>
-				<th>Group Name</th>
-				<th>Role Name</th>
+				<th><message:message code="de.enwida.userManagement.groupName" /></th>
+				<th><message:message code="de.enwida.userManagement.roleName" /></th>
 			<tr>
 		<thead>
 		<tbody>
@@ -73,8 +73,8 @@
 		<tr>
 			<td></td>
 			<td>
-				<input type="submit" class="btn btn-primary" name="assign" value="assign"/>
-				<input type="submit" class="btn btn-primary"  name="deassign" value="deassign"/>
+				<input type="submit" class="btn btn-primary" name="assign"  value="<message:message code="de.enwida.userManagement.assign" />"/>
+				<input type="submit" class="btn btn-primary"  name="deassign" value="<message:message code="de.enwida.userManagement.deAssign" />"/>
 			</td>
 		</tr>
 	</table>

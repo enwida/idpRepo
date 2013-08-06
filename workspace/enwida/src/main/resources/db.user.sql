@@ -95,3 +95,25 @@ INSERT INTO users.group_role(
 INSERT INTO users.user_group(
             user_id, group_id)
     VALUES (1, 1);
+    
+CREATE OR REPLACE FUNCTION getAllRights() RETURNS SETOF users.rights AS
+$BODY$
+DECLARE
+    r users.rights%rowtype;
+    DECLARE id INT=0;
+BEGIN
+    LOOP
+	id=id+1;
+        INSERT INTO users.rights(
+            right_id, role_id, tso, product, resolution, time1, time2, aspect_id,enabled)
+	VALUES (id, 1, 1, 1, 1, '2012.1.1.', '2012.1.1.', 1, true);
+	EXIT WHEN id> 100;
+    END LOOP;
+    RETURN;
+END
+$BODY$
+LANGUAGE 'plpgsql' ;
+
+delete from users.rights;
+
+SELECT  getAllRights();
