@@ -127,36 +127,24 @@ public class NavigationJsonGenerator {
     				final ProductNode scr = new ProductNode(2, "SCR");
     				node.addChild(scr);
     				
-    				final ProductNode pt = new ProductNode(1, "PT");
-    				final ProductNode opt = new ProductNode(2, "OPT");
+    				final ProductNode pos = new ProductNode(1, "pos");
+    				final ProductNode neg = new ProductNode(2, "neg");
 
-    				appendLeafs(pt, template);
-    				appendLeafs(opt, template);
-    				scr.addChild(pt);
-    				scr.addChild(opt);
+    				appendSCRLeaves(pos, template);
+    				appendSCRLeaves(neg, template);
+    				scr.addChild(pos);
+    				scr.addChild(neg);
     			} else if (product.equals("3**")) {
     				final ProductNode tcr = new ProductNode(3, "TCR");
     				node.addChild(tcr);
-    				
-    				final ProductNode t1 = new ProductNode(1, "0-4");
-    				final ProductNode t2 = new ProductNode(2, "4-8");
-    				final ProductNode t3 = new ProductNode(3, "8-12");
-    				final ProductNode t4 = new ProductNode(4, "12-16");
-    				final ProductNode t5 = new ProductNode(5, "16-20");
-    				final ProductNode t6 = new ProductNode(6, "20-24");
-    				
-    				appendLeafs(t1, template);
-    				appendLeafs(t2, template);
-    				appendLeafs(t3, template);
-    				appendLeafs(t4, template);
-    				appendLeafs(t5, template);
-    				appendLeafs(t6, template);
-    				tcr.addChild(t1);
-    				tcr.addChild(t2);
-    				tcr.addChild(t3);
-    				tcr.addChild(t4);
-    				tcr.addChild(t5);
-    				tcr.addChild(t6);
+    
+    				final ProductNode pos = new ProductNode(1, "pos");
+    				final ProductNode neg = new ProductNode(2, "neg");
+
+    				appendTCRLeaves(pos, template);
+    				appendTCRLeaves(neg, template);
+    				tcr.addChild(pos);
+    				tcr.addChild(neg);
     			}
     		}
     	}
@@ -164,26 +152,46 @@ public class NavigationJsonGenerator {
     	return result;
     }
     
-    private static void appendLeafs(ProductNode node, Template template) {
-    	final ProductLeaf pos = new ProductLeaf(1, "pos");
-    	final ProductLeaf neg = new ProductLeaf(2, "neg");
-    	pos.setResolution(template.resolutions);
-    	neg.setResolution(template.resolutions);
-    	pos.setTimeRange(new CalendarRange(template.dateFrom, template.dateTo));
-    	neg.setTimeRange(new CalendarRange(template.dateFrom, template.dateTo));
-    	
-    	node.addChild(pos);
-    	node.addChild(neg);
+    private static void appendSCRLeaves(ProductNode node, Template template) {
+		final List<ProductLeaf> leaves = Arrays.asList(new ProductLeaf[] {
+			new ProductLeaf(1, "PT"),
+			new ProductLeaf(2, "OPT")
+		});
+
+    	for (final ProductLeaf leaf : leaves) {
+    		setLeafProperties(leaf, template);
+    		node.addChild(leaf);
+    	}
+    }
+
+    private static void appendTCRLeaves(ProductNode node, Template template) {
+		final List<ProductLeaf> leaves = Arrays.asList(new ProductLeaf[] {
+			new ProductLeaf(1, "0-4"),
+			new ProductLeaf(2, "4-8"),
+			new ProductLeaf(3, "8-12"),
+			new ProductLeaf(4, "12-16"),
+			new ProductLeaf(5, "16-20"),
+			new ProductLeaf(6, "20-24")		});
+
+    	for (final ProductLeaf leaf : leaves) {
+    		setLeafProperties(leaf, template);
+    		node.addChild(leaf);
+    	}
+    }
+    
+    private static void setLeafProperties(ProductLeaf leaf, Template template) {
+    	leaf.setResolution(template.resolutions);
+    	leaf.setTimeRange(new CalendarRange(template.dateFrom, template.dateTo));
     }
     
     private static void appendZeroParts(ProductNode node, Template template) {
-		final ProductNode wholeDay = new ProductNode(0, "AllDay");
-		node.addChild(wholeDay);
+		final ProductNode posneg = new ProductNode(0, "Pos & neg");
+		node.addChild(posneg);
 		
-		final ProductLeaf posneg = new ProductLeaf(0, "PosNeg");
-		posneg.setResolution(template.resolutions);
-		posneg.setTimeRange(new CalendarRange(template.dateFrom, template.dateTo));
-		wholeDay.addChild(posneg);
+		final ProductLeaf day = new ProductLeaf(0, "Day");
+		day.setResolution(template.resolutions);
+		day.setTimeRange(new CalendarRange(template.dateFrom, template.dateTo));
+		posneg.addChild(day);
     }
     
     private static ChartNavigationData getExampleNavigation() {
