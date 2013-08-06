@@ -48,12 +48,11 @@ public class RightDaoImpl extends AbstractBaseDao<Right> implements IRightDao {
     public Right mapRow(ResultSet rs, int rowNum) throws SQLException {
         Right right = new Right();
         right.setRightID(rs.getLong("right_id"));
-        right.setAspect(rs.getString("aspect_id"));
         right.setRoleID(rs.getLong("role_id"));
         right.setEnabled(rs.getBoolean("enabled"));
         right.setTso(rs.getInt("tso"));
         right.setProduct(rs.getInt("product"));
-        right.setAspect(rs.getString("aspect_id"));
+        right.setAspect(Aspect.values()[rs.getInt("aspect_id")].name());
         right.setResolution(rs.getString("resolution"));
         right.setTimeFrom(rs.getDate("time1"));
         right.setTimeTo(rs.getDate("time2"));
@@ -62,7 +61,7 @@ public class RightDaoImpl extends AbstractBaseDao<Right> implements IRightDao {
     
 
     public boolean isAuthorizedByExample(Right dataAuthorization) throws Exception{
-        String SELECT_QUERY = "SELECT COUNT(*) FROM users.rights WHERE role_id = ? AND tso = ? AND product = ? AND aspect_id = ? AND resolution = ? AND time_from >= ? AND time_to <= ? AND enabled = ?;";
+        String SELECT_QUERY = "SELECT COUNT(*) FROM users.rights WHERE role_id = ? AND tso = ? AND product = ? AND aspect_id = ? AND resolution = ? AND time1 <= ? AND time2 >= ? AND enabled = ?;";
         
         Object[] param = new Object[8];
         param[0] = dataAuthorization.getRoleID();
@@ -92,7 +91,7 @@ public class RightDaoImpl extends AbstractBaseDao<Right> implements IRightDao {
         param[3] = Aspect.valueOf(dataAuthorization.getAspect()).ordinal();
         param[4] = dataAuthorization.isEnabled();
         
-        List<Right> dAuthorizartion = jdbcTemplate.queryForList(SELECT_QUERY, param, Right.class);
+        List<Right> dAuthorizartion = jdbcTemplate.query(SELECT_QUERY, param, this);
         return dAuthorizartion; 
     }
 

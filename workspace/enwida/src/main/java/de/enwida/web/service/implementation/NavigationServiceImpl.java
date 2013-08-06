@@ -8,7 +8,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
@@ -22,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import de.enwida.transport.Aspect;
+import de.enwida.transport.DataResolution;
 import de.enwida.web.model.ChartNavigationData;
 import de.enwida.web.model.ProductTree;
 import de.enwida.web.model.ProductTree.ProductAttributes;
@@ -29,6 +32,7 @@ import de.enwida.web.model.User;
 import de.enwida.web.service.interfaces.IAvailibilityService;
 import de.enwida.web.service.interfaces.INavigationService;
 import de.enwida.web.service.interfaces.ISecurityService;
+import de.enwida.web.utils.CalendarRange;
 import de.enwida.web.utils.ChartNavigationLocalizer;
 import de.enwida.web.utils.ObjectMapperFactory;
 import de.enwida.web.utils.ProductLeaf;
@@ -90,8 +94,8 @@ public class NavigationServiceImpl implements INavigationService {
         
         // Fetch the related aspects and shrink the navigation data
         // under security and availability perspective
-        shrinkNavigationOnSecurity(navigationData, user);
         shrinkNavigationOnAvailibility(navigationData, user);
+        shrinkNavigationOnSecurity(navigationData, user);
         
         // Localize Strings
         return navigationLocalizer.localize(navigationData, chartId, locale);
@@ -144,8 +148,18 @@ public class NavigationServiceImpl implements INavigationService {
                 } else {
                     // Apply restrictions to the tree
                     final ProductLeaf leaf = productTree.getLeaf(productAttrs.productId);
-                    leaf.setTimeRange(combinedRestriction.getTimeRange());
-                    leaf.setResolution(combinedRestriction.getResolutions());
+                    
+                    // Restrict time range
+                    final List<CalendarRange> timeRanges = Arrays.asList(new CalendarRange[] { leaf.getTimeRange(), combinedRestriction.getTimeRange() });
+                    leaf.setTimeRange(CalendarRange.getMinimum(timeRanges));
+                    
+                    // Restrict resolutions
+                    final Iterator<DataResolution> iter = leaf.getResolution().iterator();
+                    while (iter.hasNext()) {
+                    	if (!combinedRestriction.getResolutions().contains(iter.next())) {
+                    		iter.remove();
+                    	}
+                    }
                 }
             }
         }
