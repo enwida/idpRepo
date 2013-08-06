@@ -63,7 +63,7 @@ $(function() {
 		<tbody>
 		<tr>
 			<td>
-				<select id="selectedGroup">
+				<select id="selectedGroup" name="selectedGroup">
 						<c:forEach var="group" items="${groupsWithUsers}">
 							<option value="${group.groupID}">${group.groupName}</option>
 						</c:forEach>

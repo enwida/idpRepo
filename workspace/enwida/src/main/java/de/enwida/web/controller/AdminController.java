@@ -3,6 +3,7 @@ package de.enwida.web.controller;
 import java.io.File;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.FileUtils;
@@ -51,7 +52,7 @@ public class AdminController {
 	
 	
 	@RequestMapping(value="/admin_editaspect", method = RequestMethod.GET)
-	public String editAspect(Model model,long roleID) {
+	public String editAspect(HttpServletRequest request,Model model,long roleID) {
 	    List<Right> aspectRights;
         List<Role> roles = null;
         try {
@@ -62,7 +63,7 @@ public class AdminController {
             //Get all aspects status of requested role
             model.addAttribute("aspectRights", aspectRights);
         } catch (Exception e) {
-            model.addAttribute("Info", "Not Allowed");
+            model.addAttribute("Info", messageSource.getMessage("de.enwida.userManagement.error.notAllowed", null, request.getLocale()));
         }
 	    //Present the page
 		model.addAttribute("content", "admin/admin_editAspect");
@@ -74,7 +75,7 @@ public class AdminController {
 	 * @return
 	 */
 	@RequestMapping(value="/admin_userlist", method = RequestMethod.GET)
-	public String userList(Model model) {
+	public String userList(HttpServletRequest request, Model model) {
 	    //Gets all the users
 	    List<User> users;
         try { 
@@ -85,7 +86,7 @@ public class AdminController {
             model.addAttribute("groups", groups);
         } catch (Exception e) {
             logger.info(e.getMessage());
-            model.addAttribute("error", "Not allowed");
+            model.addAttribute("error", messageSource.getMessage("de.enwida.userManagement.error.notAllowed", null, request.getLocale()));
         }
 
         model.addAttribute("content", "admin/admin_userList");
@@ -100,7 +101,7 @@ public class AdminController {
      * @return
      */
     @RequestMapping(value="/admin_editgroup", method = RequestMethod.GET)
-    public String editGroup(Model model,String action,Integer groupID,String newGroup) {    
+    public String editGroup(HttpServletRequest request,Model model,String action,Integer groupID,String newGroup) {    
         try {
             if (action!=null){
                 //Check which action to be executed
@@ -124,7 +125,7 @@ public class AdminController {
             
         } catch (Exception e) {
             logger.info(e.getMessage());
-            model.addAttribute("error", "Not allowed");
+            model.addAttribute("error", messageSource.getMessage("de.enwida.userManagement.error.notAllowed", null, request.getLocale()));
         }
         
         model.addAttribute("content", "admin/admin_editGroup");
@@ -137,7 +138,7 @@ public class AdminController {
      * @return
      */
     @RequestMapping(value="/admin_rolelist", method = RequestMethod.GET)
-    public String roleList(Model model) {
+    public String roleList(HttpServletRequest request,Model model) {
         try {
             List<Role> roles= userService.getAllRoles();
             model.addAttribute("roles", roles);
@@ -148,7 +149,7 @@ public class AdminController {
             List<Group> groups= userService.getAllGroups();
             model.addAttribute("groups", groups);
         } catch (Exception e) {
-            model.addAttribute("error", "Not allowed");
+            model.addAttribute("error", messageSource.getMessage("de.enwida.userManagement.error.notAllowed", null, request.getLocale()));
             logger.error(e.getMessage());
         }
        
@@ -162,8 +163,8 @@ public class AdminController {
      * @return
      */
     @RequestMapping(value="/", method = RequestMethod.GET)
-    public String admin(Model model) {
-        return userList(model);
+    public String admin(HttpServletRequest request,Model model) {
+        return userList(request,model);
     }
     
     /**
@@ -173,14 +174,14 @@ public class AdminController {
      * @return
      */
     @RequestMapping(value="/admin_userlog", method = RequestMethod.GET)
-    public String  userLog(Model model,String user) {
+    public String  userLog(HttpServletRequest request,Model model,String user) {
         File file;
         try {
             //read the user log file and display it
             file=new File(System.getenv("ENWIDA_HOME")+"/log/"+user+".log");
             model.addAttribute("userLog",FileUtils.readFileToString(file));
         } catch (Exception e) {
-            model.addAttribute("error", "Not allowed");
+            model.addAttribute("error", messageSource.getMessage("de.enwida.userManagement.error.notAllowed", null, request.getLocale()));
             logger.error(e.getMessage());
         } 
         model.addAttribute("content", "admin/admin_userLog");
@@ -213,7 +214,7 @@ public class AdminController {
     }   
     
     @RequestMapping(value="/admin_user", method = RequestMethod.GET)
-    public String user(Model model,long userID) {
+    public String user(HttpServletRequest request,Model model,long userID) {
         
         User user = null;
         try {
@@ -222,11 +223,11 @@ public class AdminController {
             logger.info(e.getMessage());
         }
         if (user==null){
-            model.addAttribute("Info", "User not found");
+            model.addAttribute("Info",  messageSource.getMessage("de.enwida.userManagement.userNotFound", null, request.getLocale()));
             //This shouldnt happen
             logger.info("User is not found:userID:"+userID);
             //Redirect user to main page;
-            return admin(model);            
+            return admin(request,model);            
         }
         model.addAttribute("user", user);
         model.addAttribute("content", "admin/admin_user");
@@ -234,7 +235,7 @@ public class AdminController {
     }
     
     @RequestMapping(value="/admin_user",method=RequestMethod.POST, params = "save")
-    public String processForm(@ModelAttribute(value="USER")User user,long userID,HttpSession session, Model model)
+    public String processForm(@ModelAttribute(value="USER")User user,long userID,HttpSession session, Model model,HttpServletRequest request)
     {
         User newUser = null;
         try {
@@ -247,11 +248,11 @@ public class AdminController {
             logger.info(e.getMessage());
         }
         if (user==null){
-            model.addAttribute("Info", "User not found");
+            model.addAttribute("Info", messageSource.getMessage("de.enwida.userManagement.userNotFound", null, request.getLocale()));
             //This shouldnt happen
             logger.info("User is not found:userID:"+userID);
             //Redirect user to main page;
-            return admin(model);            
+            return admin(request,model);            
         }
 
         model.addAttribute("user", newUser);
@@ -260,7 +261,7 @@ public class AdminController {
     }
 
     @RequestMapping(value="/admin_user",method=RequestMethod.POST, params = "resetPassword")
-    public String reset(Model model,long userID)
+    public String reset(HttpServletRequest request,Model model,long userID)
     {
         System.out.println("ResetPassword");
         try {
@@ -270,12 +271,12 @@ public class AdminController {
             model.addAttribute("error", "Error:"+e.getLocalizedMessage());
             logger.error(e.getMessage());
         }
-        return user(model,userID);
+        return user(request,model,userID);
     }
     
     
     @RequestMapping(value="/admin_user",method=RequestMethod.POST, params = "delete")
-    public String deleteUser(Model model,long userID)
+    public String deleteUser(HttpServletRequest request,Model model,long userID)
     {
         System.out.println("DeleteUser");
         try {
@@ -283,41 +284,41 @@ public class AdminController {
             userService.deleteUser(user);
             
         } catch (Exception e) {
-            model.addAttribute("Info", "Not Allowed");
+            model.addAttribute("Info", messageSource.getMessage("de.enwida.userManagement.error.notAllowed", null, request.getLocale()));
             logger.info(e.getMessage());
-            return user(model,userID);
+            return user(request,model,userID);
         }
-        return userList(model);
+        return userList(request,model);
     }
     
     @RequestMapping(value="/admin_editgroup",method=RequestMethod.POST, params = "assign")
-    public String assignUserToGroup(Model model,int selectedUser,int selectedGroup)
+    public String assignUserToGroup(HttpServletRequest request,Model model,int selectedUser,int selectedGroup)
     {
         try {
             userService.assignUserToGroup(selectedUser,selectedGroup);
             model.addAttribute("info", "OK");       
         } catch (Exception e) {   
             logger.info(e.getMessage());
-            model.addAttribute("Error", "Not Allowed");       
+            model.addAttribute("Error", messageSource.getMessage("de.enwida.userManagement.error.notAllowed", null, request.getLocale()));       
         }
-        return editGroup(model,null,0,null);
+        return editGroup(request,model,null,0,null);
     }
     
     @RequestMapping(value="/admin_editgroup",method=RequestMethod.POST, params = "deassign")
-    public String deassignUserToGroup(Model model,int selectedUser,int selectedGroup)
+    public String deassignUserToGroup(HttpServletRequest request,Model model,int selectedUser,int selectedGroup)
     {
         try {
             userService.deassignUserToGroup(selectedUser,selectedGroup); 
             model.addAttribute("info", "OK");       
         } catch (Exception e) {   
             logger.info(e.getMessage());
-            model.addAttribute("Error", "Not Allowed");       
+            model.addAttribute("Error", messageSource.getMessage("de.enwida.userManagement.error.notAllowed", null, request.getLocale()));       
         }
-        return editGroup(model,null,0,null);
+        return editGroup(request,model,null,0,null);
     }
     
     @RequestMapping(value="/admin_editgroup",method=RequestMethod.POST, params = "addGroup")
-    public String addGroup(Model model,String newGroup,boolean autoPass)
+    public String addGroup(HttpServletRequest request,Model model,String newGroup,boolean autoPass)
     {
         Group group=new Group();
         group.setGroupName(newGroup);
@@ -326,35 +327,35 @@ public class AdminController {
             userService.addGroup(group);
             
         } catch (Exception e) {
-            model.addAttribute("error", "Group can not be added");
+            model.addAttribute("error", messageSource.getMessage("de.enwida.userManagement.error.notAllowed", null, request.getLocale()));
             logger.error(e.getMessage());
         }
-        return editGroup(model,null,0,null);
+        return editGroup(request,model,null,0,null);
     }
     
     @RequestMapping(value="/admin_rolelist",method=RequestMethod.POST, params = "assign")
-    public String assignRoleToGroup(Model model,int selectedRole,int selectedGroup)
+    public String assignRoleToGroup(HttpServletRequest request,Model model,int selectedRole,int selectedGroup)
     {
         try {
             userService.assignRoleToGroup(selectedRole,selectedGroup);     
             model.addAttribute("info", "OK");       
         } catch (Exception e) {   
             logger.info(e.getMessage());
-            model.addAttribute("Error", "Not Allowed");       
+            model.addAttribute("Error", messageSource.getMessage("de.enwida.userManagement.error.notAllowed", null, request.getLocale()));       
         }
-        return roleList(model);
+        return roleList(request,model);
     }
     
     @RequestMapping(value="/admin_rolelist",method=RequestMethod.POST, params = "deassign")
-    public String deassignRoleToGroup(Model model,int selectedRole,int selectedGroup)
+    public String deassignRoleToGroup(HttpServletRequest request,Model model,int selectedRole,int selectedGroup)
     {
         try {
             userService.deassignRoleToGroup(selectedRole,selectedGroup);  
             model.addAttribute("info", "OK");       
         } catch (Exception e) {   
             logger.info(e.getMessage());
-            model.addAttribute("Error", "Not Allowed");       
+            model.addAttribute("Error", messageSource.getMessage("de.enwida.userManagement.error.notAllowed", null, request.getLocale()));       
         }
-        return roleList(model);
+        return roleList(request,model);
     }
 }

@@ -1,7 +1,8 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="message"%>
 <html>
 <head>
-<title>Login Page</title>
+<title><message:message code="de.enwida.userManagement.login" /></title>
 <style>
 .errorblock {
 	color: #ff0000;
@@ -13,11 +14,11 @@
 </style>
 </head>
 <body onload='document.f.j_username.focus();'>
-	<h3>User Login</h3>
+	<h3><message:message code="de.enwida.userManagement.login" /></h3>
 
 	<c:if test="${not empty error}">
 		<div class="errorblock">
-			Your login attempt was not successful, try again.<br /> Caused :
+			<message:message code="de.enwida.userManagement.loginFailed" />.<br /> Caused :
 			${sessionScope["SPRING_SECURITY_LAST_EXCEPTION"].message}
 		</div>
 	</c:if>
@@ -27,21 +28,20 @@
 
 		<table>
 			<tr>
-				<td>E-Mail:</td>
+				<td><message:message code="de.enwida.userManagement.mailAddress" />:</td>
 				<td><input type='text' name='j_username' value=''></td>
 			</tr>
 			<tr>
-				<td>Password:</td>
+				<td><message:message code="de.enwida.userManagement.password" />:</td>
 				<td><input type='password' name='j_password' /></td>
 			</tr>
 			<tr>
-				<td><input name="submit" type="submit"
-					value="submit" /></td>
-				<td><a href="register">Register</a></td>
+				<td><a href="register.html"><message:message code="de.enwida.userManagement.register" /></a></td>
+				<td><input name="submit" type="submit" value=<message:message code="de.enwida.login" /> /></td>
 			</tr>
 			<tr>
-				<td><a href="forgotPassword">Forgot Your Password?</a></td>
-				<td><input id="j_remember" name="_spring_security_remember_me" type="checkbox" />Remember me</td>
+				<td><a href="forgotPassword"><message:message code="de.enwida.userManagement.forgotPassword" />?</a></td>
+				<td><input id="j_remember" name="_spring_security_remember_me" type="checkbox" /><message:message code="de.enwida.userManagement.rememberMe" /></td>
 			</tr>
 		</table>
 

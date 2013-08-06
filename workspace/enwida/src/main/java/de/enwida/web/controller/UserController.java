@@ -10,6 +10,7 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -40,6 +41,9 @@ public class UserController {
 	
 	@Autowired
 	private UserValidator userValidator;
+    
+    @Autowired
+    ReloadableResourceBundleMessageSource messageSource;
  
 	@Autowired	
 	private MailServiceImpl mail;	
@@ -53,42 +57,29 @@ public class UserController {
 	        model.addAttribute("user", u);		    
 		}catch(Exception e){
             logger.info(e.getMessage());
-            model.addAttribute("Error", "Not Allowed"); 		    
+            model.addAttribute("Error", messageSource.getMessage("de.enwida.userManagement.notAllowed", null, locale)); 		    
 		}
 		
 		return "user";
 	}
 
 	@RequestMapping(value = "/", method = RequestMethod.GET)
-	public String home(ModelMap model, Principal principal) {
-		String name,userStatus,userStatusURL;
-		
-		if(principal!=null){
-			name = principal.getName();
-			userStatus="logout";
-			userStatusURL="../j_spring_security_logout";
-		}else{
-			name="anonymous";
-			userStatusURL=userStatus="";
-		}
-		model.addAttribute("username", name);
-		model.addAttribute("userStatus", userStatus);
-		model.addAttribute("userStatusURL", userStatusURL);
-		model.addAttribute("content", "user/index");
-		return "master";
+	public String home(HttpServletRequest request,ModelMap model, Principal principal) {
+		return index(request,model, principal);
 	}
 	
 	   @RequestMapping(value = "/index", method = RequestMethod.GET)
-	    public String index(ModelMap model, Principal principal) {
+	    public String index(HttpServletRequest request,ModelMap model, Principal principal) {
 	        String name,userStatus,userStatusURL;
 	        
 	        if(principal!=null){
 	            name = principal.getName();
-	            userStatus="logout";
+	            userStatus=messageSource.getMessage("de.enwida.userManagement.logout", null, request.getLocale());
 	            userStatusURL="../j_spring_security_logout";
 	        }else{
 	            name="anonymous";
-	            userStatusURL=userStatus="login";
+	            userStatusURL="login";
+	            userStatus=messageSource.getMessage("de.enwida.userManagement.login", null, request.getLocale());
 	        }
 	        model.addAttribute("username", name);
 	        model.addAttribute("userStatus", userStatus);
@@ -123,7 +114,7 @@ public class UserController {
 	        request.getSession().setAttribute("url_prior_login", referrer);
 	    }
 	    if(principal!=null){
-	        return "user/index";
+	        return index(request, model, principal);
 	    }else{
 		return "user/login";
 	    }
@@ -182,7 +173,7 @@ public class UserController {
             preProcessRegisterForm(request,model);
         } catch (Exception e) {
             logger.info(e.getMessage());
-            model.addAttribute("Error", "Not Allowed");
+            model.addAttribute("Error", messageSource.getMessage("de.enwida.userManagement.notAllowed", null, request.getLocale()));
         }
 	    
         return "master";
@@ -195,39 +186,39 @@ public class UserController {
             preProcessRegisterForm(request,model);
         } catch (Exception e) {
             logger.info(e.getMessage());
-            model.addAttribute("Error", "Not Allowed");
+            model.addAttribute("Error",messageSource.getMessage("de.enwida.userManagement.notAllowed", null, request.getLocale()));
         }
         return "master";
 	}
 	
 	@RequestMapping(value="/checkEmail",method=RequestMethod.GET)
-	public @ResponseBody String checkEmail(ModelMap model,String email){
+	public @ResponseBody String checkEmail(HttpServletRequest request,ModelMap model,String email){
 		
 		boolean availabilityCheck = false;
         try {
             availabilityCheck = userService.userNameAvailability(email);
         } catch (Exception e) {
             logger.info(e.getMessage());
-            model.addAttribute("Error", "Not Allowed");
+            model.addAttribute("Error", messageSource.getMessage("de.enwida.userManagement.notAllowed", null, request.getLocale()));
         }
 		
 		if(availabilityCheck)
 		{
-			model.addAttribute("emailAvailabilityError", "This email is already in use by some other user.");
+			model.addAttribute("emailAvailabilityError",messageSource.getMessage("de.enwida.userManagement.userNameNotAvailable", null, request.getLocale()));
 		}
 		
 		return availabilityCheck + "";
 	}
 
 	@RequestMapping(value="/activateuser.html",method=RequestMethod.GET)
-	public String activateUser(ModelMap model, String username, String actId){
+	public String activateUser(HttpServletRequest request,ModelMap model, String username, String actId){
 		
 		boolean activated = false;
         try {
             activated = userService.activateUser(username, actId);
         } catch (Exception e) {
             logger.info(e.getMessage());
-            model.addAttribute("Error", "Not Allowed");
+            model.addAttribute("Error", messageSource.getMessage("de.enwida.userManagement.notAllowed", null, request.getLocale()));
         }
 		if(activated)
 		{
@@ -240,7 +231,7 @@ public class UserController {
     		model.addAttribute("userStatusURL", userStatusURL);
             model.addAttribute("info", "Activated");  
 		}else{
-	        model.addAttribute("error", "Not Allowed");  
+	        model.addAttribute("error", messageSource.getMessage("de.enwida.userManagement.notAllowed", null, request.getLocale()));  
 		}
    
         model.addAttribute("content", "user/index");
@@ -259,7 +250,7 @@ public class UserController {
     }
 	
 	@RequestMapping(value="/forgotPassword",method=RequestMethod.POST)
-	public String forgotPassword(ModelMap model,String email){
+	public String forgotPassword(HttpServletRequest request,ModelMap model,String email){
 		
 		String password = null;
         try {
@@ -268,13 +259,13 @@ public class UserController {
             logger.error(e.getMessage());
         }
 		if(password==null){
-			model.addAttribute("error", "User is not found");
+			model.addAttribute("error", messageSource.getMessage("de.enwida.userManagement.userNotFound", null, request.getLocale()));
 		}else{
 			try {
-				mail.SendEmail(email,"Your Password:",password);
+				mail.SendEmail(email, messageSource.getMessage("de.enwida.userManagement.yourPassword", null, request.getLocale())+":",password);
 			} catch (Exception e) {
 	            logger.error(e.getMessage());
-				model.addAttribute("error", "Mailling Error");
+				model.addAttribute("error", messageSource.getMessage("de.enwida.userManagement.mailingError", null, request.getLocale()));
 			}
 		}
 		return "user/forgotPassword";
