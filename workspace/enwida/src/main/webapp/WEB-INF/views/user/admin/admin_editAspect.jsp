@@ -1,4 +1,5 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="message"%>
 <%@ page session="false" %>
 <div>
 	<h1>
@@ -16,13 +17,13 @@ $("#myselect").val(get_url_parameter('roleID'));
 	<table id="tblAspects" class="tablesorter">
 	<thead>
 		<tr>
-			<th>Aspect</th>
-			<th>Product</th>
-			<th>T1</th>
-			<th>T2</th>
-			<th>Res</th>
-			<th>tso</th>
-			<th>Enable/disabled</th>
+			<th><message:message code="de.enwida.userManagement.aspect" /></th>
+			<th><message:message code="de.enwida.userManagement.product" /></th>
+			<th><message:message code="de.enwida.userManagement.t1" /></th>
+			<th><message:message code="de.enwida.userManagement.t2" /></th>
+			<th><message:message code="de.enwida.userManagement.resolution" /></th>
+			<th><message:message code="de.enwida.userManagement.tso" /></th>
+			<th><message:message code="de.enwida.userManagement.enabled" /></th>
 		<tr>
 	<thead>
 	<tbody>

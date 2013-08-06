@@ -10,6 +10,7 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -40,6 +41,9 @@ public class UserController {
 	
 	@Autowired
 	private UserValidator userValidator;
+    
+    @Autowired
+    ReloadableResourceBundleMessageSource messageSource;
  
 	@Autowired	
 	private MailServiceImpl mail;	
@@ -60,21 +64,22 @@ public class UserController {
 	}
 
 	@RequestMapping(value = "/", method = RequestMethod.GET)
-	public String home(ModelMap model, Principal principal) {
-		return index(model, principal);
+	public String home(HttpServletRequest request,ModelMap model, Principal principal) {
+		return index(request,model, principal);
 	}
 	
 	   @RequestMapping(value = "/index", method = RequestMethod.GET)
-	    public String index(ModelMap model, Principal principal) {
+	    public String index(HttpServletRequest request,ModelMap model, Principal principal) {
 	        String name,userStatus,userStatusURL;
 	        
 	        if(principal!=null){
 	            name = principal.getName();
-	            userStatus="logout";
+	            userStatus=messageSource.getMessage("de.enwida.userManagement.logout", null, request.getLocale());
 	            userStatusURL="../j_spring_security_logout";
 	        }else{
 	            name="anonymous";
-	            userStatusURL=userStatus="login";
+	            userStatusURL="login";
+	            userStatus=messageSource.getMessage("de.enwida.userManagement.login", null, request.getLocale());
 	        }
 	        model.addAttribute("username", name);
 	        model.addAttribute("userStatus", userStatus);

@@ -2,7 +2,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="message"%>
 <html>
 <head>
-<title>Login Page</title>
+<title><message:message code="de.enwida.userManagement.login" /></title>
 <style>
 .errorblock {
 	color: #ff0000;
@@ -14,7 +14,7 @@
 </style>
 </head>
 <body onload='document.f.j_username.focus();'>
-	<h3>User Login</h3>
+	<h3><message:message code="de.enwida.userManagement.login" /></h3>
 
 	<c:if test="${not empty error}">
 		<div class="errorblock">
@@ -36,9 +36,8 @@
 				<td><input type='password' name='j_password' /></td>
 			</tr>
 			<tr>
-				<td><input name="submit" type="submit"
-					value=<message:message code="de.enwida.login" /> /></td>
 				<td><a href="register.html"><message:message code="de.enwida.userManagement.register" /></a></td>
+				<td><input name="submit" type="submit" value=<message:message code="de.enwida.login" /> /></td>
 			</tr>
 			<tr>
 				<td><a href="forgotPassword"><message:message code="de.enwida.userManagement.forgotPassword" />?</a></td>
