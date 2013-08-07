@@ -1,5 +1,6 @@
 package de.enwida.web.dao.implementation;
 
+import java.sql.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
@@ -79,6 +80,22 @@ public class RightDaoImpl extends AbstractBaseDao<Right> implements IRightDao {
         
         int count = jdbcTemplate.queryForInt(SELECT_QUERY, param);
         return count > 0 ? true : false;
+    }
+    
+    public void addRight(Right right) {
+        final String SELECT_QUERY = "INSERT INTO users.rights (role_id,tso,product,aspect_id,resolution,time1,time2,enabled) VALUES (?,?,?,?,?,?,?,?);";
+        
+        Object[] param = new Object[8];
+        param[0] = right.getRoleID();
+        param[1] = right.getTso();
+        param[2] = right.getProduct();
+        param[3] = Aspect.valueOf(right.getAspect()).ordinal();
+        param[4] = right.getResolution();
+        param[5] = new Date(right.getTimeFrom().getTime());
+        param[6] = new Date(right.getTimeTo().getTime());
+        param[7] = right.isEnabled();
+        
+        jdbcTemplate.update(SELECT_QUERY, param);
     }
 
     public List<Right> getListByExample(Right dataAuthorization)throws Exception {

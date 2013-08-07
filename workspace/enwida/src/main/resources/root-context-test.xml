@@ -22,7 +22,7 @@
 	</bean>
 	<bean id="groupDao" class="de.enwida.web.dao.implementation.GroupDaoImpl">
 	</bean>
-	<bean id="rightsDao" class="de.enwida.web.dao.implementation.RightDaoImpl">
+	<bean id="rightDao" class="de.enwida.web.dao.implementation.RightDaoImpl">
 	</bean>
 	<bean id="dataAvailibilityDao" class="de.enwida.web.dao.implementation.DataAvailibilityDaoImpl">
 	</bean>
