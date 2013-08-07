@@ -19,7 +19,7 @@
 	<tr><td><message:message code="de.enwida.userManagement.telephone" /> : </td><td><form:input path="telephone" /><form:errors path="telephone" cssStyle="color : red;"/></td></tr>
 	<tr><td><message:message code="de.enwida.userManagement.company" /> : </td><td><form:input path="companyName" id="companyName"/><form:errors path="companyName" cssStyle="color : red;"/></td></tr>
 	<tr><td><message:message code="de.enwida.userManagement.logo" /> : </td><td><form:input path="companyLogo" id="companyLogo"/><form:errors path="companyLogo" cssStyle="color : red;"/></td></tr>
-	<tr><td><input type="reset" value="Reset" /></td><td><input type="submit" name="saveChanges" value="Register" /></td></tr>
+	<tr><td><input type="reset" value="Reset" /></td><td><input type="submit" name="submit" value="Register" /></td></tr>
 </table>
 <div id="companyImages">
 

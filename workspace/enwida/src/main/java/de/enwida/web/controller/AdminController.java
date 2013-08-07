@@ -243,6 +243,7 @@ public class AdminController {
             newUser.setFirstName(user.getFirstName());
             newUser.setLastName(user.getLastName());
             newUser.setTelephone(user.getTelephone());
+            newUser.setCompanyName(user.getCompanyName());
             userService.updateUser(newUser);
         } catch (Exception e) {
             logger.info(e.getMessage());

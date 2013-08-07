@@ -232,7 +232,7 @@ public class UserServiceImpl implements IUserService {
         try {
             mailService.SendEmail(user.getUserName(),"New Password","Your new Password:"+newPassword);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            throw new Exception("Invalid Email.Please contact info@enwida.de");
         }       
         user.setPassword(newPassword);
     }

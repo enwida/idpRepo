@@ -13,7 +13,7 @@
 }
 </style>
 </head>
-<body onload='document.f.j_username.focus();'>
+<body onload='document.loginForm.j_username.focus();'>
 	<h3><message:message code="de.enwida.userManagement.login" /></h3>
 
 	<c:if test="${not empty error}">
@@ -23,17 +23,17 @@
 		</div>
 	</c:if>
 
-	<form name='f' action="<c:url value='/j_spring_security_check' />"
+	<form name='loginForm' id='loginForm' action="<c:url value='/j_spring_security_check' />"
 		method='POST'>
 
 		<table>
 			<tr>
 				<td><message:message code="de.enwida.userManagement.mailAddress" />:</td>
-				<td><input type='text' name='j_username' value=''></td>
+				<td><input type='text' name='j_username' id='j_username' value=''></td>
 			</tr>
 			<tr>
 				<td><message:message code="de.enwida.userManagement.password" />:</td>
-				<td><input type='password' name='j_password' /></td>
+				<td><input type='password' name='j_password' id='j_password' /></td>
 			</tr>
 			<tr>
 				<td><a href="register.html"><message:message code="de.enwida.userManagement.register" /></a></td>

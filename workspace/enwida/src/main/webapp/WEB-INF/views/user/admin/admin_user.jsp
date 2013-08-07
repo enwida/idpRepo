@@ -21,7 +21,7 @@
 			</tr>
 			<tr>
 				<td><message:message code="de.enwida.userManagement.company" />:</td>
-				<td>${user.companyName}</td>
+				<td><form:input path="companyName" value="${user.companyName}" /></td>
 			</tr>
 			<tr>
 				<td><message:message code="de.enwida.userManagement.telephone" />:</td>
