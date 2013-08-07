@@ -127,7 +127,7 @@ public class RightDaoImpl extends AbstractBaseDao<Right> implements IRightDao {
 
     @Override
     public List<Right> getAllAspects(long roleID) throws Exception{
-        String sql = "SELECT * FROM users.rights WHERE role_id=?";
+        String sql = "SELECT * FROM users.rights WHERE role_id=? limit 10";
         return jdbcTemplate.query(sql, new Object[]{roleID}, this);
     }
     

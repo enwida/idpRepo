@@ -92,7 +92,8 @@ public class AdminPanel {
     //Select user from list and check its details
     @Test
     public void CheckUserDetails() throws Exception{
-
+        
+        Login("test", "q12wq12w");
         //Go to UserList page
         String link=webSiteLink+"user/admin/";
         //Get user lists

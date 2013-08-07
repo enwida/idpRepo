@@ -79,6 +79,10 @@ VALUES ('test', 'q12wq12w', 'test', 'test', true, '2013-07-02', '0049 89 1234567
 INSERT INTO users.roles( role_name, description)
     VALUES ('admin','adminstrator');
 
+    
+INSERT INTO users.roles( role_name, description)
+    VALUES ('chart','This user can see all charts');
+
 INSERT INTO users.roles( role_name, description)
     VALUES ('anonymous','all anonymous users');
 	
@@ -86,13 +90,14 @@ INSERT INTO users.groups(group_name, auto_pass)
 VALUES ('adminGroup', TRUE);
 
 
-INSERT INTO users.group_role(
-            group_id, role_id)
+INSERT INTO users.group_role(group_id, role_id)
     VALUES (1, 1);
 
-INSERT INTO users.user_group(
-            user_id, group_id)
+INSERT INTO users.user_group(user_id, group_id)
     VALUES (1, 1);
+
+INSERT INTO users.group_role(group_id,role_id)
+	values (1,2);
     
  --Creates dummy Rights
 CREATE OR REPLACE FUNCTION getAllRights() RETURNS SETOF users.rights AS
@@ -118,13 +123,14 @@ delete from users.rights;
 SELECT  getAllRights();
 
 --If user is not using user_name, we can login him with login_name which first and lastName
+--This is for users
 CREATE OR REPLACE VIEW users.allUsers AS 
 select user_name ,user_password,enabled
 from users.users
 UNION
 select users.first_name ||' '|| users.last_name,user_password,enabled
 from users.users;
-
+--This for roles
 CREATE OR REPLACE VIEW users.allRoles AS 
 SELECT users.user_name, roles.role_name FROM users.users
     		 INNER JOIN users.user_group ON user_group.user_id=users.user_id 
@@ -136,3 +142,35 @@ UNION
     		 INNER JOIN users.group_role ON group_role.group_id=user_group.group_id
     		 INNER JOIN users.roles ON roles.role_ID=group_role.role_id;
   
+    		 
+ --Give all permissions to role 2(chart)
+ 
+--First delete previous rights
+delete from users.rights ;
+--Create rights
+
+DO
+$BODY$
+DECLARE
+--MAX values
+    role_id   INT:=2;
+    tso INT=99;
+    productMAX INT=300;
+    resolution varchar[]:= '{"HOURLY","MONTHLY", "DAILY", "WEEKLY", "QUATER_HOURLY", "YEARLY"}';
+    aspectMax INT=20;
+--Counters
+    pCounter INT=0;
+    rCounter INT=0;
+    aCounter INT=0;
+BEGIN
+
+	   FOR pCounter IN 200 .. productMAX  LOOP
+		FOR rCounter IN  array_lower(resolution, 1) .. array_upper(resolution, 1)  LOOP
+  			FOR aCounter IN 0 .. aspectMax  LOOP
+		            INSERT INTO users.rights (role_id,tso,product,resolution,time1,time2,aspect_id,enabled)
+				VALUES (role_id,tso,pCounter,resolution[rCounter],'1970-01-01','2500-01-01',aCounter,true);
+		        END LOOP;
+		END LOOP;
+	    END LOOP;
+END;
+$BODY$ language plpgsql;
