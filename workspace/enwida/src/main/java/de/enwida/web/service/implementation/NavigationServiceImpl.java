@@ -101,17 +101,15 @@ public class NavigationServiceImpl implements INavigationService {
         return navigationLocalizer.localize(navigationData, chartId, locale);
     }
     
-    public ChartNavigationData getNavigationDataUNSECURE(int chartId, User user, Locale locale) {
-	    // Get basic navigation data from hash table and apply
-	    // internationalized properties
-        final ChartNavigationData navigationData = defaultNavigationData.get(chartId).clone();
-        
-        // Skip security and availability checks...
-
-        // Localize Strings
+    /**
+     * Only for testing purposes! Skips availability service.
+     */
+    public ChartNavigationData getNavigationDataWithoutAvailablityCheck(int chartId, User user, Locale locale) throws Exception {
+        final ChartNavigationData navigationData = getDefaultNavigationData(chartId);
+        shrinkNavigationOnSecurity(navigationData, user);
         return navigationLocalizer.localize(navigationData, chartId, locale);
     }
-
+    
 	@Override
 	public ChartNavigationData getNavigationDataFromJsonFile(int chartId) throws IOException {
 		final InputStream in = new FileInputStream(new File(jsonDir, chartId + ".json"));

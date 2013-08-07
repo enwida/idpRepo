@@ -40,7 +40,7 @@
     </bean>
 	<bean scope="singleton" id="navigationService" class="de.enwida.web.service.implementation.NavigationServiceImpl">
 		<constructor-arg>
-			<value>${ENWIDA_HOME}/conf/navigation</value>
+			<value>src/main/resources/navigation-test</value>
 		</constructor-arg>
 	</bean>
 	
