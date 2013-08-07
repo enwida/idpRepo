@@ -342,7 +342,13 @@ public class UserServiceImpl implements IUserService {
     @Override
     public User getCurrentUser()throws Exception  {
         String userName = SecurityContextHolder.getContext().getAuthentication().getName();
-        return this.getUser(userName);
+        User user=this.getUser(userName);
+        //If user is not found return anonymous user;
+        if (user==null){
+            user=new User();
+            user.setUserName("anonymous");
+        }
+        return user;
     }
 
     /**
