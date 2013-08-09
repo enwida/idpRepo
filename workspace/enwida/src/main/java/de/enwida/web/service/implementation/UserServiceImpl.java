@@ -40,17 +40,17 @@ public class UserServiceImpl implements IUserService {
 	private static org.apache.log4j.Logger logger = Logger
 			.getLogger(AdminController.class);
 
-	public User getUser(Long id) {
+	public User getUser(Long id) throws Exception {
 
 		return userDao.getUserByID(id);
 	}
 
-	public List<User> getUsers() {
+	public List<User> getUsers() throws Exception {
 		return userDao.findAllUsers();
 	}
 
 	@Transactional
-	public boolean saveUser(User user) {
+	public boolean saveUser(User user) throws Exception {
 
 		Date date = new Date(Calendar.getInstance().getTimeInMillis());
 		user.setJoiningDate(date);
@@ -69,7 +69,7 @@ public class UserServiceImpl implements IUserService {
 		return success;
 	}
 
-	private boolean postSavingUser(long userId, User user) {
+	private boolean postSavingUser(long userId, User user) throws Exception {
 		if (userId != -1) {
 			Group group = userDao.getGroupByCompanyName(user.getCompanyName());
 
@@ -143,8 +143,8 @@ public class UserServiceImpl implements IUserService {
 		return userDao.checkEmailAvailability(email);
 	}
 
-	public boolean updateUser(User user) {
-		return userDao.updateUser(user);
+	public void updateUser(User user) {
+		userDao.updateUser(user);
 	}
 
 	public User getUser(String userName) {
@@ -165,28 +165,28 @@ public class UserServiceImpl implements IUserService {
 		}
 	}
 
-	public void deleteUser(User user) {
+	public void deleteUser(User user) throws Exception {
 		userDao.deleteUser(user);
 	}
 
-	public String assignUserToGroup(int userID, int groupID) {
-		return userDao.assignUserToGroup(userID, groupID);
+	public void assignUserToGroup(int userID, int groupID) {
+		userDao.assignUserToGroup(userID, groupID);
 	}
 
-	public String deassignUserToGroup(int userID, int groupID) {
-		return userDao.deassignUserFromGroup(userID, groupID);
+	public void deassignUserToGroup(int userID, int groupID) {
+		userDao.deassignUserFromGroup(userID, groupID);
 	}
 
 	public List<Group> getAllGroupsWithUsers() {
 		return userDao.getAllGroupsWithUsers();
 	}
 
-	public String assignRoleToGroup(int roleID, int groupID) {
-		return userDao.assignRoleToGroup(roleID, groupID);
+	public void assignRoleToGroup(int roleID, int groupID) {
+		userDao.assignRoleToGroup(roleID, groupID);
 	}
 
-	public String deassignRoleToGroup(int roleID, int groupID) {
-		return userDao.deassignRoleFromGroup(roleID, groupID);
+	public void deassignRoleToGroup(int roleID, int groupID) {
+		userDao.deassignRoleFromGroup(roleID, groupID);
 	}
 
 	public List<Role> getAllRolesWithGroups() {
@@ -198,8 +198,8 @@ public class UserServiceImpl implements IUserService {
 	}
 
 	@Override
-	public boolean enableDisableUser(int userID, boolean enabled) {
-		return userDao.enableDisableUser(userID, enabled);
+	public void enableDisableUser(int userID, boolean enabled) {
+		userDao.enableDisableUser(userID, enabled);
 	}
 
 	@Override
@@ -207,20 +207,20 @@ public class UserServiceImpl implements IUserService {
 		userDao.removeGroup(groupID);
 	}
 
-	@Override
 	public boolean usernameAvailablility(String username) {
 		return userDao.usernameAvailablility(username);
 	}
 
 	@Override
-	public boolean enableDisableAspect(int rightID, boolean enabled) {
-		return userDao.enableDisableAspect(rightID, enabled);
+	public void enableDisableAspect(int rightID, boolean enabled) {
+		userDao.enableDisableAspect(rightID, enabled);
 	}
 
 	@Override
 	public boolean activateUser(String username, String activationCode) {
 		if (userDao.checkUserActivationId(username, activationCode)) {
-			return userDao.activateUser(username);
+			userDao.activateUser(username);
+			return true;
 
 		}
 
@@ -251,5 +251,35 @@ public class UserServiceImpl implements IUserService {
 	@Override
 	public int getUploadedFileVersion(UploadedFile file, User user) {
 		return userDao.getUploadedFileVersion(file, user);
+	}
+
+	@Override
+	public boolean saveUser(User user, String activationHost) throws Exception {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public List<User> getAllUsers() throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void addRole(Role role) throws Exception {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public boolean userNameAvailability(String username) throws Exception {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public User getCurrentUser() throws Exception {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

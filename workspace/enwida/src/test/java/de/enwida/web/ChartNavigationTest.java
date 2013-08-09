@@ -25,6 +25,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import de.enwida.transport.Aspect;
 import de.enwida.transport.DataResolution;
 import de.enwida.web.dao.interfaces.IRightDao;
+import de.enwida.web.db.model.CalendarRange;
+import de.enwida.web.db.model.NavigationDefaults;
 import de.enwida.web.model.ChartNavigationData;
 import de.enwida.web.model.Group;
 import de.enwida.web.model.ProductTree;
@@ -34,8 +36,6 @@ import de.enwida.web.model.Role;
 import de.enwida.web.model.User;
 import de.enwida.web.service.implementation.NavigationServiceImpl;
 import de.enwida.web.service.interfaces.IUserService;
-import de.enwida.web.utils.CalendarRange;
-import de.enwida.web.utils.NavigationDefaults;
  
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:/root-context-test.xml")

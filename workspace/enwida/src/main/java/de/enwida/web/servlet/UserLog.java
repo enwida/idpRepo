@@ -18,7 +18,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
-import de.enwida.web.service.implementation.CookieSecurityServiceImpl;
+import de.enwida.web.service.interfaces.ICookieSecurityService;
 import de.enwida.web.utils.Constants;
 
 /**

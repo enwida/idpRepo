@@ -19,10 +19,6 @@ import de.enwida.web.db.model.UploadedFile;
 public class FileDaoImpl extends AbstractBaseDao<UploadedFile> implements
 		IFileDao {
 
-	public FileDaoImpl() {
-		setModelClass(UploadedFile.class);
-	}
-
 	@Override
 	public UploadedFile getFile(int fileId) {
 		return findById(fileId);

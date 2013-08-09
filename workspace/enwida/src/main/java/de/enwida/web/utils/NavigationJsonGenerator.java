@@ -31,10 +31,10 @@ public class NavigationJsonGenerator {
         navigationData.setIsDateScale(true);
         navigationData.getAspects().add(Aspect.CR_DEGREE_OF_ACTIVATION);
 
-        navigationData.getTimeRanges().put("Day", "Day");
-        navigationData.getTimeRanges().put("Week", "Week");
-        navigationData.getTimeRanges().put("Month", "Month");
-        navigationData.getTimeRanges().put("Year", "Year");
+		// navigationData.getTimeRanges().put("Day", "Day");
+		// navigationData.getTimeRanges().put("Week", "Week");
+		// navigationData.getTimeRanges().put("Month", "Month");
+		// navigationData.getTimeRanges().put("Year", "Year");
 
 	    final DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 	    try {

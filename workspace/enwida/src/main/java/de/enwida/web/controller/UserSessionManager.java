@@ -30,7 +30,7 @@ public class UserSessionManager implements Serializable {
 		this.user = user;
 	}
 
-	public void setUserInSession(String username) {
+	public void setUserInSession(String username) throws Exception {
 		User user = userService.getUser(username);
 		setUser(user);
 	}

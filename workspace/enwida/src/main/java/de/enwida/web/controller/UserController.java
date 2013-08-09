@@ -1,32 +1,56 @@
 package de.enwida.web.controller;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.security.Principal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.DataBinder;
+import org.springframework.validation.ObjectError;
+import org.springframework.validation.Validator;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import de.enwida.web.db.model.UploadedFile;
+import de.enwida.web.db.model.UserLines;
+import de.enwida.web.db.model.UserLinesMetaData;
 import de.enwida.web.model.FileUpload;
 import de.enwida.web.model.User;
 import de.enwida.web.service.implementation.MailServiceImpl;
+import de.enwida.web.service.interfaces.IUserLinesService;
 import de.enwida.web.service.interfaces.IUserService;
+import de.enwida.web.utils.Constants;
 import de.enwida.web.utils.LogoFinder;
+import de.enwida.web.validator.FileValidator;
 import de.enwida.web.validator.UserValidator;
 
 /**
@@ -290,7 +314,7 @@ public class UserController {
 	}
 	
 	@RequestMapping(value="/upload", method = RequestMethod.GET)
-	public ModelAndView getUplaodUserData(ModelMap model) {
+	public ModelAndView getUplaodUserData(ModelMap model) throws Exception {
 		User user = userService.getUser("username1");
 		List<UploadedFile> filetable = new ArrayList<UploadedFile>(
 				user.getUploadedFiles());
@@ -304,7 +328,7 @@ public class UserController {
 	@RequestMapping(value="/upload", method = RequestMethod.POST)
 	public ModelAndView postUplaodUserData(ModelMap model,
 			@ModelAttribute(value = "fileUpload") FileUpload fileUpload,
-			BindingResult result, HttpServletRequest request) {
+			BindingResult result, HttpServletRequest request) throws Exception {
 		
 		boolean isMultipart = ServletFileUpload.isMultipartContent(request);
 		// fetch all files related to user
@@ -369,7 +393,7 @@ public class UserController {
 	@RequestMapping(value = "/replaceupload", method = RequestMethod.POST)
 	public ModelAndView replaceUplaodUserData(ModelMap model,
 			@ModelAttribute(value = "fileReplace") FileUpload fileUpload,
-			BindingResult result, HttpServletRequest request) {
+			BindingResult result, HttpServletRequest request) throws Exception {
 
 		boolean isMultipart = ServletFileUpload.isMultipartContent(request);
 		// fetch all files related to user

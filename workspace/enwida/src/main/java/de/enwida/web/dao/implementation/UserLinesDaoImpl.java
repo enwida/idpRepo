@@ -24,12 +24,6 @@ public class UserLinesDaoImpl extends AbstractBaseDao<UserLines> implements
 		IUserLinesDao {
 
 	private Logger logger = Logger.getLogger(getClass());
-	/**
-	 * 
-	 */
-	public UserLinesDaoImpl() {
-		setModelClass(UserLines.class);
-	}
 
 	@Override
 	public boolean createUserLineMetaData(UserLinesMetaData metaData) {

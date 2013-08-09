@@ -43,11 +43,16 @@ public class UserNavigationServiceTest {
 
 	@Test
 	public void test() {
-		test1();
+		try {
+			test1();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		test2();
 	}
 
-	private void test1() {
+	private void test1() throws Exception {
 		User user1 = new User(0, "username1", "password1", "firstname",
 				"lastname", false);
 		userService.saveUser(user1);

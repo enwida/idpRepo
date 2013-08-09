@@ -39,7 +39,9 @@ public class NavigationDaoImpl extends AbstractBaseDao<User> implements INavigat
 	    final String xAxisLabel = getChartMessage("xlabel", chartId, locale);
 	    final String yAxisLabel = getChartMessage("ylabel", chartId, locale);
 	    
-	    final ChartNavigationData navigationData = new ChartNavigationData(chartTitle, xAxisLabel, yAxisLabel);
+		// final ChartNavigationData navigationData = new
+		// ChartNavigationData(chartTitle, xAxisLabel, yAxisLabel);
+		final ChartNavigationData navigationData = new ChartNavigationData();
 	    fillDefaultProducts(navigationData);
 	    
 

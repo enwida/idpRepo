@@ -24,8 +24,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
+import de.enwida.chart.LineManager;
 import de.enwida.transport.Aspect;
 import de.enwida.transport.DataResolution;
 import de.enwida.transport.IDataLine;
@@ -34,8 +33,8 @@ import de.enwida.web.db.model.CalendarRange;
 import de.enwida.web.db.model.NavigationDefaults;
 import de.enwida.web.db.model.NavigationSettings;
 import de.enwida.web.model.ChartNavigationData;
-import de.enwida.web.service.implementation.LineServiceImpl;
-import de.enwida.web.service.interfaces.ICookieSecurityService;
+import de.enwida.web.model.User;
+import de.enwida.web.service.interfaces.ILineService;
 import de.enwida.web.service.interfaces.INavigationService;
 import de.enwida.web.service.interfaces.IUserService;
 
@@ -45,7 +44,8 @@ import de.enwida.web.service.interfaces.IUserService;
 @Controller
 @RequestMapping("/data")
 public class ChartDataController {
-    private static Logger logger = Logger.getLogger(AdminController.class);
+
+	private Logger logger = Logger.getLogger(getClass());
 
     @Autowired
 	private ILineService lineService;
@@ -53,16 +53,13 @@ public class ChartDataController {
 	@Autowired
     private INavigationService navigationService;
 
-    @Autowired
-    private INavigationService navigationService;
-    
 	@Autowired
     private IUserService userService;
 
-    private static org.apache.log4j.Logger logger = Logger.getLogger(AdminController.class);
+	@Autowired
+	private UserSessionManager userSession;
 
-
-    @RequestMapping(value = "/chart", method = RequestMethod.GET)
+	@RequestMapping(value = "/chart", method = RequestMethod.GET)
     public String exampleChart(Principal principal) {
     	return "charts/index";
     }
@@ -72,9 +69,10 @@ public class ChartDataController {
     public ChartNavigationData getNavigationData(@RequestParam int chartId,
 	    HttpServletRequest request, Principal principal, Locale locale) {
 
-    	ChartNavigationData chartNavigationData = null;
+		ChartNavigationData chartNavigationData = new ChartNavigationData();
     	try {
-        	final NavigationDefaults defaults = getNavigationDefaultsFromCookie(chartId, request, principal);
+			final NavigationDefaults defaults = getNavigationDefaults(chartId,
+					request);
         	if (defaults != null) {
             	chartNavigationData.setDefaults(defaults);
         	}
@@ -268,13 +266,12 @@ public class ChartDataController {
     }
 
 	private void updateChartDefaults(int chartId, NavigationDefaults defaults,
-			HttpServletRequest request)
-			throws IOException {
+			HttpServletRequest request) throws Exception {
 		setUserSettings(defaults, chartId, request);
     }
     
 	public void setUserSettings(NavigationDefaults defaults, int chartId,
-			HttpServletRequest request) {
+			HttpServletRequest request) throws Exception {
 
 		if (userSession.getUser() != null) {
 			// update database with navigation settings

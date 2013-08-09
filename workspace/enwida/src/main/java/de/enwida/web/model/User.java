@@ -112,7 +112,7 @@ public class User implements Serializable {
 	private Map<Integer, NavigationDefaults> chartDefaults;
 
 	@Transient
-    private UserRoleCollection roles;
+	private List<Role> roles;
 
 	@Transient
     private UserRoleCollection userPermissionCollection;
@@ -195,6 +195,15 @@ public class User implements Serializable {
         return this.getUserName();
     }
 
+	@Transient
+	public List<Role> getRoles() {
+		return roles;
+	}
+
+	public void setRoles(List<Role> roles) {
+		this.roles = roles;
+	}
+
     @Transient
     public UserRoleCollection getUserPermissionCollection() {
         return userPermissionCollection;
@@ -259,15 +268,6 @@ public class User implements Serializable {
 
     public void setTelephone(String telephone) {
         this.telephone = telephone;
-    }
-
-    @Transient
-    public UserRoleCollection getRoles() {
-        return roles;
-    }
-
-    public void setRoles(UserRoleCollection roles) {
-        this.roles = roles;
     }
 
     public String getCompanyLogo() {

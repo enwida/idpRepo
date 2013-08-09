@@ -6,17 +6,27 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-import javax.management.Query;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.sql.DataSource;
-import javax.swing.tree.RowMapper;
+
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import de.enwida.web.utils.Constants;
 
-public abstract class AbstractBaseDao<T> implements RowMapper<T>, IDao<T> {
+public abstract class AbstractBaseDao<T> implements IDao<T>, RowMapper<T> {
 
     private Class<T> modelClass;
     protected JdbcTemplate jdbcTemplate;
     private String dbTableName;
+
+	private Logger logger = Logger.getLogger(getClass());
 
 	@PersistenceContext(unitName = Constants.ENWIDA_USERS_JPA_CONTEXT)
 	protected EntityManager em;
@@ -36,39 +46,40 @@ public abstract class AbstractBaseDao<T> implements RowMapper<T>, IDao<T> {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
-    public T findById(Long id) throws Exception{
+	public T findById(Long id) {
         String sql = "SELECT * FROM " + this.getDbTableName() + " WHERE id = "
                 + id;
         return this.jdbcTemplate.queryForObject(sql, this.modelClass);
     }
     
-    public void save(String sql,T obj)throws Exception{
+	public void save(String sql, T obj) {
         this.jdbcTemplate.update(sql,obj);
     }
     
-    public T deleteById(Long id)throws Exception {
+	public T deleteById(Long id) {
         String sql = "DELETE FROM " + this.getDbTableName() + " WHERE id = "
                 + id;
         return this.jdbcTemplate.queryForObject(sql, this.modelClass);
     }
 
-    public List<T> findAll() throws Exception{
+	public List<T> findAll() {
         String sql = "SELECT * FROM " + this.getDbTableName();
         return this.jdbcTemplate.query(sql,this);
     }
     
-    public List<T> findByColumn(String columnName,int columnValue)throws Exception {
+	public List<T> findByColumn(String columnName, int columnValue) {
         String sql = "SELECT * FROM " + this.getDbTableName()+ " WHERE "+columnName+"=?";
         return this.jdbcTemplate.query(sql,new Object[]{columnValue},this);
     }
     
-    public List<T> findByColumn(String columnName,String columnValue)throws Exception {
+	public List<T> findByColumn(String columnName, String columnValue) {
         String sql = "SELECT * FROM " + this.getDbTableName()+ " WHERE "+columnName+"=?";
         return this.jdbcTemplate.query(sql,new Object[]{columnValue},this);
     }
     
 
-    public List<T> findByExample(T obj)throws Exception {
+	@SuppressWarnings("unchecked")
+	public List<T> findByExample(T obj) {
         String sql = "SELECT * FROM users."
                 + this.modelClass.getSimpleName().toUpperCase()
                 + " where first_name = :firstName and last_name = :lastName";
@@ -96,7 +107,8 @@ public abstract class AbstractBaseDao<T> implements RowMapper<T>, IDao<T> {
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<T> findAll() {
+	@Override
+	public List<T> fetchAll() {
 		return em.createQuery("from " + modelClass.getName()).getResultList();
 	}
 

@@ -11,9 +11,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import de.enwida.transport.Aspect;
 import de.enwida.transport.DataResolution;
+import de.enwida.web.db.model.CalendarRange;
+import de.enwida.web.db.model.NavigationDefaults;
 import de.enwida.web.model.ProductTree.ProductAttributes;
-import de.enwida.web.utils.CalendarRange;
-import de.enwida.web.utils.NavigationDefaults;
 import de.enwida.web.utils.NavigationDictionary;
 
 

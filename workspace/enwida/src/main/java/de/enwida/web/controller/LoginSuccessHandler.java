@@ -50,7 +50,12 @@ public class LoginSuccessHandler extends
 		if (userSession.getUser() == null) {
 			// Fetch User details and save in session
 			// System.out.println(userService.getUser(auth.getName()));
-			userSession.setUserInSession(auth.getName());
+			try {
+				userSession.setUserInSession(auth.getName());
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
             
         response.addCookie(cookie);
