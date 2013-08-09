@@ -10,7 +10,8 @@ import de.enwida.web.dao.interfaces.IRightDao;
 import de.enwida.web.model.Right;
 import de.enwida.web.service.interfaces.IAspectService;
 
-@Service("AspectService")
+@TransactionConfiguration(defaultRollback = true)
+@Service("aspectService")
 @Transactional
 public class AspectServiceImpl implements IAspectService {
 

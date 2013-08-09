@@ -8,13 +8,21 @@ public interface IDao <T> {
 
 	void setDataSource(DataSource ds);
 	
-	T findById(Long id);
-	List<T> findByExample(T obj);
-	List<T> findAll();
+	public T findById(Long id);
+
+	public List<T> findByExample(T obj);
+
+	public T findById(int id);
+
+	public List<T> findAll();
 	
-	void delete(T obj);	
-	void deleteAll();
-	
-	T save(T obj);	
-	T update(T obj);	
+	public void create(T entity);
+
+	public T update(T entity);
+
+	public void delete(T entity);
+
+	public void deleteById(long entityId);
+
+	public Long getNextSequenceNumber(String schema, String sequenceName);
 }

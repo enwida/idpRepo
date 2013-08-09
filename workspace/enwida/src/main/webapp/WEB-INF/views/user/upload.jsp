@@ -1,4 +1,5 @@
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%>
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+	pageEncoding="ISO-8859-1"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
@@ -27,24 +28,66 @@
 	<div style="text-align: center;">
 		<h2>Import CSV File</h2>
 	</div>
-	
+
 	<div style="clear: both"></div>
 	<div style="width: 100%">
 		<div style="width: 30%; float: left;"></div>
 		<div style="text-align: center; width: 40%; margin-left: 35%">
-		
-		<form:form method="POST" commandName="fileUpload" enctype="multipart/form-data">
-			<form:errors path="*" cssClass="errorblock" element="div" />
- 			Please Select a file to upload: 
- 			<input type="file" name="file" />
- 			<input type="submit" value="Upload" />
- 			
-			<span>
-				<form:errors path="file" cssClass="error" />
-				<c:out value="${invalidFileMessage}"></c:out> 
-			</span> 
-		</form:form>
-				
+
+			<form:form method="POST" commandName="fileUpload"
+				enctype="multipart/form-data">
+				<form:errors path="*" cssClass="errorblock" element="div" />
+ 				Please Select a file to upload: 
+ 				<input type="file" name="file" />
+				<input type="submit" value="Upload" />
+
+				<span> <form:errors path="file" cssClass="error" /> <c:out
+						value="${invalidFileMessage}"></c:out>
+				</span>
+			</form:form>
+			
+			<form:form method="POST" commandName="fileReplace"
+				enctype="multipart/form-data">
+				<table border="1">
+					<tr>
+							<th>Id</th>
+							<th>File Name</th>
+							<th>Upload Date</th>
+							<th>Revision</th>
+							<th>Delete</th>
+							<th>Replace</th>
+							<th>Download</th>
+					</tr>
+					<c:choose>
+						<c:when test="${not empty uploadedfiletable}">
+							<c:forEach var="file" items="${uploadedfiletable}">
+							<tr>
+								<td><c:out value="${file.id}"/></td>
+								<td><c:out value="${file.displayFileName}"/></td>
+								<td><c:out value="${file.displayUploadDate}"/></td>
+								<td><c:out value="${file.revision}"/></td>
+								<td><input type="submit" value="Delete" /></td>
+								<td><input type="file" name="file" />
+								<input type="submit" value="Replace" /></td>
+								<td><a target="_blank" href="./files/<c:out value='${file.id}'/>">download</a></td>
+							</tr>
+							</c:forEach>
+					
+						</c:when>
+						<c:otherwise>
+							<tr>
+								<td colspan="7">No data found</td>
+							</tr>
+						</c:otherwise>
+					</c:choose>
+				</table>
+			</form:form>
+			<c:if test="${not empty errormsg}">
+			   <small><font color="red">
+			     <c:out value="${errormsg}"/>
+			   </font></small>
+			 </c:if>
+			<c:out value="${successmsg}"/>
 		</div>
 		<div style="width: 30%;"></div>
 	</div>

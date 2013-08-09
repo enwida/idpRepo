@@ -30,7 +30,7 @@ public class UserLog extends HandlerInterceptorAdapter{
     static Logger logger = Logger.getLogger(UserLog.class);
     
     @Autowired
-    private CookieSecurityServiceImpl cookieSecurityService;
+	private ICookieSecurityService cookieSecurityService;
 
     @Override
     public void postHandle(HttpServletRequest request,

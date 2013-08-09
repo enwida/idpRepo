@@ -4,7 +4,6 @@
 package de.enwida.web.service.interfaces;
 
 import java.io.IOException;
-import java.util.Hashtable;
 import java.util.Locale;
 
 import de.enwida.web.model.ChartNavigationData;
@@ -15,4 +14,15 @@ public interface INavigationService {
 	ChartNavigationData getDefaultNavigationData(int chartId);
 	ChartNavigationData getNavigationDataFromJsonFile(int chartId) throws IOException;
 	Hashtable<Integer, ChartNavigationData> getAllDefaultNavigationData();
+	
+	Set<NavigationSettings> getNavigationSettingsByUserId(int userId)
+			throws IOException;
+
+	boolean saveUserNavigationSettings(NavigationSettings navigationSettings);
+
+	NavigationSettings getUserNavigationSettings(Object id, int chartId,
+			boolean isClient);
+
+	ChartNavigationData getNavigationDataUNSECURE(int chartId, User user,
+			Locale locale);
 }

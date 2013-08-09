@@ -246,4 +246,12 @@ public interface IUserService {
      * @throws Exception 
      */
     public User getCurrentUser() throws Exception;
+
+    Long getNextSequence(String schema, String sequenceName);
+
+	UploadedFile getFile(int fileId);
+
+	UploadedFile getFileByFilePath(String filePath);
+
+	public int getUploadedFileVersion(UploadedFile file, User user);
 }

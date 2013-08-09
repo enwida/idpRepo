@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import de.enwida.transport.DataResolution;
-import de.enwida.web.utils.CalendarRange;
+import de.enwida.web.db.model.CalendarRange;
 import de.enwida.web.utils.ProductLeaf;
 import de.enwida.web.utils.ProductNode;
 

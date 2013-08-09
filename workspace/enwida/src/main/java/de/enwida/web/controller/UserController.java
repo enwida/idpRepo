@@ -38,9 +38,18 @@ public class UserController {
 	
 	@Autowired
 	private IUserService userService;
+
+	@Autowired
+	private IUserLinesService userLineService;
+
+	@Autowired
+	private UserSessionManager userSession;
 	
 	@Autowired
 	private UserValidator userValidator;
+
+	@Autowired
+	private FileValidator fileValidator;
     
     @Autowired
     ReloadableResourceBundleMessageSource messageSource;
@@ -49,6 +58,12 @@ public class UserController {
 	private MailServiceImpl mail;	
 
     private static org.apache.log4j.Logger logger = Logger.getLogger(AdminController.class);
+
+    @Value("#{applicationProperties['fileUploadDirectory']}")
+	protected String fileUploadDirectory;
+
+	@Value("#{applicationProperties['file.upload.parse.success']}")
+	protected String uploadsuccessmsg;
 	
 	@RequestMapping(value="/user", method = RequestMethod.GET)
 	public String displayDashboard(Model model, Locale locale) {
@@ -275,37 +290,279 @@ public class UserController {
 	}
 	
 	@RequestMapping(value="/upload", method = RequestMethod.GET)
-	public ModelAndView getUplaodUserData() {
-
-		return new ModelAndView("user/upload");
+	public ModelAndView getUplaodUserData(ModelMap model) {
+		User user = userService.getUser("username1");
+		List<UploadedFile> filetable = new ArrayList<UploadedFile>(
+				user.getUploadedFiles());
+		Collections.sort(filetable);
+		model.put("uploadedfiletable", filetable);
+		model.put("fileUpload", new FileUpload());
+		return new ModelAndView("user/upload", model);
 	}
 	
+	@SuppressWarnings("unchecked")
 	@RequestMapping(value="/upload", method = RequestMethod.POST)
-	public ModelAndView postUplaodUserData(@ModelAttribute(value="fileUpload") FileUpload fileUpload, BindingResult result, HttpServletRequest request) {
+	public ModelAndView postUplaodUserData(ModelMap model,
+			@ModelAttribute(value = "fileUpload") FileUpload fileUpload,
+			BindingResult result, HttpServletRequest request) {
 		
 		boolean isMultipart = ServletFileUpload.isMultipartContent(request);
+		// fetch all files related to user
+		User user = userService.getUser("username1");
+		List<UploadedFile> filetable = new ArrayList<UploadedFile>(
+				user.getUploadedFiles());
 
-        if (isMultipart) {
+		String displayfileName = null;
+		if (isMultipart) {
             try {
             	FileItem item = fileUpload.getFile().getFileItem();
-            	
+				File filetobeuploaded = null;
             	if (!item.isFormField()) {
-	                String fileName = item.getName();
-	
-	                String root = request.getSession().getServletContext().getRealPath("/");
-	                File path = new File(root + "/uploads");
-	                if (!path.exists()) {
-	                    boolean status = path.mkdirs();
-	                }
-	
-	                File uploadedFile = new File(path + "/" + fileName);
-	                System.out.println(uploadedFile.getAbsolutePath());
-	                //item.write(uploadedFile);
+					// save file in temporary directory
+					filetobeuploaded = getTemporaryFile(item);
+					// do validation here
+					BindingResult results = validateFile(filetobeuploaded,
+							fileValidator);
+					ObjectError status = results.getGlobalError();
+
+					if (status.getCode().equalsIgnoreCase(
+							"file.upload.parse.success")) {
+
+						Map<String, Object> parsedData = (Map<String, Object>) status
+								.getArguments()[0];
+						List<UserLines> userlines = (List<UserLines>) parsedData
+								.get(Constants.UPLOAD_LINES_KEY);
+						UserLinesMetaData metaData = (UserLinesMetaData) parsedData
+								.get(Constants.UPLOAD_LINES_METADATA_KEY);
+
+						boolean recordsInserted = userLineService
+								.createUserLines(userlines, metaData);
+						if (recordsInserted) {
+							// if atleast one record is written then upload
+							// file.
+							UploadedFile file = saveFile(filetobeuploaded, user);
+							// update file Id (which already have owner details)
+							metaData.setFile(file);
+							userLineService.updateUserLineMetaData(metaData);
+							// update uploaded files list
+							filetable.add(file);
+							model.put("successmsg", uploadsuccessmsg);
+							removeTemporaryFile(filetobeuploaded);
+						} else {
+							model.put("errormsg", "Duplicate file uploaded");
+						}
+					} else if (status.getCode().equalsIgnoreCase(
+							"file.upload.parse.error")) {
+						model.put("errormsg", status.getDefaultMessage());
+					}
 	            }
             } catch (Exception e) {
-                e.printStackTrace();
+				logger.error("Unable to upload file : " + displayfileName, e);
             }
         }
-		return new ModelAndView("user/upload", "fileUpload", new FileUpload() );
+		Collections.sort(filetable);
+		model.put("uploadedfiletable", filetable);
+		model.put("fileUpload", new FileUpload());
+		return new ModelAndView("user/upload", model);
+	}
+
+	@RequestMapping(value = "/replaceupload", method = RequestMethod.POST)
+	public ModelAndView replaceUplaodUserData(ModelMap model,
+			@ModelAttribute(value = "fileReplace") FileUpload fileUpload,
+			BindingResult result, HttpServletRequest request) {
+
+		boolean isMultipart = ServletFileUpload.isMultipartContent(request);
+		// fetch all files related to user
+		User user = userService.getUser("username1");
+		List<UploadedFile> filetable = new ArrayList<UploadedFile>(
+				user.getUploadedFiles());
+
+		String displayfileName = null;
+		if (isMultipart) {
+			try {
+				FileItem item = fileUpload.getFile().getFileItem();
+				if (!item.isFormField()) {
+
+				}
+			} catch (Exception e) {
+				logger.error("Unable to upload file : " + displayfileName, e);
+			}
+		}
+		Collections.sort(filetable);
+		model.put("uploadedfiletable", filetable);
+		model.put("fileUpload", new FileUpload());
+		return new ModelAndView("user/upload", model);
+	}
+
+	public BindingResult validateFile(File file, Validator validator) {
+		// Map<String, Object> objectMap = new LinkedHashMap<String, Object>();
+		// objectMap.put("file", file);
+		DataBinder binder = new DataBinder(file);
+		binder.setValidator(validator);
+		// validate the target object
+		binder.validate();
+		// get BindingResult that includes any validation errors
+		return binder.getBindingResult();
+	}
+	/**
+	 * Creates a new directory depending on the input path given
+	 * 
+	 * @param path
+	 *            directory path that needs to be created
+	 * @return success status of directory creation
+	 */
+	public boolean createDirectory(String path) {
+		boolean status = false;
+
+		if (path != null && !path.trim().isEmpty()) {
+			File f = new File(path);
+			f.setWritable(true);
+
+			if (!f.exists()) {
+				status = f.mkdirs();
+			}
+		}
+		return status;
+	}
+
+	private File getTemporaryFile(FileItem item) throws Exception {
+		String tempFile = fileUploadDirectory + File.separator + "temp"
+				+ File.separator + item.getName();
+		createDirectory(fileUploadDirectory + File.separator + "temp");
+		// do validation here
+		File filetobeuploaded = new File(tempFile);
+		item.write(filetobeuploaded);
+		return filetobeuploaded;
+	}
+
+	private boolean removeTemporaryFile(File fileTORemove) throws Exception {
+		fileTORemove.delete();
+		return true;
+	}
+
+	private UploadedFile saveFile(File file, User user) throws Exception {
+		String displayfileName = file.getName();
+
+		// Get the next generated value of file sequence
+		Long generatedId = null;
+		try {
+			generatedId = userService.getNextSequence(
+					Constants.UPLOADED_FILE_SEQUENCE_SCHEMA_NAME,
+					Constants.UPLOADED_FILE_SEQUENCE_NAME);
+		} catch (Exception e) {
+			// TODO: handle exception
+			generatedId = new Long(1);
+		}
+		String fileFormat = extractFileFormat(displayfileName);
+		String fileName = "file";
+		if (fileFormat != null && generatedId != null)
+			fileName += "_" + generatedId + "." + fileFormat;
+		else {
+			throw new Exception("No file format");
+		}
+		// make sure that file directory is present
+		// before uploading file
+		createDirectory(fileUploadDirectory);
+
+		// upload file
+		File uploadedFile = new File(fileUploadDirectory + File.separator
+				+ fileName);
+		FileUtils.copyFile(file, uploadedFile);
+		// IOUtils.copyLarge(new FileInputStream(file), new FileOutputStream(
+		// uploadedFile));
+		// item.write(uploadedFile);
+
+		// update file manifest data
+		File manifestFile = new File(fileUploadDirectory + File.separator
+				+ fileName + ".mfst");
+		writeAllText(manifestFile, displayfileName);
+
+		// create entry in file upload table
+		UploadedFile uploadedfile = new UploadedFile();
+		uploadedfile.setDisplayFileName(displayfileName);
+		uploadedfile.setFileName(fileName);
+		uploadedfile.setFilePath(fileUploadDirectory + File.separator
+				+ fileName);
+		uploadedfile.setFormat(fileFormat);
+		uploadedfile.setUploadDate(new Date());
+
+		uploadedfile.setUploader(user);
+		// User user = userSession.getUser();
+		user.addUploadedFile(uploadedfile);
+		// update revision based on
+		// int revision = userService.getUploadedFileVersion(uploadedfile,
+		// user);
+		uploadedfile.setRevision(1);
+		user.addUploadedFile(uploadedfile);
+		userService.updateUser(user);
+
+		uploadedfile = userService
+				.getFileByFilePath(uploadedfile.getFilePath());
+		return uploadedfile;
+	}
+	/**
+	 * Writes given content to a file.
+	 * 
+	 * @param file
+	 *            the file to write to
+	 * @param text
+	 *            the text to write.
+	 */
+	public void writeAllText(File file, String text) {
+		try {
+			BufferedWriter out = new BufferedWriter(new FileWriter(file));
+			out.write(text);
+			out.close();
+		} catch (Exception e) {
+			logger.error(
+					"Update Manifest data for uploaded File: " + file.getName(),
+					e);
+		}
+	}
+
+	private String extractFileFormat(String completeName) {
+		String[] fnameParts = completeName.split("\\\\");
+		// String fname = fnameParts[fnameParts.length - 1];
+		// this.displayFileName = fname;
+
+		fnameParts = completeName.split("\\.");
+		if (fnameParts.length < 2) {
+			// file without format.
+			return null;
+		}
+
+		return fnameParts[fnameParts.length - 1];
+	}
+
+	@RequestMapping(value = "/files/{fileId}", method = RequestMethod.GET)
+	@ResponseBody
+	public String downloadFile(@PathVariable("fileId") String fileId,
+			HttpServletResponse reponse) {
+		if (fileId != null) {
+			int fileid = Integer.parseInt(fileId);
+			// System.out.println("File Id : " + userService.getFile(fileid));
+			UploadedFile downloadFile = userService.getFile(fileid);
+			if (downloadFile == null)
+				return null;
+			String filePath = downloadFile.getFilePath();
+			File file = new File(filePath);
+			reponse.setHeader("Content-Disposition", "attachment; filename=\""
+					+ downloadFile.getDisplayFileName() + "\"");
+			OutputStream out = null;
+			try {
+				out = reponse.getOutputStream();
+				reponse.setContentType("text/plain; charset=utf-8");
+				FileInputStream fi = new FileInputStream(file);
+
+				IOUtils.copy(fi, out);
+				out.flush();
+				out.close();
+			} catch (IOException e) {
+				logger.error("Unable to download file : ", e);
+			} finally {
+				out = null;
+			}
+		}
+		return null;
 	}
 }

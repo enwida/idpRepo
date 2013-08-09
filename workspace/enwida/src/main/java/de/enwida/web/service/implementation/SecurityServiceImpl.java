@@ -18,7 +18,9 @@ import de.enwida.web.service.interfaces.ISecurityService;
 import de.enwida.web.utils.CalendarRange;
 import de.enwida.web.utils.ProductRestriction;
 
-@Service
+@TransactionConfiguration(defaultRollback = true)
+@Transactional
+@Service("securityService")
 public class SecurityServiceImpl implements ISecurityService {
 
 	@Autowired

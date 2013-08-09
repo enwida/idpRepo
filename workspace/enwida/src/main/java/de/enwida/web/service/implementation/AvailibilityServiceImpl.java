@@ -16,7 +16,9 @@ import de.enwida.web.utils.CalendarRange;
 import de.enwida.web.utils.EnwidaUtils;
 import de.enwida.web.utils.ProductRestriction;
 
-@Service
+@TransactionConfiguration(defaultRollback = true)
+@Service("availabilityService")
+@Transactional
 public class AvailibilityServiceImpl implements IAvailibilityService {
 
 	@Autowired

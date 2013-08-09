@@ -2,6 +2,7 @@
 <beans:beans xmlns="http://www.springframework.org/schema/mvc"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:aop="http://www.springframework.org/schema/aop"
 	xmlns:context="http://www.springframework.org/schema/context"
 	xmlns:tx="http://www.springframework.org/schema/tx"
 	xmlns:task="http://www.springframework.org/schema/task"
@@ -9,14 +10,18 @@
 		http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.0.xsd
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
 		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
-		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+		http://www.springframework.org/schema/aop
+        http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
 
 	<!-- Enables the Spring MVC @Controller programming model -->
 	<annotation-driven />
 
 	<!-- Scans the classpath of this application for @Components to deploy as beans -->
-	<context:component-scan base-package="de.enwida" />
 	<context:annotation-config />
+	<context:component-scan base-package="de.enwida.web.controller" scoped-proxy="interfaces"/>
+	<context:component-scan base-package="de.enwida.web.validator" scoped-proxy="targetClass"/>
+  
 	<!-- Handles HTTP GET requests for /resources/** by efficiently serving 
 		up static resources in the ${webappRoot}/resources directory -->
 	<resources mapping="/resources/**" location="/resources/" cache-period="31556926" />
@@ -31,11 +36,12 @@
 	</beans:bean>
 	
 	<beans:bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver" />
-
-	<beans:bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
-		<beans:property name="basename" value="/resources/messages/messages" />
+	
+	<beans:bean id="userPermissionCollection" class="de.enwida.web.model.UserRoleCollection">
 	</beans:bean>
 	
+	<!-- All service and DAO's are initialised at root application context level so as 
+	to use in testcases run and varioos other standalone parts of application. 
 	<beans:bean id="userDao" class="de.enwida.web.dao.implementation.UserDaoImpl">
 	</beans:bean>
 	
@@ -57,6 +63,9 @@
 	<beans:bean scope="singleton" id="lineService" class="de.enwida.web.service.implementation.LineServiceImpl">
 	</beans:bean>
 
+	<beans:bean id="lineService" class="de.enwida.web.service.implementation.LineServiceImpl">
+	</beans:bean> -->
+
 	<interceptors>
     	<beans:bean id="localeChangeInterceptor" class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor">
         	<beans:property name="paramName" value="lang" />
@@ -72,29 +81,25 @@
 		<beans:property name="defaultLocale" value="en" />
 	</beans:bean>
 	
-	<context:property-placeholder location="/WEB-INF/configProperties/enwida.jdbc.config" />
+	<beans:bean id="envPropertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+	    <beans:property name="locations">
+	    	<beans:list>
+	            <beans:value>/WEB-INF/configProperties/enwida.jdbc.config</beans:value>
+	        </beans:list>
+	    </beans:property>
+	</beans:bean>
+
+<!-- 	<context:property-placeholder location="/WEB-INF/configProperties/enwida.jdbc.config" /> -->
+<!-- 	<context:property-placeholder location="/WEB-INF/configProperties/application.properties" /> -->
 	
-	<beans:bean id="lineManager" class="de.enwida.chart.LineManager">	
-		<beans:property name="messageSource" ref="messageSource" />
-	</beans:bean>	
 	
 	<!-- <beans:bean id="availability" class="de.enwida.rl.Availability" init-method="init">	
 	</beans:bean> -->
 	
-	<beans:bean id="dch" class="de.enwida.common.DateCalendarHelper" init-method="init">	
-		<beans:property name="dataSource" ref="dataSource" />
-	</beans:bean>
-	
-	<beans:bean id="listOfProducts" class="de.enwida.rl.daos.ListOfProducts" init-method="init">	
-		<beans:property name="dataSource" ref="dataSource" />
-	</beans:bean>
 	
 	<beans:bean id="dbc" class="de.enwida.rl.controller.DatabaseController">	
 	</beans:bean>	
 
-	<beans:bean id="cookieSecurityService" scope="singleton" class="de.enwida.web.service.implementation.CookieSecurityServiceImpl">
-	</beans:bean>
-	
 	<beans:bean id="isoDateFormat" class="java.text.SimpleDateFormat">
 		<beans:constructor-arg value="yyyy-MM-dd" />
 	</beans:bean>
@@ -112,5 +117,5 @@
 	     <beans:property name="password" value="${mail.smtp.password}"/>
 	</beans:bean>
 	
-	<beans:bean id="userValidator" class="de.enwida.web.validator.UserValidator" />
+	
 </beans:beans>

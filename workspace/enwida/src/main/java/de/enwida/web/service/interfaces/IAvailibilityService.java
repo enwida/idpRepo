@@ -8,6 +8,8 @@ import de.enwida.web.utils.ProductRestriction;
 public interface IAvailibilityService {
 
 	public boolean isAvailable(DataAvailibility dataAvailibility);
-	public ProductRestriction getProductRestriction(int productId, int tso, Aspect aspect, User user);
-	
+
+	public ProductRestriction getProductRestriction(int productId, int tso,
+			Aspect aspect, User user);
+
 }

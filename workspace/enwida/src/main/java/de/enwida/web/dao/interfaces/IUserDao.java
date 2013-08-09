@@ -38,4 +38,8 @@ public interface IUserDao {
 
     User getUserByName(String userName) throws Exception;
 
+    public Long getNextSequence(String schema, String sequenceName);
+
+	int getUploadedFileVersion(UploadedFile file, User user);
+
 }

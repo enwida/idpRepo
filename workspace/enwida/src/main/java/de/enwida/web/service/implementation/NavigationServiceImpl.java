@@ -38,6 +38,9 @@ import de.enwida.web.utils.ObjectMapperFactory;
 import de.enwida.web.utils.ProductLeaf;
 import de.enwida.web.utils.ProductRestriction;
 
+@TransactionConfiguration(defaultRollback = true)
+@Transactional
+@Service("navigationService")
 public class NavigationServiceImpl implements INavigationService {
 
     private static Logger logger = Logger.getLogger(NavigationServiceImpl.class);
@@ -47,7 +50,13 @@ public class NavigationServiceImpl implements INavigationService {
 	
 	@Autowired
 	private IAvailibilityService availibilityService;
-	
+
+	@Autowired
+	private INavigationDao navigationDao;
+
+	@Autowired
+	private MessageSource messageSource;
+
 	@Autowired
 	private ObjectMapperFactory objectMapperFactory;
 	
@@ -209,5 +218,22 @@ public class NavigationServiceImpl implements INavigationService {
 			}
 		}
 	}
-	
+
+	@Override
+	public Set<NavigationSettings> getNavigationSettingsByUserId(
+			int userId) throws IOException {
+		return navigationDao.getUserNavigationSettings(userId);
+	}
+
+	@Override
+	public boolean saveUserNavigationSettings(
+			NavigationSettings navigationSettings) {
+		return navigationDao.saveUserNavigationSettings(navigationSettings);
+	}
+
+	@Override
+	public NavigationSettings getUserNavigationSettings(Object id,
+			int chartId, boolean isClient) {
+		return navigationDao.getUserNavigationSettings(id, chartId, isClient);
+	}
 }

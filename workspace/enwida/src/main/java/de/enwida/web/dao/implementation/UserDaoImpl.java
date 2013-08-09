@@ -181,4 +181,23 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
         return users;
         
     }
+
+    @Override
+	public int getUploadedFileVersion(UploadedFile uplaodedfile, User user) {
+		int revision = 1;
+		User latestuser = getUserByName(user.getUserName());
+		Set<UploadedFile> uploadedFiles = latestuser.getUploadedFiles();
+		for (UploadedFile file : uploadedFiles) {
+			if (file.getDisplayFileName().equals(
+					uplaodedfile.getDisplayFileName())) {
+				revision += 1;
+			}
+		}
+		return revision;
+	}
+
+	@Override
+	public Long getNextSequence(String schema, String sequenceName) {
+		return super.getNextSequenceNumber(schema, sequenceName);
+	}
 }

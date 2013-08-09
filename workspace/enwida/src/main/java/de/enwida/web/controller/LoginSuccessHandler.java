@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
@@ -15,9 +16,13 @@ import org.springframework.security.web.authentication.SavedRequestAwareAuthenti
 import de.enwida.web.service.interfaces.ICookieSecurityService;
 import de.enwida.web.utils.Constants;
 
-public class LoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
+public class LoginSuccessHandler extends
+		SavedRequestAwareAuthenticationSuccessHandler {
 
+	@Autowired
     private ICookieSecurityService cookieSecurityService;
+	@Autowired
+	private UserSessionManager userSession;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request,
@@ -40,9 +45,16 @@ public class LoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessH
             for (int i = 0; i < cookies.length; i++) {
              cookies[i].setMaxAge(0);
         }
+
+		// update user session value if not present
+		if (userSession.getUser() == null) {
+			// Fetch User details and save in session
+			// System.out.println(userService.getUser(auth.getName()));
+			userSession.setUserInSession(auth.getName());
+		}
             
         response.addCookie(cookie);
-        
+
         if (url != null) {
 
             response.sendRedirect(url);
@@ -57,11 +69,21 @@ public class LoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessH
         }
     }
 
-    public ICookieSecurityService getCookieSecurityService() {
-        return cookieSecurityService;
-    }
+	// public ICookieSecurityService getCookieSecurityService() {
+	// return cookieSecurityService;
+	// }
+	//
+	// public void setCookieSecurityService(
+	// ICookieSecurityService cookieSecurityService) {
+	// this.cookieSecurityService = cookieSecurityService;
+	// }
+	//
+	// public UserSessionManager getUserSession() {
+	// return userSession;
+	// }
+	//
+	// public void setUserSession(UserSessionManager userSession) {
+	// this.userSession = userSession;
+	// }
 
-    public void setCookieSecurityService(ICookieSecurityService cookieSecurityService) {
-        this.cookieSecurityService = cookieSecurityService;
-    }
 }
