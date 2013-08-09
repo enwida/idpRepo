@@ -2,6 +2,7 @@ define [ "components/navigation"
          "components/visual"
          "components/lines"
          "components/infobox"
+         "components/download"
          "util/loading"
          "util/lines_preprocessor"
         ],
@@ -10,6 +11,7 @@ define [ "components/navigation"
    Visual
    Lines
    Infobox
+   Download
    Loading
    LinesPreprocessor
   ) ->
@@ -92,6 +94,7 @@ define [ "components/navigation"
           data: data
           disabledLines: @attr.disabledLines
 
+        @trigger @select("download"), "downloadLink"
 
       @toggleLine = (_, opts) ->
         @attr.disabledLines = opts.disabledLines
@@ -103,6 +106,7 @@ define [ "components/navigation"
         visual: ".visual"
         lines: ".lines"
         infobox: ".infobox"
+        download: ".download"
         disabledLines: []
 
       @after "initialize", ->
@@ -157,3 +161,16 @@ define [ "components/navigation"
           id: @attr.id
           width: @attr.width
           type: @attr.type
+
+        # Add download
+        download = $("<div>").addClass("download")
+        a = $("<a>").attr("download", "chart.svg").attr("title", "chart.svg")
+        button = $("<button>").addClass("btn").addClass("btn-default")
+          .attr("type", "button")
+          .text("Download")
+        a.append button
+        download.append a
+        @$node.append download
+        Download.attachTo download
+
+
