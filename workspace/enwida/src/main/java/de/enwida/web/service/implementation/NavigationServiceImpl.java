@@ -122,7 +122,7 @@ public class NavigationServiceImpl implements INavigationService {
 	 */
 	@Override
 	public ChartNavigationData getNavigationDataWithoutAvailablityCheck(
-			Integer chartId, User user, Locale locale) throws Exception {
+			int chartId, User user, Locale locale) throws Exception {
         final ChartNavigationData navigationData = getDefaultNavigationData(chartId);
         shrinkNavigationOnSecurity(navigationData, user);
         return navigationLocalizer.localize(navigationData, chartId, locale);
