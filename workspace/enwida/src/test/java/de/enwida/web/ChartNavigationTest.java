@@ -3,8 +3,10 @@ package de.enwida.web;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
@@ -24,6 +26,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import de.enwida.transport.Aspect;
 import de.enwida.transport.DataResolution;
+import de.enwida.transport.LineRequest;
 import de.enwida.web.dao.interfaces.IRightDao;
 import de.enwida.web.db.model.CalendarRange;
 import de.enwida.web.db.model.NavigationDefaults;
@@ -34,8 +37,10 @@ import de.enwida.web.model.ProductTree.ProductAttributes;
 import de.enwida.web.model.Right;
 import de.enwida.web.model.Role;
 import de.enwida.web.model.User;
+import de.enwida.web.service.implementation.LineServiceImpl;
 import de.enwida.web.service.implementation.NavigationServiceImpl;
 import de.enwida.web.service.interfaces.IUserService;
+import de.enwida.web.utils.ProductLeaf;
  
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:/root-context-test.xml")
@@ -43,6 +48,9 @@ public class ChartNavigationTest {
 
 	@Autowired
 	private NavigationServiceImpl navigationService;
+	
+	@Autowired
+	private LineServiceImpl lineService;
 	
 	@Autowired
 	private IUserService userService;
@@ -286,6 +294,8 @@ public class ChartNavigationTest {
 		Assert.assertEquals(product.resolutions.get(0).name(), right.getResolution());
 		Assert.assertEquals(product.timeRange.getFrom().getTimeInMillis(), right.getTimeFrom().getTime());
 		Assert.assertEquals(product.timeRange.getTo().getTimeInMillis(), right.getTimeTo().getTime());
+		
+		checkLines(navigationData);
 	}
 
 	@Test
@@ -340,6 +350,8 @@ public class ChartNavigationTest {
 		Assert.assertEquals(product.resolutions.get(0).name(), right1.getResolution());
 		Assert.assertEquals(product.timeRange.getFrom().getTimeInMillis(), right1.getTimeFrom().getTime());
 		Assert.assertEquals(product.timeRange.getTo().getTimeInMillis(), right1.getTimeTo().getTime());
+
+		checkLines(navigationData);
 	}
 
 	@Test
@@ -397,6 +409,8 @@ public class ChartNavigationTest {
 		Assert.assertEquals(product2.resolutions.get(0).name(), right2.getResolution());
 		Assert.assertEquals(product2.timeRange.getFrom().getTimeInMillis(), right2.getTimeFrom().getTime());
 		Assert.assertEquals(product2.timeRange.getTo().getTimeInMillis(), right2.getTimeTo().getTime());
+
+		checkLines(navigationData, toCalendar("2009-06-01"), toCalendar("2010-08-05"));
 	}
 
 	@Test
@@ -434,7 +448,7 @@ public class ChartNavigationTest {
 
 		Assert.assertTrue(navigationData.getAllResolutions().size() == 2);
 		
-		// One tso
+		// One TSO
 		Assert.assertTrue(navigationData.getProductTrees().size() == 1);
 		
 		// Check TSO 99
@@ -450,6 +464,63 @@ public class ChartNavigationTest {
 		// Check that the time matches the maximum of allowed times
 		Assert.assertEquals(product1.timeRange.getFrom().getTimeInMillis(), right2.getTimeFrom().getTime());
 		Assert.assertEquals(product1.timeRange.getTo().getTimeInMillis(), right1.getTimeTo().getTime());
+
+		checkLines(navigationData, toCalendar("2009-06-01"), toCalendar("2010-02-04"));
+	}
+	@Test
+	public void checkTimeRangeExpansionOverRoles() throws Exception {
+		revokeAllRights(42);
+		revokeAllRights(43);
+		
+		final Right right1 = new Right();
+		right1.setAspect(Aspect.CR_VOL_ACTIVATION.name());
+		right1.setEnabled(true);
+		right1.setProduct(211);
+		right1.setResolution(DataResolution.DAILY.name());
+		right1.setRoleID(42);
+		right1.setTimeFrom(dateFormat.parse("2009-05-18"));
+		right1.setTimeTo(dateFormat.parse("2011-09-02"));
+		right1.setTso(99);
+		rightDao.addRight(right1);
+
+		final Right right2 = new Right();
+		right2.setAspect(Aspect.CR_VOL_ACTIVATION.name());
+		right2.setEnabled(true);
+		right2.setProduct(211);
+		right2.setResolution(DataResolution.DAILY.name());
+		right2.setRoleID(43);
+		right2.setTimeFrom(dateFormat.parse("2008-05-18"));
+		right2.setTimeTo(dateFormat.parse("2010-09-02"));
+		right2.setTso(99);
+		rightDao.addRight(right2);
+		
+		final User user = getTestUser();
+		
+		final ChartNavigationData navigationData = navigationService.getNavigationDataWithoutAvailablityCheck(0, user, Locale.GERMAN);
+		Assert.assertNotNull(navigationData);
+		checkNavigationData(navigationData);
+
+		Assert.assertTrue(navigationData.getAllResolutions().size() == 1);
+		
+		// One TSO
+		Assert.assertTrue(navigationData.getProductTrees().size() == 1);
+		
+		// Check TSO 99
+		final List<ProductAttributes> products = navigationData.getProductTrees().get(0).flatten();
+		Assert.assertTrue(products.size() == 1);
+
+		final ProductAttributes product1 = products.get(0);
+		Assert.assertTrue(product1.productId == right1.getProduct());
+		Assert.assertTrue(product1.resolutions.size() == 1);
+		Assert.assertTrue(product1.resolutions.contains(DataResolution.valueOf(right1.getResolution())));
+		Assert.assertTrue(product1.resolutions.contains(DataResolution.valueOf(right2.getResolution())));
+		
+		// Check that the time matches the maximum of allowed times
+		Assert.assertEquals(product1.timeRange.getFrom().getTimeInMillis(), right2.getTimeFrom().getTime());
+		Assert.assertEquals(product1.timeRange.getTo().getTimeInMillis(), right1.getTimeTo().getTime());
+
+		// Check expanding time range over roles
+		checkLines(navigationData);
 	}
 
 	@Test
@@ -527,6 +598,8 @@ public class ChartNavigationTest {
 		// Check that the time matches the maximum of allowed times
 		Assert.assertEquals(product1.timeRange.getFrom().getTimeInMillis(), right4.getTimeFrom().getTime());
 		Assert.assertEquals(product1.timeRange.getTo().getTimeInMillis(), right3.getTimeTo().getTime());
+
+		checkLines(navigationData, toCalendar("2009-12-01"), toCalendar("2010-05-28"));
 	}
 	
 	@Test
@@ -558,6 +631,8 @@ public class ChartNavigationTest {
 				Assert.assertEquals(product.timeRange.getFrom().getTime(), dateFormat.parse("2009-01-01"));
 				Assert.assertEquals(product.timeRange.getTo().getTime(), dateFormat.parse("2012-01-01"));
 			}
+
+			checkLines(navigationData);
 		}
 	}
 
@@ -602,6 +677,8 @@ public class ChartNavigationTest {
 			if (defaultProducts.size() > removedProducts.length) {
 				Assert.assertTrue(products.size() > 0);
 			}
+
+			checkLines(navigationData);
 		}
 	}
 
@@ -655,6 +732,8 @@ public class ChartNavigationTest {
 				Assert.assertEquals(product.timeRange.getFrom().getTime(), dateFormat.parse("2009-01-01"));
 				Assert.assertEquals(product.timeRange.getTo().getTime(), dateFormat.parse("2012-01-01"));
 			}
+
+			checkLines(navigationData);
 		}
 	}
 
@@ -702,6 +781,8 @@ public class ChartNavigationTest {
 					Assert.assertEquals(product.timeRange.getTo().getTime(), dateFormat.parse("2012-01-01"));		
 				}
 			}
+
+			checkLines(navigationData);
 		}
 	}
 
@@ -781,6 +862,7 @@ public class ChartNavigationTest {
 					}
 				}
 			}
+			checkLines(navigationData, toCalendar(startTime), toCalendar(endTime));
 		}
 	}
 
@@ -844,6 +926,75 @@ public class ChartNavigationTest {
 		
 		// No negative range allowed
 		Assert.assertTrue(range.getFrom().compareTo(range.getTo()) <= 0);
+	}
+	
+	private void checkLines(ChartNavigationData navigationData, Calendar startTime, Calendar endTime) throws Exception {
+		final int[] allProducts = new int[] { 200, 300, 211, 212, 221, 222, 311, 321, 312, 322, 313, 323, 314, 324, 315, 325, 316, 326 };
+		final User user = getTestUser();
+
+		for (final ProductTree tree : navigationData.getProductTrees()) {
+			for (final int product : allProducts) {
+				for (final DataResolution resolution : DataResolution.values()) {
+					for (final Aspect aspect : navigationData.getAspects()) {
+						// System.out.println("Product: " + product + " | Aspect: " + aspect.toString());
+						final ProductLeaf leaf = tree.getLeaf(product);
+						if (leaf == null || !leaf.getResolution().contains(resolution)) {
+							final Calendar savedStartTime = startTime;
+							final Calendar savedEndTime = endTime;
+
+							if (startTime == null) {
+								startTime = Calendar.getInstance();
+								startTime.setTime(dateFormat.parse("2011-01-01"));
+							}
+							if (endTime == null) {
+								endTime = Calendar.getInstance();
+								endTime.setTime(dateFormat.parse("2012-01-01"));
+							}
+
+							final LineRequest lineRequest = new LineRequest(aspect, product, tree.getTso(), startTime, endTime, resolution, Locale.ENGLISH);
+							Assert.assertFalse(lineService.isAllowed(lineRequest, user));
+							
+							startTime = savedStartTime;
+							endTime = savedEndTime;
+						} else {
+							if (startTime == null) {
+								startTime = leaf.getTimeRange().getFrom();
+							}
+							if (endTime == null) {
+								endTime = leaf.getTimeRange().getTo();
+							}
+
+							final LineRequest lineRequest = new LineRequest(aspect, product, tree.getTso(), startTime, endTime, resolution, Locale.ENGLISH);
+							Assert.assertTrue(lineService.isAllowed(lineRequest, user));
+
+							// Enlarge time range
+							final Calendar t1 = (Calendar) startTime.clone();
+							final Calendar t2 = (Calendar) endTime.clone();
+							t1.add(Calendar.YEAR, -2);
+							t2.add(Calendar.YEAR, 2);
+							lineRequest.setStartTime(t1);
+							lineRequest.setEndTime(t2);
+
+							Assert.assertFalse(lineService.isAllowed(lineRequest, user));
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	private void checkLines(ChartNavigationData navigationData) throws Exception {
+		checkLines(navigationData, null, null);
+	}
+	
+	private Calendar toCalendar(java.util.Date date) {
+		final Calendar result = Calendar.getInstance();
+		result.setTime(date);
+		return result;
+	}
+	
+	private Calendar toCalendar(String source) throws ParseException {
+		return toCalendar(dateFormat.parse(source));
 	}
 	
 }

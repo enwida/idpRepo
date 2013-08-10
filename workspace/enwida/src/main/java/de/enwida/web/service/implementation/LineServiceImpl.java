@@ -41,7 +41,7 @@ public class LineServiceImpl implements ILineService {
         return lineManager.getLine(request);
     }
     
-    private boolean isAllowed(LineRequest lineRequest, User user) throws Exception {
+    public boolean isAllowed(LineRequest lineRequest, User user) throws Exception {
         final Right authorization = getDataAuthorization(lineRequest);
 
         for (final Role role : user.getRoles()) {
