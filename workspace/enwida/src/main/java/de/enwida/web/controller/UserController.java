@@ -23,6 +23,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.stereotype.Controller;
@@ -75,8 +76,8 @@ public class UserController {
 	@Autowired
 	private FileValidator fileValidator;
     
-    @Autowired
-    ReloadableResourceBundleMessageSource messageSource;
+	@Qualifier("messageSource")
+	private ReloadableResourceBundleMessageSource messageSource;
  
 	@Autowired	
 	private MailServiceImpl mail;	

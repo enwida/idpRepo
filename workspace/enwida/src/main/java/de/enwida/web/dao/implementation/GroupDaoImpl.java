@@ -22,8 +22,6 @@ import de.enwida.web.controller.AdminController;
 import de.enwida.web.dao.interfaces.AbstractBaseDao;
 import de.enwida.web.dao.interfaces.IGroupDao;
 import de.enwida.web.model.Group;
-import de.enwida.web.model.Role;
-import de.enwida.web.model.User;
 
 @Repository
 public class GroupDaoImpl extends AbstractBaseDao<Group> implements IGroupDao {
@@ -40,6 +38,7 @@ public class GroupDaoImpl extends AbstractBaseDao<Group> implements IGroupDao {
 	    return "users.groups";
 	}
 	
+	@SuppressWarnings("rawtypes")
 	@Override
 	public List<Group> getAllGroups() {
 	    
@@ -252,7 +251,8 @@ public class GroupDaoImpl extends AbstractBaseDao<Group> implements IGroupDao {
     }
    
    
-    @Override
+	@SuppressWarnings("rawtypes")
+	@Override
     public Group getGroupByName(String groupName) {
         String sql = "select * from users.groups where group_name=?";
         List<Map<String,Object>> rows =this.jdbcTemplate.queryForList(sql,groupName);
@@ -266,11 +266,14 @@ public class GroupDaoImpl extends AbstractBaseDao<Group> implements IGroupDao {
         return null;
     }
 
-    @Override
+	@SuppressWarnings("rawtypes")
+	@Override
     public List<Group> getGroupsByRole(long roleID) {
         String sql = "SELECT users.groups.group_id, group_name,auto_pass FROM users.groups" +
         		" INNER JOIN users.group_role ON users.groups.group_id=users.group_role.group_id WHERE role_ID="+roleID;
-        List<Group> groups  = this.jdbcTemplate.query(sql,new BeanPropertyRowMapper(Group.class));
+		@SuppressWarnings("unchecked")
+		List<Group> groups = this.jdbcTemplate.query(sql,
+				new BeanPropertyRowMapper(Group.class));
         return groups;
     }
 

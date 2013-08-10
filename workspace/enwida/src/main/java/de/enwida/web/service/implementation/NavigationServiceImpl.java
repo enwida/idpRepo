@@ -61,26 +61,33 @@ public class NavigationServiceImpl implements INavigationService {
 	@Autowired
 	private INavigationDao navigationDao;
 
+	@Autowired
 	private ObjectMapperFactory objectMapperFactory;
 	
 	@Autowired
-	private ChartNavigationLocalizer chartNavigationLocalizer;
-	
+	private ChartNavigationLocalizer navigationLocalizer;
 	private String jsonDir;
+
 	private ObjectMapper objectMapper;
 	private Hashtable<Integer, ChartNavigationData> defaultNavigationData =  new Hashtable<Integer, ChartNavigationData>();
 	
+	public NavigationServiceImpl() {
+
+	}
+
 	@Autowired
-	public NavigationServiceImpl(@Value("${ENWIDA_HOME}/conf/navigation")String jsonDir) {
+	public NavigationServiceImpl(
+			@Value("${ENWIDA_HOME}/conf/navigation") String jsonDir) {
 		this.jsonDir = jsonDir;
 	}
-	
+
 	@PostConstruct
 	public void init() throws IOException {
 		objectMapper = objectMapperFactory.create();
 		readJsonNavigationFiles();
+		// System.out.println(jsonDir);
 	}
-	
+
 	@Override
 	public Hashtable<Integer, ChartNavigationData> getAllDefaultNavigationData() {
 		// Clone every stored NavigationData instance
@@ -111,7 +118,7 @@ public class NavigationServiceImpl implements INavigationService {
         shrinkNavigationOnSecurity(navigationData, user);
         
         // Localize Strings
-        return chartNavigationLocalizer.localize(navigationData, chartId, locale);
+        return navigationLocalizer.localize(navigationData, chartId, locale);
     }
     
     /**
@@ -120,7 +127,7 @@ public class NavigationServiceImpl implements INavigationService {
     public ChartNavigationData getNavigationDataWithoutAvailablityCheck(int chartId, User user, Locale locale) throws Exception {
         final ChartNavigationData navigationData = getDefaultNavigationData(chartId);
         shrinkNavigationOnSecurity(navigationData, user);
-        return chartNavigationLocalizer.localize(navigationData, chartId, locale);
+        return navigationLocalizer.localize(navigationData, chartId, locale);
     }
     
 	@Override
@@ -129,14 +136,6 @@ public class NavigationServiceImpl implements INavigationService {
 		return objectMapper.readValue(in, ChartNavigationData.class);
 	}
 	
-    public String getJsonDir() {
-		return jsonDir;
-	}
-
-	public void setJsonDir(String jsonDir) {
-		this.jsonDir = jsonDir;
-	}
-
     private interface IProductRestrictionGetter {
         public ProductRestriction getProductRestriction(int productId, int tso, Aspect aspect) throws Exception;
     }

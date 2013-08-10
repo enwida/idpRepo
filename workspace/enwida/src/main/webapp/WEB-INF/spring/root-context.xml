@@ -6,7 +6,10 @@
 	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd
 	http://www.springframework.org/schema/context
     http://www.springframework.org/schema/context/spring-context-3.0.xsd">
-
+	
+	<!-- Load all properties file -->
+	<import resource="/appServlet/properties.xml" />
+	
 	<!-- Root Context: defines shared resources visible to all other web components -->
 	<bean id="dataSource"
 		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
@@ -28,6 +31,17 @@
         <property name="maxIdleTime" value="1800" />
 	</bean> -->
 	
+	<bean id="objectMapperFactory" scope="singleton" class="de.enwida.web.utils.ObjectMapperFactory">
+		<constructor-arg ref="isoDateFormat" />
+	</bean>
+	
+	<bean id="isoDateFormat" class="java.text.SimpleDateFormat">
+		<constructor-arg value="yyyy-MM-dd" />
+	</bean>
+	
+	<bean scope="singleton" id="navigationLocalizer" class="de.enwida.web.utils.ChartNavigationLocalizer">
+	</bean>
+	
 	<bean id="lineManager" class="de.enwida.chart.LineManager">	
 		<property name="messageSource" ref="messageSource" />
 	</bean>
@@ -42,10 +56,29 @@
 		<property name="dataSource" ref="dataSource" />
 	</bean>
 	
+	<bean id="propertyConfigurer"
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>file:${ENWIDA_HOME}/conf/enwida.config</value>
+				<value>classpath:/configProperties/enwida.jdbc.config</value>
+				<value>classpath:/configProperties/application.properties</value>
+			</list>
+		</property>
+	</bean>
 	
 	<!-- This class onApplicationEvent is triggered when root conetxt is loaded -->
 	<bean id="eventListenerBean" class="de.enwida.web.application.ApplicationContextInitializer" />
 
+	<bean id="mailService" class="de.enwida.web.service.implementation.MailServiceImpl">
+	 	 <property name="starttls" value="${mail.smtp.starttls.enable}"/>
+	     <property name="host" value="${mail.smtp.host}"/>
+	     <property name="user" value="${mail.smtp.user}"/>
+	     <property name="password" value="${mail.smtp.password}"/>
+	     <property name="port" value="${mail.smtp.port"/>
+	     <property name="auth" value="${mail.smtp.auth}"/>
+	</bean>
+	
 	<!-- Scan all dao's and load in context(dnt forget to give repository annotation to DAO -->
 	<context:component-scan base-package="de.enwida.web.dao.implementation">
 		<context:include-filter type="annotation"
@@ -57,15 +90,6 @@
         <context:include-filter type="annotation"
             expression="org.springframework.stereotype.Service" />
     </context:component-scan>
-    
-	<bean id="propertyConfigurer"
-		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-		<property name="locations">
-			<list>
-				<value>file:${ENWIDA_HOME}/conf/enwida.config</value>
-			</list>
-		</property>
-	</bean>
 
 	<!-- Used for persistence context annotation -->
 	<bean

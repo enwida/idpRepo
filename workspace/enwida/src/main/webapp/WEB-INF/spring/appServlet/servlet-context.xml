@@ -26,8 +26,6 @@
 		up static resources in the ${webappRoot}/resources directory -->
 	<resources mapping="/resources/**" location="/resources/" cache-period="31556926" />
 
-	<beans:import resource="properties.xml" />
-	
 	<!-- Resolves views selected for rendering by @Controllers to .jsp resources 
 		in the /WEB-INF/views directory -->
 	<beans:bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
@@ -43,9 +41,6 @@
 	</beans:bean>
 	
 	<beans:bean id="rightDao" class="de.enwida.web.dao.implementation.RightDaoImpl">
-	</beans:bean>
-
-	<beans:bean scope="singleton" id="navigationLocalizer" class="de.enwida.web.utils.ChartNavigationLocalizer">
 	</beans:bean>
 
 	<beans:bean scope="singleton" id="navigationService" class="de.enwida.web.service.implementation.NavigationServiceImpl">
@@ -78,41 +73,11 @@
 		<beans:property name="defaultLocale" value="en" />
 	</beans:bean>
 	
-	<beans:bean id="envPropertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-	    <beans:property name="locations">
-	    	<beans:list>
-	            <beans:value>/WEB-INF/configProperties/enwida.jdbc.config</beans:value>
-	        </beans:list>
-	    </beans:property>
-	</beans:bean>
-
 <!-- 	<context:property-placeholder location="/WEB-INF/configProperties/enwida.jdbc.config" /> -->
 <!-- 	<context:property-placeholder location="/WEB-INF/configProperties/application.properties" /> -->
 	
 	
 	<!-- <beans:bean id="availability" class="de.enwida.rl.Availability" init-method="init">	
 	</beans:bean> -->
-	
-	
-	<beans:bean id="dbc" class="de.enwida.rl.controller.DatabaseController">	
-	</beans:bean>	
 
-	<beans:bean id="isoDateFormat" class="java.text.SimpleDateFormat">
-		<beans:constructor-arg value="yyyy-MM-dd" />
-	</beans:bean>
-
-	<beans:bean id="objectMapperFactory" scope="singleton" class="de.enwida.web.utils.ObjectMapperFactory">
-		<beans:constructor-arg ref="isoDateFormat" />
-	</beans:bean>
-
-	<beans:bean id="mailService" class="de.enwida.web.service.implementation.MailServiceImpl">
-	     <beans:property name="starttls" value="${mail.smtp.starttls.enable}"/>
-	     <beans:property name="host" value="${mail.smtp.host}"/>
-	     <beans:property name="user" value="${mail.smtp.user}"/>
-	     <beans:property name="port" value="${mail.smtp.port"/>
-	     <beans:property name="auth" value="${mail.smtp.auth}"/>
-	     <beans:property name="password" value="${mail.smtp.password}"/>
-	</beans:bean>
-	
-	
 </beans:beans>
