@@ -66,10 +66,6 @@ public class NavigationServiceImpl implements INavigationService {
 	
 	@Autowired
 	private ChartNavigationLocalizer navigationLocalizer;
-
-	@Value("#{applicationProperties['json.dir.suffix']}")
-	protected String jsonDirSuffix;
-
 	private String jsonDir;
 
 	private ObjectMapper objectMapper;
@@ -79,20 +75,17 @@ public class NavigationServiceImpl implements INavigationService {
 
 	}
 
+	@Autowired
+	public NavigationServiceImpl(
+			@Value("${ENWIDA_HOME}/conf/navigation") String jsonDir) {
+		this.jsonDir = jsonDir;
+	}
+
 	@PostConstruct
 	public void init() throws IOException {
 		objectMapper = objectMapperFactory.create();
-		setJsonDir(System.getenv("ENWIDA_HOME") + jsonDirSuffix);
 		readJsonNavigationFiles();
 		// System.out.println(jsonDir);
-	}
-	
-	public String getJsonDir() {
-		return jsonDir;
-	}
-
-	public void setJsonDir(String jsonDir) {
-		this.jsonDir = jsonDir;
 	}
 
 	@Override

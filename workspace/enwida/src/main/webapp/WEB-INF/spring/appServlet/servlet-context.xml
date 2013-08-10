@@ -35,9 +35,6 @@
 	
 	<beans:bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver" />
 	
-<!-- 	<beans:bean id="userPermissionCollection" class="de.enwida.web.model.UserRoleCollection"> -->
-<!-- 	</beans:bean> -->
-	
 	<!-- All service and DAO's are initialised at root application context level so as 
 	to use in testcases run and varioos other standalone parts of application. 
 	<beans:bean id="userDao" class="de.enwida.web.dao.implementation.UserDaoImpl">

@@ -62,6 +62,7 @@
 			<list>
 				<value>file:${ENWIDA_HOME}/conf/enwida.config</value>
 				<value>classpath:/configProperties/enwida.jdbc.config</value>
+				<value>classpath:/configProperties/application.properties</value>
 			</list>
 		</property>
 	</bean>
