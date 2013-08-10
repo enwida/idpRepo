@@ -23,7 +23,7 @@ import javax.persistence.UniqueConstraint;
 import de.enwida.web.utils.Constants;
 
 @Entity
-@Table(name = Constants.USER_TABLE_NAME, schema = Constants.USER_TABLE_SCHEMA_NAME)
+@Table(name = Constants.ROLE_TABLE_NAME, schema = Constants.ROLE_TABLE_SCHEMA_NAME)
 public class Role  implements Serializable{
 
     /**
@@ -31,9 +31,9 @@ public class Role  implements Serializable{
      */
     private static final long serialVersionUID = -2772444487718010995L;
     
-    public static final String ROLE_ID = "USER_ID";
-    public static final String ROLE_NAME = "USER_ID";
-    public static final String DESCRIPTION = "USER_ID";
+	public static final String ROLE_ID = "ROLE_ID";
+	public static final String ROLE_NAME = "ROLE_NAME";
+	public static final String DESCRIPTION = "DESCRIPTION";
     
     @Id
     @Column(name = ROLE_ID)

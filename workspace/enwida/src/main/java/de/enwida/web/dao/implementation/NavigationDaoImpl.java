@@ -27,7 +27,8 @@ import de.enwida.web.utils.ProductLeaf;
 import de.enwida.web.utils.ProductNode;
 
 @Repository
-public class NavigationDaoImpl extends AbstractBaseDao<User> implements INavigationDao {
+public class NavigationDaoImpl extends AbstractBaseDao<NavigationSettings>
+		implements INavigationDao {
 
 	@Autowired
 	private MessageSource messageSource;

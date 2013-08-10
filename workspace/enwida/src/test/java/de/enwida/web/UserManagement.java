@@ -2,8 +2,6 @@ package de.enwida.web;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -11,8 +9,6 @@ import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.List;
 
-import javax.mail.MessagingException;
-import javax.mail.internet.AddressException;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPath;
@@ -31,10 +27,10 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
 import de.enwida.web.controller.AdminController;
-import de.enwida.web.dao.implementation.GroupDaoImpl;
-import de.enwida.web.dao.implementation.RightDaoImpl;
-import de.enwida.web.dao.implementation.RoleDaoImpl;
-import de.enwida.web.dao.implementation.UserDaoImpl;
+import de.enwida.web.dao.interfaces.IGroupDao;
+import de.enwida.web.dao.interfaces.IRightDao;
+import de.enwida.web.dao.interfaces.IRoleDao;
+import de.enwida.web.dao.interfaces.IUserDao;
 import de.enwida.web.model.Group;
 import de.enwida.web.model.Right;
 import de.enwida.web.model.User;
@@ -48,19 +44,19 @@ public class UserManagement {
 	private DriverManagerDataSource datasource;
 	
 	@Autowired
-	private UserDaoImpl userDao;
+	private IUserDao userDao;
 
     @Autowired
     private MailServiceImpl mailService;
 	   
     @Autowired
-    private GroupDaoImpl groupDao;    
+	private IGroupDao groupDao;
     
     @Autowired
-    private RoleDaoImpl roleDao;   
+	private IRoleDao roleDao;
     
     @Autowired
-    private RightDaoImpl rightsDao;     
+	private IRightDao rightsDao;
 
     private static org.apache.log4j.Logger logger = Logger.getLogger(AdminController.class);
 

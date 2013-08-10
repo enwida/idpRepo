@@ -4,7 +4,7 @@ import java.util.List;
 
 import de.enwida.web.model.Right;
 
-public interface IRightDao {
+public interface IRightDao extends IDao<Right> {
 
     void addRight(Right right) throws Exception;
     boolean enableDisableAspect(long rightID, boolean enabled)throws Exception;
