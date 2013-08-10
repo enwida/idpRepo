@@ -56,9 +56,9 @@ public class UserValidator implements Validator {
             }
 	    }else{
             
-            if(!user.getOldPassword().isEmpty() && updated)
+			if (!user.getPassword().isEmpty() && updated)
             {
-                if(!user.getOldPassword().equals(user.getConfirmPassword()))
+				if (!user.getPassword().equals(user.getConfirmPassword()))
                 {
                     errors.rejectValue("password", "de.enwida.password.mismatch");
                 }

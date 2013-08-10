@@ -2,6 +2,9 @@ package de.enwida.web.dao.interfaces;
 
 import java.util.List;
 
+import de.enwida.web.db.model.UploadedFile;
+import de.enwida.web.model.Group;
+import de.enwida.web.model.Role;
 import de.enwida.web.model.User;
 
 /**
@@ -10,7 +13,7 @@ import de.enwida.web.model.User;
  *
  */
 public interface IUserDao {
-    long save(User user) throws Exception;
+	long save(User user) throws Exception;
 
     User getUserByID(Long id) throws Exception;
 
@@ -38,4 +41,7 @@ public interface IUserDao {
 
     User getUserByName(String userName) throws Exception;
 
+    Long getNextSequence(String schema, String sequenceName);
+
+    int getUploadedFileVersion(UploadedFile uplaodedfile, User user);
 }

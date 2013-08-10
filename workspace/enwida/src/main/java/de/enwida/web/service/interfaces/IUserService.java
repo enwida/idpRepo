@@ -2,6 +2,7 @@ package de.enwida.web.service.interfaces;
 
 import java.util.List;
 
+import de.enwida.web.db.model.UploadedFile;
 import de.enwida.web.model.Group;
 import de.enwida.web.model.Role;
 import de.enwida.web.model.User;
@@ -246,4 +247,12 @@ public interface IUserService {
      * @throws Exception 
      */
     public User getCurrentUser() throws Exception;
+
+    public Long getNextSequence(String schema, String sequenceName);
+
+    public UploadedFile getFile(int fileId);
+
+    public UploadedFile getFileByFilePath(String filePath);
+
+    public int getUploadedFileVersion(UploadedFile file, User user);
 }

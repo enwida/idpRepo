@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import de.enwida.transport.DataResolution;
+import de.enwida.web.db.model.CalendarRange;
 
 public class ProductRestriction {
     

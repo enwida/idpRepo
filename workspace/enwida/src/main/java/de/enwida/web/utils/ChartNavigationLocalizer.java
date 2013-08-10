@@ -6,11 +6,13 @@ import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.stereotype.Repository;
 
 import de.enwida.transport.DataResolution;
 import de.enwida.web.model.ChartNavigationData;
 import de.enwida.web.model.ProductTree;
 
+@Repository
 public class ChartNavigationLocalizer {
 	
 	private static List<String> infoKeys;

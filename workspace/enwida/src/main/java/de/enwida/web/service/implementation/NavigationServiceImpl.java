@@ -13,6 +13,7 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -20,11 +21,18 @@ import javax.annotation.PostConstruct;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.test.context.transaction.TransactionConfiguration;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import de.enwida.transport.Aspect;
 import de.enwida.transport.DataResolution;
+import de.enwida.web.dao.interfaces.INavigationDao;
+import de.enwida.web.db.model.CalendarRange;
+import de.enwida.web.db.model.NavigationSettings;
 import de.enwida.web.model.ChartNavigationData;
 import de.enwida.web.model.ProductTree;
 import de.enwida.web.model.ProductTree.ProductAttributes;
@@ -32,12 +40,14 @@ import de.enwida.web.model.User;
 import de.enwida.web.service.interfaces.IAvailibilityService;
 import de.enwida.web.service.interfaces.INavigationService;
 import de.enwida.web.service.interfaces.ISecurityService;
-import de.enwida.web.utils.CalendarRange;
 import de.enwida.web.utils.ChartNavigationLocalizer;
 import de.enwida.web.utils.ObjectMapperFactory;
 import de.enwida.web.utils.ProductLeaf;
 import de.enwida.web.utils.ProductRestriction;
 
+@TransactionConfiguration(defaultRollback = true)
+@Transactional
+@Service("navigationService")
 public class NavigationServiceImpl implements INavigationService {
 
     private static Logger logger = Logger.getLogger(NavigationServiceImpl.class);
@@ -47,27 +57,37 @@ public class NavigationServiceImpl implements INavigationService {
 	
 	@Autowired
 	private IAvailibilityService availibilityService;
-	
+
+	@Autowired
+	private INavigationDao navigationDao;
+
 	@Autowired
 	private ObjectMapperFactory objectMapperFactory;
 	
 	@Autowired
 	private ChartNavigationLocalizer navigationLocalizer;
-	
 	private String jsonDir;
+
 	private ObjectMapper objectMapper;
 	private Hashtable<Integer, ChartNavigationData> defaultNavigationData =  new Hashtable<Integer, ChartNavigationData>();
 	
-	public NavigationServiceImpl(String jsonDir) {
+	public NavigationServiceImpl() {
+
+	}
+
+	@Autowired
+	public NavigationServiceImpl(
+			@Value("${ENWIDA_HOME}/conf/navigation") String jsonDir) {
 		this.jsonDir = jsonDir;
 	}
-	
+
 	@PostConstruct
 	public void init() throws IOException {
 		objectMapper = objectMapperFactory.create();
 		readJsonNavigationFiles();
+		// System.out.println(jsonDir);
 	}
-	
+
 	@Override
 	public Hashtable<Integer, ChartNavigationData> getAllDefaultNavigationData() {
 		// Clone every stored NavigationData instance
@@ -116,14 +136,6 @@ public class NavigationServiceImpl implements INavigationService {
 		return objectMapper.readValue(in, ChartNavigationData.class);
 	}
 	
-    public String getJsonDir() {
-		return jsonDir;
-	}
-
-	public void setJsonDir(String jsonDir) {
-		this.jsonDir = jsonDir;
-	}
-
     private interface IProductRestrictionGetter {
         public ProductRestriction getProductRestriction(int productId, int tso, Aspect aspect) throws Exception;
     }
@@ -209,5 +221,29 @@ public class NavigationServiceImpl implements INavigationService {
 			}
 		}
 	}
-	
+
+	@Override
+	public Set<NavigationSettings> getNavigationSettingsByUserId(
+			int userId) throws IOException {
+		return navigationDao.getUserNavigationSettings(userId);
+	}
+
+	@Override
+	public boolean saveUserNavigationSettings(
+			NavigationSettings navigationSettings) {
+		return navigationDao.saveUserNavigationSettings(navigationSettings);
+	}
+
+	@Override
+	public NavigationSettings getUserNavigationSettings(Object id,
+			int chartId, boolean isClient) {
+		return navigationDao.getUserNavigationSettings(id, chartId, isClient);
+	}
+
+	@Override
+	public ChartNavigationData getNavigationDataUNSECURE(int chartId,
+			User user, Locale locale) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

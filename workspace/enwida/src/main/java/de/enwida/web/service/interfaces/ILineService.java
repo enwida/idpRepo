@@ -6,6 +6,6 @@ import de.enwida.web.model.User;
 
 public interface ILineService {
 
-    public IDataLine getLine(LineRequest request, User user) throws Exception;
-    
+	public IDataLine getLine(LineRequest request, User user) throws Exception;
+
 }

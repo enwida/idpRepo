@@ -1,17 +1,36 @@
-package de.enwida.web.utils;
+package de.enwida.web.db.model;
 
+import java.beans.Transient;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+@Embeddable
 public class CalendarRange {
+
+	public static final String FROM = "START_DATE";
+	public static final String TO = "END_DATE";
+
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = FROM)
+	private Calendar from;
+
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = TO)
+	private Calendar to;
     
-    private Calendar from;
-    private Calendar to;
-    
-    public CalendarRange() { }
-    
-    public CalendarRange(Calendar from, Calendar to) {
+	/**
+	 * 
+	 */
+	public CalendarRange() {
+	}
+
+	public CalendarRange(Calendar from, Calendar to) {
         this.from = from;
         this.to = to;
     }
@@ -73,6 +92,7 @@ public class CalendarRange {
 	    return new CalendarRange(from, to);
 	}
 
+	@Transient
     public Calendar getFrom() {
         return from;
     }
@@ -81,6 +101,7 @@ public class CalendarRange {
         this.from = from;
     }
     
+	@Transient
     public Calendar getTo() {
         return to;
     }
@@ -88,5 +109,4 @@ public class CalendarRange {
     public void setTo(Calendar to) {
         this.to = to;
     }
-
 }

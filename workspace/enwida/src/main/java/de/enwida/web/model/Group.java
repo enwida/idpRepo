@@ -1,24 +1,71 @@
 package de.enwida.web.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Group {
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+import javax.persistence.UniqueConstraint;
 
-    private long groupID;
+import de.enwida.web.utils.Constants;
+
+@Entity
+@Table(name = Constants.GROUP_TABLE_NAME, schema = Constants.GROUP_TABLE_SCHEMA_NAME)
+public class Group implements Serializable{
+    
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7173117643347079483L;
+	public static final String GROUP_ID = "GROUP_ID";
+	public static final String GROUP_NAME = "GROUP_NAME";
+	public static final String AUTO_PASS = "AUTO_PASS";
+
+	@Id
+	@Column(name = GROUP_ID)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private int groupId;
+    
+	@Column(name = GROUP_NAME)
     private String groupName;
+    
+	@Column(name = AUTO_PASS)
     private boolean autoPass;
-    public List<User> assignedUsers;
+
+	@ManyToMany(fetch = FetchType.EAGER)
+	@ElementCollection(targetClass = User.class, fetch = FetchType.EAGER)
+	@JoinTable(name = Constants.USER_GROUP_TABLE_NAME, schema = Constants.USER_GROUP_TABLE_SCHEMA_NAME, uniqueConstraints = { @UniqueConstraint(columnNames = {
+			User.USER_ID, Group.GROUP_ID }) }, joinColumns = { @JoinColumn(name = GROUP_ID, referencedColumnName = GROUP_ID) }, inverseJoinColumns = { @JoinColumn(name = User.USER_ID, referencedColumnName = User.USER_ID) })
+	private List<User> assignedUsers;
 
     public Long getGroupID() {
-        return groupID;
+		return new Long(groupId);
     }
 
     public void setGroupID(Long groupID) {
-        this.groupID = groupID;
+		this.groupId = groupID.intValue();
     }
 
-    public String getGroupName() {
+	public int getGroupId() {
+		return groupId;
+	}
+
+	public void setGroupId(int groupId) {
+		this.groupId = groupId;
+	}
+
+	public String getGroupName() {
         return groupName;
     }
 
@@ -26,6 +73,7 @@ public class Group {
         this.groupName = groupName;
     }
 
+	@Transient
     public List<User> getAssignedUsers() {
         return assignedUsers;
     }

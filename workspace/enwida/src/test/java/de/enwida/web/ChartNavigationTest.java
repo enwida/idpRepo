@@ -28,6 +28,8 @@ import de.enwida.transport.Aspect;
 import de.enwida.transport.DataResolution;
 import de.enwida.transport.LineRequest;
 import de.enwida.web.dao.interfaces.IRightDao;
+import de.enwida.web.db.model.CalendarRange;
+import de.enwida.web.db.model.NavigationDefaults;
 import de.enwida.web.model.ChartNavigationData;
 import de.enwida.web.model.Group;
 import de.enwida.web.model.ProductTree;
@@ -38,8 +40,6 @@ import de.enwida.web.model.User;
 import de.enwida.web.service.implementation.LineServiceImpl;
 import de.enwida.web.service.implementation.NavigationServiceImpl;
 import de.enwida.web.service.interfaces.IUserService;
-import de.enwida.web.utils.CalendarRange;
-import de.enwida.web.utils.NavigationDefaults;
 import de.enwida.web.utils.ProductLeaf;
  
 @RunWith(SpringJUnit4ClassRunner.class)

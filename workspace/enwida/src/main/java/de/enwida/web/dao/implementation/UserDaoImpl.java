@@ -4,8 +4,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.sql.DataSource;
 
@@ -20,7 +20,9 @@ import org.springframework.stereotype.Repository;
 import de.enwida.web.controller.AdminController;
 import de.enwida.web.dao.interfaces.AbstractBaseDao;
 import de.enwida.web.dao.interfaces.IUserDao;
+import de.enwida.web.db.model.UploadedFile;
 import de.enwida.web.model.Group;
+import de.enwida.web.model.Role;
 import de.enwida.web.model.User;
 
 @Repository
@@ -33,7 +35,7 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
     private static org.apache.log4j.Logger logger = Logger.getLogger(AdminController.class);
 	
 	@Override
-	public List<User> findAllUsers() throws Exception{
+	public List<User> findAllUsers() {
         return this.findAll();
 	}
 	
@@ -59,13 +61,13 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
     }
 		
 	@Override
-	public void deleteUser (User user) throws Exception {
+	public void deleteUser(User user) {
 	    String sql = "DELETE FROM  users.users WHERE user_name=?";
         this.jdbcTemplate.update(sql,user.getUserName());
 	}
 	
     @Override
-	public long save(final User user) throws Exception  
+	public long save(final User user)
 	{
 		KeyHolder keyHolder = new GeneratedKeyHolder();	
 		Number id = -1;
@@ -97,14 +99,14 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
 	}
 
     @Override
-    public User getUserByID(Long id) throws Exception{
+	public User getUserByID(Long id) {
         String sql = "SELECT * FROM users.users WHERE user_id=?";
         List<User> users = this.jdbcTemplate.query(sql,new Object[]{id}, this);
         return ((users.size() > 0) ? users.get(0) : null);
     }
   
     @Override
-    public List<User> getAllUsers() throws Exception {
+	public List<User> getAllUsers() {
         return this.findAll();
     }
     
@@ -132,7 +134,7 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
     }
 
     @Override
-    public void assignUserToGroup(long userId, long groupID) throws Exception {
+	public void assignUserToGroup(long userId, long groupID) {
         if (userId == 0 || groupID == 0) {
             throw new RuntimeException("Invalid userID or GroupID");
         }
@@ -142,7 +144,7 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
 
     @Override
     public void deassignUserFromGroup(long userId, long groupID)
-            throws Exception {
+ {
         if (userId == 0 || groupID == 0) {
             throw new RuntimeException("Invalid userID or GroupID");
         }
@@ -151,19 +153,19 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
     }
 
     @Override
-    public void activateUser(String username)throws Exception  {
+	public void activateUser(String username) {
         String sql = "UPDATE users.users SET enabled=? WHERE user_name=?";
         this.jdbcTemplate.update(sql, true, username);
     }
 
     @Override
-    public void updateUser(User user) throws Exception  {
+	public void updateUser(User user) {
         String sql = "UPDATE users.users SET first_name=?,last_name=?,telephone=?,user_password=?,company_name=? WHERE user_name=?";
         this.jdbcTemplate.update(sql,new Object[]{ user.getFirstName(),user.getLastName(),user.getTelephone(),user.getPassword(),user.getCompanyName(),user.getUserName()});
     }
 
     @Override
-    public void enableDisableUser(long userID, boolean enabled) throws Exception {
+	public void enableDisableUser(long userID, boolean enabled) {
         String sql = "UPDATE users.users SET enabled=? WHERE user_id=?";
         this.jdbcTemplate.update(sql, new Object[] {enabled,userID});
     }
@@ -181,4 +183,23 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
         return users;
         
     }
+
+    @Override
+	public int getUploadedFileVersion(UploadedFile uplaodedfile, User user) {
+		int revision = 1;
+		User latestuser = getUserByName(user.getUserName());
+		Set<UploadedFile> uploadedFiles = latestuser.getUploadedFiles();
+		for (UploadedFile file : uploadedFiles) {
+			if (file.getDisplayFileName().equals(
+					uplaodedfile.getDisplayFileName())) {
+				revision += 1;
+			}
+		}
+		return revision;
+	}
+
+	@Override
+	public Long getNextSequence(String schema, String sequenceName) {
+		return super.getNextSequenceNumber(schema, sequenceName);
+	}
 }
