@@ -76,14 +76,18 @@ public class LogoFinder {
         images = images.replace("Yahoo", "Enwida");
         return images;
     }
-    public static final HashMap<String, String> acceptTypes = new HashMap<String, String>(){{
+
+	@SuppressWarnings("serial")
+	public static final HashMap<String, String> acceptTypes = new HashMap<String, String>() {
+		{
         put("html", "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8");
         put("img", "image/png,image/*;q=0.8,*/*;q=0.5");
         put("script", "*/*");
         put("style", "text/css,*/*;q=0.1");
     }};
     
-    public List<String> downloadCssAndImages(URL companyLink) {
+	@SuppressWarnings("unchecked")
+	public List<String> downloadCssAndImages(URL companyLink) {
         List<String> urls = new ArrayList<String>();
         final WebClient client = new WebClient();
         HtmlPage page;

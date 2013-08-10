@@ -8,12 +8,39 @@
 	http://www.springframework.org/schema/context
     http://www.springframework.org/schema/context/spring-context-3.0.xsd">
 	
+	<!-- Load all properties file -->
+	<import resource="properties-test.xml" />
+	
 	<!-- Root Context: defines shared resources visible to all other web components -->
-	<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+	<bean id="dataSource"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<property name="driverClassName" value="${db.driver}" />
 		<property name="url" value="${db1.url}" />
 		<property name="username" value="${db.user}" />
 		<property name="password" value="${db.pw}" />
+	</bean>
+	
+	<!-- <bean id="dataSource"
+        class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+	    <property name="driverClass" value="${db.driver}"/>
+	    <property name="jdbcUrl" value="${db1.url}"/>
+	    <property name="user" value="${db.user}"/>
+	    <property name="password" value="${db.pw}"/>
+	    <property name="acquireIncrement" value="5" />
+        <property name="minPoolSize" value="5" />
+        <property name="maxPoolSize" value="600" />
+        <property name="maxIdleTime" value="1800" />
+	</bean> -->
+	
+	<bean id="objectMapperFactory" scope="singleton" class="de.enwida.web.utils.ObjectMapperFactory">
+		<constructor-arg ref="isoDateFormat" />
+	</bean>
+	
+	<bean id="isoDateFormat" class="java.text.SimpleDateFormat">
+		<constructor-arg value="yyyy-MM-dd" />
+	</bean>
+	
+	<bean scope="singleton" id="navigationLocalizer" class="de.enwida.web.utils.ChartNavigationLocalizer">
 	</bean>
 	
 	<bean id="lineManager" class="de.enwida.chart.LineManager">	
@@ -30,30 +57,46 @@
 		<property name="dataSource" ref="dataSource" />
 	</bean>
 	
-	<!-- This class onApplicationEvent is triggered when root conetxt is loaded -->
-	<bean id="eventListenerBean" class="de.enwida.web.application.ApplicationContextInitializer" />
-	
-	<context:component-scan base-package="de.enwida.web.dao.implementation">
-        <context:include-filter type="annotation"
-            expression="org.springframework.stereotype.Repository" />
-    </context:component-scan>
-    
-    <context:component-scan base-package="de.enwida.web.service.implementation">
-        <context:include-filter type="annotation"
-            expression="org.springframework.stereotype.Service" />
-    </context:component-scan>
-    
 	<bean id="propertyConfigurer"
 		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<property name="locations">
 			<list>
 				<value>file:${ENWIDA_HOME}/conf/enwida.config</value>
+				<value>classpath:/configProperties/enwida.jdbc.config</value>
 			</list>
 		</property>
-	</bean>	
+	</bean>
 	
+	<!-- This class onApplicationEvent is triggered when root conetxt is loaded -->
+	<bean id="eventListenerBean" class="de.enwida.web.application.ApplicationContextInitializer" />
+
+	<bean id="mailService" class="de.enwida.web.service.implementation.MailServiceImpl">
+	 	 <property name="starttls" value="${mail.smtp.starttls.enable}"/>
+	     <property name="host" value="${mail.smtp.host}"/>
+	     <property name="user" value="${mail.smtp.user}"/>
+	     <property name="password" value="${mail.smtp.password}"/>
+	     <property name="port" value="${mail.smtp.port"/>
+	     <property name="auth" value="${mail.smtp.auth}"/>
+	</bean>
+	
+	<!-- Scan all dao's and load in context(dnt forget to give repository annotation to DAO -->
+	<context:component-scan base-package="de.enwida.web.dao.implementation">
+		<context:include-filter type="annotation"
+			expression="org.springframework.stereotype.Repository" />
+	</context:component-scan>
+	
+	<!-- Scan all service and load in context(dnt forget to give service annotation to services -->
+	<context:component-scan base-package="de.enwida.web.service.implementation">
+        <context:include-filter type="annotation"
+            expression="org.springframework.stereotype.Service" />
+    </context:component-scan>
+
 	<!-- Used for persistence context annotation -->
-	<bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor"/>
+	<bean
+		class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" />
+
+ 	<bean id="persistenceExceptionTranslationPostProcessor"
+      class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor" />
 	
 	<bean id="entityManagerFactory"
 		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
@@ -61,11 +104,11 @@
 		<property name="persistenceUnitName" value="enwida-users-jpa"/>
 		<property name="dataSource" ref="dataSource"/>
 	</bean>
-	
+
 	<bean id="jpaTransactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
-		<property name="entityManagerFactory" ref="entityManagerFactory"/>
+		<property name="entityManagerFactory" ref="entityManagerFactory" />
 	</bean>
-	
+
 	<tx:annotation-driven transaction-manager="jpaTransactionManager" proxy-target-class="false"/>
 	
 </beans>

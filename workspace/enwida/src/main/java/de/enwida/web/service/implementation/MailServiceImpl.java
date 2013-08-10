@@ -12,13 +12,6 @@ import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
-import org.springframework.stereotype.Service;
-import org.springframework.test.context.transaction.TransactionConfiguration;
-import org.springframework.transaction.annotation.Transactional;
-
-@TransactionConfiguration(defaultRollback = true)
-@Transactional
-@Service("mailService")
 public class MailServiceImpl {
     private Boolean starttls;
     private String host;

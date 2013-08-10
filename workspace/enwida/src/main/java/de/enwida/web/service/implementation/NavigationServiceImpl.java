@@ -21,6 +21,7 @@ import javax.annotation.PostConstruct;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
@@ -65,21 +66,35 @@ public class NavigationServiceImpl implements INavigationService {
 	
 	@Autowired
 	private ChartNavigationLocalizer navigationLocalizer;
-	
+
+	@Value("#{applicationProperties['json.dir.suffix']}")
+	protected String jsonDirSuffix;
+
 	private String jsonDir;
+
 	private ObjectMapper objectMapper;
 	private Hashtable<Integer, ChartNavigationData> defaultNavigationData =  new Hashtable<Integer, ChartNavigationData>();
 	
-	public NavigationServiceImpl(String jsonDir) {
-		this.jsonDir = jsonDir;
+	public NavigationServiceImpl() {
+
 	}
-	
+
 	@PostConstruct
 	public void init() throws IOException {
 		objectMapper = objectMapperFactory.create();
+		setJsonDir(System.getenv("ENWIDA_HOME") + jsonDirSuffix);
 		readJsonNavigationFiles();
+		// System.out.println(jsonDir);
 	}
 	
+	public String getJsonDir() {
+		return jsonDir;
+	}
+
+	public void setJsonDir(String jsonDir) {
+		this.jsonDir = jsonDir;
+	}
+
 	@Override
 	public Hashtable<Integer, ChartNavigationData> getAllDefaultNavigationData() {
 		// Clone every stored NavigationData instance
@@ -128,14 +143,6 @@ public class NavigationServiceImpl implements INavigationService {
 		return objectMapper.readValue(in, ChartNavigationData.class);
 	}
 	
-    public String getJsonDir() {
-		return jsonDir;
-	}
-
-	public void setJsonDir(String jsonDir) {
-		this.jsonDir = jsonDir;
-	}
-
     private interface IProductRestrictionGetter {
         public ProductRestriction getProductRestriction(int productId, int tso, Aspect aspect) throws Exception;
     }
