@@ -4,7 +4,7 @@ DROP SCHEMA IF EXISTS users CASCADE;
 CREATE SCHEMA users;
 
 
-CREATE TABLE users.users
+CREATE TABLE users.user
 (
   user_id serial NOT NULL,
   user_name character varying NOT NULL,
@@ -57,7 +57,7 @@ CREATE TABLE users.user_group (
 	id SERIAL PRIMARY KEY,
     user_id integer NOT NULL,
     group_id integer NOT NULL,
-	CONSTRAINT "FK_user_usergroup" FOREIGN KEY (user_id) REFERENCES users.users(user_id) ON DELETE CASCADE,
+	CONSTRAINT "FK_user_usergroup" FOREIGN KEY (user_id) REFERENCES users.user(user_id) ON DELETE CASCADE,
 	CONSTRAINT "FK_group_usergroup" FOREIGN KEY (group_id) REFERENCES users.groups(group_id) ON DELETE CASCADE
 );
 
@@ -71,7 +71,7 @@ CREATE TABLE users.group_role (
 	);
 	
 -- Before inserting any data in any of the tables make sure all the DDL commands are executed	
-INSERT INTO users.users(
+INSERT INTO users.user(
 		user_name, user_password, first_name, last_name, enabled, 
 		joining_date, telephone, company_name)
 VALUES ('test', 'q12wq12w', 'test', 'test', true, '2013-07-02', '0049 89 1234567','enwida');
@@ -134,18 +134,18 @@ SELECT  getAllRights();
 --This is for users
 CREATE OR REPLACE VIEW users.allUsers AS 
 select user_name ,user_password,enabled
-from users.users
+from users.user
 UNION
 select users.first_name ||' '|| users.last_name,user_password,enabled
-from users.users;
+from users.user;
 --This for roles
 CREATE OR REPLACE VIEW users.allRoles AS 
-SELECT users.user_name, roles.role_name FROM users.users
+SELECT users.user_name, roles.role_name FROM users.user
     		 INNER JOIN users.user_group ON user_group.user_id=users.user_id 
     		 INNER JOIN users.group_role ON group_role.group_id=user_group.group_id
     		 INNER JOIN users.roles ON roles.role_ID=group_role.role_id
 UNION
-	SELECT users.first_name ||' '|| users.last_name, roles.role_name  FROM users.users
+	SELECT users.first_name ||' '|| users.last_name, roles.role_name  FROM users.user
     		 INNER JOIN users.user_group ON user_group.user_id=users.user_id 
     		 INNER JOIN users.group_role ON group_role.group_id=user_group.group_id
     		 INNER JOIN users.roles ON roles.role_ID=group_role.role_id;
