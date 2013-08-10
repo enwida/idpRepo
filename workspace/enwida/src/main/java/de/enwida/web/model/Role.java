@@ -3,7 +3,6 @@ package de.enwida.web.model;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -18,13 +17,13 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
-import de.enwida.web.db.model.NavigationSettings;
 import de.enwida.web.utils.Constants;
 
 @Entity
-@Table(name = Constants.USER_TABLE_NAME, schema = Constants.USER_TABLE_SCHEMA_NAME)
+@Table(name = Constants.ROLE_TABLE_NAME, schema = Constants.ROLE_TABLE_SCHEMA_NAME)
 public class Role  implements Serializable{
 
     /**
@@ -32,9 +31,9 @@ public class Role  implements Serializable{
      */
     private static final long serialVersionUID = -2772444487718010995L;
     
-    public static final String ROLE_ID = "USER_ID";
-    public static final String ROLE_NAME = "USER_ID";
-    public static final String DESCRIPTION = "USER_ID";
+	public static final String ROLE_ID = "ROLE_ID";
+	public static final String ROLE_NAME = "ROLE_NAME";
+	public static final String DESCRIPTION = "DESCRIPTION";
     
     @Id
     @Column(name = ROLE_ID)
@@ -53,11 +52,24 @@ public class Role  implements Serializable{
             Role.ROLE_ID, Group.GROUP_ID }) }, joinColumns = { @JoinColumn(name = ROLE_ID, referencedColumnName = ROLE_ID) }, inverseJoinColumns = { @JoinColumn(name = Group.GROUP_ID, referencedColumnName = Group.GROUP_ID) })
     private  List<Group> assignedGroups;
     
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "right")
+	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "role")
     @ElementCollection(targetClass = Right.class)
     private List<Right> rights;
     
-    public void addAssignedGroups(Group group) {
+	/**
+	 * 
+	 */
+	public Role() {
+	}
+
+	/**
+	 * @param roleID
+	 */
+	public Role(long roleID) {
+		this.roleID = roleID;
+	}
+
+	public void addAssignedGroups(Group group) {
         if (assignedGroups == null) {
             assignedGroups = new ArrayList<Group>();
         }
@@ -84,6 +96,7 @@ public class Role  implements Serializable{
         this.roleName = roleName;
     }
 
+	@Transient
     public List<Group> getAssignedGroups() {
         return assignedGroups;
     }
@@ -92,7 +105,16 @@ public class Role  implements Serializable{
         this.assignedGroups = assignedGroups;
     }
     
-    @Override
+	@Transient
+    public List<Right> getRights() {
+		return rights;
+	}
+
+	public void setRights(List<Right> rights) {
+		this.rights = rights;
+	}
+
+	@Override
     public String toString() {
         return getRoleName();
     }

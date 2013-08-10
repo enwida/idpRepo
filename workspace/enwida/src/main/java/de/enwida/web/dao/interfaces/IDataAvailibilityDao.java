@@ -4,7 +4,7 @@ import java.util.List;
 
 import de.enwida.web.model.DataAvailibility;
 
-public interface IDataAvailibilityDao {
+public interface IDataAvailibilityDao extends IDao<DataAvailibility> {
 
 	public boolean isAvailableByExample(DataAvailibility dataAvailibility);
 	public DataAvailibility getByExample(DataAvailibility dataAvailibility);

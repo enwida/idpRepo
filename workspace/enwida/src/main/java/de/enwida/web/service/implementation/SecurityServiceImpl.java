@@ -60,7 +60,7 @@ public class SecurityServiceImpl implements ISecurityService {
     public ProductRestriction getProductRestriction(int productId, int tso, Aspect aspect, int role) throws Exception {
     	
         final Right dataAuthorization = new Right();
-		dataAuthorization.setRoleID(role);
+		dataAuthorization.setRole(new Role(role));
 		dataAuthorization.setProduct(productId);
 		dataAuthorization.setAspect(aspect.name());
 		dataAuthorization.setTso(tso);
@@ -96,7 +96,7 @@ public class SecurityServiceImpl implements ISecurityService {
 	public void authorizeDataLine(int productId, int tso, Aspect aspect, int role, boolean enable) throws Exception {
 		
 	    Right dataAuthorization = new Right();
-		dataAuthorization.setRoleID(role);
+		dataAuthorization.setRole(new Role(role));
 		dataAuthorization.setProduct(productId);
 		dataAuthorization.setAspect(aspect.name());
 		dataAuthorization.setTso(tso);

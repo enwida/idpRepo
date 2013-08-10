@@ -272,7 +272,7 @@ public class ChartNavigationTest {
 		right.setEnabled(true);
 		right.setProduct(211);
 		right.setResolution(DataResolution.DAILY.name());
-		right.setRoleID(42);
+		right.setRole(new Role(42));
 		right.setTimeFrom(dateFormat.parse("2009-05-18"));
 		right.setTimeTo(dateFormat.parse("2011-09-02"));
 		right.setTso(99);
@@ -311,7 +311,7 @@ public class ChartNavigationTest {
 		right1.setEnabled(true);
 		right1.setProduct(211);
 		right1.setResolution(DataResolution.DAILY.name());
-		right1.setRoleID(42);
+		right1.setRole(new Role(42));
 		right1.setTimeFrom(dateFormat.parse("2009-05-18"));
 		right1.setTimeTo(dateFormat.parse("2011-09-02"));
 		right1.setTso(99);
@@ -322,7 +322,7 @@ public class ChartNavigationTest {
 		right2.setEnabled(true);
 		right2.setProduct(311);
 		right2.setResolution(DataResolution.MONTHLY.name());
-		right2.setRoleID(43);
+		right2.setRole(new Role(43));
 		right2.setTimeFrom(dateFormat.parse("2007-05-18"));
 		right2.setTimeTo(dateFormat.parse("2010-09-02"));
 		right2.setTso(100);
@@ -367,7 +367,7 @@ public class ChartNavigationTest {
 		right1.setEnabled(true);
 		right1.setProduct(211);
 		right1.setResolution(DataResolution.DAILY.name());
-		right1.setRoleID(42);
+		right1.setRole(new Role(42));
 		right1.setTimeFrom(dateFormat.parse("2009-05-18"));
 		right1.setTimeTo(dateFormat.parse("2011-09-02"));
 		right1.setTso(99);
@@ -378,7 +378,7 @@ public class ChartNavigationTest {
 		right2.setEnabled(true);
 		right2.setProduct(311);
 		right2.setResolution(DataResolution.MONTHLY.name());
-		right2.setRoleID(43);
+		right2.setRole(new Role(43));
 		right2.setTimeFrom(dateFormat.parse("2007-05-18"));
 		right2.setTimeTo(dateFormat.parse("2010-09-02"));
 		right2.setTso(99);
@@ -426,7 +426,7 @@ public class ChartNavigationTest {
 		right1.setEnabled(true);
 		right1.setProduct(211);
 		right1.setResolution(DataResolution.DAILY.name());
-		right1.setRoleID(42);
+		right1.setRole(new Role(42));
 		right1.setTimeFrom(dateFormat.parse("2009-05-18"));
 		right1.setTimeTo(dateFormat.parse("2011-09-02"));
 		right1.setTso(99);
@@ -437,7 +437,7 @@ public class ChartNavigationTest {
 		right2.setEnabled(true);
 		right2.setProduct(211);
 		right2.setResolution(DataResolution.MONTHLY.name());
-		right2.setRoleID(43);
+		right2.setRole(new Role(43));
 		right2.setTimeFrom(dateFormat.parse("2008-05-18"));
 		right2.setTimeTo(dateFormat.parse("2010-09-02"));
 		right2.setTso(99);
@@ -480,7 +480,7 @@ public class ChartNavigationTest {
 		right1.setEnabled(true);
 		right1.setProduct(211);
 		right1.setResolution(DataResolution.DAILY.name());
-		right1.setRoleID(42);
+		right1.setRole(new Role(42));
 		right1.setTimeFrom(dateFormat.parse("2009-05-18"));
 		right1.setTimeTo(dateFormat.parse("2011-09-02"));
 		right1.setTso(99);
@@ -491,7 +491,7 @@ public class ChartNavigationTest {
 		right2.setEnabled(true);
 		right2.setProduct(211);
 		right2.setResolution(DataResolution.DAILY.name());
-		right2.setRoleID(43);
+		right2.setRole(new Role(43));
 		right2.setTimeFrom(dateFormat.parse("2008-05-18"));
 		right2.setTimeTo(dateFormat.parse("2010-09-02"));
 		right2.setTso(99);
@@ -536,7 +536,7 @@ public class ChartNavigationTest {
 		right1.setEnabled(true);
 		right1.setProduct(211);
 		right1.setResolution(DataResolution.DAILY.name());
-		right1.setRoleID(42);
+		right1.setRole(new Role(42));
 		right1.setTimeFrom(dateFormat.parse("2009-05-18"));
 		right1.setTimeTo(dateFormat.parse("2011-09-02"));
 		right1.setTso(99);
@@ -547,7 +547,7 @@ public class ChartNavigationTest {
 		right2.setEnabled(true);
 		right2.setProduct(211);
 		right2.setResolution(DataResolution.MONTHLY.name());
-		right2.setRoleID(43);
+		right2.setRole(new Role(43));
 		right2.setTimeFrom(dateFormat.parse("2008-05-18"));
 		right2.setTimeTo(dateFormat.parse("2010-09-02"));
 		right2.setTso(99);
@@ -558,7 +558,7 @@ public class ChartNavigationTest {
 		right3.setEnabled(true);
 		right3.setProduct(211);
 		right3.setResolution(DataResolution.WEEKLY.name());
-		right3.setRoleID(42);
+		right3.setRole(new Role(42));
 		right3.setTimeFrom(dateFormat.parse("2008-05-18"));
 		right3.setTimeTo(dateFormat.parse("2012-09-02"));
 		right3.setTso(99);
@@ -569,7 +569,7 @@ public class ChartNavigationTest {
 		right4.setEnabled(true);
 		right4.setProduct(211);
 		right4.setResolution(DataResolution.WEEKLY.name());
-		right4.setRoleID(43);
+		right4.setRole(new Role(43));
 		right4.setTimeFrom(dateFormat.parse("2008-03-13"));
 		right4.setTimeTo(dateFormat.parse("2012-09-02"));
 		right4.setTso(99);

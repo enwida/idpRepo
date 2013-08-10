@@ -3,20 +3,23 @@ package de.enwida.web.model;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import de.enwida.web.utils.Constants;
 
 @Entity
 @Table(name = Constants.RIGHT_TABLE_NAME, schema = Constants.RIGHT_TABLE_SCHEMA_NAME)
-public class Right  implements Serializable{
+public class Right implements Serializable {
 
     /**
      * 
@@ -37,9 +40,9 @@ public class Right  implements Serializable{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long rightID;
     
-    @ManyToOne
+	@ManyToOne(targetEntity = Role.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = Role.ROLE_ID)
-    private long roleID;
+	private Role role;
     
     @Column(name = TSO)
     private int tso;
@@ -68,13 +71,17 @@ public class Right  implements Serializable{
     public void setRightID(long rightID) {
         this.rightID = rightID;
     }
-    public long getRoleID() {
-        return roleID;
-    }
-    public void setRoleID(long roleID) {
-        this.roleID = roleID;
-    }
-    public int getTso() {
+
+	@Transient
+	public Role getRole() {
+		return role;
+	}
+
+	public void setRole(Role role) {
+		this.role = role;
+	}
+
+	public int getTso() {
         return tso;
     }
     public void setTso(int tso) {

@@ -6,7 +6,7 @@ import java.util.Set;
 import de.enwida.web.db.model.NavigationSettings;
 import de.enwida.web.model.ChartNavigationData;
 
-public interface INavigationDao {
+public interface INavigationDao extends IDao<NavigationSettings> {
     
     ChartNavigationData getDefaultNavigation(int chartId, Locale locale);
 

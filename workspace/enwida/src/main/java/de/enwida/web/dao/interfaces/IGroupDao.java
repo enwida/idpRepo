@@ -8,7 +8,7 @@ import de.enwida.web.model.Group;
  * @author olcay tarazan
  *
  */
-public interface IGroupDao {
+public interface IGroupDao extends IDao<Group> {
     /**
      * Gets all the groups
      * @return

@@ -51,10 +51,10 @@ public class Group implements Serializable{
 			User.USER_ID, Group.GROUP_ID }) }, joinColumns = { @JoinColumn(name = GROUP_ID, referencedColumnName = GROUP_ID) }, inverseJoinColumns = { @JoinColumn(name = User.USER_ID, referencedColumnName = User.USER_ID) })
 	private List<User> assignedUsers;
 	
-	 @ManyToMany(cascade = CascadeType.ALL)
-	    @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
-	    @JoinTable(name = Constants.GROUP_ROLE_TABLE_NAME, schema = Constants.GROUP_ROLE_TABLE_SCHEMA_NAME, uniqueConstraints = { @UniqueConstraint(columnNames = {
-	            Role.ROLE_ID, Group.GROUP_ID }) }, joinColumns = { @JoinColumn(name = GROUP_ID, referencedColumnName = GROUP_ID) }, inverseJoinColumns = { @JoinColumn(name = Role.ROLE_ID, referencedColumnName = Role.ROLE_ID) })
+	@ManyToMany(cascade = CascadeType.ALL)
+	@ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
+	@JoinTable(name = Constants.GROUP_ROLE_TABLE_NAME, schema = Constants.GROUP_ROLE_TABLE_SCHEMA_NAME, uniqueConstraints = { @UniqueConstraint(columnNames = {
+			Role.ROLE_ID, Group.GROUP_ID }) }, joinColumns = { @JoinColumn(name = GROUP_ID, referencedColumnName = GROUP_ID) }, inverseJoinColumns = { @JoinColumn(name = Role.ROLE_ID, referencedColumnName = Role.ROLE_ID) })
 	private List<Role> assignedRoles;   
 
     public Long getGroupID() {
@@ -97,7 +97,16 @@ public class Group implements Serializable{
         this.assignedUsers.add(user);
     }
 
-    public boolean isAutoPass() {
+	@Transient
+	public List<Role> getAssignedRoles() {
+		return assignedRoles;
+	}
+
+	public void setAssignedRoles(List<Role> assignedRoles) {
+		this.assignedRoles = assignedRoles;
+	}
+
+	public boolean isAutoPass() {
         return autoPass;
     }
 

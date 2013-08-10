@@ -4,7 +4,7 @@ import java.util.List;
 
 import de.enwida.web.model.Role;
 
-public interface IRoleDao {
+public interface IRoleDao extends IDao<Role> {
 
     List<Role> getUserRoles(long userID) throws Exception;
 
