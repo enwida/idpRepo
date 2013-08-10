@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
@@ -28,6 +29,7 @@ public class Group implements Serializable{
 	 * 
 	 */
 	private static final long serialVersionUID = 7173117643347079483L;
+	
 	public static final String GROUP_ID = "GROUP_ID";
 	public static final String GROUP_NAME = "GROUP_NAME";
 	public static final String AUTO_PASS = "AUTO_PASS";
@@ -48,6 +50,12 @@ public class Group implements Serializable{
 	@JoinTable(name = Constants.USER_GROUP_TABLE_NAME, schema = Constants.USER_GROUP_TABLE_SCHEMA_NAME, uniqueConstraints = { @UniqueConstraint(columnNames = {
 			User.USER_ID, Group.GROUP_ID }) }, joinColumns = { @JoinColumn(name = GROUP_ID, referencedColumnName = GROUP_ID) }, inverseJoinColumns = { @JoinColumn(name = User.USER_ID, referencedColumnName = User.USER_ID) })
 	private List<User> assignedUsers;
+	
+	 @ManyToMany(cascade = CascadeType.ALL)
+	    @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
+	    @JoinTable(name = Constants.GROUP_ROLE_TABLE_NAME, schema = Constants.GROUP_ROLE_TABLE_SCHEMA_NAME, uniqueConstraints = { @UniqueConstraint(columnNames = {
+	            Role.ROLE_ID, Group.GROUP_ID }) }, joinColumns = { @JoinColumn(name = GROUP_ID, referencedColumnName = GROUP_ID) }, inverseJoinColumns = { @JoinColumn(name = Role.ROLE_ID, referencedColumnName = Role.ROLE_ID) })
+	private List<Role> assignedRoles;   
 
     public Long getGroupID() {
 		return new Long(groupId);
