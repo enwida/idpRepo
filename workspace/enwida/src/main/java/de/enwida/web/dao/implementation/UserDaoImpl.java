@@ -25,6 +25,7 @@ import de.enwida.web.dao.interfaces.AbstractBaseDao;
 import de.enwida.web.dao.interfaces.IUserDao;
 import de.enwida.web.db.model.UploadedFile;
 import de.enwida.web.model.User;
+import de.enwida.web.utils.Constants;
 
 @Repository
 public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
@@ -42,7 +43,7 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
 	
 	@Override
 	public String getDbTableName() {
-	    return "users.users";
+	    return Constants.USERS_SCHEMA_NAME+Constants.USER_TABLE_NAME;
 	}
 	
 	@Override
@@ -63,7 +64,7 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
 		
 	@Override
 	public void deleteUser(User user) {
-	    String sql = "DELETE FROM  users.users WHERE user_name=?";
+	    String sql = "DELETE FROM  "+Constants.USERS_SCHEMA_NAME+Constants.USER_TABLE_NAME+" WHERE user_name=?";
         this.jdbcTemplate.update(sql,user.getUserName());
 	}
 	
@@ -73,7 +74,7 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
 		KeyHolder keyHolder = new GeneratedKeyHolder();	
 		Number id = -1;
 
-		final String sql = "INSERT INTO users.users ( user_name, user_password, first_name, last_name, enabled, joining_date, telephone, company_name, company_logo, activation_id )" +
+		final String sql = "INSERT INTO "+Constants.USERS_SCHEMA_NAME+Constants.USER_TABLE_NAME+" ( user_name, user_password, first_name, last_name, enabled, joining_date, telephone, company_name, company_logo, activation_id )" +
 				" VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";	    			
 		this.jdbcTemplate.update(
 			    new PreparedStatementCreator() {
@@ -101,7 +102,7 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
 
     @Override
 	public User getUserByID(Long id) {
-        String sql = "SELECT * FROM users.users WHERE user_id=?";
+        String sql = "SELECT * FROM "+Constants.USERS_SCHEMA_NAME+Constants.USER_TABLE_NAME+" WHERE user_id=?";
         List<User> users = this.jdbcTemplate.query(sql,new Object[]{id}, this);
         return ((users.size() > 0) ? users.get(0) : null);
     }
@@ -115,7 +116,7 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
     @Override
     public boolean checkUserActivationId(String username, String activationCode) {
 
-        String sql = "select activation_id from users.users where users.user_name=?";
+        String sql = "select activation_id from "+Constants.USERS_SCHEMA_NAME+Constants.USER_TABLE_NAME+" where users.user_name=?";
         String activationID = (String) this.jdbcTemplate.queryForObject(sql, new Object[] { username }, new RowMapper() {
             @Override
             public String mapRow(ResultSet rs, int arg1) throws SQLException {
@@ -174,19 +175,19 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
 
     @Override
 	public void activateUser(String username) {
-        String sql = "UPDATE users.users SET enabled=? WHERE user_name=?";
+        String sql = "UPDATE "+Constants.USERS_SCHEMA_NAME+Constants.USER_TABLE_NAME+" SET enabled=? WHERE user_name=?";
         this.jdbcTemplate.update(sql, true, username);
     }
 
     @Override
 	public void updateUser(User user) {
-        String sql = "UPDATE users.users SET first_name=?,last_name=?,telephone=?,user_password=?,company_name=? WHERE user_name=?";
+        String sql = "UPDATE "+Constants.USERS_SCHEMA_NAME+Constants.USER_TABLE_NAME+" SET first_name=?,last_name=?,telephone=?,user_password=?,company_name=? WHERE user_name=?";
         this.jdbcTemplate.update(sql,new Object[]{ user.getFirstName(),user.getLastName(),user.getTelephone(),user.getPassword(),user.getCompanyName(),user.getUserName()});
     }
 
     @Override
 	public void enableDisableUser(long userID, boolean enabled) {
-        String sql = "UPDATE users.users SET enabled=? WHERE user_id=?";
+        String sql = "UPDATE "+Constants.USERS_SCHEMA_NAME+Constants.USER_TABLE_NAME+" SET enabled=? WHERE user_id=?";
         this.jdbcTemplate.update(sql, new Object[] {enabled,userID});
     }
     
@@ -198,7 +199,7 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
     @Override
     public List<User> getUsersByGroupID(Long groupID) {
 
-        String sql = "SELECT * FROM users.users INNER JOIN users.user_group ON users.users.user_id=users.user_group.user_id WHERE user_group.group_ID="+groupID;
+        String sql = "SELECT * FROM "+Constants.USERS_SCHEMA_NAME+Constants.USER_TABLE_NAME+" INNER JOIN users.user_group ON users.users.user_id=users.user_group.user_id WHERE user_group.group_ID="+groupID;
         List<User> users  = this.jdbcTemplate.query(sql,this);
         return users;
         
