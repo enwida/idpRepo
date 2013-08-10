@@ -6,10 +6,10 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -17,10 +17,10 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 
 import de.enwida.transport.Aspect;
 import de.enwida.transport.DataResolution;
+import de.enwida.web.db.model.CalendarRange;
+import de.enwida.web.db.model.NavigationDefaults;
 import de.enwida.web.model.ChartNavigationData;
 import de.enwida.web.model.ProductTree;
-import de.enwida.web.utils.CalendarRange;
-import de.enwida.web.utils.NavigationDefaults;
 import de.enwida.web.utils.ObjectMapperFactory;
 import de.enwida.web.utils.ProductLeaf;
 import de.enwida.web.utils.ProductNode;
@@ -103,7 +103,7 @@ public class NavigationJsonGenerator {
     	defaultTo.set(2011, 0, 1);
     	defaults.setTimeRange(new CalendarRange(defaultFrom, defaultTo));
     	defaults.setProduct(Integer.parseInt(template.products.get(0).replaceAll("\\*", "1")));
-    	defaults.setDisabledLines(new ArrayList<Integer>(0));
+    	defaults.setDisabledLines(new HashSet<Integer>(0));
     	result.setDefaults(defaults);
     	
     	// Create product trees
