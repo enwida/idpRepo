@@ -78,8 +78,6 @@ public class NavigationServiceImpl implements INavigationService {
 	public void init()
 			throws IOException {
 		objectMapper = objectMapperFactory.create();
-		this.jsonDir = System.getenv("ENWIDA_HOME") + "conf" + File.separator
-				+ "navigation";
 		readJsonNavigationFiles();
 		// System.out.println(jsonDir);
 	}
