@@ -13,72 +13,35 @@ import de.enwida.web.model.User;
  *
  */
 public interface IUserDao {
-	long save(User user);
+	long save(User user) throws Exception;
 
-	User getUserByID(Long id);
+    User getUserByID(Long id) throws Exception;
 
-	void deleteUser(User user);
+    void deleteUser(User user) throws Exception;
 
-	List<User> findAllUsers();
+    List<User> findAllUsers() throws Exception;
 
-	List<User> getAllUsers();
+    List<User> getAllUsers() throws Exception;
 
-	boolean checkUserActivationId(String username, String activationCode);
+    boolean checkUserActivationId(String username, String activationCode) throws Exception;
 
-	void assignUserToGroup(long userId, long groupID);
+    void assignUserToGroup(long userId, long groupID) throws Exception;
 
-	void activateUser(String username);
+    void activateUser(String username) throws Exception;
 
-	void updateUser(User user);
+    void updateUser(User user) throws Exception;
 
-	void deassignUserFromGroup(long userID, long groupID);
+    void deassignUserFromGroup(long userID, long groupID) throws Exception;
 
-	void enableDisableUser(long userID, boolean enabled);
+    void enableDisableUser(long userID, boolean enabled) throws Exception;
 
-	boolean usernameAvailablility(String username);
+    boolean usernameAvailablility(String username) throws Exception;
 
-	List<User> getUsersByGroupID(Long groupID);
+    List<User> getUsersByGroupID(Long groupID) throws Exception;
 
-	User getUserByName(String userName);
+    User getUserByName(String userName) throws Exception;
 
-    public Long getNextSequence(String schema, String sequenceName);
+    Long getNextSequence(String schema, String sequenceName);
 
-	int getUploadedFileVersion(UploadedFile file, User user);
-
-	Group getGroupByCompanyName(String companyName);
-
-	Group getGroupByGroupId(Long groupID);
-
-	Group getGroupByName(String string);
-
-	Group addGroup(Group anonymousGroup);
-
-	String getPassword(String email);
-
-	List<User> findAllUsersWithPermissions();
-
-	List<Group> getAvailableGroupsForUser(long userID);
-
-	List<Group> getUserGroups(long userID);
-
-	List<Group> getAllGroups();
-
-	void addRole(Role role);
-
-	List<Role> getAllRoles();
-
-	boolean checkEmailAvailability(String email);
-
-	String assignRoleToGroup(int roleID, int groupID);
-
-	List<Group> getAllGroupsWithUsers();
-
-	Object deassignRoleFromGroup(int roleID, int groupID);
-
-	List<Role> getAllRolesWithGroups();
-
-	void removeGroup(int groupID);
-
-	void enableDisableAspect(int rightID, boolean enabled);
-
+    int getUploadedFileVersion(UploadedFile uplaodedfile, User user);
 }
