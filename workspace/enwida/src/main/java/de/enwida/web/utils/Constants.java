@@ -35,8 +35,14 @@ public class Constants {
 	public static final String USER_TABLE_SCHEMA_NAME = USERS_SCHEMA_NAME;
 	public static final String GROUP_TABLE_NAME = "groups";
 	public static final String GROUP_TABLE_SCHEMA_NAME = USERS_SCHEMA_NAME;
-	public static final String USER_GROUP_TABLE_NAME = "user_group";
-	public static final String USER_GROUP_TABLE_SCHEMA_NAME = USERS_SCHEMA_NAME;
+    public static final String ROLE_TABLE_NAME = "roles";
+    public static final String ROLE_TABLE_SCHEMA_NAME = USERS_SCHEMA_NAME;
+    public static final String RIGHT_TABLE_NAME = "right";
+    public static final String RIGHT_TABLE_SCHEMA_NAME = USERS_SCHEMA_NAME;
+    public static final String USER_GROUP_TABLE_NAME = "user_group";
+    public static final String USER_GROUP_TABLE_SCHEMA_NAME = USERS_SCHEMA_NAME;
+    public static final String GROUP_ROLE_TABLE_NAME = "group_role";
+    public static final String GROUP_ROLE_TABLE_SCHEMA_NAME = USERS_SCHEMA_NAME;
 
 
 	// Cookie Constants
