@@ -46,38 +46,44 @@ public abstract class AbstractBaseDao<T> implements IDao<T>, RowMapper<T> {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
+	@Deprecated
 	public T findById(Long id) {
         String sql = "SELECT * FROM " + this.getDbTableName() + " WHERE id = "
                 + id;
         return this.jdbcTemplate.queryForObject(sql, this.modelClass);
     }
     
+	@Deprecated
 	public void save(String sql, T obj) {
         this.jdbcTemplate.update(sql,obj);
     }
     
+	@Deprecated
 	public T deleteById(Long id) {
         String sql = "DELETE FROM " + this.getDbTableName() + " WHERE id = "
                 + id;
         return this.jdbcTemplate.queryForObject(sql, this.modelClass);
     }
 
+	@Deprecated
 	public List<T> findAll() {
         String sql = "SELECT * FROM " + this.getDbTableName();
         return this.jdbcTemplate.query(sql,this);
     }
     
+	@Deprecated
 	public List<T> findByColumn(String columnName, int columnValue) {
         String sql = "SELECT * FROM " + this.getDbTableName()+ " WHERE "+columnName+"=?";
         return this.jdbcTemplate.query(sql,new Object[]{columnValue},this);
     }
     
+	@Deprecated
 	public List<T> findByColumn(String columnName, String columnValue) {
         String sql = "SELECT * FROM " + this.getDbTableName()+ " WHERE "+columnName+"=?";
         return this.jdbcTemplate.query(sql,new Object[]{columnValue},this);
     }
     
-
+	@Deprecated
 	@SuppressWarnings("unchecked")
 	public List<T> findByExample(T obj) {
         String sql = "SELECT * FROM users."
@@ -101,8 +107,8 @@ public abstract class AbstractBaseDao<T> implements IDao<T>, RowMapper<T> {
     }
 
 
-
-	public T findById(int id) {
+	@Override
+	public T fetchById(long id) {
 		return em.find(modelClass, id);
 	}
 
@@ -126,7 +132,7 @@ public abstract class AbstractBaseDao<T> implements IDao<T>, RowMapper<T> {
 	}
 
 	public void deleteById(long entityId) {
-		T entity = findById(entityId);
+		T entity = fetchById(entityId);
 		delete(entity);
 	}
 

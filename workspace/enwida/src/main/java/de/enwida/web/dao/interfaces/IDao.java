@@ -12,7 +12,7 @@ public interface IDao <T> {
 
 	public List<T> findByExample(T obj);
 
-	public T findById(int id);
+	public T fetchById(long id);
 
 	public List<T> findAll();
 	

@@ -23,6 +23,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.transaction.TransactionConfiguration;
+import org.springframework.transaction.annotation.Transactional;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 
@@ -38,6 +40,8 @@ import de.enwida.web.service.implementation.MailServiceImpl;
  
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:/root-context-test.xml")
+@TransactionConfiguration(transactionManager = "jpaTransactionManager", defaultRollback = false)
+@Transactional
 public class UserManagement {
 
 	@Autowired
@@ -65,7 +69,7 @@ public class UserManagement {
 	
 	@Before
 	public void testUser() throws Exception {
-	    user=new User(100,"test1","test","test","test",false);
+		user = new User(0, "test1", "test", "test", "test", false);
 	    user.setJoiningDate(new Date(Calendar.getInstance().getTimeInMillis()));
 	    user.setCompanyName("enwida.de");
         User existingUser = userDao.getUserByName(user.getUserName());
@@ -74,13 +78,13 @@ public class UserManagement {
 	    }else{
 	        user=existingUser;
 	    }
-	    userDao.enableDisableUser(user.getUserID(), false);
-	    userDao.enableDisableUser(user.getUserID(), true);
-	    userDao.deleteUser(user);
+		// userDao.enableDisableUser(user.getUserID(), false);
+		// userDao.enableDisableUser(user.getUserID(), true);
+		// userDao.deleteUser(user);
 	}
 	
    @Test
-    public void saveUserGroup() throws Exception {
+	public void saveUserGroup() throws Exception {
        Group group = groupDao.getAllGroups().get(0);
        //save user in any group
        userDao.assignUserToGroup(user.getUserID(),group.getGroupID());
@@ -188,7 +192,7 @@ public class UserManagement {
 	}
 	
    @Test
-    public void testEnableLine() {
+	public void testEnableLine() {
      //   rightsDao.enableLine(dataAuthorization);
         
    }

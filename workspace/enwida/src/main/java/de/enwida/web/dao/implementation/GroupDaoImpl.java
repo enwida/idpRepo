@@ -4,7 +4,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -38,21 +37,20 @@ public class GroupDaoImpl extends AbstractBaseDao<Group> implements IGroupDao {
 	    return "users.groups";
 	}
 	
-	@SuppressWarnings("rawtypes")
 	@Override
 	public List<Group> getAllGroups() {
-	    
-	    String sql = "SELECT * FROM users.groups";
-	    List<Group> groups  = new ArrayList<Group>();
-	    List<Map<String,Object>> rows =this.jdbcTemplate.queryForList(sql);
-        for (Map row : rows) {
-            Group group = new Group();
-            group.setGroupID(Long.parseLong(row.get("group_id").toString()));
-            group.setGroupName((String) row.get("group_name"));
-            group.setAutoPass((Boolean) row.get("auto_pass"));
-            groups.add(group);
-        }
-	    return groups;
+		return fetchAll();
+		// String sql = "SELECT * FROM users.groups";
+		// List<Group> groups = new ArrayList<Group>();
+		// List<Map<String,Object>> rows =this.jdbcTemplate.queryForList(sql);
+		// for (Map row : rows) {
+		// Group group = new Group();
+		// group.setGroupID(Long.parseLong(row.get("group_id").toString()));
+		// group.setGroupName((String) row.get("group_name"));
+		// group.setAutoPass((Boolean) row.get("auto_pass"));
+		// groups.add(group);
+		// }
+		// return groups;
 	}
 	
    @Override

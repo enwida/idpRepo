@@ -1,7 +1,5 @@
 package de.enwida.web.dao.implementation;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
@@ -14,10 +12,7 @@ import javax.sql.DataSource;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import de.enwida.web.controller.AdminController;
@@ -64,40 +59,60 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
 		
 	@Override
 	public void deleteUser(User user) {
-	    String sql = "DELETE FROM  "+Constants.USERS_SCHEMA_NAME+Constants.USER_TABLE_NAME+" WHERE user_name=?";
-        this.jdbcTemplate.update(sql,user.getUserName());
+		delete(user);
+		// String sql =
+		// "DELETE FROM  "+Constants.USERS_SCHEMA_NAME+Constants.USER_TABLE_NAME+" WHERE user_name=?";
+		// this.jdbcTemplate.update(sql,user.getUserName());
 	}
 	
     @Override
-	public long save(final User user)
+	public long save(User user)
 	{
-		KeyHolder keyHolder = new GeneratedKeyHolder();	
-		Number id = -1;
+		User exisinguser = getUserByName(user.getUserName());
+		try {
+			if (exisinguser == null) {
+				// create the user and refresh the user object
+				create(user);
+			} else {
+				user = update(user);
+			}
+			// user = getUserByName(user.getUserName());
+		} catch (Exception e) {
+			logger.error("Error saving user : " + user.getUserName(), e);
+		}
 
-		final String sql = "INSERT INTO "+Constants.USERS_SCHEMA_NAME+Constants.USER_TABLE_NAME+" ( user_name, user_password, first_name, last_name, enabled, joining_date, telephone, company_name, company_logo, activation_id )" +
-				" VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";	    			
-		this.jdbcTemplate.update(
-			    new PreparedStatementCreator() {
-			        public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
-			            PreparedStatement ps = connection.prepareStatement(sql, new String[] {"user_id"});
-			            ps.setString(1, user.getUserName());
-			            ps.setString(2, user.getPassword());
-			            ps.setString(3, user.getFirstName());
-			            ps.setString(4, user.getLastName());
-			            ps.setBoolean(5, user.isEnabled());
-			            ps.setDate(6, user.getJoiningDate());
-			            ps.setString(7, user.getTelephone());
-                        ps.setString(8, user.getCompanyName());
-                        ps.setString(9, user.getCompanyLogo());
-                        ps.setString(10, user.getActivationKey());
-			            return ps;
-			        }
-			    },
-			    keyHolder);
-			
-	    id = keyHolder.getKey();
+		return user.getUserID();
+		// KeyHolder keyHolder = new GeneratedKeyHolder();
+		// Number id = -1;
+		//
+		// final String sql =
+		// "INSERT INTO "+Constants.USERS_SCHEMA_NAME+Constants.USER_TABLE_NAME+" ( user_name, user_password, first_name, last_name, enabled, joining_date, telephone, company_name, company_logo, activation_id )"
+		// +
+		// " VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+		// this.jdbcTemplate.update(
+		// new PreparedStatementCreator() {
+		// public PreparedStatement createPreparedStatement(Connection
+		// connection) throws SQLException {
+		// PreparedStatement ps = connection.prepareStatement(sql, new String[]
+		// {"user_id"});
+		// ps.setString(1, user.getUserName());
+		// ps.setString(2, user.getPassword());
+		// ps.setString(3, user.getFirstName());
+		// ps.setString(4, user.getLastName());
+		// ps.setBoolean(5, user.isEnabled());
+		// ps.setDate(6, user.getJoiningDate());
+		// ps.setString(7, user.getTelephone());
+		// ps.setString(8, user.getCompanyName());
+		// ps.setString(9, user.getCompanyLogo());
+		// ps.setString(10, user.getActivationKey());
+		// return ps;
+		// }
+		// },
+		// keyHolder);
+		//
+		// id = keyHolder.getKey();
      
-		return id.intValue();
+		// return id.intValue();
 	}
 
     @Override
@@ -181,8 +196,11 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
 
     @Override
 	public void updateUser(User user) {
-        String sql = "UPDATE "+Constants.USERS_SCHEMA_NAME+Constants.USER_TABLE_NAME+" SET first_name=?,last_name=?,telephone=?,user_password=?,company_name=? WHERE user_name=?";
-        this.jdbcTemplate.update(sql,new Object[]{ user.getFirstName(),user.getLastName(),user.getTelephone(),user.getPassword(),user.getCompanyName(),user.getUserName()});
+		save(user);
+		// String sql =
+		// "UPDATE "+Constants.USERS_SCHEMA_NAME+Constants.USER_TABLE_NAME+" SET first_name=?,last_name=?,telephone=?,user_password=?,company_name=? WHERE user_name=?";
+		// this.jdbcTemplate.update(sql,new Object[]{
+		// user.getFirstName(),user.getLastName(),user.getTelephone(),user.getPassword(),user.getCompanyName(),user.getUserName()});
     }
 
     @Override

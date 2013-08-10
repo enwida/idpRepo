@@ -36,13 +36,16 @@ public class RightDaoImpl extends AbstractBaseDao<Right> implements IRightDao {
 	 */
     @Override
     public boolean enableDisableAspect(long rightID, boolean enabled) throws Exception{
-        String sql = "UPDATE users.rights SET enabled=? WHERE right_id=?";
-        try{
-        this.jdbcTemplate.update(sql,enabled,rightID);
-        }catch(Exception e){
-            logger.error(e.getMessage());
-            return false;
-        }
+		Right right = fetchById(rightID);
+		right.setEnabled(enabled);
+		update(right);
+		// String sql = "UPDATE users.rights SET enabled=? WHERE right_id=?";
+		// try{
+		// this.jdbcTemplate.update(sql,enabled,rightID);
+		// }catch(Exception e){
+		// logger.error(e.getMessage());
+		// return false;
+		// }
         return true;
     }
     
