@@ -1,8 +1,12 @@
 package de.enwida.web.dao.implementation;
 
+import java.sql.Array;
+import java.sql.Connection;
 import java.sql.Date;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.sql.DataSource;
@@ -15,6 +19,8 @@ import de.enwida.transport.Aspect;
 import de.enwida.web.controller.AdminController;
 import de.enwida.web.dao.interfaces.AbstractBaseDao;
 import de.enwida.web.dao.interfaces.IRightDao;
+import de.enwida.web.db.model.CalendarRange;
+import de.enwida.web.model.AuthorizationRequest;
 import de.enwida.web.model.Right;
 
 @Repository
@@ -80,6 +86,29 @@ public class RightDaoImpl extends AbstractBaseDao<Right> implements IRightDao {
         
         int count = jdbcTemplate.queryForInt(SELECT_QUERY, param);
         return count > 0 ? true : false;
+    }
+    
+    @Override    public List<CalendarRange> getAllowedTimeRanges(AuthorizationRequest request) throws Exception {
+        String SELECT_QUERY = "SELECT time1, time2 FROM users.rights WHERE role_id in ? AND tso = ? AND product = ? AND aspect_id = ? AND resolution = ? AND enabled = true;";
+
+        final Connection connection = datasource.getConnection();
+        final PreparedStatement stmt = connection.prepareStatement(SELECT_QUERY);
+        final Array roleArray = connection.createArrayOf("int", request.getUser().getRoles().toArray());
+        stmt.setArray(1, roleArray);
+        stmt.setInt(2, request.getTso());
+        stmt.setInt(3, request.getProduct());
+        stmt.setInt(4, request.getAspect().ordinal());
+        stmt.setString(5, request.getResolution().name());
+        
+        final ResultSet result = stmt.executeQuery();
+        final List<CalendarRange> ranges = new ArrayList<>();
+        while (result.next()) {
+	        final Date from = result.getDate(1);
+	        final Date to = result.getDate(2);
+	        final CalendarRange range = new CalendarRange(from, to);
+	        ranges.add(range);
+        }
+        return ranges;
     }
     
     public void addRight(Right right) {
