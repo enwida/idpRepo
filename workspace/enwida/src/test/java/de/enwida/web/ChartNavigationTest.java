@@ -34,7 +34,7 @@ import de.enwida.web.model.ProductTree.ProductAttributes;
 import de.enwida.web.model.Right;
 import de.enwida.web.model.Role;
 import de.enwida.web.model.User;
-import de.enwida.web.service.implementation.NavigationServiceImpl;
+import de.enwida.web.service.interfaces.INavigationService;
 import de.enwida.web.service.interfaces.IUserService;
  
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -42,7 +42,7 @@ import de.enwida.web.service.interfaces.IUserService;
 public class ChartNavigationTest {
 
 	@Autowired
-	private NavigationServiceImpl navigationService;
+	private INavigationService navigationService;
 	
 	@Autowired
 	private IUserService userService;

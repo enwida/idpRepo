@@ -66,24 +66,20 @@ public class NavigationServiceImpl implements INavigationService {
 	
 	@Autowired
 	private ChartNavigationLocalizer navigationLocalizer;
-	private String jsonDir;
+
+	@Value("${ENWIDA_HOME}/conf/navigation")
+	protected String jsonDir;
 
 	private ObjectMapper objectMapper;
 	private Hashtable<Integer, ChartNavigationData> defaultNavigationData =  new Hashtable<Integer, ChartNavigationData>();
 	
-	public NavigationServiceImpl() {
-
-	}
-
-	@Autowired
-	public NavigationServiceImpl(
-			@Value("${ENWIDA_HOME}/conf/navigation") String jsonDir) {
-		this.jsonDir = jsonDir;
-	}
 
 	@PostConstruct
-	public void init() throws IOException {
+	public void init()
+			throws IOException {
 		objectMapper = objectMapperFactory.create();
+		this.jsonDir = System.getenv("ENWIDA_HOME") + "conf" + File.separator
+				+ "navigation";
 		readJsonNavigationFiles();
 		// System.out.println(jsonDir);
 	}
@@ -122,9 +118,13 @@ public class NavigationServiceImpl implements INavigationService {
     }
     
     /**
-     * Only for testing purposes! Skips availability service.
-     */
-    public ChartNavigationData getNavigationDataWithoutAvailablityCheck(int chartId, User user, Locale locale) throws Exception {
+	 * Only for testing purposes! Skips availability service.
+	 * 
+	 * @throws Exception
+	 */
+	@Override
+	public ChartNavigationData getNavigationDataWithoutAvailablityCheck(
+			Integer chartId, User user, Locale locale) throws Exception {
         final ChartNavigationData navigationData = getDefaultNavigationData(chartId);
         shrinkNavigationOnSecurity(navigationData, user);
         return navigationLocalizer.localize(navigationData, chartId, locale);
