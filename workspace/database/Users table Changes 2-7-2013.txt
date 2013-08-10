@@ -1,4 +1,0 @@
-Change done by Abdul for the company logo part and user activation link via email part:
-
-ALTER TABLE users.users ADD COLUMN activation_id character varying;
-ALTER TABLE users.users ALTER COLUMN activation_id SET NOT NULL;

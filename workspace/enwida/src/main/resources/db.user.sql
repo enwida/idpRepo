@@ -89,6 +89,10 @@ INSERT INTO users.roles( role_name, description)
 INSERT INTO users.groups(group_name, auto_pass)
 VALUES ('adminGroup', TRUE);
 
+INSERT INTO users.groups(group_name, auto_pass)
+VALUES ('anonymous', TRUE);
+
+
 
 INSERT INTO users.group_role(group_id, role_id)
     VALUES (1, 1);
@@ -98,7 +102,11 @@ INSERT INTO users.user_group(user_id, group_id)
 
 INSERT INTO users.group_role(group_id,role_id)
 	values (1,2);
-    
+
+--Assign anonymous group to anonymous role
+INSERT INTO users.group_role(group_id,role_id)
+values (2,3);
+
  --Creates dummy Rights
 CREATE OR REPLACE FUNCTION getAllRights() RETURNS SETOF users.rights AS
 $BODY$
