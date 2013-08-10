@@ -21,6 +21,7 @@ import javax.annotation.PostConstruct;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
@@ -60,17 +61,17 @@ public class NavigationServiceImpl implements INavigationService {
 	@Autowired
 	private INavigationDao navigationDao;
 
-	@Autowired
 	private ObjectMapperFactory objectMapperFactory;
 	
 	@Autowired
-	private ChartNavigationLocalizer navigationLocalizer;
+	private ChartNavigationLocalizer chartNavigationLocalizer;
 	
 	private String jsonDir;
 	private ObjectMapper objectMapper;
 	private Hashtable<Integer, ChartNavigationData> defaultNavigationData =  new Hashtable<Integer, ChartNavigationData>();
 	
-	public NavigationServiceImpl(String jsonDir) {
+	@Autowired
+	public NavigationServiceImpl(@Value("${ENWIDA_HOME}/conf/navigation")String jsonDir) {
 		this.jsonDir = jsonDir;
 	}
 	
@@ -110,7 +111,7 @@ public class NavigationServiceImpl implements INavigationService {
         shrinkNavigationOnSecurity(navigationData, user);
         
         // Localize Strings
-        return navigationLocalizer.localize(navigationData, chartId, locale);
+        return chartNavigationLocalizer.localize(navigationData, chartId, locale);
     }
     
     /**
@@ -119,7 +120,7 @@ public class NavigationServiceImpl implements INavigationService {
     public ChartNavigationData getNavigationDataWithoutAvailablityCheck(int chartId, User user, Locale locale) throws Exception {
         final ChartNavigationData navigationData = getDefaultNavigationData(chartId);
         shrinkNavigationOnSecurity(navigationData, user);
-        return navigationLocalizer.localize(navigationData, chartId, locale);
+        return chartNavigationLocalizer.localize(navigationData, chartId, locale);
     }
     
 	@Override
