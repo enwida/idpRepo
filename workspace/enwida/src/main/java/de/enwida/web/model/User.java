@@ -114,9 +114,6 @@ public class User implements Serializable {
 	@Transient
 	private List<Role> roles;
 
-	@Transient
-    private UserRoleCollection userPermissionCollection;
-
     public User(long userID, String userName, String password,
             String firstName, String lastName, boolean enabled) {
         // TODO Auto-generated constructor stub
@@ -203,20 +200,6 @@ public class User implements Serializable {
 	public void setRoles(List<Role> roles) {
 		this.roles = roles;
 	}
-
-    @Transient
-    public UserRoleCollection getUserPermissionCollection() {
-        return userPermissionCollection;
-    }
-
-    public void setUserPermissionCollection(
-            UserRoleCollection userPermissionCollection) {
-        this.userPermissionCollection = userPermissionCollection;
-    }
-
-    public boolean hasPermission(String permission) {
-        return getUserPermissionCollection().implies(new UserRole(permission));
-    }
 
     public boolean isEnabled() {
         return enabled;

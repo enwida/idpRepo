@@ -248,13 +248,11 @@ public interface IUserService {
      */
     public User getCurrentUser() throws Exception;
 
-    Long getNextSequence(String schema, String sequenceName);
+    public Long getNextSequence(String schema, String sequenceName);
 
-	UploadedFile getFile(int fileId);
+    public UploadedFile getFile(int fileId);
 
-	UploadedFile getFileByFilePath(String filePath);
+    public UploadedFile getFileByFilePath(String filePath);
 
-	public int getUploadedFileVersion(UploadedFile file, User user);
-
-	boolean usernameAvailablility(String username);
+    public int getUploadedFileVersion(UploadedFile file, User user);
 }
