@@ -7,6 +7,9 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.NoResultException;
+import javax.persistence.NonUniqueResultException;
+import javax.persistence.TypedQuery;
 import javax.sql.DataSource;
 
 import org.apache.log4j.Logger;
@@ -21,8 +24,6 @@ import de.enwida.web.controller.AdminController;
 import de.enwida.web.dao.interfaces.AbstractBaseDao;
 import de.enwida.web.dao.interfaces.IUserDao;
 import de.enwida.web.db.model.UploadedFile;
-import de.enwida.web.model.Group;
-import de.enwida.web.model.Role;
 import de.enwida.web.model.User;
 
 @Repository
@@ -128,9 +129,28 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
     
     @Override
     public User getUserByName(String userName) {
-        String sql = "SELECT * FROM users.users WHERE user_name=?";
-        List<User> users=this.jdbcTemplate.query(sql,new Object[]{userName}, this);
-        return ((users.size()>0)? users.get(0) : null);
+		User user = null;
+
+		try {
+			TypedQuery<User> typedQuery = em.createQuery(
+					"from " + User.class.getName()
+							+ " WHERE user_name= :username", User.class);
+			user = typedQuery.setParameter("username", userName)
+					.getSingleResult();
+		} catch (NoResultException noresult) {
+			// if there is no result
+			logger.error("No user found with user name : " + userName);
+		} catch (NonUniqueResultException notUnique) {
+			// if more than one result
+			logger.error("More than one users found with user name : "
+					+ userName);
+		}
+		return user;
+
+		// String sql = "SELECT * FROM users.users WHERE user_name=?";
+		// List<User> users=this.jdbcTemplate.query(sql,new Object[]{userName},
+		// this);
+		// return ((users.size()>0)? users.get(0) : null);
     }
 
     @Override
