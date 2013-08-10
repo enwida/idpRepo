@@ -467,6 +467,61 @@ public class ChartNavigationTest {
 
 		checkLines(navigationData, toCalendar("2009-06-01"), toCalendar("2010-02-04"));
 	}
+	@Test
+	public void checkTimeRangeExpansionOverRoles() throws Exception {
+		revokeAllRights(42);
+		revokeAllRights(43);
+		
+		final Right right1 = new Right();
+		right1.setAspect(Aspect.CR_VOL_ACTIVATION.name());
+		right1.setEnabled(true);
+		right1.setProduct(211);
+		right1.setResolution(DataResolution.DAILY.name());
+		right1.setRoleID(42);
+		right1.setTimeFrom(dateFormat.parse("2009-05-18"));
+		right1.setTimeTo(dateFormat.parse("2011-09-02"));
+		right1.setTso(99);
+		rightDao.addRight(right1);
+
+		final Right right2 = new Right();
+		right2.setAspect(Aspect.CR_VOL_ACTIVATION.name());
+		right2.setEnabled(true);
+		right2.setProduct(211);
+		right2.setResolution(DataResolution.DAILY.name());
+		right2.setRoleID(43);
+		right2.setTimeFrom(dateFormat.parse("2008-05-18"));
+		right2.setTimeTo(dateFormat.parse("2010-09-02"));
+		right2.setTso(99);
+		rightDao.addRight(right2);
+		
+		final User user = getTestUser();
+		
+		final ChartNavigationData navigationData = navigationService.getNavigationDataWithoutAvailablityCheck(0, user, Locale.GERMAN);
+		Assert.assertNotNull(navigationData);
+		checkNavigationData(navigationData);
+
+		Assert.assertTrue(navigationData.getAllResolutions().size() == 1);
+		
+		// One TSO
+		Assert.assertTrue(navigationData.getProductTrees().size() == 1);
+		
+		// Check TSO 99
+		final List<ProductAttributes> products = navigationData.getProductTrees().get(0).flatten();
+		Assert.assertTrue(products.size() == 1);
+
+		final ProductAttributes product1 = products.get(0);
+		Assert.assertTrue(product1.productId == right1.getProduct());
+		Assert.assertTrue(product1.resolutions.size() == 1);
+		Assert.assertTrue(product1.resolutions.contains(DataResolution.valueOf(right1.getResolution())));
+		Assert.assertTrue(product1.resolutions.contains(DataResolution.valueOf(right2.getResolution())));
+		
+		// Check that the time matches the maximum of allowed times
+		Assert.assertEquals(product1.timeRange.getFrom().getTimeInMillis(), right2.getTimeFrom().getTime());
+		Assert.assertEquals(product1.timeRange.getTo().getTimeInMillis(), right1.getTimeTo().getTime());
+
+		// Check expanding time range over roles
+		checkLines(navigationData);
+	}
 
 	@Test
 	public void checkMultiplePermissionsPerRoleForSameProduct() throws Exception {
