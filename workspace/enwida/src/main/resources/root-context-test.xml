@@ -15,6 +15,25 @@
 	<bean id="isoDateFormat" class="java.text.SimpleDateFormat">
 		<constructor-arg value="yyyy-MM-dd" />
 	</bean>
+	
+	<bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+		<property name="basename" value="/resources/messages/messages" />
+	</bean>
+
+	<bean id="dch" class="de.enwida.common.DateCalendarHelper" init-method="init">	
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<bean id="listOfProducts" class="de.enwida.rl.daos.ListOfProducts" init-method="init">	
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<bean id="dbc" class="de.enwida.rl.controller.DatabaseController">	
+	</bean>	
+
+	<bean id="lineManager" class="de.enwida.chart.LineManager">	
+		<property name="messageSource" ref="messageSource" />
+	</bean>	
 
 	<bean id="userDao" class="de.enwida.web.dao.implementation.UserDaoImpl">
 	</bean>
@@ -27,6 +46,8 @@
 	<bean id="dataAvailibilityDao" class="de.enwida.web.dao.implementation.DataAvailibilityDaoImpl">
 	</bean>
 
+    <bean scope="singleton" id="lineService" class="de.enwida.web.service.implementation.LineServiceImpl">
+    </bean>
     <bean scope="singleton" id="userService" class="de.enwida.web.service.implementation.UserServiceImpl">
     </bean>
     <bean scope="singleton" id="securityService" class="de.enwida.web.service.implementation.SecurityServiceImpl">
