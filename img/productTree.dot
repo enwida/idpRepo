@@ -1,0 +1,61 @@
+digraph G {
+  node [shape="box"];
+
+  "a1" [label="ID: 2\nName: SCR"];
+  "a2" [label="ID: 3\nName: TCR"];
+
+  "b1" [label="ID: 1\nName: pos"];
+  "b2" [label="ID: 2\nName: neg"];
+
+  "c1" [label="ID: 1\nName: pos"];
+  "c2" [label="ID: 2\nName: neg"];
+
+  "d1" [label="ID: 1\nName: PT\nResolutions: [...]\nTime range: [...]"];
+  "d2" [label="ID: 2\nName: OPT\nResolutions: [...]\nTime range: [...]"];
+
+  "e1" [label="ID: 1\nName: PT\nResolutions: [...]\nTime range: [...]"];
+  "e2" [label="ID: 2\nName: OPT\nResolutions: [...]\nTime range: [...]"];
+
+  "f1" [label="ID: 1\nName: 0-4\nResolutions: [...]\nTime range: [...]"];
+  "f2" [label="ID: 2\nName: 4-8\nResolutions: [...]\nTime range: [...]"];
+  "f3" [label="ID: 3\nName: 8-12\nResolutions: [...]\nTime range: [...]"];
+  "f4" [label="ID: 4\nName: 12-16\nResolutions: [...]\nTime range: [...]"];
+  "f5" [label="ID: 5\nName: 16-20\nResolutions: [...]\nTime range: [...]"];
+  "f6" [label="ID: 6\nName: 20-24\nResolutions: [...]\nTime range: [...]"];
+
+  "g1" [label="ID: 1\nName: 0-4\nResolutions: [...]\nTime range: [...]"];
+  "g2" [label="ID: 2\nName: 4-8\nResolutions: [...]\nTime range: [...]"];
+  "g3" [label="ID: 3\nName: 8-12\nResolutions: [...]\nTime range: [...]"];
+  "g4" [label="ID: 4\nName: 12-16\nResolutions: [...]\nTime range: [...]"];
+  "g5" [label="ID: 5\nName: 16-20\nResolutions: [...]\nTime range: [...]"];
+  "g6" [label="ID: 6\nName: 20-24\nResolutions: [...]\nTime range: [...]"];
+
+  root -> a1;
+  root -> a2;
+
+  a1 -> b1;
+  a1 -> b2;
+
+  a2 -> c1;
+  a2 -> c2;
+
+  b1 -> d1;
+  b1 -> d2;
+
+  b2 -> e1;
+  b2 -> e2;
+
+  c1 -> f1;
+  c1 -> f2;
+  c1 -> f3;
+  c1 -> f4;
+  c1 -> f5;
+  c1 -> f6;
+
+  c2 -> g1;
+  c2 -> g2;
+  c2 -> g3;
+  c2 -> g4;
+  c2 -> g5;
+  c2 -> g6;
+}
