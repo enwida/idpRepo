@@ -37,8 +37,8 @@ import de.enwida.web.model.ProductTree.ProductAttributes;
 import de.enwida.web.model.Right;
 import de.enwida.web.model.Role;
 import de.enwida.web.model.User;
-import de.enwida.web.service.implementation.LineServiceImpl;
-import de.enwida.web.service.implementation.NavigationServiceImpl;
+import de.enwida.web.service.interfaces.ILineService;
+import de.enwida.web.service.interfaces.INavigationService;
 import de.enwida.web.service.interfaces.IUserService;
 import de.enwida.web.utils.ProductLeaf;
  
@@ -47,10 +47,10 @@ import de.enwida.web.utils.ProductLeaf;
 public class ChartNavigationTest {
 
 	@Autowired
-	private NavigationServiceImpl navigationService;
+	private INavigationService navigationService;
 	
 	@Autowired
-	private LineServiceImpl lineService;
+	private ILineService lineService;
 	
 	@Autowired
 	private IUserService userService;
@@ -63,8 +63,8 @@ public class ChartNavigationTest {
 	
 	private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 	private static final String username = "navigationTester";
+	private static final String groupName = "navigationTesterGroup";
 	private static final int userId = 42;
-	private static final long groupId = 42l;
 	
 	@Before
 	public void setup() throws Exception {
@@ -76,6 +76,7 @@ public class ChartNavigationTest {
 		user.setCompanyLogo("");
 		user.setCompanyName("");
 		user.setTelephone("");
+		user.setEnabled(true);
 		userService.saveUser(user);
 		setupGroup();
 		setupRoles();
@@ -84,15 +85,15 @@ public class ChartNavigationTest {
 	private Group setupGroup() throws Exception {
 		
         for (final Group group : userService.getAllGroups()) {
-        	if (group.getGroupID() == 42) {
+        	if (group.getGroupName().equals(groupName)) {
         		// Test group is already there
         		return group;
         	}
         }
 		
 		final Group group = new Group();
-		group.setGroupID(groupId);
-		group.setGroupName("navigationTestGroup");
+		group.setGroupID(42l);
+		group.setGroupName(groupName);
 		try {
             userService.addGroup(group);
             userService.assignUserToGroup(userId, group.getGroupID().intValue());

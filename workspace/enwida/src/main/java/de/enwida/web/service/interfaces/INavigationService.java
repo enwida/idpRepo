@@ -28,4 +28,6 @@ public interface INavigationService {
 
 	ChartNavigationData getNavigationDataUNSECURE(int chartId, User user,
 			Locale locale);
+	
+    ChartNavigationData getNavigationDataWithoutAvailablityCheck(int chartId, User user, Locale locale) throws Exception;
 }
