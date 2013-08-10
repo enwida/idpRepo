@@ -45,7 +45,7 @@ public class LineServiceImpl implements ILineService {
         final Right authorization = getDataAuthorization(lineRequest);
 
         for (final Role role : user.getRoles()) {
-            authorization.setRoleID(role.getRoleID());
+			authorization.setRole(new Role(role.getRoleID()));
             if (securityService.isAllowed(authorization)) {
                 return true;
             }

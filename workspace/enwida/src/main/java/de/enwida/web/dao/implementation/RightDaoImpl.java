@@ -16,6 +16,7 @@ import de.enwida.web.controller.AdminController;
 import de.enwida.web.dao.interfaces.AbstractBaseDao;
 import de.enwida.web.dao.interfaces.IRightDao;
 import de.enwida.web.model.Right;
+import de.enwida.web.model.Role;
 
 @Repository
 public class RightDaoImpl extends AbstractBaseDao<Right> implements IRightDao {
@@ -49,7 +50,7 @@ public class RightDaoImpl extends AbstractBaseDao<Right> implements IRightDao {
     public Right mapRow(ResultSet rs, int rowNum) throws SQLException {
         Right right = new Right();
         right.setRightID(rs.getLong("right_id"));
-        right.setRoleID(rs.getLong("role_id"));
+		right.setRole(new Role(rs.getLong("role_id")));
         right.setEnabled(rs.getBoolean("enabled"));
         right.setTso(rs.getInt("tso"));
         right.setProduct(rs.getInt("product"));
@@ -65,7 +66,7 @@ public class RightDaoImpl extends AbstractBaseDao<Right> implements IRightDao {
         String SELECT_QUERY = "SELECT COUNT(*) FROM users.rights WHERE role_id = ? AND tso = ? AND product = ? AND aspect_id = ? AND resolution = ? AND time1 <= ? AND time2 >= ? AND enabled = ?;";
         
         Object[] param = new Object[8];
-        param[0] = dataAuthorization.getRoleID();
+		param[0] = dataAuthorization.getRole();
         param[1] = dataAuthorization.getTso();
         param[2] = dataAuthorization.getProduct();
         param[3] = Aspect.valueOf(dataAuthorization.getAspect()).ordinal();
@@ -86,7 +87,7 @@ public class RightDaoImpl extends AbstractBaseDao<Right> implements IRightDao {
         final String SELECT_QUERY = "INSERT INTO users.rights (role_id,tso,product,aspect_id,resolution,time1,time2,enabled) VALUES (?,?,?,?,?,?,?,?);";
         
         Object[] param = new Object[8];
-        param[0] = right.getRoleID();
+		param[0] = right.getRole();
         param[1] = right.getTso();
         param[2] = right.getProduct();
         param[3] = Aspect.valueOf(right.getAspect()).ordinal();
@@ -102,7 +103,7 @@ public class RightDaoImpl extends AbstractBaseDao<Right> implements IRightDao {
         String SELECT_QUERY = "SELECT * FROM users.rights WHERE role_id = ? AND tso = ? AND product = ? AND aspect_id = ? AND enabled = ?;";
         
         Object[] param = new Object[5];
-        param[0] = dataAuthorization.getRoleID();
+		param[0] = dataAuthorization.getRole();
         param[1] = dataAuthorization.getTso();
         param[2] = dataAuthorization.getProduct();
         param[3] = Aspect.valueOf(dataAuthorization.getAspect()).ordinal();
@@ -117,7 +118,7 @@ public class RightDaoImpl extends AbstractBaseDao<Right> implements IRightDao {
         
         Object[] param = new Object[4];
         param[0] = dataAuthorization.isEnabled();
-        param[1] = dataAuthorization.getRoleID();
+		param[1] = dataAuthorization.getRole();
         param[2] = dataAuthorization.getTso();
         param[3] = dataAuthorization.getProduct();
         param[4] = Aspect.valueOf(dataAuthorization.getAspect()).ordinal();

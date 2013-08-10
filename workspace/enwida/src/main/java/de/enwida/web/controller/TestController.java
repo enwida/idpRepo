@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import de.enwida.web.model.ChartNavigationData;
 import de.enwida.web.model.DataAvailibility;
 import de.enwida.web.model.Right;
+import de.enwida.web.model.Role;
 import de.enwida.web.service.interfaces.IAvailibilityService;
 import de.enwida.web.service.interfaces.INavigationService;
 import de.enwida.web.service.interfaces.ISecurityService;
@@ -56,7 +57,7 @@ public class TestController {
 		Calendar cal = Calendar.getInstance();
 		
 		Right da = new Right();
-		da.setRoleID(3);
+		da.setRole(new Role(3));
 		da.setTso(99);
 		da.setProduct(321);
 		da.setAspect("rl_ab1");
