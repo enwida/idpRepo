@@ -315,7 +315,7 @@ public class UserController {
 	
 	@RequestMapping(value="/upload", method = RequestMethod.GET)
 	public ModelAndView getUplaodUserData(ModelMap model) throws Exception {
-		User user = userService.getUser("username1");
+		User user = userService.getUser("test");
 		List<UploadedFile> filetable = new ArrayList<UploadedFile>(
 				user.getUploadedFiles());
 		Collections.sort(filetable);
@@ -332,7 +332,7 @@ public class UserController {
 		
 		boolean isMultipart = ServletFileUpload.isMultipartContent(request);
 		// fetch all files related to user
-		User user = userService.getUser("username1");
+		User user = userService.getUser("test");
 		List<UploadedFile> filetable = new ArrayList<UploadedFile>(
 				user.getUploadedFiles());
 
