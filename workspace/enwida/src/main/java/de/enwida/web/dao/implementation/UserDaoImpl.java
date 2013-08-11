@@ -13,6 +13,7 @@ import javax.persistence.TypedQuery;
 import javax.sql.DataSource;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.core.RowMapper;
@@ -64,40 +65,18 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
 		
 	@Override
 	public void deleteUser(User user) {
-	    String sql = "DELETE FROM  "+Constants.USERS_SCHEMA_NAME+Constants.USER_TABLE_NAME+" WHERE user_name=?";
-        this.jdbcTemplate.update(sql,user.getUserName());
+	    Session session = sessionFactory.openSession();
+        session.delete(user);
+        session.close();
 	}
 	
     @Override
 	public long save(final User user)
 	{
-		KeyHolder keyHolder = new GeneratedKeyHolder();	
-		Number id = -1;
-
-		final String sql = "INSERT INTO "+Constants.USERS_SCHEMA_NAME+Constants.USER_TABLE_NAME+" ( user_name, user_password, first_name, last_name, enabled, joining_date, telephone, company_name, company_logo, activation_id )" +
-				" VALUES ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";	    			
-		this.jdbcTemplate.update(
-			    new PreparedStatementCreator() {
-			        public PreparedStatement createPreparedStatement(Connection connection) throws SQLException {
-			            PreparedStatement ps = connection.prepareStatement(sql, new String[] {"user_id"});
-			            ps.setString(1, user.getUserName());
-			            ps.setString(2, user.getPassword());
-			            ps.setString(3, user.getFirstName());
-			            ps.setString(4, user.getLastName());
-			            ps.setBoolean(5, user.isEnabled());
-			            ps.setDate(6, user.getJoiningDate());
-			            ps.setString(7, user.getTelephone());
-                        ps.setString(8, user.getCompanyName());
-                        ps.setString(9, user.getCompanyLogo());
-                        ps.setString(10, user.getActivationKey());
-			            return ps;
-			        }
-			    },
-			    keyHolder);
-			
-	    id = keyHolder.getKey();
-     
-		return id.intValue();
+        Session session = sessionFactory.openSession();
+        session.save(user);
+        session.close();
+		return user.getUserID();
 	}
 
     @Override
