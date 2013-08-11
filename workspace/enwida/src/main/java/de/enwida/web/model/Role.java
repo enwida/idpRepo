@@ -48,7 +48,7 @@ public class Role  implements Serializable{
     
     @ManyToMany(cascade = CascadeType.ALL)
     @ElementCollection(targetClass = Group.class, fetch = FetchType.EAGER)
-    @JoinTable(name = Constants.USER_GROUP_TABLE_NAME, schema = Constants.USER_GROUP_TABLE_SCHEMA_NAME, uniqueConstraints = { @UniqueConstraint(columnNames = {
+    @JoinTable(name = Constants.GROUP_ROLE_TABLE_NAME, schema = Constants.USER_GROUP_TABLE_SCHEMA_NAME, uniqueConstraints = { @UniqueConstraint(columnNames = {
             Role.ROLE_ID, Group.GROUP_ID }) }, joinColumns = { @JoinColumn(name = ROLE_ID, referencedColumnName = ROLE_ID) }, inverseJoinColumns = { @JoinColumn(name = Group.GROUP_ID, referencedColumnName = Group.GROUP_ID) })
     private  List<Group> assignedGroups;
     
