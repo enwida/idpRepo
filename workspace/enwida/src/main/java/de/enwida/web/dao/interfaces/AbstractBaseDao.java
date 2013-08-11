@@ -21,7 +21,6 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
-import de.enwida.web.model.User;
 import de.enwida.web.utils.Constants;
 
 public abstract class AbstractBaseDao<T> implements IDao<T>, RowMapper<T> {
@@ -102,7 +101,17 @@ public abstract class AbstractBaseDao<T> implements IDao<T>, RowMapper<T> {
     public T fetchByName(String name) {
         T entity = null;
         TypedQuery<T> typedQuery = em.createQuery( "from " + modelClass.getName()+" WHERE name= :name", modelClass);
-        entity = typedQuery.setParameter("name", name).getSingleResult();
+		try {
+			entity = typedQuery.setParameter("name", name).getSingleResult();
+		} catch (NoResultException noresult) {
+			// if there is no result
+			logger.error("No data found for " + modelClass.getSimpleName()
+					+ " with name : " + name);
+		} catch (NonUniqueResultException notUnique) {
+			// if more than one result
+			logger.error("More than one record found for "
+					+ modelClass.getSimpleName() + " with name : " + name);
+		}
         return entity;
     }
 
