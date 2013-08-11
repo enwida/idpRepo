@@ -32,7 +32,7 @@ public class Role  implements Serializable{
     private static final long serialVersionUID = -2772444487718010995L;
     
 	public static final String ROLE_ID = "ROLE_ID";
-	public static final String ROLE_NAME = "ROLE_NAME";
+	public static final String ROLE_NAME = "NAME";
 	public static final String DESCRIPTION = "DESCRIPTION";
     
     @Id

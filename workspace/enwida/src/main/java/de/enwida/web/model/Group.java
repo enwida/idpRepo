@@ -31,7 +31,7 @@ public class Group implements Serializable{
 	private static final long serialVersionUID = 7173117643347079483L;
 	
 	public static final String GROUP_ID = "GROUP_ID";
-	public static final String GROUP_NAME = "GROUP_NAME";
+	public static final String GROUP_NAME = "NAME";
 	public static final String AUTO_PASS = "AUTO_PASS";
 
 	@Id
