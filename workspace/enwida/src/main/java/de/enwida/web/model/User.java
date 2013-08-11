@@ -39,7 +39,7 @@ public class User implements Serializable {
 
 	public static final String USER_ID = "USER_ID";
 	public static final String CLIENT_ID = "CLIENT_ID";
-	public static final String USER_NAME = "USER_NAME";
+	public static final String USER_NAME = "NAME";
 	public static final String FIRST_NAME = "FIRST_NAME";
 	public static final String LAST_NAME = "LAST_NAME";
 	public static final String PASSWORD = "USER_PASSWORD";

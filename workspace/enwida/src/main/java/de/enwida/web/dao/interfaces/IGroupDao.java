@@ -13,7 +13,7 @@ public interface IGroupDao extends IDao<Group> {
      * Gets all the groups
      * @return
      */
-    public List<Group> getAllGroups();
+    List<Group> fetchAll();
     /**
      * Adds new group
      * @param newGroup
@@ -38,7 +38,7 @@ public interface IGroupDao extends IDao<Group> {
      * @param groupId
      * @return
      */
-    public Group getGroupByGroupId(long groupId);
+    public Group fetchById(long groupId);
     /**
      * Assigns role to group
      * @param roleID

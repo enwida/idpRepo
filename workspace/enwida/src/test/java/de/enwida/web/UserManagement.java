@@ -68,7 +68,7 @@ public class UserManagement {
 	    user=new User("test","test","test","test",false);
 	    user.setJoiningDate(new Date(Calendar.getInstance().getTimeInMillis()));
 	    user.setCompanyName("enwida.de");
-        User existingUser = userDao.getUserByName(user.getUserName());
+        User existingUser = userDao.fetchByName(user.getUserName());
 	    if(existingUser==null){
 	        user.setUserID(userDao.save(user));
 	    }else{
@@ -88,11 +88,11 @@ public class UserManagement {
        groupDao.addGroup(anonymousGroup);
        
        //save user in any group
-       userDao.assignUserToGroup(user.getUserID(),adminGroup.getGroupID());
-       userDao.deassignUserFromGroup(user.getUserID(), adminGroup.getGroupID());
+      // userDao.assignUserToGroup(user.getUserID(),adminGroup.getGroupID());
+      // userDao.deassignUserFromGroup(user.getUserID(), adminGroup.getGroupID());
        //save user in anonymous group
-       userDao.assignUserToGroup(user.getUserID(),anonymousGroup.getGroupID());
-       userDao.deassignUserFromGroup(user.getUserID(), anonymousGroup.getGroupID());
+       //   userDao.assignUserToGroup(user.getUserID(),anonymousGroup.getGroupID());
+       //   userDao.deassignUserFromGroup(user.getUserID(), anonymousGroup.getGroupID());
     }
    
    @Test
@@ -100,10 +100,10 @@ public class UserManagement {
       userDao.save(user);
       user.setCompanyName("test");
       userDao.updateUser(user);
-      User user2=userDao.getUserByName(user.getUserName());
+      User user2=userDao.fetchByName(user.getUserName());
       assertEquals("test", user2.getCompanyName());
       userDao.deleteUser(user);
-      assertEquals(null,userDao.getUserByName(user.getUserName()));
+      assertEquals(null,userDao.fetchByName(user.getUserName()));
    }
    
    @Test

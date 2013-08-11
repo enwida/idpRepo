@@ -2,13 +2,10 @@ package de.enwida.web.dao.implementation;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import javax.sql.DataSource;
 
-import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.stereotype.Repository;
@@ -22,12 +19,6 @@ public class RoleDaoImpl extends AbstractBaseDao<Role> implements IRoleDao {
 	
 	@Autowired
 	private DataSource datasource;
-	
-	@Override
-	public String getDbTableName() {
-	    return "users.roles";
-	}
-	
 	
 	@Override
 	public List<Role> getUserRoles(long userID)throws Exception {
@@ -56,31 +47,11 @@ public class RoleDaoImpl extends AbstractBaseDao<Role> implements IRoleDao {
 	
     @Override
     public void addRole(Role role) throws Exception{
-                
-        String sql = "INSERT INTO users.roles(name,description) VALUES (?,?);";
-        this.save(sql, role);
+        create(role);
     }
     
     @Override
     public void removeRole(Role role) throws Exception{
-        Session session = sessionFactory.openSession();
-        session.save(role);
-        session.close();
-    }
-
-    @Override
-    public List<Role> getAllRoles()throws Exception {
-        String sql = "SELECT * FROM users.roles";
-        List<Role> roles  =new  ArrayList<Role>();
-        
-        List<Map<String,Object>> rows =this.jdbcTemplate.queryForList(sql);
-        for (Map row : rows) {
-            Role role = new Role();
-            role.setRoleID(Long.parseLong(row.get("role_id").toString()));
-            role.setRoleName((String) row.get("role_name"));
-            role.setDescription((String) row.get("description"));
-            roles.add(role);
-        }
-        return roles;
+        delete(role);
     }
 }

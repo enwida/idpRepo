@@ -11,13 +11,10 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
-import org.apache.log4j.Logger;
-import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import de.enwida.transport.Aspect;
-import de.enwida.web.controller.AdminController;
 import de.enwida.web.dao.interfaces.AbstractBaseDao;
 import de.enwida.web.dao.interfaces.IRightDao;
 import de.enwida.web.db.model.CalendarRange;
@@ -31,13 +28,6 @@ public class RightDaoImpl extends AbstractBaseDao<Right> implements IRightDao {
 	@Autowired
 	private DataSource datasource;
 	
-    private static org.apache.log4j.Logger logger = Logger.getLogger(AdminController.class);
-	
-	@Override
-	public String getDbTableName() {
-	    return "users.rights";
-	}
-	
 	/**
 	 * Enables or disables the Aspects in the database.So that right won't see that aspect 
 	 */
@@ -46,16 +36,10 @@ public class RightDaoImpl extends AbstractBaseDao<Right> implements IRightDao {
 		Right right = fetchById(rightID);
 		right.setEnabled(enabled);
 		update(right);
-		// String sql = "UPDATE users.rights SET enabled=? WHERE right_id=?";
-		// try{
-		// this.jdbcTemplate.update(sql,enabled,rightID);
-		// }catch(Exception e){
-		// logger.error(e.getMessage());
-		// return false;
-		// }
         return true;
     }
     
+    @Deprecated
     @Override
     public Right mapRow(ResultSet rs, int rowNum) throws SQLException {
         Right right = new Right();
@@ -117,17 +101,12 @@ public class RightDaoImpl extends AbstractBaseDao<Right> implements IRightDao {
     }
     
     public void addRight(Right right) {
-        Session session = sessionFactory.openSession();
-        session.save(right);
-        session.close();
+        create(right);
     }
     
-
     @Override
     public void removeRight(Right right) throws Exception {
-        Session session = sessionFactory.openSession();
-        session.delete(right);
-        session.close();
+        delete(right);
     }
 
     public List<Right> getListByExample(Right dataAuthorization)throws Exception {
@@ -145,16 +124,7 @@ public class RightDaoImpl extends AbstractBaseDao<Right> implements IRightDao {
     }
 
     public void enableLine(Right dataAuthorization) throws Exception{
-        String UPDATET_QUERY = "UPDATE users.rights SET enabled = ? WHERE role_id = ? AND tso = ? AND product = ? AND aspect_id = ?;";
-        
-        Object[] param = new Object[4];
-        param[0] = dataAuthorization.isEnabled();
-		param[1] = dataAuthorization.getRole();
-        param[2] = dataAuthorization.getTso();
-        param[3] = dataAuthorization.getProduct();
-        param[4] = Aspect.valueOf(dataAuthorization.getAspect()).ordinal();
-        
-        jdbcTemplate.update(UPDATET_QUERY, param);
+        update(dataAuthorization);
     }
 
     @Override

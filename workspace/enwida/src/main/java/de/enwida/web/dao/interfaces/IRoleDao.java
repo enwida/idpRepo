@@ -14,6 +14,6 @@ public interface IRoleDao extends IDao<Role> {
 
     void removeRole(Role role) throws Exception;
 
-    List<Role> getAllRoles() throws Exception;
+    List<Role> fetchAll();
 
 }

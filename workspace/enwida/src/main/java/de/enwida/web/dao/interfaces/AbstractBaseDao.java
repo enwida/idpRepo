@@ -7,8 +7,11 @@ import java.sql.SQLException;
 import java.util.List;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.NonUniqueResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 import javax.sql.DataSource;
 
 import org.apache.log4j.Logger;
@@ -18,13 +21,13 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
+import de.enwida.web.model.User;
 import de.enwida.web.utils.Constants;
 
 public abstract class AbstractBaseDao<T> implements IDao<T>, RowMapper<T> {
 
     private Class<T> modelClass;
     protected JdbcTemplate jdbcTemplate;
-    private String dbTableName;
 
 	private Logger logger = Logger.getLogger(getClass());
 
@@ -45,43 +48,6 @@ public abstract class AbstractBaseDao<T> implements IDao<T>, RowMapper<T> {
     public void setDataSource(DataSource dataSource) {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
-
-	@Deprecated
-	public T findById(Long id) {
-        String sql = "SELECT * FROM " + this.getDbTableName() + " WHERE id = "
-                + id;
-        return this.jdbcTemplate.queryForObject(sql, this.modelClass);
-    }
-    
-	@Deprecated
-	public void save(String sql, T obj) {
-        this.jdbcTemplate.update(sql,obj);
-    }
-    
-	@Deprecated
-	public T deleteById(Long id) {
-        String sql = "DELETE FROM " + this.getDbTableName() + " WHERE id = "
-                + id;
-        return this.jdbcTemplate.queryForObject(sql, this.modelClass);
-    }
-
-	@Deprecated
-	public List<T> findAll() {
-        String sql = "SELECT * FROM " + this.getDbTableName();
-        return this.jdbcTemplate.query(sql,this);
-    }
-    
-	@Deprecated
-	public List<T> findByColumn(String columnName, int columnValue) {
-        String sql = "SELECT * FROM " + this.getDbTableName()+ " WHERE "+columnName+"=?";
-        return this.jdbcTemplate.query(sql,new Object[]{columnValue},this);
-    }
-    
-	@Deprecated
-	public List<T> findByColumn(String columnName, String columnValue) {
-        String sql = "SELECT * FROM " + this.getDbTableName()+ " WHERE "+columnName+"=?";
-        return this.jdbcTemplate.query(sql,new Object[]{columnValue},this);
-    }
     
 	@Deprecated
 	@SuppressWarnings("unchecked")
@@ -93,19 +59,10 @@ public abstract class AbstractBaseDao<T> implements IDao<T>, RowMapper<T> {
                 obj);
         return (List<T>) this.jdbcTemplate.queryForList(sql, namedParameters);
     }
-    
+	
     public T mapRow(ResultSet rs, int rowNum) throws SQLException {
         return null;
     }
-
-    public String getDbTableName() {
-        return dbTableName;
-    }
-
-    public void setDbTableName(String dbTableName) {
-        this.dbTableName = dbTableName;
-    }
-
 
 	@Override
 	public T fetchById(long id) {
@@ -135,6 +92,19 @@ public abstract class AbstractBaseDao<T> implements IDao<T>, RowMapper<T> {
 		T entity = fetchById(entityId);
 		delete(entity);
 	}
+	
+	 /**
+     * If we can use same structure in every model classes, we can query by their name  like this
+     *  
+     * @param name Name
+     * @return
+     */
+    public T fetchByName(String name) {
+        T entity = null;
+        TypedQuery<T> typedQuery = em.createQuery( "from " + modelClass.getName()+" WHERE name= :name", modelClass);
+        entity = typedQuery.setParameter("name", name).getSingleResult();
+        return entity;
+    }
 
 	/**
 	 * This will help in getting the next id to be generated for a sequence

@@ -13,23 +13,17 @@ import de.enwida.web.model.User;
 public interface IUserDao extends IDao<User> {
 	long save(User user) throws Exception;
 
-    User getUserByID(Long id) throws Exception;
+	User fetchById(long id);
 
     void deleteUser(User user) throws Exception;
 
-    List<User> findAllUsers() throws Exception;
-
-    List<User> getAllUsers() throws Exception;
+    List<User> fetchAll();
 
     boolean checkUserActivationId(String username, String activationCode) throws Exception;
-
-    void assignUserToGroup(long userId, long groupID) throws Exception;
 
     void activateUser(String username) throws Exception;
 
     void updateUser(User user) throws Exception;
-
-    void deassignUserFromGroup(long userID, long groupID) throws Exception;
 
     void enableDisableUser(long userID, boolean enabled) throws Exception;
 
@@ -37,7 +31,7 @@ public interface IUserDao extends IDao<User> {
 
     List<User> getUsersByGroupID(Long groupID) throws Exception;
 
-    User getUserByName(String userName) throws Exception;
+    User fetchByName(String userName) throws Exception;
 
     Long getNextSequence(String schema, String sequenceName);
 
