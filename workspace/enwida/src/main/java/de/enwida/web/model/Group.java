@@ -81,7 +81,15 @@ public class Group implements Serializable{
         this.groupName = groupName;
     }
 
-	@Transient
+	public Group(String groupName) {
+        this.groupName = groupName;
+    }
+	
+	public Group(){
+	    this(null);
+	}
+
+    @Transient
     public List<User> getAssignedUsers() {
         return assignedUsers;
     }

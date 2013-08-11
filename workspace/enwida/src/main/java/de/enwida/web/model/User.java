@@ -114,24 +114,14 @@ public class User implements Serializable {
 	@Transient
 	private List<Role> roles;
 
-    public User(long userID, String userName, String password,
+    public User(String userName, String password,
             String firstName, String lastName, boolean enabled) {
-        // TODO Auto-generated constructor stub
-        this.setUserID(userID);
         this.setUserName(userName);
         this.setLastName(lastName);
         this.setFirstName(firstName);
         this.setPassword(password);
         this.setEnabled(enabled);
     }
-
-    public User(long userID, String userName, String password, boolean enabled) {
-        this(userID, userName, password, null, null, enabled);
-    }
-
-	public User(String userName, String password, boolean enabled) {
-		this(0, userName, password, null, null, enabled);
-	}
 
     public User() {
         // TODO Auto-generated constructor stub

@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import de.enwida.transport.Aspect;
 import de.enwida.transport.DataResolution;
+import de.enwida.transport.LineRequest;
 import de.enwida.web.dao.interfaces.IDataAvailibilityDao;
 import de.enwida.web.dao.interfaces.IRightDao;
 import de.enwida.web.db.model.CalendarRange;
@@ -31,6 +32,16 @@ public class AvailibilityServiceImpl implements IAvailibilityService {
 
 	public boolean isAvailable(DataAvailibility dataAvailibility) {
 		return dataAvailibilityDao.isAvailableByExample(dataAvailibility);
+	}
+
+	public boolean isAvailable(LineRequest request) {
+        final DataAvailibility availibility = new DataAvailibility();
+        availibility.setProduct(request.getProduct());
+        availibility.setTimeFrom(request.getStartTime().getTime());
+        availibility.setTimeTo(request.getEndTime().getTime());
+        availibility.setTableName(EnwidaUtils.getTableNameByAspect(request.getAspect()));
+        
+        return isAvailable(availibility);
 	}
 
     public ProductRestriction getProductRestriction(int productId, int tso, Aspect aspect, User user) {
@@ -65,4 +76,5 @@ public class AvailibilityServiceImpl implements IAvailibilityService {
 		}
 		return pR;
     }
+
 }

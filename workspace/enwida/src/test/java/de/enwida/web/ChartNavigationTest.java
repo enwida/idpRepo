@@ -37,8 +37,8 @@ import de.enwida.web.model.ProductTree.ProductAttributes;
 import de.enwida.web.model.Right;
 import de.enwida.web.model.Role;
 import de.enwida.web.model.User;
-import de.enwida.web.service.interfaces.ILineService;
 import de.enwida.web.service.interfaces.INavigationService;
+import de.enwida.web.service.interfaces.ISecurityService;
 import de.enwida.web.service.interfaces.IUserService;
 import de.enwida.web.utils.ProductLeaf;
  
@@ -50,7 +50,7 @@ public class ChartNavigationTest {
 	private INavigationService navigationService;
 	
 	@Autowired
-	private ILineService lineService;
+	private ISecurityService securityService;
 	
 	@Autowired
 	private IUserService userService;
@@ -64,25 +64,26 @@ public class ChartNavigationTest {
 	private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 	private static final String username = "navigationTester";
 	private static final String groupName = "navigationTesterGroup";
-	private static final int userId = 42;
-	
+
 	@Before
 	public void setup() throws Exception {
-		if (userService.getUser(username) != null) {
+		User user = userService.getUser(username);
+		if (user != null) {
 			// Test user is already there
 			return;
 		}
-		final User user = new User(userId, username, "", "John", "Doe", true);
+
+		user = new User(username, "", "John", "Doe", true);
 		user.setCompanyLogo("");
 		user.setCompanyName("");
 		user.setTelephone("");
 		user.setEnabled(true);
 		userService.saveUser(user);
-		setupGroup();
-		setupRoles();
+		final Group group = setupGroup(user);
+		setupRoles(group);
 	}
 	
-	private Group setupGroup() throws Exception {
+	private Group setupGroup(User user) throws Exception {
 		
         for (final Group group : userService.getAllGroups()) {
         	if (group.getGroupName().equals(groupName)) {
@@ -96,7 +97,7 @@ public class ChartNavigationTest {
 		group.setGroupName(groupName);
 		try {
             userService.addGroup(group);
-            userService.assignUserToGroup(userId, group.getGroupID().intValue());
+            userService.assignUserToGroup(user.getUserId(), group.getGroupID().intValue());
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -105,7 +106,7 @@ public class ChartNavigationTest {
 		return group;
 	}
 	
-	private void setupRoles() throws Exception {
+	private void setupRoles(Group group) throws Exception {
 		final Connection connection = dataSource.getConnection();
 		PreparedStatement stmt = connection.prepareStatement("INSERT INTO users.roles VALUES(?, ?, ?)");
 		stmt.setInt(1, 42);
@@ -953,7 +954,7 @@ public class ChartNavigationTest {
 							}
 
 							final LineRequest lineRequest = new LineRequest(aspect, product, tree.getTso(), startTime, endTime, resolution, Locale.ENGLISH);
-							Assert.assertFalse(lineService.isAllowed(lineRequest, user));
+							Assert.assertFalse(securityService.isAllowed(lineRequest, user));
 							
 							startTime = savedStartTime;
 							endTime = savedEndTime;
@@ -966,7 +967,7 @@ public class ChartNavigationTest {
 							}
 
 							final LineRequest lineRequest = new LineRequest(aspect, product, tree.getTso(), startTime, endTime, resolution, Locale.ENGLISH);
-							Assert.assertTrue(lineService.isAllowed(lineRequest, user));
+							Assert.assertTrue(securityService.isAllowed(lineRequest, user));
 
 							// Enlarge time range
 							final Calendar t1 = (Calendar) startTime.clone();
@@ -976,7 +977,7 @@ public class ChartNavigationTest {
 							lineRequest.setStartTime(t1);
 							lineRequest.setEndTime(t2);
 
-							Assert.assertFalse(lineService.isAllowed(lineRequest, user));
+							Assert.assertFalse(securityService.isAllowed(lineRequest, user));
 						}
 					}
 				}

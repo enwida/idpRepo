@@ -8,10 +8,8 @@ import java.util.Set;
 import javax.persistence.NoResultException;
 import javax.persistence.NonUniqueResultException;
 import javax.persistence.TypedQuery;
-import javax.sql.DataSource;
 
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
@@ -25,15 +23,11 @@ import de.enwida.web.utils.Constants;
 @Repository
 public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
 	
-	@Autowired
-	private DataSource datasource;
-	
-	
     private static org.apache.log4j.Logger logger = Logger.getLogger(AdminController.class);
 	
 	@Override
 	public List<User> findAllUsers() {
-        return this.findAll();
+		return this.fetchAll();
 	}
 	
 	@Override
@@ -63,6 +57,7 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
 		// String sql =
 		// "DELETE FROM  "+Constants.USERS_SCHEMA_NAME+Constants.USER_TABLE_NAME+" WHERE user_name=?";
 		// this.jdbcTemplate.update(sql,user.getUserName());
+
 	}
 	
     @Override
@@ -124,10 +119,10 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
   
     @Override
 	public List<User> getAllUsers() {
-        return this.findAll();
+		return this.fetchAll();
     }
     
-    @SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
     public boolean checkUserActivationId(String username, String activationCode) {
 

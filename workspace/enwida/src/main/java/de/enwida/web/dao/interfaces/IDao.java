@@ -4,7 +4,13 @@ import java.util.List;
 
 import javax.sql.DataSource;
 
+import org.hibernate.SessionFactory;
+import org.hibernate.cfg.Configuration;
+
 public interface IDao <T> {
+        
+    Configuration cfg = new Configuration().configure();
+    SessionFactory sessionFactory = cfg.buildSessionFactory();
 
 	void setDataSource(DataSource ds);
 	

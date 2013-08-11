@@ -1,7 +1,9 @@
 package de.enwida.web.db.model;
 
 import java.beans.Transient;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -11,7 +13,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 @Embeddable
-public class CalendarRange {
+public class CalendarRange implements Cloneable, Comparable<CalendarRange> {
 
 	public static final String FROM = "START_DATE";
 	public static final String TO = "END_DATE";
@@ -91,6 +93,29 @@ public class CalendarRange {
 	    }
 	    return new CalendarRange(from, to);
 	}
+	
+	public static List<CalendarRange> getConnectedRanges(List<CalendarRange> ranges) {
+		final List<CalendarRange> result = new ArrayList<>(ranges.size());
+		if (ranges.isEmpty()) {
+			return result;
+		}
+		Collections.sort(ranges);
+		result.add((CalendarRange) ranges.get(0).clone());
+		
+		for (int i = 1; i < ranges.size(); i++) {
+			final CalendarRange current = ranges.get(i);
+			final CalendarRange last = result.get(result.size() - 1);
+			
+			if (current.getFrom().compareTo(last.getTo()) <= 0) {
+				if (current.getTo().compareTo(last.getTo()) >= 0) {
+					last.setTo((Calendar) current.getTo().clone());
+				}
+			} else {
+				result.add(current.clone());
+			}
+		}
+		return result;
+	}
 
 	@Transient
     public Calendar getFrom() {
@@ -109,4 +134,16 @@ public class CalendarRange {
     public void setTo(Calendar to) {
         this.to = to;
     }
+
+	@Override
+	public int compareTo(CalendarRange o) {
+		return from.compareTo(o.from);
+	}
+	
+	@Override
+	protected CalendarRange clone() {
+		final Calendar fromClone = (Calendar) from.clone();
+		final Calendar toClone = (Calendar) to.clone();
+		return new CalendarRange(fromClone, toClone);
+	}
 }

@@ -8,6 +8,7 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
+import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.stereotype.Repository;
@@ -58,6 +59,13 @@ public class RoleDaoImpl extends AbstractBaseDao<Role> implements IRoleDao {
                 
         String sql = "INSERT INTO users.roles(name,description) VALUES (?,?);";
         this.save(sql, role);
+    }
+    
+    @Override
+    public void removeRole(Role role) throws Exception{
+        Session session = sessionFactory.openSession();
+        session.save(role);
+        session.close();
     }
 
     @Override

@@ -1,13 +1,18 @@
 package de.enwida.web.dao.implementation;
 
+import java.sql.Array;
+import java.sql.Connection;
 import java.sql.Date;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.sql.DataSource;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -15,6 +20,8 @@ import de.enwida.transport.Aspect;
 import de.enwida.web.controller.AdminController;
 import de.enwida.web.dao.interfaces.AbstractBaseDao;
 import de.enwida.web.dao.interfaces.IRightDao;
+import de.enwida.web.db.model.CalendarRange;
+import de.enwida.web.model.AuthorizationRequest;
 import de.enwida.web.model.Right;
 import de.enwida.web.model.Role;
 
@@ -86,20 +93,41 @@ public class RightDaoImpl extends AbstractBaseDao<Right> implements IRightDao {
         return count > 0 ? true : false;
     }
     
+    @Override    public List<CalendarRange> getAllowedTimeRanges(AuthorizationRequest request) throws Exception {
+        String SELECT_QUERY = "SELECT time1, time2 FROM users.rights WHERE role_id in ? AND tso = ? AND product = ? AND aspect_id = ? AND resolution = ? AND enabled = true;";
+
+        final Connection connection = datasource.getConnection();
+        final PreparedStatement stmt = connection.prepareStatement(SELECT_QUERY);
+        final Array roleArray = connection.createArrayOf("int", request.getUser().getRoles().toArray());
+        stmt.setArray(1, roleArray);
+        stmt.setInt(2, request.getTso());
+        stmt.setInt(3, request.getProduct());
+        stmt.setInt(4, request.getAspect().ordinal());
+        stmt.setString(5, request.getResolution().name());
+        
+        final ResultSet result = stmt.executeQuery();
+        final List<CalendarRange> ranges = new ArrayList<>();
+        while (result.next()) {
+	        final Date from = result.getDate(1);
+	        final Date to = result.getDate(2);
+	        final CalendarRange range = new CalendarRange(from, to);
+	        ranges.add(range);
+        }
+        return ranges;
+    }
+    
     public void addRight(Right right) {
-        final String SELECT_QUERY = "INSERT INTO users.rights (role_id,tso,product,aspect_id,resolution,time1,time2,enabled) VALUES (?,?,?,?,?,?,?,?);";
-        
-        Object[] param = new Object[8];
-		param[0] = right.getRole();
-        param[1] = right.getTso();
-        param[2] = right.getProduct();
-        param[3] = Aspect.valueOf(right.getAspect()).ordinal();
-        param[4] = right.getResolution();
-        param[5] = new Date(right.getTimeFrom().getTime());
-        param[6] = new Date(right.getTimeTo().getTime());
-        param[7] = right.isEnabled();
-        
-        jdbcTemplate.update(SELECT_QUERY, param);
+        Session session = sessionFactory.openSession();
+        session.save(right);
+        session.close();
+    }
+    
+
+    @Override
+    public void removeRight(Right right) throws Exception {
+        Session session = sessionFactory.openSession();
+        session.delete(right);
+        session.close();
     }
 
     public List<Right> getListByExample(Right dataAuthorization)throws Exception {
