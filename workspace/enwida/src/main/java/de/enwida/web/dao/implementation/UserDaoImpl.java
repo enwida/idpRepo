@@ -75,9 +75,9 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
 
     @Override
 	public void enableDisableUser(long userID, boolean enabled) {
-        //TODO:Fix here
-        String sql = "UPDATE "+Constants.USERS_SCHEMA_NAME+Constants.USER_TABLE_NAME+" SET enabled=? WHERE user_id=?";
-        this.jdbcTemplate.update(sql, new Object[] {enabled,userID});
+        User user=fetchById(userID);
+        user.setEnabled(false);
+        update(user);
     }
     
     @Override

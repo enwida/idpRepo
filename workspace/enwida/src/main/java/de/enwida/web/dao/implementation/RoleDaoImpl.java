@@ -23,13 +23,14 @@ public class RoleDaoImpl extends AbstractBaseDao<Role> implements IRoleDao {
 	@Override
 	public List<Role> getUserRoles(long userID)throws Exception {
 	    
-	    String sql = "select DISTINCT ON (role_id) roles.role_id,roles.role_name,roles.description FROM users.roles " +
+	    String sql = "select DISTINCT ON (role_id) roles.role_id,roles.name,roles.description FROM users.roles " +
 	    		"INNER JOIN users.group_role ON group_role.role_id=roles.role_id " +
 	    		"INNER JOIN users.user_group ON user_group.group_id=group_role.group_id " +
 	    		" where users.user_group.user_id=?";
         return this.jdbcTemplate.query(sql,new Object[]{userID},this);
     }
 	
+	@Deprecated
 	@Override
     public Role mapRow(ResultSet rs, int rowNum) throws SQLException {
 	    Role role = new Role();
@@ -39,12 +40,6 @@ public class RoleDaoImpl extends AbstractBaseDao<Role> implements IRoleDao {
         return role;
     }
 
-	@Override
-	public Role getRoleByID(Long id)throws Exception {
-	    String sql = "SELECT * FROM users.roles where roles.role_id=?;";
-	    return this.jdbcTemplate.queryForObject(sql, new Object[] { id }, new BeanPropertyRowMapper<Role>(Role.class));
-	}
-	
     @Override
     public void addRole(Role role) throws Exception{
         create(role);

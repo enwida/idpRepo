@@ -8,7 +8,7 @@ public interface IRoleDao extends IDao<Role> {
 
     List<Role> getUserRoles(long userID) throws Exception;
 
-    Role getRoleByID(Long id) throws Exception;
+    Role fetchById(long id);
 
     void addRole(Role role) throws Exception;
 
