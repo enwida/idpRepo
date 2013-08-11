@@ -210,6 +210,24 @@ public class UploadedFile implements Serializable, Comparable<UploadedFile> {
 	}
 
 	@Override
+	public String toString() {
+		return "UploadedFile [id="
+				+ id
+				+ ", "
+				+ (displayFileName != null ? "displayFileName="
+						+ displayFileName + ", " : "")
+				+ (fileName != null ? "fileName=" + fileName + ", " : "")
+				+ (uploader != null ? "uploader=" + uploader.getUserName()
+						+ ", " : "")
+				+ (uploadDate != null ? "uploadDate=" + uploadDate + ", " : "")
+				+ (modificationDate != null ? "modificationDate="
+						+ modificationDate + ", " : "")
+				+ (format != null ? "format=" + format + ", " : "")
+				+ (filePath != null ? "filePath=" + filePath + ", " : "")
+				+ "revision=" + revision + "]";
+	}
+
+	@Override
 	public int compareTo(UploadedFile o) {
 		// Sort based on upload date descending order
 		return o.getUploadDate().compareTo(this.uploadDate);

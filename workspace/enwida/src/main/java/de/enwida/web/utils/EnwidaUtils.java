@@ -1,6 +1,9 @@
 package de.enwida.web.utils;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -111,4 +114,68 @@ public class EnwidaUtils {
     {
       return new BigInteger(130, random).toString(32);
     }
+
+	/**
+	 * Writes given content to a file.
+	 * 
+	 * @param file
+	 *            the file to write to
+	 * @param text
+	 *            the text to write.
+	 */
+	public static void writeAllText(File file, String text) throws Exception {
+		BufferedWriter out = new BufferedWriter(new FileWriter(file));
+		out.write(text);
+		out.close();
+	}
+
+	/**
+	 * Creates a new directory depending on the input path given
+	 * 
+	 * @param path
+	 *            directory path that needs to be created
+	 * @return success status of directory creation
+	 */
+	public static boolean createDirectory(String path) {
+		boolean status = false;
+
+		if (path != null && !path.trim().isEmpty()) {
+			File f = new File(path);
+			f.setWritable(true);
+
+			if (!f.exists()) {
+				status = f.mkdirs();
+			}
+		}
+		return status;
+	}
+
+	/**
+	 * @param completeName
+	 * @return
+	 */
+	public static String extractFileFormat(String completeName) {
+		String[] fnameParts = completeName.split("\\\\");
+		// String fname = fnameParts[fnameParts.length - 1];
+		// this.displayFileName = fname;
+
+		fnameParts = completeName.split("\\.");
+		if (fnameParts.length < 2) {
+			// file without format.
+			return null;
+		}
+
+		return fnameParts[fnameParts.length - 1];
+	}
+
+	/**
+	 * @param fileTORemove
+	 * @return
+	 * @throws Exception
+	 */
+	public static boolean removeTemporaryFile(File fileTORemove)
+			throws Exception {
+		fileTORemove.delete();
+		return true;
+	}
 }

@@ -4,10 +4,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-import javax.sql.DataSource;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.stereotype.Repository;
 
 import de.enwida.web.dao.interfaces.AbstractBaseDao;
@@ -16,9 +12,6 @@ import de.enwida.web.model.Role;
 
 @Repository
 public class RoleDaoImpl extends AbstractBaseDao<Role> implements IRoleDao {
-	
-	@Autowired
-	private DataSource datasource;
 	
 	@Override
 	public List<Role> getUserRoles(long userID)throws Exception {

@@ -217,8 +217,9 @@ public class UserServiceImpl implements IUserService {
         User user= userDao.fetchByName(userName);
         if (user==null)
             return null;
-        user.setRoles(roleDao.getUserRoles(user.getUserID()));
-        user.setGroups(groupDao.getUserGroups(user.getUserID()));
+		// TODO:FIX
+		// user.setRoles(roleDao.getUserRoles(user.getUserID()));
+		// user.setGroups(groupDao.getUserGroups(user.getUserID()));
         return user;
     }
     /**

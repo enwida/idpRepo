@@ -1,9 +1,7 @@
 package de.enwida.web.controller;
 
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.security.Principal;
@@ -49,6 +47,7 @@ import de.enwida.web.service.implementation.MailServiceImpl;
 import de.enwida.web.service.interfaces.IUserLinesService;
 import de.enwida.web.service.interfaces.IUserService;
 import de.enwida.web.utils.Constants;
+import de.enwida.web.utils.EnwidaUtils;
 import de.enwida.web.utils.LogoFinder;
 import de.enwida.web.validator.FileValidator;
 import de.enwida.web.validator.UserValidator;
@@ -371,7 +370,7 @@ public class UserController {
 							// update uploaded files list
 							filetable.add(file);
 							model.put("successmsg", uploadsuccessmsg);
-							removeTemporaryFile(filetobeuploaded);
+							EnwidaUtils.removeTemporaryFile(filetobeuploaded);
 						} else {
 							model.put("errormsg", "Duplicate file uploaded");
 						}
@@ -428,41 +427,19 @@ public class UserController {
 		// get BindingResult that includes any validation errors
 		return binder.getBindingResult();
 	}
-	/**
-	 * Creates a new directory depending on the input path given
-	 * 
-	 * @param path
-	 *            directory path that needs to be created
-	 * @return success status of directory creation
-	 */
-	public boolean createDirectory(String path) {
-		boolean status = false;
 
-		if (path != null && !path.trim().isEmpty()) {
-			File f = new File(path);
-			f.setWritable(true);
-
-			if (!f.exists()) {
-				status = f.mkdirs();
-			}
-		}
-		return status;
-	}
 
 	private File getTemporaryFile(FileItem item) throws Exception {
 		String tempFile = fileUploadDirectory + File.separator + "temp"
 				+ File.separator + item.getName();
-		createDirectory(fileUploadDirectory + File.separator + "temp");
+		EnwidaUtils.createDirectory(fileUploadDirectory + File.separator
+				+ "temp");
 		// do validation here
 		File filetobeuploaded = new File(tempFile);
 		item.write(filetobeuploaded);
 		return filetobeuploaded;
 	}
 
-	private boolean removeTemporaryFile(File fileTORemove) throws Exception {
-		fileTORemove.delete();
-		return true;
-	}
 
 	private UploadedFile saveFile(File file, User user) throws Exception {
 		String displayfileName = file.getName();
@@ -477,7 +454,7 @@ public class UserController {
 			// TODO: handle exception
 			generatedId = new Long(1);
 		}
-		String fileFormat = extractFileFormat(displayfileName);
+		String fileFormat = EnwidaUtils.extractFileFormat(displayfileName);
 		String fileName = "file";
 		if (fileFormat != null && generatedId != null)
 			fileName += "_" + generatedId + "." + fileFormat;
@@ -486,7 +463,7 @@ public class UserController {
 		}
 		// make sure that file directory is present
 		// before uploading file
-		createDirectory(fileUploadDirectory);
+		EnwidaUtils.createDirectory(fileUploadDirectory);
 
 		// upload file
 		File uploadedFile = new File(fileUploadDirectory + File.separator
@@ -499,7 +476,13 @@ public class UserController {
 		// update file manifest data
 		File manifestFile = new File(fileUploadDirectory + File.separator
 				+ fileName + ".mfst");
-		writeAllText(manifestFile, displayfileName);
+		try {
+			EnwidaUtils.writeAllText(manifestFile, displayfileName);
+		} catch (Exception e) {
+			logger.error(
+					"Update Manifest data for uploaded File: " + file.getName(),
+					e);
+		}
 
 		// create entry in file upload table
 		UploadedFile uploadedfile = new UploadedFile();
@@ -524,39 +507,7 @@ public class UserController {
 				.getFileByFilePath(uploadedfile.getFilePath());
 		return uploadedfile;
 	}
-	/**
-	 * Writes given content to a file.
-	 * 
-	 * @param file
-	 *            the file to write to
-	 * @param text
-	 *            the text to write.
-	 */
-	public void writeAllText(File file, String text) {
-		try {
-			BufferedWriter out = new BufferedWriter(new FileWriter(file));
-			out.write(text);
-			out.close();
-		} catch (Exception e) {
-			logger.error(
-					"Update Manifest data for uploaded File: " + file.getName(),
-					e);
-		}
-	}
 
-	private String extractFileFormat(String completeName) {
-		String[] fnameParts = completeName.split("\\\\");
-		// String fname = fnameParts[fnameParts.length - 1];
-		// this.displayFileName = fname;
-
-		fnameParts = completeName.split("\\.");
-		if (fnameParts.length < 2) {
-			// file without format.
-			return null;
-		}
-
-		return fnameParts[fnameParts.length - 1];
-	}
 
 	@RequestMapping(value = "/files/{fileId}", method = RequestMethod.GET)
 	@ResponseBody

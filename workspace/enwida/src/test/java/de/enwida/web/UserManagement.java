@@ -86,7 +86,7 @@ public class UserManagement {
 
 	@After
 	public void cleanUpTestCase() throws Exception {
-		userDao.deleteUser(user);
+		// userDao.deleteUser(user);
 	}
 
 	@Test
