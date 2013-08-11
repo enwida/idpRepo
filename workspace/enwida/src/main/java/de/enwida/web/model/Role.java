@@ -61,6 +61,10 @@ public class Role  implements Serializable{
 	 */
 	public Role() {
 	}
+	
+    public Role(String roleName) {
+        this.roleName=roleName;
+    }
 
 	/**
 	 * @param roleID

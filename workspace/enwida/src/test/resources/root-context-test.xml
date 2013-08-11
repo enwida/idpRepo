@@ -77,8 +77,8 @@
 	     <property name="password" value="${mail.smtp.password}"/>
 	     <property name="port" value="${mail.smtp.port"/>
 	     <property name="auth" value="${mail.smtp.auth}"/>
-	</bean>
-	
+	</bean>	
+
 	<!-- Scan all dao's and load in context(dnt forget to give repository annotation to DAO -->
 	<context:component-scan base-package="de.enwida.web.dao.implementation">
 		<context:include-filter type="annotation"

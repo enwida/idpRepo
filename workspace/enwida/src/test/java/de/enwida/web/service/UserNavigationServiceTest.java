@@ -53,7 +53,7 @@ public class UserNavigationServiceTest {
 	}
 
 	private void test1() throws Exception {
-		User user1 = new User(0, "username1", "password1", "firstname",
+		User user1 = new User("username1", "password1", "firstname",
 				"lastname", false);
 		userService.saveUser(user1);
 		System.out.println(userService.getUsers());

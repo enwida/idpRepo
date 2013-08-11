@@ -12,6 +12,7 @@ import java.util.List;
 import javax.sql.DataSource;
 
 import org.apache.log4j.Logger;
+import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -113,19 +114,17 @@ public class RightDaoImpl extends AbstractBaseDao<Right> implements IRightDao {
     }
     
     public void addRight(Right right) {
-        final String SELECT_QUERY = "INSERT INTO users.rights (role_id,tso,product,aspect_id,resolution,time1,time2,enabled) VALUES (?,?,?,?,?,?,?,?);";
-        
-        Object[] param = new Object[8];
-		param[0] = right.getRole();
-        param[1] = right.getTso();
-        param[2] = right.getProduct();
-        param[3] = Aspect.valueOf(right.getAspect()).ordinal();
-        param[4] = right.getResolution();
-        param[5] = new Date(right.getTimeFrom().getTime());
-        param[6] = new Date(right.getTimeTo().getTime());
-        param[7] = right.isEnabled();
-        
-        jdbcTemplate.update(SELECT_QUERY, param);
+        Session session = sessionFactory.openSession();
+        session.save(right);
+        session.close();
+    }
+    
+
+    @Override
+    public void removeRight(Right right) throws Exception {
+        Session session = sessionFactory.openSession();
+        session.delete(right);
+        session.close();
     }
 
     public List<Right> getListByExample(Right dataAuthorization)throws Exception {
