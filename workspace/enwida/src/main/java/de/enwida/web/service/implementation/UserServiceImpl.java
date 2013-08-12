@@ -243,7 +243,8 @@ public class UserServiceImpl implements IUserService {
         if (!group.getAssignedUsers().contains(user)){
             group.getAssignedUsers().add(user);
         }
-        groupDao.save(group);
+        if(group!=null  || user!=null)
+            groupDao.save(group);
     }
     /**
      * deAssign users into group
@@ -255,7 +256,8 @@ public class UserServiceImpl implements IUserService {
         if (group.getAssignedUsers().contains(user)){
             group.getAssignedUsers().remove(user);
         }
-        groupDao.save(group);
+        if(group!=null  || user!=null)
+            groupDao.save(group);
     }
     /**
      * Gets all groups with users attached
@@ -276,7 +278,8 @@ public class UserServiceImpl implements IUserService {
         if (!group.getAssignedRoles().contains(role)){
             group.getAssignedRoles().add(role);
         }
-        groupDao.save(group);
+        if(role!=null  || group!=null)
+            groupDao.save(group);
     }
 
     @Override
@@ -286,7 +289,8 @@ public class UserServiceImpl implements IUserService {
         if (group.getAssignedRoles().contains(role)){
             group.getAssignedRoles().remove(role);
         }
-        groupDao.save(group);
+        if(role!=null  || group!=null)
+            groupDao.save(group);
     }
 
     @Override

@@ -83,6 +83,9 @@ public class Group implements Serializable{
 
     @Transient
     public List<User> getAssignedUsers() {
+        if (assignedUsers == null) {
+            assignedUsers = new ArrayList<User>();
+        }
         return assignedUsers;
     }
 
@@ -99,6 +102,9 @@ public class Group implements Serializable{
 
 	@Transient
 	public List<Role> getAssignedRoles() {
+        if (assignedRoles == null) {
+            assignedRoles = new ArrayList<Role>();
+        }
 		return assignedRoles;
 	}
 

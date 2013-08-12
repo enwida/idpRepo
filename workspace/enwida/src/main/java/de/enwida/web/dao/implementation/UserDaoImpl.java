@@ -24,6 +24,8 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
     @Override
 	public long save(User user)
 	{
+        if(user==null) return 0;
+        
 		User exisinguser = fetchByName(user.getUserName());
 		try {
 			if (exisinguser == null) {

@@ -27,10 +27,13 @@ public class RoleDaoImpl extends AbstractBaseDao<Role> implements IRoleDao {
     @Override
     public Role save(Role role)
     {
+        if(role==null) return null;
+        
         Role exist = fetchByName(role.getRoleName());
         if (exist == null) {
             // create or refresh
             create(role);
+            exist=role;
         } else {
             exist = update(exist);
         }

@@ -26,10 +26,13 @@ public class GroupDaoImpl extends AbstractBaseDao<Group> implements IGroupDao {
     @Override
     public Group save(Group group)
     {
+        if(group==null) return null;
+        
         Group exist = fetchByName(group.getGroupName());
         if (exist == null) {
             // create or refresh
             create(group);
+            exist=group;
         } else {
             exist = update(exist);
         }
