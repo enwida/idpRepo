@@ -2,7 +2,6 @@ package de.enwida.web.controller;
 
 import java.io.IOException;
 import java.security.Principal;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -24,16 +23,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import de.enwida.chart.LineManager;
 import de.enwida.transport.Aspect;
 import de.enwida.transport.DataResolution;
 import de.enwida.transport.IDataLine;
 import de.enwida.transport.LineRequest;
-import de.enwida.web.db.model.CalendarRange;
 import de.enwida.web.db.model.NavigationDefaults;
 import de.enwida.web.db.model.NavigationSettings;
 import de.enwida.web.model.ChartNavigationData;
-import de.enwida.web.model.User;
 import de.enwida.web.service.interfaces.ILineService;
 import de.enwida.web.service.interfaces.INavigationService;
 import de.enwida.web.service.interfaces.IUserService;
@@ -157,106 +153,9 @@ public class ChartDataController {
         }
     }
     
-    private User getUser(Principal principal) {
-        try {
-			return userSession.getUser();
-			// return userService.getUser(principal.getName());
-        } catch (Exception e) {
-            logger.error(e.getMessage());
-            return null;
-        }
-    }
     
 
-    /*
-     * ==========================================================================
-     * ============= CAUTION: ! Never ever leave the methods below in production
-     * code !
-     * 
-     * These get navigation data and lines bypassing the security layer in order
-     * to test frontend JavaScript code
-     * ==========================================
-     * =============================================
-     */
-
-    @Autowired
-    private LineManager lineManager;
-
-    @RequestMapping(value = "/navigation.test", method = RequestMethod.GET)
-    @ResponseBody
-    public ChartNavigationData getNavigationDataTest(@RequestParam int chartId,
-	    Principal principal, Locale locale, HttpServletRequest request,
-	    HttpServletResponse response) throws ParseException {
-
-		final ChartNavigationData result = navigationService
-				.getNavigationDataUNSECURE(chartId, getUser(principal), locale);
-
-    	// Try to get the navigation defaults from the cookie
-    	try {
-			Map<Integer, NavigationDefaults> chartDefaults = getUserSettings(request);
-			/*
-			 * final JsonReader jsonReader = new JsonReader( new
-			 * ByteArrayInputStream(navigationSettings.getBytes())); final
-			 * ChartDefaults chartDefaults = (ChartDefaults)
-			 * jsonReader.readObject(); jsonReader.close();
-			 */
-
-    	    final NavigationDefaults defaults = chartDefaults.get(chartId);
-    	    if (defaults != null) {
-    	        result.setDefaults(defaults);
-    	    }
-    	} catch (Exception ignored) {
-            logger.info(ignored.getMessage());
-    	}
-    	
-    	return result;
-    }
-
-    @RequestMapping(value = "/lines.test", method = RequestMethod.GET)
-    @ResponseBody
-    public List<IDataLine> getLinesTest(
-	    @RequestParam int chartId,
-	    @RequestParam int product,
-	    @RequestParam int tso,
-	    @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Calendar startTime,
-	    @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Calendar endTime,
-	    @RequestParam DataResolution resolution,
-	    Locale locale,
-	    HttpServletRequest request,
-	    HttpServletResponse response,
-	    Principal principal) {
-
-    	final List<IDataLine> result = new ArrayList<IDataLine>();
-    	final ChartNavigationData navigationData = navigationService.getDefaultNavigationData(chartId);
-
-    	for (final Aspect aspect : navigationData.getAspects()) {
-
-    	    final LineRequest req = new LineRequest(aspect, product, tso,
-    		    startTime, endTime, resolution, locale);
-    	    try {
-        		result.add(lineManager.getLine(req));
-    	    } catch (Exception e) {
-        		e.printStackTrace();
-    	    }
-    	}
-    	
-		// Update navigation settings data
-    	final NavigationDefaults defaults = new NavigationDefaults(
-    	        tso,
-    	        resolution,
-    	        product,
-    	        new CalendarRange(startTime, endTime));
-
-    	try {
-			updateChartDefaults(chartId, defaults, request);
-        } catch (Exception e) {
-            // Don't reply with an error if saving the defaults failed
-			logger.error("saving the chart navigation details failed : ", e);
-			// e.printStackTrace();
-        }
     
-    	return result;
-    }
     
 	private NavigationDefaults getNavigationDefaults(int chartId,
 			HttpServletRequest request)
