@@ -1,5 +1,7 @@
 package de.enwida.web;
 
+import static org.junit.Assert.assertEquals;
+
 import java.sql.Date;
 import java.util.Calendar;
 
@@ -30,7 +32,6 @@ import de.enwida.web.service.interfaces.IUserService;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:/root-context-test.xml")
 @TransactionConfiguration(transactionManager = "jpaTransactionManager", defaultRollback = false)
-@Transactional
 public class UserManagement {
 
 	@Autowired
@@ -60,21 +61,21 @@ public class UserManagement {
 	private User user;
 
 	@Test
+	@Transactional
 	public void createUser() throws Exception {
 		user = new User("test", "q12wq12w", "test", "test", true);
 		user.setJoiningDate(new Date(Calendar.getInstance().getTimeInMillis()));
 		user.setCompanyName("enwida.de");
-		userDao.save(user);
+		user=userDao.fetchByName(user.getUsername());
 		userDao.enableDisableUser(user.getUserID(), false);
 		userDao.enableDisableUser(user.getUserID(), true);
-		updateUser();
-		testGroup();
-        testRole();
-        testRight();
-		testMail();
+		userDao.save(user);
 	}
 
+	   @Test
+	    @Transactional
 	public void testGroup(){
+	        user=userDao.fetchByName("test");
 		Group adminGroup = new Group("Admin");
 		adminGroup =groupDao.addGroup(adminGroup);
 
@@ -92,20 +93,25 @@ public class UserManagement {
         Assert.assertTrue(adminGroup.getAssignedUsers().contains(user));
 	}
 
-
+    @Test
+    @Transactional
 	public void updateUser() throws Exception {
-//		userDao.save(user);
-//		user.setCompanyName("test");
-//		userDao.updateUser(user);
-//        userDao.save(user);
-//		User user2 = userDao.fetchByName(user.getUserName());
-//		assertEquals("test", user2.getCompanyName());
+		user=userDao.fetchByName("test");
+		user.setCompanyName("test");
+		userDao.updateUser(user);
+        userDao.save(user);
+		User user2 = userDao.fetchByName(user.getUserName());
+		assertEquals("test", user2.getCompanyName());
 	}
 
+    @Test
+    @Transactional
 	public void testMail() throws Exception {
 		mailService.SendEmail("olcaytarazan@gmail.com", "User Management Test","Ignore");
 	}
-
+	    
+    @Test
+    @Transactional
 	public void testRole()  {
 	    //Create roles
 		Role adminRole = new Role("Admin");
@@ -133,7 +139,8 @@ public class UserManagement {
         Assert.assertTrue(anonymousGroup.getAssignedRoles().contains(anonymousRole));
 		
 	}
-
+    @Test
+    @Transactional
 	public void testRight() throws Exception {
 
 		Right right1 = new Right();
