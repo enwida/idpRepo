@@ -272,8 +272,9 @@ public class ChartNavigationTest {
 		right.setProduct(211);
 		right.setResolution(DataResolution.DAILY.name());
 		right.setRole(new Role(42));
-		right.setTimeFrom(dateFormat.parse("2009-05-18"));
-		right.setTimeTo(dateFormat.parse("2011-09-02"));
+        right.setTimeRange(
+                new CalendarRange(dateFormat.parse("2008-05-18"), dateFormat.parse("2012-09-02"))
+                        );
 		right.setTso(99);
 		rightDao.addRight(right);
 		
@@ -294,8 +295,8 @@ public class ChartNavigationTest {
 		Assert.assertTrue(product.productId == right.getProduct());
 		Assert.assertTrue(product.resolutions.size() == 1);
 		Assert.assertEquals(product.resolutions.get(0).name(), right.getResolution());
-		Assert.assertEquals(product.timeRange.getFrom().getTimeInMillis(), right.getTimeFrom().getTime());
-		Assert.assertEquals(product.timeRange.getTo().getTimeInMillis(), right.getTimeTo().getTime());
+		Assert.assertEquals(product.timeRange.getFrom().getTimeInMillis(), right.getTimeRange().getFrom().getTime());
+		Assert.assertEquals(product.timeRange.getTo().getTimeInMillis(), right.getTimeRange().getTo().getTime());
 		
 		checkLines(navigationData);
 	}
@@ -311,8 +312,9 @@ public class ChartNavigationTest {
 		right1.setProduct(211);
 		right1.setResolution(DataResolution.DAILY.name());
 		right1.setRole(new Role(42));
-		right1.setTimeFrom(dateFormat.parse("2009-05-18"));
-		right1.setTimeTo(dateFormat.parse("2011-09-02"));
+        right1.setTimeRange(
+                new CalendarRange(dateFormat.parse("2008-05-18"), dateFormat.parse("2012-09-02"))
+                        );
 		right1.setTso(99);
 		rightDao.addRight(right1);
 
@@ -322,8 +324,9 @@ public class ChartNavigationTest {
 		right2.setProduct(311);
 		right2.setResolution(DataResolution.MONTHLY.name());
 		right2.setRole(new Role(43));
-		right2.setTimeFrom(dateFormat.parse("2007-05-18"));
-		right2.setTimeTo(dateFormat.parse("2010-09-02"));
+        right2.setTimeRange(
+                new CalendarRange(dateFormat.parse("2008-05-18"), dateFormat.parse("2012-09-02"))
+                        );
 		right2.setTso(100);
 		rightDao.addRight(right2);
 		
@@ -350,8 +353,8 @@ public class ChartNavigationTest {
 		Assert.assertTrue(product.productId == right1.getProduct());
 		Assert.assertTrue(product.resolutions.size() == 1);
 		Assert.assertEquals(product.resolutions.get(0).name(), right1.getResolution());
-		Assert.assertEquals(product.timeRange.getFrom().getTimeInMillis(), right1.getTimeFrom().getTime());
-		Assert.assertEquals(product.timeRange.getTo().getTimeInMillis(), right1.getTimeTo().getTime());
+		Assert.assertEquals(product.timeRange.getFrom().getTimeInMillis(), right1.getTimeRange().getFrom().getTime());
+		Assert.assertEquals(product.timeRange.getTo().getTimeInMillis(), right1.getTimeRange().getTo().getTime());
 
 		checkLines(navigationData);
 	}
@@ -367,8 +370,9 @@ public class ChartNavigationTest {
 		right1.setProduct(211);
 		right1.setResolution(DataResolution.DAILY.name());
 		right1.setRole(new Role(42));
-		right1.setTimeFrom(dateFormat.parse("2009-05-18"));
-		right1.setTimeTo(dateFormat.parse("2011-09-02"));
+		right1.setTimeRange(
+		        new CalendarRange(dateFormat.parse("2009-05-18"), dateFormat.parse("2011-09-02"))
+		                );
 		right1.setTso(99);
 		rightDao.addRight(right1);
 
@@ -378,8 +382,9 @@ public class ChartNavigationTest {
 		right2.setProduct(311);
 		right2.setResolution(DataResolution.MONTHLY.name());
 		right2.setRole(new Role(43));
-		right2.setTimeFrom(dateFormat.parse("2007-05-18"));
-		right2.setTimeTo(dateFormat.parse("2010-09-02"));
+        right2.setTimeRange(
+                new CalendarRange(dateFormat.parse("2009-05-18"), dateFormat.parse("2011-09-02"))
+                        );
 		right2.setTso(99);
 		rightDao.addRight(right2);
 		
@@ -402,15 +407,15 @@ public class ChartNavigationTest {
 		Assert.assertTrue(product1.productId == right1.getProduct());
 		Assert.assertTrue(product1.resolutions.size() == 1);
 		Assert.assertEquals(product1.resolutions.get(0).name(), right1.getResolution());
-		Assert.assertEquals(product1.timeRange.getFrom().getTimeInMillis(), right1.getTimeFrom().getTime());
-		Assert.assertEquals(product1.timeRange.getTo().getTimeInMillis(), right1.getTimeTo().getTime());		
+		Assert.assertEquals(product1.timeRange.getFrom().getTimeInMillis(), right1.getTimeRange().getFrom().getTime());
+		Assert.assertEquals(product1.timeRange.getTo().getTimeInMillis(), right1.getTimeRange().getTo().getTime());		
 
 		final ProductAttributes product2 = products.get(1);
 		Assert.assertTrue(product2.productId == right2.getProduct());
 		Assert.assertTrue(product2.resolutions.size() == 1);
 		Assert.assertEquals(product2.resolutions.get(0).name(), right2.getResolution());
-		Assert.assertEquals(product2.timeRange.getFrom().getTimeInMillis(), right2.getTimeFrom().getTime());
-		Assert.assertEquals(product2.timeRange.getTo().getTimeInMillis(), right2.getTimeTo().getTime());
+		Assert.assertEquals(product2.timeRange.getFrom().getTimeInMillis(), right2.getTimeRange().getFrom().getTime());
+		Assert.assertEquals(product2.timeRange.getTo().getTimeInMillis(), right2.getTimeRange().getTo().getTime());
 
 		checkLines(navigationData, toCalendar("2009-06-01"), toCalendar("2010-08-05"));
 	}
@@ -426,8 +431,9 @@ public class ChartNavigationTest {
 		right1.setProduct(211);
 		right1.setResolution(DataResolution.DAILY.name());
 		right1.setRole(new Role(42));
-		right1.setTimeFrom(dateFormat.parse("2009-05-18"));
-		right1.setTimeTo(dateFormat.parse("2011-09-02"));
+        right1.setTimeRange(
+                new CalendarRange(dateFormat.parse("2008-05-18"), dateFormat.parse("2012-09-02"))
+                        );
 		right1.setTso(99);
 		rightDao.addRight(right1);
 
@@ -437,8 +443,9 @@ public class ChartNavigationTest {
 		right2.setProduct(211);
 		right2.setResolution(DataResolution.MONTHLY.name());
 		right2.setRole(new Role(43));
-		right2.setTimeFrom(dateFormat.parse("2008-05-18"));
-		right2.setTimeTo(dateFormat.parse("2010-09-02"));
+        right2.setTimeRange(
+                new CalendarRange(dateFormat.parse("2008-05-18"), dateFormat.parse("2012-09-02"))
+                        );
 		right2.setTso(99);
 		rightDao.addRight(right2);
 		
@@ -464,8 +471,8 @@ public class ChartNavigationTest {
 		Assert.assertTrue(product1.resolutions.contains(DataResolution.valueOf(right2.getResolution())));
 		
 		// Check that the time matches the maximum of allowed times
-		Assert.assertEquals(product1.timeRange.getFrom().getTimeInMillis(), right2.getTimeFrom().getTime());
-		Assert.assertEquals(product1.timeRange.getTo().getTimeInMillis(), right1.getTimeTo().getTime());
+		Assert.assertEquals(product1.timeRange.getFrom().getTimeInMillis(), right2.getTimeRange().getFrom().getTime());
+		Assert.assertEquals(product1.timeRange.getTo().getTimeInMillis(), right1.getTimeRange().getTo().getTime());
 
 		checkLines(navigationData, toCalendar("2009-06-01"), toCalendar("2010-02-04"));
 	}
@@ -480,8 +487,9 @@ public class ChartNavigationTest {
 		right1.setProduct(211);
 		right1.setResolution(DataResolution.DAILY.name());
 		right1.setRole(new Role(42));
-		right1.setTimeFrom(dateFormat.parse("2009-05-18"));
-		right1.setTimeTo(dateFormat.parse("2011-09-02"));
+        right1.setTimeRange(
+                new CalendarRange(dateFormat.parse("2008-05-18"), dateFormat.parse("2012-09-02"))
+                        );
 		right1.setTso(99);
 		rightDao.addRight(right1);
 
@@ -491,8 +499,9 @@ public class ChartNavigationTest {
 		right2.setProduct(211);
 		right2.setResolution(DataResolution.DAILY.name());
 		right2.setRole(new Role(43));
-		right2.setTimeFrom(dateFormat.parse("2008-05-18"));
-		right2.setTimeTo(dateFormat.parse("2010-09-02"));
+        right2.setTimeRange(
+                new CalendarRange(dateFormat.parse("2008-05-18"), dateFormat.parse("2012-09-02"))
+                        );
 		right2.setTso(99);
 		rightDao.addRight(right2);
 		
@@ -518,8 +527,8 @@ public class ChartNavigationTest {
 		Assert.assertTrue(product1.resolutions.contains(DataResolution.valueOf(right2.getResolution())));
 		
 		// Check that the time matches the maximum of allowed times
-		Assert.assertEquals(product1.timeRange.getFrom().getTimeInMillis(), right2.getTimeFrom().getTime());
-		Assert.assertEquals(product1.timeRange.getTo().getTimeInMillis(), right1.getTimeTo().getTime());
+		Assert.assertEquals(product1.timeRange.getFrom().getTimeInMillis(), right2.getTimeRange().getFrom().getTime());
+		Assert.assertEquals(product1.timeRange.getTo().getTimeInMillis(), right1.getTimeRange().getTo().getTime());
 
 		// Check expanding time range over roles
 		checkLines(navigationData);
@@ -536,8 +545,9 @@ public class ChartNavigationTest {
 		right1.setProduct(211);
 		right1.setResolution(DataResolution.DAILY.name());
 		right1.setRole(new Role(42));
-		right1.setTimeFrom(dateFormat.parse("2009-05-18"));
-		right1.setTimeTo(dateFormat.parse("2011-09-02"));
+        right1.setTimeRange(
+                new CalendarRange(dateFormat.parse("2008-05-18"), dateFormat.parse("2012-09-02"))
+                        );
 		right1.setTso(99);
 		rightDao.addRight(right1);
 
@@ -547,8 +557,9 @@ public class ChartNavigationTest {
 		right2.setProduct(211);
 		right2.setResolution(DataResolution.MONTHLY.name());
 		right2.setRole(new Role(43));
-		right2.setTimeFrom(dateFormat.parse("2008-05-18"));
-		right2.setTimeTo(dateFormat.parse("2010-09-02"));
+        right2.setTimeRange(
+                new CalendarRange(dateFormat.parse("2008-05-18"), dateFormat.parse("2012-09-02"))
+                        );
 		right2.setTso(99);
 		rightDao.addRight(right2);
 
@@ -558,8 +569,9 @@ public class ChartNavigationTest {
 		right3.setProduct(211);
 		right3.setResolution(DataResolution.WEEKLY.name());
 		right3.setRole(new Role(42));
-		right3.setTimeFrom(dateFormat.parse("2008-05-18"));
-		right3.setTimeTo(dateFormat.parse("2012-09-02"));
+        right3.setTimeRange(
+                new CalendarRange(dateFormat.parse("2008-05-18"), dateFormat.parse("2012-09-02"))
+                        );
 		right3.setTso(99);
 		rightDao.addRight(right3);
 
@@ -569,8 +581,9 @@ public class ChartNavigationTest {
 		right4.setProduct(211);
 		right4.setResolution(DataResolution.WEEKLY.name());
 		right4.setRole(new Role(43));
-		right4.setTimeFrom(dateFormat.parse("2008-03-13"));
-		right4.setTimeTo(dateFormat.parse("2012-09-02"));
+        right4.setTimeRange(
+                new CalendarRange(dateFormat.parse("2008-03-13"), dateFormat.parse("2012-09-02"))
+                        );
 		right4.setTso(99);
 		rightDao.addRight(right4);
 
@@ -598,8 +611,8 @@ public class ChartNavigationTest {
 		Assert.assertTrue(product1.resolutions.contains(DataResolution.valueOf(right3.getResolution())));
 		
 		// Check that the time matches the maximum of allowed times
-		Assert.assertEquals(product1.timeRange.getFrom().getTimeInMillis(), right4.getTimeFrom().getTime());
-		Assert.assertEquals(product1.timeRange.getTo().getTimeInMillis(), right3.getTimeTo().getTime());
+		Assert.assertEquals(product1.timeRange.getFrom().getTimeInMillis(), right4.getTimeRange().getFrom().getTime());
+		Assert.assertEquals(product1.timeRange.getTo().getTimeInMillis(), right3.getTimeRange().getTo().getTime());
 
 		checkLines(navigationData, toCalendar("2009-12-01"), toCalendar("2010-05-28"));
 	}
