@@ -240,10 +240,10 @@ public class UserServiceImpl implements IUserService {
     public void assignUserToGroup(long userID, long groupID){
         User user=userDao.fetchById(userID);
         Group group=groupDao.fetchById(groupID);
-        if (!user.getGroups().contains(group)){
-            user.getGroups().add(group);
+        if (!group.getAssignedUsers().contains(user)){
+            group.getAssignedUsers().add(user);
         }
-        userDao.save(user);
+        groupDao.save(group);
     }
     /**
      * deAssign users into group
@@ -252,10 +252,10 @@ public class UserServiceImpl implements IUserService {
     public void deassignUserFromGroup(long userID, long groupID) {
         User user=userDao.fetchById(userID);
         Group group=groupDao.fetchById(groupID);
-        if (user.getGroups().contains(group)){
-            user.getGroups().remove(group);
+        if (group.getAssignedUsers().contains(user)){
+            group.getAssignedUsers().remove(user);
         }
-        userDao.save(user);
+        groupDao.save(group);
     }
     /**
      * Gets all groups with users attached

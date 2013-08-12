@@ -91,11 +91,10 @@ public class UserManagement {
 		 
 		// save user in anonymous group
 		 userService.assignUserToGroup(user.getUserID(),anonymousGroup.getGroupID());
-		 
 
         //CheckGroups
-        Assert.assertTrue(user.getGroups().contains(anonymousGroup));
-        Assert.assertTrue( user.getGroups().contains(adminGroup));
+        Assert.assertTrue(anonymousGroup.getAssignedUsers().contains(user));
+        Assert.assertTrue(adminGroup.getAssignedUsers().contains(user));
 	}
 
 	@Test
