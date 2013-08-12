@@ -1,13 +1,15 @@
-define [ "components/navigation"
-         "components/visual"
+define [ "components/visual"
+         "components/productSelection"
+         "components/timeSelection"
          "components/lines"
          "components/infobox"
          "util/loading"
          "util/lines_preprocessor"
         ],
 
-  (Navigation
-   Visual
+  (Visual
+   ProductSelection
+   TimeSelection
    Lines
    Infobox
    Loading
@@ -114,6 +116,8 @@ define [ "components/navigation"
         visual: ".visual"
         lines: ".lines"
         infobox: ".infobox"
+        productSelection: ".productSelection"
+        timeSelection: ".timeSelection"
         disabledLines: []
 
       @after "initialize", ->
@@ -157,13 +161,15 @@ define [ "components/navigation"
           @$node.append lines
           Lines.attachTo lines
 
-        # Add navigation
-        navigation = $("<div>").addClass "navigation"
-        @$node.append navigation
-        Navigation.attachTo navigation,
-          id: @attr.id
-          width: @attr.width
-          type: @attr.type
+        # Add product selection
+        productSelection = $("<div>").addClass "productSelection"
+        @$node.append productSelection
+        ProductSelection.attachTo productSelection, id: @attr.id
+
+        # Add time selection
+        timeSelection = $("<div>").addClass "timeSelection"
+        @$node.append timeSelection
+        TimeSelection.attachTo timeSelection, id: @attr.id
 
         @getNavigationData (err, data) =>
           if err?
@@ -175,5 +181,6 @@ define [ "components/navigation"
 
           @attr.navigationData = data
           @applyVisibility()
-          @trigger @select("navigation"), "refresh", data: data
+          @trigger @select("productSelection"), "refresh", data: data
+          @trigger @select("timeSelection"), "refresh", data: data
 

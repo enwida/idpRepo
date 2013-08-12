@@ -1,4 +1,4 @@
 - Factor out productSelection
 - Factor out timeSelection (one with time range, one with from, to)
-- Factor out getting of navigation data -> chart manager
+
 

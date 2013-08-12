@@ -132,19 +132,22 @@ body {
 	background-color: #888888;
 }
 
-.navigation {
+.productSelection,
+.timeSelection {
 	padding: 10px;
 	margin-left: 40px;
 	margin-top: 5px;
 }
 
-.navigation select {
+.productSelection select,
+.timeSelection select {
 	width: 0;
 	min-width: 150px;
 	margin-right: 10px;
 }
 
-.navigation input {
+.productSelection input,
+.timeSelection input {
 	width: 0;
 	min-width: 110px;
 }
