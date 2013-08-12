@@ -4,22 +4,35 @@ define ->
 
     @productParts     = ["type", "posneg", "timeslot"]
 
+    @refresh = (data) ->
+      @attr.navigationData = data
+
+      @createElements()
+      @setupEvents()
+
+      @fillTso()
+      @fillProduct()
+
+      # Apply defaults
+      @select("tso").val data.defaults.tsoId
+      @setProduct data.defaults.product
+      @select("tso").change()
+
     @createElements = ->
       @$node.empty()
-      @$node.append($("<select>").addClass("tso")
-        .change => @trigger "updateProducts")
+      @$node.append $("<select>").addClass("tso")
 
       product = $("<div>").addClass("product").css("display", "inline")
       for name in @productParts
-        product.append($("<select>").addClass(name)
-          .change => @trigger "updateProducts")
+        product.append $("<select>").addClass(name)
       @$node.append product
 
-    @refresh = (data) ->
-      @attr.navigationData = data
-      @createElements()
-      @fillTso()
-      @fillProduct()
+    @setupEvents = ->
+      @$node.find("select").change =>
+        tso = @select("tso").val()
+        product = @getProduct()
+        @trigger "productSelectionChanged", tso: tso, product: product
+        @setProduct product
 
     @fillTso = ->
       element = @select("tso")

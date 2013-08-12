@@ -29,7 +29,7 @@ define ->
       when "Year" then years: 1
       else {}
 
-  getDateFrom: (time, timeRange) ->
+  normalizeDate: (time, timeRange) ->
     result = new Date time
     switch timeRange
       when "Week"
@@ -41,7 +41,7 @@ define ->
         result.setDate 1
     result
 
-  getDateTo: (time, timeRange) ->
+  addRange: (time, timeRange) ->
     modifier = @getDateModifier timeRange
     @modifyDate time, modifier
 
@@ -57,4 +57,9 @@ define ->
     else if diff < 1000*60*60*24*28 then "Week"
     else if diff < 1000*60*60*24*365 then "Month"
     else "Year"
+
+  timeRangePrototype: (timeRange) ->
+    time = new Date()
+    from : time
+    to   : @addRange time, timeRange
 

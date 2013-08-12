@@ -5,6 +5,8 @@ define [ "components/visual"
          "components/infobox"
          "util/loading"
          "util/lines_preprocessor"
+         "util/resolution"
+         "util/product_tree"
         ],
 
   (Visual
@@ -14,6 +16,8 @@ define [ "components/visual"
    Infobox
    Loading
    LinesPreprocessor
+   Resolution
+   ProductTree
   ) ->
 
     flight.component ->
@@ -79,14 +83,17 @@ define [ "components/visual"
           success: =>
             @logDebug "Sent disabled lines"
 
-      @onGetLines = (a, opts) ->
+      @onGetLines = (selections) ->
+        # Calculate resolution
+        selections.resolution = @optimalResolution selections
+
         # Update info box
-        opts.title = @attr.navigationData.title
+        selections.title = @attr.navigationData.title
         @trigger @select("infobox"), "updateInfo",
           navigationData: @attr.navigationData
-          selections: opts
+          selections: selections
 
-        @getLines opts, (err, data) =>
+        @getLines selections, (err, data) =>
           if err?
             console.log err
             return @trigger "chartMessage", msg: "Sorry, something went wrong."
@@ -111,6 +118,12 @@ define [ "components/visual"
         @reportDisabledLines opts.disabledLines
         @triggerDraw @attr.data
 
+      @optimalResolution = (selections) ->
+        leaf = @attr.treeHelper.traverse selections.tso, selections.product
+        Resolution.getOptimalResolution \
+          @attr.type, selections.timeRange,
+          leaf.resolution, @attr.width, @attr.navigationData.aspects.length
+
       @defaultAttrs
         navigation: ".navigation"
         visual: ".visual"
@@ -133,6 +146,14 @@ define [ "components/visual"
         @on "chartMessage", (_, opts) ->
           @getMsg().showText opts.msg
 
+        productStream = @$node.asEventStream("productSelectionChanged", (_, v) -> v)
+        timeStream = @$node.asEventStream("timeSelectionChanged", (_, v) -> v)
+        productStream.onValue (selections) =>
+          leaf = @attr.treeHelper.traverse selections.tso, selections.product
+          @trigger @select("timeSelection"), "timeRestrictions", leaf.timeRange
+        selectionStream = Bacon.combineWith $.extend, productStream, timeStream
+        selectionStream.onValue (selections) => @onGetLines selections
+
         # Parse element attributes
         @attr.type = @$node.attr("data-chart-type") ? "line"
         @attr.width = parseInt(@$node.attr("data-width"))
@@ -144,11 +165,7 @@ define [ "components/visual"
         # Add visual
         visual = $("<div>").addClass "visual"
         @$node.append visual
-        Visual.attachTo visual,
-          id: @attr.id
-          type: @attr.type
-          width: @attr.width
-          height: @attr.height
+        Visual.attachTo visual, @attr
 
         # Add info box
         infoBox = $("<div>").addClass("infobox").css("width", "#{@attr.width}px")
@@ -161,15 +178,18 @@ define [ "components/visual"
           @$node.append lines
           Lines.attachTo lines
 
+        selection = $("<div>").addClass("selection")
+        @$node.append selection
+
         # Add product selection
         productSelection = $("<div>").addClass "productSelection"
-        @$node.append productSelection
-        ProductSelection.attachTo productSelection, id: @attr.id
+        selection.append productSelection
+        ProductSelection.attachTo productSelection, @attr
 
         # Add time selection
         timeSelection = $("<div>").addClass "timeSelection"
-        @$node.append timeSelection
-        TimeSelection.attachTo timeSelection, id: @attr.id
+        selection.append timeSelection
+        TimeSelection.attachTo timeSelection, @attr
 
         @getNavigationData (err, data) =>
           if err?
@@ -180,7 +200,9 @@ define [ "components/visual"
             return
 
           @attr.navigationData = data
+          @attr.treeHelper = ProductTree.init data
           @applyVisibility()
+
           @trigger @select("productSelection"), "refresh", data: data
           @trigger @select("timeSelection"), "refresh", data: data
 
