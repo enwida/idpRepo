@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import de.enwida.web.db.model.CalendarRange;
 import de.enwida.web.model.ChartNavigationData;
 import de.enwida.web.model.DataAvailibility;
 import de.enwida.web.model.Right;
@@ -63,9 +64,10 @@ public class TestController {
 		da.setAspect("rl_ab1");
 		da.setResolution("15min");
 		cal.set(2010, 00, 1, 00, 00, 00);
-		da.setTimeFrom(new Date(cal.getTimeInMillis()));
 		cal.set(2011, 00, 1, 00, 00, 00);
-		da.setTimeTo(new Date(cal.getTimeInMillis()));	
+		da.setTimeRange(
+                new CalendarRange(new Date(cal.getTimeInMillis()), new Date(cal.getTimeInMillis()))
+                        );
 		da.setEnabled(true);
 		
 		try {
