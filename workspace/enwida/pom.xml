@@ -72,7 +72,7 @@
 		<dependency>
 			<groupId>de.enwida</groupId>
 			<artifactId>datamanager</artifactId>
-			<version>1.5</version>
+			<version>1.4</version>
 		</dependency>
 
 		<!-- JSON -->
