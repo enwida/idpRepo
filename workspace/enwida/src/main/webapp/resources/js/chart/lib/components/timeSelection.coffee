@@ -1,4 +1,4 @@
-define ->
+define ["../util/time_utils"], (TimeUtils) ->
 
   flight.component ->
 
@@ -35,36 +35,6 @@ define ->
         .append($("<i>").addClass("icon-chevron-right"))
         .click => @nextPeriode())
 
-    @modifyDate = (base, opts, backwards) ->
-      result = new Date base
-
-      days = parseInt opts.days
-      months = parseInt opts.months
-      years = parseInt opts.years
-
-      opts.backwards = backwards if backwards?
-      if opts.backwards
-        days *= -1
-        months *= -1
-        years *= -1
-
-      unless isNaN(days)
-        result.setDate(result.getDate() + days)
-      unless isNaN(months)
-        result.setMonth(result.getMonth() + months)
-      unless isNaN(years)
-        result.setFullYear(result.getFullYear() + years)
-
-      result
-
-    @getDateModifier = (timeRange) ->
-      switch timeRange
-        when "Day" then days: 1
-        when "Week" then days: 7
-        when "Month" then months: 1
-        when "Year" then years: 1
-        else {}
-
     @refresh = (data) ->
       @attr.navigationData = data
       @createElements()
@@ -87,14 +57,14 @@ define ->
       @timeRanges.forEach (timeRange) =>
         element = @getDatepickerElement timeRange
         element.datepicker
-          format: @datePickerFormats[timeRange]
-          weekStart: 1
-          calendarWeeks: timeRange is "Week"
-          weekselect: timeRange is "Week"
-          viewMode: @viewModes[timeRange]
-          minViewMode: @viewModes[timeRange]
-          startDate: limits.from ? "1900-01-01"
-          endDate: limits.to ? new Date()
+          format        : @datePickerFormats[timeRange]
+          weekStart     : 1
+          calendarWeeks : timeRange is "Week"
+          weekselect    : timeRange is "Week"
+          viewMode      : @viewModes[timeRange]
+          minViewMode   : @viewModes[timeRange]
+          startDate     : limits.from ? "1900-01-01"
+          endDate       : limits.to ? new Date()
 
         element.closest(".datepicker-generic").find(".fromIcon").click (e) =>
           $(e.target).closest(".datepicker-generic").find(".from").datepicker "show"
@@ -110,16 +80,17 @@ define ->
       @$node.find(".datepicker-#{timeRange}").show()
 
     @showCurrentDatepicker = ->
-      @showDatepicker @select("timeRange").val()
+      @showDatepicker @getCurrentTimeRange()
 
     @syncDatepickers = (date, sender) ->
       for timeRange in @timeRanges
         continue if timeRange is sender
+
         element = @getDatepickerElement timeRange
         newDate = switch sender
           when "Day"
             if timeRange is "Week"
-              @getWeekStart date
+              TimeUtils.getWeekStart date
             else
               date
           when "Week"
@@ -138,56 +109,34 @@ define ->
             result
         element.datepicker "setDate", newDate
 
-    @getDateFrom = (from) ->
-      result = new Date from
-      switch @select("timeRange").val()
-        when "Week"
-          result = @getWeekStart result
-        when "Month"
-          result.setDate 1
-        when "Year"
-          result.setMonth 0
-          result.setDate 1
-      result
-
-    @getDateTo = (from) ->
-      @modifyDate from, @getDateModifier @select("timeRange").val()
-
-    @getWeekStart = (date) ->
-      result = new Date date
-      while result.getDay() isnt 1
-        result.setDate (result.getDate() - 1)
-      result
-
     @getDatepickerElement = (timeRange) ->
-      @$node.find(".datepicker-#{timeRange} .from")
+      @$node.find ".datepicker-#{timeRange} .from"
 
-    @getVisibleFromDate = ->
-      timeRange = @select("timeRange").val()
-      new Date @$node.find(".datepicker-#{timeRange} .from").data("datepicker").date
+    @getCurrentDatePicker = ->
+      timeRange = @getCurrentTimeRange()
+      @getDatepickerElement timeRange
 
-    @setVisibleFromDate = (date) ->
-      @$node.find(".datepicker-generic:visible .from").datepicker "setDate", date
+    @getFromDate = ->
+      datePicker = @getCurrentDatePicker()
+      datePicker.data("datepicker").date
 
-    @getTimeRange = (timeRange) ->
-      diff = timeRange.to - timeRange.from
-      if diff < 1000*60*60*24*7 then "Day"
-      else if diff < 1000*60*60*24*28 then "Week"
-      else if diff < 1000*60*60*24*365 then "Month"
-      else "Year"
-
-    @forEachDatepicker = (f) ->
-      for timeRange in @timeRanges
-        f @getDatepickerElement(timeRange)
+    @setFromDate = (date) ->
+      datePicker = @getCurrentDatePicker()
+      datePicker.datepicker "setDate", date
+      @syncDatepickers date, @getCurrentTimeRange()
 
     @prevPeriode = ->
-      modifier = @getDateModifier(@select("timeRange").val())
+      modifier = TimeUtils.getDateModifier @getCurrentTimeRange()
       modifier.backwards = true
-      date = @modifyDate @getVisibleFromDate(), modifier
-      @setVisibleFromDate date
+      date = TimeUtils.modifyDate @getFromDate(), modifier
+      @setFromDate date
 
     @nextPeriode = ->
-      @setVisibleFromDate @getDateTo @getVisibleFromDate()
+      time = TimeUtils.getDateTo @getFromDate(), @getCurrentTimeRange()
+      @setFromDate time
+
+    @getCurrentTimeRange = ->
+      @select("timeRange").val()
 
     @defaultAttrs
       timeRange: ".timerange"

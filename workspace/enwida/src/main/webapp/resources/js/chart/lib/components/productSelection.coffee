@@ -75,6 +75,6 @@ define ->
 
     @after "initialize", ->
       @on "refresh", (_, opts) => @refresh opts.data
-      @on "updateProducts", (_, opts) => @setProduct @getProduct()
+      @on "updateProducts", (_, opts) => @refresh opts.data
       
 

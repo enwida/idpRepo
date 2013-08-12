@@ -2,7 +2,6 @@ define ["util/resolution"], (Resolution) ->
 
   flight.component ->
 
-    @productParts     = ["type", "posneg", "timeslot"]
     @dateFormat       = d3.time.format "%Y-%m-%d"
     @datePickerFormat = "yyyy-mm-dd"
     @timeRanges       = ["Day", "Week", "Month", "Year"]
@@ -181,45 +180,6 @@ define ["util/resolution"], (Resolution) ->
     @getProductTree = ->
       tso = parseInt @select("tso").val()
       _.find @navigationData.productTrees, (t) -> t.tso is tso
-
-    @setProduct = (product) ->
-      product = "" + product # convert to string
-      values = {}
-      for i in [0...@productParts.length]
-        id = parseInt product.substring i, i + 1
-        values[@productParts[i]] = id
-
-      node = @getProductTree().root
-      for name, i in @productParts
-        element = @select("product").find ".#{name}"
-        element.empty()
-        for child in node.children
-          element.append $("<option>").val(child.id).text(child.name)
-
-        if node.children.length <= 1
-          element.hide()
-        else
-          element.show()
-
-        id = values[name]
-        element.val id
-        node = (_.find node.children, (c) -> c.id is id) ? node.children[0]
-
-      # Apply restrictions of leaf node
-      @attr.resolutions = node.resolution
-      @forEachDatepicker (picker) ->
-        picker.datepicker "setStartDate", new Date node.timeRange.from
-        picker.datepicker "setEndDate", new Date node.timeRange.to
-
-    @getProduct = ->
-      result = ""
-      for name in @productParts
-        element = @select("product").find(".#{name}")
-        result += element.val()
-      result
-
-    @updateProducts = ->
-      @setProduct @getProduct()
 
     @getDateFrom = (from) ->
       result = new Date from
