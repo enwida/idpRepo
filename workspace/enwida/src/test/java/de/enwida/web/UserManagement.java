@@ -76,10 +76,16 @@ public class UserManagement {
 		userDao.enableDisableUser(user.getUserID(), true);
 	}
 
-	@After
-	public void cleanUpTestCase() throws Exception {
-		 userDao.deleteUser(user);
-	}
+    @After
+    public void cleanUpTestCase() throws Exception {
+        userDao.deleteUser(user);
+        //Create Default Values
+        Group adminGroup = new Group("Admin");
+        groupDao.addGroup(adminGroup);
+
+        Group anonymousGroup = new Group("Anonymous");
+        groupDao.addGroup(anonymousGroup);
+    }
 
 	@Test
 	public void saveUserInAGroup() throws Exception {

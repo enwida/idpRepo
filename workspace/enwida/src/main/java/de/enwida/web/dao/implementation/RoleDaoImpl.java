@@ -15,7 +15,7 @@ public class RoleDaoImpl extends AbstractBaseDao<Role> implements IRoleDao {
 
     @Override
     public void addRole(Role role){
-        create(role);
+        save(role);
     }
     
     @Override

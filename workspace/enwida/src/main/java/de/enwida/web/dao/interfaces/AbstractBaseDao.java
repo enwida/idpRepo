@@ -93,7 +93,7 @@ public abstract class AbstractBaseDao<T> implements IDao<T> {
      */
     public T fetchByName(String name) {
         T entity = null;
-        TypedQuery<T> typedQuery = em.createQuery( "from " + modelClass.getName()+" WHERE name= :name", modelClass);
+        TypedQuery<T> typedQuery = em.createQuery( "from " + this.modelClass.getSimpleName()+" WHERE name= :name", modelClass);
 		try {
 			entity = typedQuery.setParameter("name", name).getSingleResult();
 		} catch (NoResultException noresult) {
@@ -102,7 +102,7 @@ public abstract class AbstractBaseDao<T> implements IDao<T> {
 					+ " with name : " + name);
 		} catch (NonUniqueResultException notUnique) {
 			// if more than one result
-			logger.error("More than one record found for "
+			logger.info("More than one record found for "
 					+ modelClass.getSimpleName() + " with name : " + name);
 		}
         return entity;

@@ -19,4 +19,5 @@ public interface IGroupDao extends IDao<Group> {
      * @throws Exception
      */
     public void removeGroup(long groupID) throws Exception;
+    Group save(Group group);
 }
