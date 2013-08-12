@@ -65,14 +65,6 @@ public class Group implements Serializable{
 		this.groupId = groupID.intValue();
     }
 
-	public long getGroupId() {
-		return groupId;
-	}
-
-	public void setGroupId(long groupId) {
-		this.groupId = groupId;
-	}
-
 	public String getGroupName() {
         return groupName;
     }

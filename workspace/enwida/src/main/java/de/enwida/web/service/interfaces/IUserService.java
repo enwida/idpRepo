@@ -171,8 +171,7 @@ public interface IUserService {
      * @return
      * @throws Exception
      */
-    public void assignRoleToGroup(int selectedRole, int selectedGroup)
-            throws Exception;
+    public void assignRoleToGroup(long selectedRole, long selectedGroup);
 
     /**
      * Deassigns role to the groups
@@ -182,8 +181,7 @@ public interface IUserService {
      * @return
      * @throws Exception
      */
-    public void deassignRoleToGroup(int selectedRole, int selectedGroup)
-            throws Exception;
+    public void deassignRoleToGroup(long selectedRole, long selectedGroup);
 
     /**
      * Get All roles with Groups attached

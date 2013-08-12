@@ -9,7 +9,7 @@ public interface IRoleDao extends IDao<Role> {
 
     Role fetchById(long id);
 
-    void addRole(Role role);
+    Role addRole(Role role);
 
     void removeRole(Role role);
 

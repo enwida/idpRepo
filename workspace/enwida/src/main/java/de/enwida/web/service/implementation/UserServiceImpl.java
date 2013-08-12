@@ -240,7 +240,9 @@ public class UserServiceImpl implements IUserService {
     public void assignUserToGroup(long userID, long groupID){
         User user=userDao.fetchById(userID);
         Group group=groupDao.fetchById(groupID);
-        user.getGroups().add(group);
+        if (!user.getGroups().contains(group)){
+            user.getGroups().add(group);
+        }
         userDao.save(user);
     }
     /**
@@ -250,7 +252,9 @@ public class UserServiceImpl implements IUserService {
     public void deassignUserFromGroup(long userID, long groupID) {
         User user=userDao.fetchById(userID);
         Group group=groupDao.fetchById(groupID);
-        user.getGroups().remove(group);
+        if (user.getGroups().contains(group)){
+            user.getGroups().remove(group);
+        }
         userDao.save(user);
     }
     /**
@@ -266,19 +270,23 @@ public class UserServiceImpl implements IUserService {
      * Assigns role to group
      */
     @Override
-    public void assignRoleToGroup(int roleID, int groupID) throws Exception {
+    public void assignRoleToGroup(long roleID, long groupID) {
         Role role=roleDao.fetchById(roleID);
         Group group=groupDao.fetchById(groupID);
-        role.getAssignedGroups().add(group);
-        roleDao.save(role);
+        if (!group.getAssignedRoles().contains(role)){
+            group.getAssignedRoles().add(role);
+        }
+        groupDao.save(group);
     }
 
     @Override
-    public void deassignRoleToGroup(int roleID, int groupID) throws Exception {
+    public void deassignRoleToGroup(long roleID, long groupID){
         Role role=roleDao.fetchById(roleID);
         Group group=groupDao.fetchById(groupID);
-        role.getAssignedGroups().remove(group);
-        roleDao.save(role);
+        if (group.getAssignedRoles().contains(role)){
+            group.getAssignedRoles().remove(role);
+        }
+        groupDao.save(group);
     }
 
     @Override

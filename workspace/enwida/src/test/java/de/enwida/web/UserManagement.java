@@ -5,6 +5,8 @@ import static org.junit.Assert.assertEquals;
 import java.sql.Date;
 import java.util.Calendar;
 
+import junit.framework.Assert;
+
 import org.apache.log4j.Logger;
 import org.junit.After;
 import org.junit.Before;
@@ -63,7 +65,7 @@ public class UserManagement {
 
 	@Before
 	public void createUser() throws Exception {
-		user = new User("test", "test", "test", "test", true);
+		user = new User("test", "q12wq12w", "test", "test", true);
 		user.setJoiningDate(new Date(Calendar.getInstance().getTimeInMillis()));
 		user.setCompanyName("enwida.de");
 		User existingUser = userDao.fetchByName(user.getUserName());
@@ -76,35 +78,27 @@ public class UserManagement {
 		userDao.enableDisableUser(user.getUserID(), true);
 	}
 
-    @After
-    public void cleanUpTestCase() throws Exception {
-        userDao.deleteUser(user);
-        //Create Default Values
-        Group adminGroup = new Group("Admin");
-        groupDao.addGroup(adminGroup);
-
-        Group anonymousGroup = new Group("Anonymous");
-        groupDao.addGroup(anonymousGroup);
-    }
-
 	@Test
-	public void saveUserInAGroup() throws Exception {
+	public void testGroup(){
 		Group adminGroup = new Group("Admin");
-		groupDao.addGroup(adminGroup);
+		adminGroup =groupDao.addGroup(adminGroup);
 
 		Group anonymousGroup = new Group("Anonymous");
-		groupDao.addGroup(anonymousGroup);
+		anonymousGroup = groupDao.addGroup(anonymousGroup);
 
 		// save user in any group and remove it
 		 userService.assignUserToGroup(user.getUserID(),adminGroup.getGroupID());
-		 userService.deassignUserFromGroup(user.getUserID(),adminGroup.getGroupID());
 		 
 		// save user in anonymous group
 		 userService.assignUserToGroup(user.getUserID(),anonymousGroup.getGroupID());
+		 
+
+        //CheckGroups
+        Assert.assertTrue(user.getGroups().contains(anonymousGroup));
+        Assert.assertTrue( user.getGroups().contains(adminGroup));
 	}
 
 	@Test
-	@Transactional
 	public void updateUser() throws Exception {
 		userDao.save(user);
 		user.setCompanyName("test");
@@ -120,21 +114,37 @@ public class UserManagement {
 	}
 
 	@Test
-	public void testRole() throws Exception {
+	public void testRole()  {
 	    //Create roles
 		Role adminRole = new Role("Admin");
 		Role anonymousRole = new Role("Anonymous");
 		Role testRole = new Role("Test");
 		//Add roles
-		roleDao.addRole(adminRole);
-		roleDao.addRole(anonymousRole);
-		roleDao.addRole(testRole);
-		//Test remove role method
-		roleDao.removeRole(testRole);
+		adminRole=roleDao.addRole(adminRole);
+		anonymousRole=roleDao.addRole(anonymousRole);
+		testRole=roleDao.addRole(testRole);
+ 
+		//Get Groups
+        Group adminGroup = new Group("Admin");
+        adminGroup =groupDao.addGroup(adminGroup);
+
+        Group anonymousGroup = new Group("Anonymous");
+        anonymousGroup = groupDao.addGroup(anonymousGroup);
+
+        //Assign
+        userService.assignRoleToGroup(adminRole.getRoleID(), adminGroup.getGroupID());
+        userService.assignRoleToGroup(anonymousRole.getRoleID(), anonymousGroup.getGroupID());
+        
+        
+        //CheckRoles
+        Assert.assertTrue(adminGroup.getAssignedRoles().contains(adminRole));
+        Assert.assertTrue(anonymousGroup.getAssignedRoles().contains(anonymousRole));
+		
 	}
 
 	@Test
 	public void testRight() throws Exception {
+
 		Right right1 = new Right();
 		Right right2 = new Right();
 		rightDao.addRight(right1);
@@ -142,5 +152,6 @@ public class UserManagement {
         rightDao.enableDisableAspect(right1.getRightID(), true);
 		rightDao.removeRight(right1);
 		rightDao.removeRight(right2);
+
 	}
 }

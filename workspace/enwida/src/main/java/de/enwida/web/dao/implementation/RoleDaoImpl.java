@@ -14,8 +14,8 @@ import de.enwida.web.model.User;
 public class RoleDaoImpl extends AbstractBaseDao<Role> implements IRoleDao {
 
     @Override
-    public void addRole(Role role){
-        save(role);
+    public Role addRole(Role role){
+        return save(role);
     }
     
     @Override

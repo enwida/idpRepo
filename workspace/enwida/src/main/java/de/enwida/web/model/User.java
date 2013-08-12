@@ -121,9 +121,6 @@ public class User implements Serializable, UserDetails {
 	@Transient
 	private Collection<GrantedAuthority> authorities = new HashSet<GrantedAuthority>();
 
-	@Transient
-	private List<Role> roles;
-
     public User(String userName, String password,
             String firstName, String lastName, boolean enabled) {
         this.setUserName(userName);
@@ -186,15 +183,6 @@ public class User implements Serializable, UserDetails {
     public String toString() {
         return this.getUserName();
     }
-
-	@Transient
-	public List<Role> getRoles() {
-		return roles;
-	}
-
-	public void setRoles(List<Role> roles) {
-		this.roles = roles;
-	}
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;

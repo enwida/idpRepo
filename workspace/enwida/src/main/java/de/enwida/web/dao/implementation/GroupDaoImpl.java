@@ -13,8 +13,7 @@ public class GroupDaoImpl extends AbstractBaseDao<Group> implements IGroupDao {
 	@Override
     public Group addGroup(final Group newGroup) 
     {
-	    save(newGroup);
-	    return newGroup;
+	    return save(newGroup);
     }
 
 
