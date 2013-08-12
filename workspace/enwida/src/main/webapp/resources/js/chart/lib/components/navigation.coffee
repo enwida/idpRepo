@@ -81,32 +81,18 @@ define ["util/resolution"], (Resolution) ->
         when "Year" then years: 1
         else {}
 
-    @getNavigationData = (callback) ->
-      $.ajax "navigation",
-        data: chartId: @attr.id
-        success: (data) =>
-          console.log data
-          @navigationData = data
-          callback null, data
-        error: (err) -> callback err
+    @refresh = (data) ->
+      @navigationData = data
 
-    @refresh = ->
-      @getNavigationData (err, data) =>
-        throw err if err?
-        unless typeof data is "object" and data?.allResolutions?.length > 0
-          @trigger "errorMessage", msg: "Sorry, you do not have the permission to see this chart."
-          return
+      dateLimits =
+        from : new Date data.timeRangeMax.from
+        to   : new Date data.timeRangeMax.to
 
-        dateLimits =
-          from : new Date data.timeRangeMax.from
-          to   : new Date data.timeRangeMax.to
-
-        @fillTso()
-        @fillTimeRange dateLimits
-        @fillProduct()
-        @setDefaults data.defaults
-        @trigger "updateNavigation", data: data
-        @triggerGetLines()
+      @fillTso()
+      @fillTimeRange dateLimits
+      @fillProduct()
+      @setDefaults data.defaults
+      @triggerGetLines()
 
     @fillTso = ->
       element = @select("tso")
@@ -316,9 +302,9 @@ define ["util/resolution"], (Resolution) ->
       type: "line"
 
     @after "initialize", ->
-      @on "refresh", @refresh
+      @on "refresh", (_, data) => @refresh data.data
       @on "updateProducts", @updateProducts
 
       @createElements()
-      @refresh()
       @setupEvents()
+

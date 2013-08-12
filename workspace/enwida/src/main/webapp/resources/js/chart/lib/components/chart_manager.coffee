@@ -40,6 +40,15 @@ define [ "components/navigation"
           @attr.navigationData?.width,
           @attr.navigationData?.height
 
+      @getNavigationData = (callback) ->
+        $.ajax "navigation",
+          data: chartId: @attr.id
+          error: (err) -> callback err
+          success: (data) =>
+            console.log data
+            @navigationData = data
+            callback null, data
+
       @getLines = (options, callback) ->
         @getMsg().showLoading()
 
@@ -76,9 +85,11 @@ define [ "components/navigation"
           selections: opts
 
         @getLines opts, (err, data) =>
-          throw err if err?
+          if err?
+            console.log err
+            return @trigger "chartMessage", msg: "Sorry, something went wrong."
           if data.length is 0
-            return @getMsg().showText "No data"
+            return @trigger "chartMessage", msg: "No data"
 
           @attr.data = data = LinesPreprocessor.transform @attr.type, data
           @triggerDraw data
@@ -86,12 +97,12 @@ define [ "components/navigation"
 
       @triggerDraw = (data) ->
         if data.length is @attr.disabledLines.length
-          return @getMsg().showText "No lines selected"
+          return @trigger "chartMessage", msg: "No lines selected"
 
         @trigger @select("visual"), "draw",
           data: data
+          navigation: @attr.navigationData
           disabledLines: @attr.disabledLines
-
 
       @toggleLine = (_, opts) ->
         @attr.disabledLines = opts.disabledLines
@@ -112,15 +123,11 @@ define [ "components/navigation"
 
         # Event handlers
         @on "getLines", @onGetLines
-        @on "updateNavigation", (_, opts) ->
-          @attr.navigationData = opts.data
-          @applyVisibility()
-          @trigger @select("visual"), "navigationData", opts
-          @trigger @select("lines"), "disabledLines",
-            lines: opts.data?.defaults?.disabledLines
         @on "toggleLine", @toggleLine
         @on "errorMessage", (_, opts) ->
           @$node.text opts.msg
+        @on "chartMessage", (_, opts) ->
+          @getMsg().showText opts.msg
 
         # Parse element attributes
         @attr.type = @$node.attr("data-chart-type") ? "line"
@@ -157,3 +164,16 @@ define [ "components/navigation"
           id: @attr.id
           width: @attr.width
           type: @attr.type
+
+        @getNavigationData (err, data) =>
+          if err?
+            console.log err
+            return @trigger "errorMessage", msg: "Sorry, something went wrong."
+          unless typeof data is "object" and data?.allResolutions?.length > 0
+            return @trigger "errorMessage", msg: "Sorry, you do not have the permission to see this chart."
+            return
+
+          @attr.navigationData = data
+          @applyVisibility()
+          @trigger @select("navigation"), "refresh", data: data
+
