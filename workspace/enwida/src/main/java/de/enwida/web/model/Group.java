@@ -37,7 +37,7 @@ public class Group implements Serializable{
 	@Id
 	@Column(name = GROUP_ID)
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int groupId;
+	private long groupId;
     
 	@Column(name = GROUP_NAME)
     private String groupName;
@@ -65,11 +65,11 @@ public class Group implements Serializable{
 		this.groupId = groupID.intValue();
     }
 
-	public int getGroupId() {
+	public long getGroupId() {
 		return groupId;
 	}
 
-	public void setGroupId(int groupId) {
+	public void setGroupId(long groupId) {
 		this.groupId = groupId;
 	}
 

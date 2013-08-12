@@ -59,7 +59,7 @@ public class User implements Serializable, UserDetails {
 	@Id
 	@Column(name = USER_ID)
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int userId;
+	private long userId;
 
 	@Column(name = USER_NAME, nullable = false, unique = true)
     private String userName;
@@ -173,11 +173,11 @@ public class User implements Serializable, UserDetails {
 		this.userId = userID.intValue();
     }
 
-	public int getUserId() {
+	public long getUserId() {
 		return userId;
 	}
 
-	public void setUserId(int userId) {
+	public void setUserId(long userId) {
 		this.userId = userId;
 	}
 

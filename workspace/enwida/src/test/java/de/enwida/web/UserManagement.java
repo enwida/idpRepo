@@ -38,6 +38,7 @@ import de.enwida.web.model.Right;
 import de.enwida.web.model.Role;
 import de.enwida.web.model.User;
 import de.enwida.web.service.implementation.MailServiceImpl;
+import de.enwida.web.service.interfaces.IUserService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:/root-context-test.xml")
@@ -51,8 +52,11 @@ public class UserManagement {
 	@Autowired
 	private IUserDao userDao;
 
-	@Autowired
-	private MailServiceImpl mailService;
+    @Autowired
+    private MailServiceImpl mailService;
+    
+    @Autowired
+    private IUserService userService;
 
 	@Autowired
 	private IGroupDao groupDao;
@@ -69,7 +73,7 @@ public class UserManagement {
 	private User user;
 
 	@Before
-	public void testUser() throws Exception {
+	public void createUser() throws Exception {
 		user = new User("test", "test", "test", "test", true);
 		user.setJoiningDate(new Date(Calendar.getInstance().getTimeInMillis()));
 		user.setCompanyName("enwida.de");
@@ -80,13 +84,12 @@ public class UserManagement {
 			user = existingUser;
 		}
 		userDao.enableDisableUser(user.getUserID(), false);
-		userDao.enableDisableUser(user.getUserID(), true);
-		// userDao.deleteUser(user);
+		//userDao.enableDisableUser(user.getUserID(), true);
 	}
 
 	@After
 	public void cleanUpTestCase() throws Exception {
-		// userDao.deleteUser(user);
+		 userDao.deleteUser(user);
 	}
 
 	@Test
@@ -114,7 +117,7 @@ public class UserManagement {
 		userDao.updateUser(user);
 		User user2 = userDao.fetchByName(user.getUserName());
 		assertEquals("test", user2.getCompanyName());
-		userDao.deleteUser(user);
+		//userDao.deleteUser(user);
 		assertEquals(null, userDao.fetchByName(user.getUserName()));
 	}
 

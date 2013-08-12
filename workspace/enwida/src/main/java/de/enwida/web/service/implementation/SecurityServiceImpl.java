@@ -71,11 +71,10 @@ public class SecurityServiceImpl implements ISecurityService {
 		for (Right dA : dataAuthorizationResult) {
 			pR.getResolutions().add(DataResolution.valueOf(dA.getResolution().trim()));
 
-			final CalendarRange timeRange = new CalendarRange(dA.getTimeFrom(), dA.getTimeTo());
 			if (pR.getTimeRange() == null) {
-				pR.setTimeRange(timeRange);
+				pR.setTimeRange(dA.getTimeRange());
 			} else {
-				final List<CalendarRange> ranges = Arrays.asList(new CalendarRange[] { pR.getTimeRange(), timeRange });
+				final List<CalendarRange> ranges = Arrays.asList(new CalendarRange[] { pR.getTimeRange(), dA.getTimeRange() });
 
 				// TODO: Or minimum or separate for each aspect
 				pR.setTimeRange(CalendarRange.getMaximum(ranges));

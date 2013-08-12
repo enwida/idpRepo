@@ -1,10 +1,10 @@
 package de.enwida.web.model;
 
 import java.io.Serializable;
-import java.util.Date;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -15,6 +15,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import de.enwida.web.db.model.CalendarRange;
 import de.enwida.web.utils.Constants;
 
 @Entity
@@ -51,13 +52,10 @@ public class Right implements Serializable {
     private int product;
     
     @Column(name = RESOLUTION)
-    private String resolution;
-    
-    @Column(name = TIMEFROM)
-    private Date timeFrom;
-    
-    @Column(name = TIMETO)
-    private Date timeTo;
+    private String resolution; 
+
+    @Embedded
+    private CalendarRange timeRange;
     
     @Column(name = ASPECT)
     private String aspect;
@@ -93,18 +91,7 @@ public class Right implements Serializable {
     public void setProduct(int product) {
         this.product = product;
     }
-    public Date getTimeFrom() {
-        return timeFrom;
-    }
-    public void setTimeFrom(java.util.Date date) {
-        this.timeFrom = date;
-    }
-    public Date getTimeTo() {
-        return timeTo;
-    }
-    public void setTimeTo(Date time2) {
-        this.timeTo = time2;
-    }
+
     public boolean isEnabled() {
         return enabled;
     }
@@ -122,5 +109,11 @@ public class Right implements Serializable {
     }
     public void setResolution(String resolution) {
         this.resolution = resolution;
+    }
+    public CalendarRange getTimeRange() {
+        return timeRange;
+    }
+    public void setTimeRange(CalendarRange timeRange) {
+        this.timeRange = timeRange;
     }
 }

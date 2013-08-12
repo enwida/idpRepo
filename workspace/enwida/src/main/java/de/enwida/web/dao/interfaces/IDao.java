@@ -10,7 +10,9 @@ public interface IDao <T> {
 
 	public List<T> findByExample(T obj);
 
-	public T fetchById(long id);
+    public T fetchById(long id);
+
+    public T fetchByName(String name);
 	
 	public void create(T entity);
 
