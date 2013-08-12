@@ -102,4 +102,12 @@ public class RightDaoImpl extends AbstractBaseDao<Right> implements IRightDao {
     public void enableLine(Right dataAuthorization) throws Exception{
         update(dataAuthorization);
     }
+
+    @Override
+    public List<Right> getAllAspects(long roleID) {
+        TypedQuery<Right> typedQuery = em.createQuery( "from "+ Right.class.getName()
+                + "  WHERE role_id = ? AND enabled = TRUE;", Right.class);
+            typedQuery.setParameter("roleID", roleID);
+            return typedQuery.getResultList();
+    }
 }

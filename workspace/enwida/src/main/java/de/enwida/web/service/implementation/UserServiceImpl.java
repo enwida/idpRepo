@@ -161,7 +161,7 @@ public class UserServiceImpl implements IUserService {
      */
     @Override
     public List<Group> getUserGroups(long userID)throws Exception {
-        return groupDao.getUserGroups(userID);
+        return userDao.fetchById(userID).getGroups();
     }
 
     /**
@@ -265,9 +265,6 @@ public class UserServiceImpl implements IUserService {
     @Override
     public List<Group> getAllGroupsWithUsers() throws Exception {
         List<Group> groups = groupDao.fetchAll();
-        for (Group group : groups) {
-            group.setAssignedUsers(userDao.getUsersByGroupID(group.getGroupID()));
-        }
         return groups;
     }
 
