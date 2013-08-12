@@ -15,6 +15,7 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
+import org.springframework.transaction.annotation.Transactional;
 
 import de.enwida.web.controller.AdminController;
 import de.enwida.web.dao.interfaces.IGroupDao;
@@ -31,6 +32,7 @@ import de.enwida.web.service.interfaces.IUserService;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:/root-context-test.xml")
 @TransactionConfiguration(transactionManager = "jpaTransactionManager", defaultRollback = false)
+@Transactional
 public class UserManagement {
 
 	@Autowired
@@ -76,7 +78,7 @@ public class UserManagement {
 
 	@After
 	public void cleanUpTestCase() throws Exception {
-		 //userDao.deleteUser(user);
+		 userDao.deleteUser(user);
 	}
 
 	@Test
@@ -96,6 +98,7 @@ public class UserManagement {
 	}
 
 	@Test
+	@Transactional
 	public void updateUser() throws Exception {
 		userDao.save(user);
 		user.setCompanyName("test");

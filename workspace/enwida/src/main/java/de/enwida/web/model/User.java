@@ -2,6 +2,7 @@ package de.enwida.web.model;
 
 import java.io.Serializable;
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -270,6 +271,9 @@ public class User implements Serializable, UserDetails {
 
 	@Transient
     public List<Group> getGroups() {
+	    if( groups==null){
+	        this.groups=new ArrayList<Group>();
+	    }
         return groups;
     }
 
