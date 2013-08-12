@@ -11,7 +11,7 @@ import de.enwida.web.model.User;
  *
  */
 public interface IUserDao extends IDao<User> {
-	long save(User user) throws Exception;
+	long save(User user);
 
     void deleteUser(User user) throws Exception;
 
