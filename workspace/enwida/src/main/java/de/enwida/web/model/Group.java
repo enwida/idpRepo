@@ -45,7 +45,7 @@ public class Group implements Serializable{
 	@Column(name = AUTO_PASS)
     private boolean autoPass;
 
-	@ManyToMany(fetch = FetchType.EAGER)
+	@ManyToMany(cascade = CascadeType.ALL)
 	@ElementCollection(targetClass = User.class, fetch = FetchType.EAGER)
 	@JoinTable(name = Constants.USER_GROUP_TABLE_NAME, schema = Constants.USER_GROUP_TABLE_SCHEMA_NAME, uniqueConstraints = { @UniqueConstraint(columnNames = {
 			User.USER_ID, Group.GROUP_ID }) }, joinColumns = { @JoinColumn(name = GROUP_ID, referencedColumnName = GROUP_ID) }, inverseJoinColumns = { @JoinColumn(name = User.USER_ID, referencedColumnName = User.USER_ID) })

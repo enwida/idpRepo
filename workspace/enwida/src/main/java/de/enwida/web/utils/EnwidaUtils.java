@@ -169,6 +169,15 @@ public class EnwidaUtils {
 	}
 
 	/**
+	 * @param completeName
+	 * @return
+	 */
+	public static String extractFileName(String completeName) {
+		String[] fnameParts = completeName.split("\\\\");
+		return fnameParts[fnameParts.length - 1];
+	}
+
+	/**
 	 * @param fileTORemove
 	 * @return
 	 * @throws Exception

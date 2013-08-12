@@ -9,13 +9,8 @@
                     http://www.springframework.org/schema/aop
         			http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
   
-<authentication-manager>
-	   <authentication-provider>
-		<jdbc-user-service data-source-ref="dataSource"
-		   users-by-username-query="SELECT * FROM users.allUsers where user_name=?;" 
-		   authorities-by-username-query="SELECT * FROM users.allRoles WHERE user_name=?;" 
-		/>
-	   </authentication-provider>
+	<authentication-manager>
+	   <authentication-provider user-service-ref="springSecurityService"/>
 	</authentication-manager>
 	
 	<!--  This is required here since it is used in loginsuccesshandler bean-->

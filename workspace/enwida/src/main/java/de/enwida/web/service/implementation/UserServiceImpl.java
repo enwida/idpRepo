@@ -300,7 +300,7 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public List<User> getAllUsers() throws Exception {
+	public List<User> getAllUsers() throws Exception {
         return userDao.fetchAll();
     }
     /**

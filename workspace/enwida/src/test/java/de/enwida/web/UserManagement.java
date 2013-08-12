@@ -70,7 +70,7 @@ public class UserManagement {
 
 	@Before
 	public void testUser() throws Exception {
-		user = new User("test", "test", "test", "test", false);
+		user = new User("test", "test", "test", "test", true);
 		user.setJoiningDate(new Date(Calendar.getInstance().getTimeInMillis()));
 		user.setCompanyName("enwida.de");
 		User existingUser = userDao.fetchByName(user.getUserName());

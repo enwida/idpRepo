@@ -2,6 +2,7 @@ package de.enwida.web.model;
 
 import java.io.Serializable;
 import java.sql.Date;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -24,6 +25,9 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
 import de.enwida.web.db.model.NavigationDefaults;
 import de.enwida.web.db.model.NavigationSettings;
 import de.enwida.web.db.model.UploadedFile;
@@ -31,7 +35,7 @@ import de.enwida.web.utils.Constants;
 
 @Entity
 @Table(name = Constants.USER_TABLE_NAME, schema = Constants.USER_TABLE_SCHEMA_NAME)
-public class User implements Serializable {
+public class User implements Serializable, UserDetails {
 	/**
 	 * 
 	 */
@@ -68,6 +72,8 @@ public class User implements Serializable {
 
 	@Column(name = PASSWORD)
     private String password;
+
+	@Transient
     private String confirmPassword;
 
 	@Column(name = COMPANY_NAME)
@@ -94,8 +100,8 @@ public class User implements Serializable {
 	@Column(name = ACTIVATION_ID)
 	private String activationKey;
 
-	@ManyToMany(cascade = CascadeType.ALL)
-	@ElementCollection(targetClass = Group.class, fetch = FetchType.EAGER)
+	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@ElementCollection(targetClass = Group.class)
 	@JoinTable(name = Constants.USER_GROUP_TABLE_NAME, schema = Constants.USER_GROUP_TABLE_SCHEMA_NAME, uniqueConstraints = { @UniqueConstraint(columnNames = {
 			User.USER_ID, Group.GROUP_ID }) }, joinColumns = { @JoinColumn(name = USER_ID, referencedColumnName = USER_ID) }, inverseJoinColumns = { @JoinColumn(name = Group.GROUP_ID, referencedColumnName = Group.GROUP_ID) })
 	private List<Group> groups;
@@ -110,6 +116,9 @@ public class User implements Serializable {
 
 	@Transient
 	private Map<Integer, NavigationDefaults> chartDefaults;
+
+	@Transient
+	private Collection<GrantedAuthority> authorities = new HashSet<GrantedAuthority>();
 
 	@Transient
 	private List<Role> roles;
@@ -141,11 +150,6 @@ public class User implements Serializable {
 
     public void setFirstName(String firstName) {
         this.firstName = firstName;
-    }
-
-
-    public String getPassword() {
-        return password;
     }
 
     public void setPassword(String password) {
@@ -190,10 +194,6 @@ public class User implements Serializable {
 	public void setRoles(List<Role> roles) {
 		this.roles = roles;
 	}
-
-    public boolean isEnabled() {
-        return enabled;
-    }
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
@@ -354,5 +354,46 @@ new NavigationSettings(chartId, updateddefaults, this,
 		}
 	}
 
+	@Override
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+		if (this.groups != null && this.groups.size() > 0) {
+			for (Group group : this.groups) {
+				for (Role role : group.getAssignedRoles()) {
+					this.authorities.add(role);
+				}
+			}
+		}
+		return this.authorities;
+	}
+
+	@Override
+	public String getPassword() {
+		return this.password;
+	}
+
+	@Override
+	public String getUsername() {
+		return this.userName;
+	}
+
+	@Override
+	public boolean isAccountNonExpired() {
+		return true;
+	}
+
+	@Override
+	public boolean isAccountNonLocked() {
+		return true;
+	}
+
+	@Override
+	public boolean isCredentialsNonExpired() {
+		return true;
+	}
+
+	@Override
+	public boolean isEnabled() {
+		return enabled;
+	}
 
 }

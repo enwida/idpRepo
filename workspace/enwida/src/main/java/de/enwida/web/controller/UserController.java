@@ -314,12 +314,14 @@ public class UserController {
 	
 	@RequestMapping(value="/upload", method = RequestMethod.GET)
 	public ModelAndView getUplaodUserData(ModelMap model) throws Exception {
-		User user = userService.getUser("test");
-		List<UploadedFile> filetable = new ArrayList<UploadedFile>(
-				user.getUploadedFiles());
-		Collections.sort(filetable);
-		model.put("uploadedfiletable", filetable);
-		model.put("fileUpload", new FileUpload());
+		User user = userSession.getUser();
+		if (user != null) {
+			List<UploadedFile> filetable = new ArrayList<UploadedFile>(
+					user.getUploadedFiles());
+			Collections.sort(filetable);
+			model.put("uploadedfiletable", filetable);
+			model.put("fileUpload", new FileUpload());
+		}
 		return new ModelAndView("user/upload", model);
 	}
 	
@@ -331,12 +333,13 @@ public class UserController {
 		
 		boolean isMultipart = ServletFileUpload.isMultipartContent(request);
 		// fetch all files related to user
-		User user = userService.getUser("test");
-		List<UploadedFile> filetable = new ArrayList<UploadedFile>(
-				user.getUploadedFiles());
+		User user = userSession.getUser();
+
 
 		String displayfileName = null;
-		if (isMultipart) {
+		if (user != null && isMultipart) {
+			List<UploadedFile> filetable = new ArrayList<UploadedFile>(
+					user.getUploadedFiles());
             try {
             	FileItem item = fileUpload.getFile().getFileItem();
 				File filetobeuploaded = null;
@@ -382,9 +385,9 @@ public class UserController {
             } catch (Exception e) {
 				logger.error("Unable to upload file : " + displayfileName, e);
             }
+			Collections.sort(filetable);
+			model.put("uploadedfiletable", filetable);
         }
-		Collections.sort(filetable);
-		model.put("uploadedfiletable", filetable);
 		model.put("fileUpload", new FileUpload());
 		return new ModelAndView("user/upload", model);
 	}
@@ -431,7 +434,7 @@ public class UserController {
 
 	private File getTemporaryFile(FileItem item) throws Exception {
 		String tempFile = fileUploadDirectory + File.separator + "temp"
-				+ File.separator + item.getName();
+				+ File.separator + EnwidaUtils.extractFileName(item.getName());
 		EnwidaUtils.createDirectory(fileUploadDirectory + File.separator
 				+ "temp");
 		// do validation here

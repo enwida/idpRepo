@@ -2,6 +2,8 @@ package de.enwida.web.controller;
 
 import java.io.Serializable;
 
+import javax.annotation.PostConstruct;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import de.enwida.web.model.User;
@@ -17,6 +19,10 @@ public class UserSessionManager implements Serializable {
 	@Autowired
 	private IUserService userService;
 
+	@PostConstruct
+	public void init() {
+		// System.out.println("Session initialized for user: " + user);
+	}
 	/**
 	 * This user is set when user logs in.
 	 */

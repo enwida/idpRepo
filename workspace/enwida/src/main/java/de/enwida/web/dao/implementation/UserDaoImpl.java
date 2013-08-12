@@ -76,7 +76,7 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
     @Override
 	public void enableDisableUser(long userID, boolean enabled) {
         User user=fetchById(userID);
-        user.setEnabled(false);
+		user.setEnabled(enabled);
         update(user);
     }
     

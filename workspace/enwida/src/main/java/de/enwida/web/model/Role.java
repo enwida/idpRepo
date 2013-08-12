@@ -20,11 +20,13 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
+import org.springframework.security.core.GrantedAuthority;
+
 import de.enwida.web.utils.Constants;
 
 @Entity
 @Table(name = Constants.ROLE_TABLE_NAME, schema = Constants.ROLE_TABLE_SCHEMA_NAME)
-public class Role  implements Serializable{
+public class Role implements Serializable, GrantedAuthority {
 
     /**
      * 
@@ -122,5 +124,10 @@ public class Role  implements Serializable{
     public String toString() {
         return getRoleName();
     }
+
+	@Override
+	public String getAuthority() {
+		return this.roleName;
+	}
 
 }
