@@ -8,6 +8,7 @@ import de.enwida.web.dao.interfaces.AbstractBaseDao;
 import de.enwida.web.dao.interfaces.IRoleDao;
 import de.enwida.web.model.Right;
 import de.enwida.web.model.Role;
+import de.enwida.web.model.User;
 
 @Repository
 public class RoleDaoImpl extends AbstractBaseDao<Role> implements IRoleDao {
@@ -21,6 +22,22 @@ public class RoleDaoImpl extends AbstractBaseDao<Role> implements IRoleDao {
     public void removeRole(Role role){
         delete(role);
     }    
+    
+    
+    @Override
+    public Role save(Role role)
+    {
+        Role exist = fetchByName(role.getRoleName());
+        if (exist == null) {
+            // create or refresh
+            create(role);
+        } else {
+            exist = update(exist);
+        }
+
+        return exist;
+    }
+  
 
     @Override
     public List<Right> getAllAspects(long roleID) {

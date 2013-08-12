@@ -207,14 +207,8 @@ public class UserServiceImpl implements IUserService {
      * Gets the user based on userName
      */
     @Override
-    public User getUser(String userName)throws Exception  {
-        User user= userDao.fetchByName(userName);
-        if (user==null)
-            return null;
-		// TODO:FIX
-		// user.setRoles(roleDao.getUserRoles(user.getUserID()));
-		// user.setGroups(groupDao.getUserGroups(user.getUserID()));
-        return user;
+    public User getUser(String userName)  {
+        return userDao.fetchByName(userName);
     }
     /**
      * Resets user Password and send an email link
@@ -273,25 +267,23 @@ public class UserServiceImpl implements IUserService {
      */
     @Override
     public void assignRoleToGroup(int roleID, int groupID) throws Exception {
-        //TODO:Fix here
         Role role=roleDao.fetchById(roleID);
         Group group=groupDao.fetchById(groupID);
-         groupDao.assignRoleToGroup(roleID,groupID);
+        role.getAssignedGroups().add(group);
+        roleDao.save(role);
     }
 
     @Override
     public void deassignRoleToGroup(int roleID, int groupID) throws Exception {
-        //TODO:Fix here
-        groupDao.deassignRoleFromGroup(roleID,groupID);
+        Role role=roleDao.fetchById(roleID);
+        Group group=groupDao.fetchById(groupID);
+        role.getAssignedGroups().remove(group);
+        roleDao.save(role);
     }
 
     @Override
     public List<Role> getAllRolesWithGroups()throws Exception  {
-        List<Role> roles = roleDao.fetchAll();
-        for (Role role : roles) {
-            role.setAssignedGroups(groupDao.getGroupsByRole(role.getRoleID()));
-        }
-        return roles;
+        return roleDao.fetchAll();
     }
 
     @Override

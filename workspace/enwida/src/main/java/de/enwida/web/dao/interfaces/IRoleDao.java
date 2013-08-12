@@ -17,4 +17,6 @@ public interface IRoleDao extends IDao<Role> {
 
     List<Right> getAllAspects(long roleID);
 
+    Role save(Role role);
+
 }

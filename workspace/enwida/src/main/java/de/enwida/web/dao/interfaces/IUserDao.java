@@ -1,7 +1,5 @@
 package de.enwida.web.dao.interfaces;
 
-import java.util.List;
-
 import de.enwida.web.db.model.UploadedFile;
 import de.enwida.web.model.User;
 
