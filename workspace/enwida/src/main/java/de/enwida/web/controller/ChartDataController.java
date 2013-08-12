@@ -72,7 +72,7 @@ public class ChartDataController {
 
     	ChartNavigationData chartNavigationData = null;
     	try {
-            chartNavigationData = navigationService.getNavigationData(chartId, userService.getCurrentUser(), locale);
+            chartNavigationData = navigationService.getNavigationData(chartId, null, locale);
             // Try to set the defaults from the cookie
         	final NavigationDefaults defaults = getNavigationDefaultsFromCookie(chartId, request, principal);
         	if (defaults != null) {
@@ -103,7 +103,7 @@ public class ChartDataController {
         	final LineRequest request = new LineRequest(aspect, product, tso, startTime, endTime, resolution, locale);
 
         	try {
-                final IDataLine line = lineService.getLine(request, userService.getCurrentUser());
+                final IDataLine line = lineService.getLine(request, null);
                 result.add(line);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -156,6 +156,11 @@ public class ChartDataController {
         } catch (Exception ignored) { 
             logger.info(ignored.getMessage());
         }
+    }
+    
+    @RequestMapping(value = "/download", method = RequestMethod.GET)
+    public String download(@RequestParam int chartId) {
+    	return "charts/download";
     }
     
     private ChartDefaults getChartDefaultsFromCookie(HttpServletRequest request, Principal principal) throws Exception {
