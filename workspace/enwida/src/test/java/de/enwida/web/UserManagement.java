@@ -66,16 +66,21 @@ public class UserManagement {
 		user = new User("test", "q12wq12w", "test", "test", true);
 		user.setJoiningDate(new Date(Calendar.getInstance().getTimeInMillis()));
 		user.setCompanyName("enwida.de");
-		user=userDao.fetchByName(user.getUsername());
-		userDao.enableDisableUser(user.getUserID(), false);
-		userDao.enableDisableUser(user.getUserID(), true);
 		userDao.save(user);
+		
+		user = userService.getUser("test");
+		Assert.assertNotNull(user);
+		Assert.assertEquals(user.getUsername(), "test");
+		Assert.assertEquals(user.getCompanyName(), "enwida.de");
+		Assert.assertEquals(user.getFirstName(), "test");
+		Assert.assertEquals(user.getLastName(), "test");
+		Assert.assertEquals(user.getPassword(), "q12wq12w");
 	}
 
-	   @Test
-	    @Transactional
+    @Test
+    @Transactional
 	public void testGroup(){
-	        user=userDao.fetchByName("test");
+        user=userDao.fetchByName("test");
 		Group adminGroup = new Group("Admin");
 		adminGroup =groupDao.addGroup(adminGroup);
 
