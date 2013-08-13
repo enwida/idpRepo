@@ -32,8 +32,8 @@ public class GroupDaoImpl extends AbstractBaseDao<Group> implements IGroupDao {
         if (exist == null) {
             // create or refresh
             create(group);
-            exist=group;
         } else {
+            exist.setGroupID(exist.getGroupID());
             exist = update(exist);
         }
 

@@ -75,6 +75,25 @@ public abstract class AbstractBaseDao<T> implements IDao<T> {
 		entity = em.merge(entity);
 		return entity;
 	}
+	
+	public void create(T entity, boolean flushImmediate) {
+        em.persist(entity);
+        if(flushImmediate){
+            em.flush();em.refresh(entity);
+        }
+    }
+
+    public T update(T entity,boolean flushImmediate) {
+        entity = em.merge(entity);
+        if(flushImmediate){
+            em.flush();em.refresh(entity);
+        }
+        return entity;
+    }
+	
+	public void refresh(T entity){
+	    em.refresh(entity);
+	}
 
 	public void delete(T entity) {
 		em.remove(entity);
