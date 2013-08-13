@@ -32,6 +32,7 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
 				// create the user and refresh the user object
 				create(user);
 			} else {
+			    user.setUserID(exisinguser.getUserID());
 				user = update(user);
 			}
 		} catch (Exception e) {

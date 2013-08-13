@@ -76,6 +76,25 @@ public abstract class AbstractBaseDao<T> implements IDao<T> {
 		em.flush();
 		return entity;
 	}
+	
+	public void create(T entity, boolean flushImmediate) {
+        em.persist(entity);
+        if(flushImmediate){
+            em.flush();em.refresh(entity);
+        }
+    }
+
+    public T update(T entity,boolean flushImmediate) {
+        entity = em.merge(entity);
+        if(flushImmediate){
+            em.flush();em.refresh(entity);
+        }
+        return entity;
+    }
+	
+	public void refresh(T entity){
+	    em.refresh(entity);
+	}
 
 	public void delete(T entity) {
 		em.remove(entity);
@@ -142,9 +161,5 @@ public abstract class AbstractBaseDao<T> implements IDao<T> {
 			logger.error("Unable to reset sequence value : ", e);
 		}
 		return nextCounter.longValue();
-	}
-	
-	public void refresh(T entity) {
-		em.refresh(entity);
 	}
 }
