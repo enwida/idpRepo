@@ -2,6 +2,7 @@ package de.enwida.web.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -45,7 +46,9 @@ public class Group implements Serializable{
 	@Column(name = AUTO_PASS)
     private boolean autoPass;
 
-	@ManyToMany(mappedBy="groups")
+	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@JoinTable(name = Constants.USER_GROUP_TABLE_NAME, schema = Constants.USER_GROUP_TABLE_SCHEMA_NAME,
+		joinColumns = {@JoinColumn(name=GROUP_ID)}, inverseJoinColumns={@JoinColumn(name=User.USER_ID)})
 	private List<User> assignedUsers;
 	
 	@ManyToMany(cascade = CascadeType.ALL)
@@ -83,7 +86,7 @@ public class Group implements Serializable{
         if (assignedUsers == null) {
             assignedUsers = new ArrayList<User>();
         }
-        return assignedUsers;
+        return Collections.unmodifiableList(assignedUsers);
     }
 
     public void setAssignedUsers(List<User> assignedUsers) {

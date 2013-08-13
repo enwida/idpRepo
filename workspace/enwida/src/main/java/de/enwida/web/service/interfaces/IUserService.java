@@ -144,16 +144,34 @@ public interface IUserService {
      * @param groupID
      * @return
      */
+
+    public void assignUserToGroup(User user, Group group);
+    /**
+     * Assigns User into Group
+     * 
+     * @param user
+     * @param groupp
+     * @return
+     */
     public void assignUserToGroup(long userID, long groupID);
 
     /**
-     * Deassigns User into Group
+     * Revokes User into Group
+     * 
+     * @param user
+     * @param group
+     * @return
+     */
+
+    public void revokeUserFromGroup(User user, Group group);
+    /**
+     * Revokes User from Group
      * 
      * @param userID
      * @param groupID
      * @return
      */
-    public void deassignUserFromGroup(long userID, long groupID);
+    public void revokeUserFromGroup(long userID, long groupID);
 
     /**
      * Get All Groups with Users attached

@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -102,9 +103,6 @@ public class User implements Serializable, UserDetails {
 	private String activationKey;
 
 	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-//	@ElementCollection(targetClass = Group.class)
-//	@JoinTable(name = Constants.USER_GROUP_TABLE_NAME, schema = Constants.USER_GROUP_TABLE_SCHEMA_NAME, uniqueConstraints = { @UniqueConstraint(columnNames = {
-//			User.USER_ID, Group.GROUP_ID }) }, joinColumns = { @JoinColumn(name = USER_ID, referencedColumnName = USER_ID) }, inverseJoinColumns = { @JoinColumn(name = Group.GROUP_ID, referencedColumnName = Group.GROUP_ID) })
 	@JoinTable(name = Constants.USER_GROUP_TABLE_NAME, schema = Constants.USER_GROUP_TABLE_SCHEMA_NAME,
 		joinColumns = {@JoinColumn(name=USER_ID)}, inverseJoinColumns={@JoinColumn(name=Group.GROUP_ID)})
 	private List<Group> groups;
@@ -267,7 +265,7 @@ public class User implements Serializable, UserDetails {
 	    if( groups==null){
 	        this.groups=new ArrayList<Group>();
 	    }
-        return groups;
+        return Collections.unmodifiableList(groups);
     }
 
     public void setGroups(List<Group> groups) {

@@ -3,7 +3,9 @@ package de.enwida.web.service.implementation;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -233,24 +235,48 @@ public class UserServiceImpl implements IUserService {
     public void deleteUser(User user) throws Exception {
         userDao.deleteUser(user);
     }
+    
+    @Override
+    public void assignUserToGroup(User user, Group group) {
+    	final List<Group> groups = new ArrayList<>(user.getGroups());
+    	groups.add(group);
+    	user.setGroups(groups);
+    	userDao.update(user);
+    	userDao.refresh(user);
+    	groupDao.refresh(group);
+    }
     /**
      * Assign users into group
      */
     @Override
     public void assignUserToGroup(long userID, long groupID){
-        User user=userDao.fetchById(userID);
-        Group group=groupDao.fetchById(groupID);
-        if (!group.getAssignedUsers().contains(user)){
-            group.getAssignedUsers().add(user);
-        }
-        if(group!=null  || user!=null)
-            groupDao.save(group);
+        final User user = userDao.fetchById(userID);
+        final Group group = groupDao.fetchById(groupID);
+        assignUserToGroup(user, group);
     }
+    
+    @Override
+    public void revokeUserFromGroup(User user, Group group) {
+    	final List<Group> groups = new ArrayList<>(user.getGroups());
+    	final Iterator<Group> iter = groups.iterator();
+
+    	while (iter.hasNext()) {
+    		if (iter.next().getGroupID() == group.getGroupID()) {
+    			iter.remove();
+    			break;
+    		}
+    	}
+    	user.setGroups(groups);
+    	userDao.update(user);
+    	userDao.refresh(user);
+    	groupDao.refresh(group);
+    }
+    
     /**
      * deAssign users into group
      */
     @Override
-    public void deassignUserFromGroup(long userID, long groupID) {
+    public void revokeUserFromGroup(long userID, long groupID) {
         User user=userDao.fetchById(userID);
         Group group=groupDao.fetchById(groupID);
         if (group.getAssignedUsers().contains(user)){

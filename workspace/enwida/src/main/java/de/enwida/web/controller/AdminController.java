@@ -309,7 +309,7 @@ public class AdminController {
     public String deassignUserToGroup(HttpServletRequest request,Model model,int selectedUser,int selectedGroup)
     {
         try {
-            userService.deassignUserFromGroup(selectedUser,selectedGroup); 
+            userService.revokeUserFromGroup(selectedUser,selectedGroup); 
             model.addAttribute("info", "OK");       
         } catch (Exception e) {   
             logger.info(e.getMessage());
