@@ -1,6 +1,7 @@
 package de.enwida.web.service.interfaces;
 
 import java.util.List;
+import java.util.Set;
 
 import de.enwida.web.db.model.UploadedFile;
 import de.enwida.web.model.Group;
@@ -82,7 +83,7 @@ public interface IUserService {
      * @param userID
      * @return collection of groups
      */
-    public List<Group> getUserGroups(long userID)throws Exception;
+	public Set<Group> getUserGroups(long userID) throws Exception;
 
     /**
      * Gets all the groups

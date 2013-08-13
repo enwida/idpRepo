@@ -13,7 +13,6 @@ import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -25,7 +24,6 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import javax.persistence.UniqueConstraint;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -105,14 +103,14 @@ public class User implements Serializable, UserDetails {
 	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@JoinTable(name = Constants.USER_GROUP_TABLE_NAME, schema = Constants.USER_GROUP_TABLE_SCHEMA_NAME,
 		joinColumns = {@JoinColumn(name=USER_ID)}, inverseJoinColumns={@JoinColumn(name=Group.GROUP_ID)})
-	private List<Group> groups;
+	private Set<Group> groups;
 
-	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "user")
-	@ElementCollection(targetClass = NavigationSettings.class)
+	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "user",targetEntity=NavigationSettings.class)
+	// @ElementCollection(targetClass = NavigationSettings.class)
 	private Set<NavigationSettings> navigationSettings;
 
-	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "uploader")
-	@ElementCollection(targetClass = UploadedFile.class)
+	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "uploader", targetEntity = UploadedFile.class)
+	// @ElementCollection(targetClass = UploadedFile.class)
 	private Set<UploadedFile> uploadedFiles;
 
 	@Transient
@@ -260,15 +258,14 @@ public class User implements Serializable, UserDetails {
         this.activationKey = activationKey;
     }
 
-	@Transient
-    public List<Group> getGroups() {
+	public Set<Group> getGroups() {
 	    if( groups==null){
-	        this.groups=new ArrayList<Group>();
+			this.groups = new HashSet<Group>();
 	    }
         return Collections.unmodifiableList(groups);
     }
 
-    public void setGroups(List<Group> groups) {
+	public void setGroups(Set<Group> groups) {
         this.groups = groups;
     }
 

@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -123,11 +124,11 @@ public class UserServiceImpl implements IUserService {
             else
             {
                 // saving in default group (Anonymous)
-                Group anonymousGroup = groupDao.fetchByName("anonymous");
+				Group anonymousGroup = groupDao.fetchByName("Anonymous");
                 if(anonymousGroup == null)
                 {
                     anonymousGroup = new Group();
-                    anonymousGroup.setGroupName("anonymous");
+					anonymousGroup.setGroupName("Anonymous");
                     anonymousGroup.setAutoPass(true);
                     anonymousGroup = groupDao.addGroup(anonymousGroup);
                 }
@@ -162,7 +163,7 @@ public class UserServiceImpl implements IUserService {
      * Get all user group
      */
     @Override
-    public List<Group> getUserGroups(long userID)throws Exception {
+	public Set<Group> getUserGroups(long userID) throws Exception {
         return userDao.fetchById(userID).getGroups();
     }
 

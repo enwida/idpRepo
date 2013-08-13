@@ -1,24 +1,18 @@
 package de.enwida.web.model;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
-import javax.persistence.Transient;
-import javax.persistence.UniqueConstraint;
 
 import de.enwida.web.utils.Constants;
 
@@ -46,16 +40,18 @@ public class Group implements Serializable{
 	@Column(name = AUTO_PASS)
     private boolean autoPass;
 
-	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-	@JoinTable(name = Constants.USER_GROUP_TABLE_NAME, schema = Constants.USER_GROUP_TABLE_SCHEMA_NAME,
-		joinColumns = {@JoinColumn(name=GROUP_ID)}, inverseJoinColumns={@JoinColumn(name=User.USER_ID)})
-	private List<User> assignedUsers;
+	@ManyToMany(mappedBy = "groups", fetch = FetchType.EAGER, cascade = CascadeType.ALL, targetEntity = User.class)
+	private Set<User> assignedUsers;
 	
-	@ManyToMany(cascade = CascadeType.ALL)
-	@ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
-	@JoinTable(name = Constants.GROUP_ROLE_TABLE_NAME, schema = Constants.GROUP_ROLE_TABLE_SCHEMA_NAME, uniqueConstraints = { @UniqueConstraint(columnNames = {
-			Role.ROLE_ID, Group.GROUP_ID }) }, joinColumns = { @JoinColumn(name = GROUP_ID, referencedColumnName = GROUP_ID) }, inverseJoinColumns = { @JoinColumn(name = Role.ROLE_ID, referencedColumnName = Role.ROLE_ID) })
-	private List<Role> assignedRoles;   
+	// @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER,
+	// targetEntity = Role.class)
+	// @JoinTable(name = Constants.GROUP_ROLE_TABLE_NAME, schema =
+	// Constants.GROUP_ROLE_TABLE_SCHEMA_NAME, uniqueConstraints = {
+	// @UniqueConstraint(columnNames = {
+	// Role.ROLE_ID, Group.GROUP_ID }) }, joinColumns = { @JoinColumn(name =
+	// GROUP_ID) }, inverseJoinColumns = { @JoinColumn(name = Role.ROLE_ID) })
+	@ManyToMany(mappedBy = "assignedGroups", fetch = FetchType.EAGER, cascade = CascadeType.ALL, targetEntity = Role.class)
+	private Set<Role> assignedRoles;
 
     public Long getGroupID() {
 		return new Long(groupId);
@@ -81,34 +77,32 @@ public class Group implements Serializable{
 	    this(null);
 	}
 
-    @Transient
-    public List<User> getAssignedUsers() {
+	public Set<User> getAssignedUsers() {
         if (assignedUsers == null) {
-            assignedUsers = new ArrayList<User>();
+			assignedUsers = new HashSet<User>();
         }
-        return Collections.unmodifiableList(assignedUsers);
+		return assignedUsers;
     }
 
-    public void setAssignedUsers(List<User> assignedUsers) {
+	public void setAssignedUsers(Set<User> assignedUsers) {
         this.assignedUsers = assignedUsers;
     }
 
     public void addAssignedUsers(User user) {
         if (assignedUsers == null) {
-            assignedUsers = new ArrayList<User>();
+			assignedUsers = new HashSet<User>();
         }
         this.assignedUsers.add(user);
     }
 
-	@Transient
-	public List<Role> getAssignedRoles() {
+	public Set<Role> getAssignedRoles() {
         if (assignedRoles == null) {
-            assignedRoles = new ArrayList<Role>();
+			assignedRoles = new HashSet<Role>();
         }
 		return assignedRoles;
 	}
 
-	public void setAssignedRoles(List<Role> assignedRoles) {
+	public void setAssignedRoles(Set<Role> assignedRoles) {
 		this.assignedRoles = assignedRoles;
 	}
 

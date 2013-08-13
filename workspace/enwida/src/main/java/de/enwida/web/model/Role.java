@@ -1,8 +1,9 @@
 package de.enwida.web.model;
 
 import java.io.Serializable;
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -48,11 +49,20 @@ public class Role implements Serializable, GrantedAuthority {
     @Column(name = DESCRIPTION) 
     private String description;
     
-    @ManyToMany(cascade = CascadeType.ALL)
-    @ElementCollection(targetClass = Group.class, fetch = FetchType.EAGER)
-    @JoinTable(name = Constants.GROUP_ROLE_TABLE_NAME, schema = Constants.USER_GROUP_TABLE_SCHEMA_NAME, uniqueConstraints = { @UniqueConstraint(columnNames = {
-            Role.ROLE_ID, Group.GROUP_ID }) }, joinColumns = { @JoinColumn(name = ROLE_ID, referencedColumnName = ROLE_ID) }, inverseJoinColumns = { @JoinColumn(name = Group.GROUP_ID, referencedColumnName = Group.GROUP_ID) })
-    private  List<Group> assignedGroups;
+	// @ManyToMany(mappedBy = "assignedRoles", cascade = CascadeType.ALL,
+	// targetEntity = Group.class, fetch = FetchType.EAGER)
+	// @ElementCollection(targetClass = Group.class, fetch = FetchType.EAGER)
+	// @JoinTable(name = Constants.GROUP_ROLE_TABLE_NAME, schema =
+	// Constants.USER_GROUP_TABLE_SCHEMA_NAME, uniqueConstraints = {
+	// @UniqueConstraint(columnNames = {
+	// Role.ROLE_ID, Group.GROUP_ID }) }, joinColumns = { @JoinColumn(name =
+	// ROLE_ID, referencedColumnName = ROLE_ID) }, inverseJoinColumns = {
+	// @JoinColumn(name = Group.GROUP_ID, referencedColumnName = Group.GROUP_ID)
+	// })
+	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, targetEntity = Group.class)
+	@JoinTable(name = Constants.GROUP_ROLE_TABLE_NAME, schema = Constants.GROUP_ROLE_TABLE_SCHEMA_NAME, uniqueConstraints = { @UniqueConstraint(columnNames = {
+			Role.ROLE_ID, Group.GROUP_ID }) }, joinColumns = { @JoinColumn(name = ROLE_ID) }, inverseJoinColumns = { @JoinColumn(name = Group.GROUP_ID) })
+	private Set<Group> assignedGroups;
     
 	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "role")
     @ElementCollection(targetClass = Right.class)
@@ -77,7 +87,7 @@ public class Role implements Serializable, GrantedAuthority {
 
 	public void addAssignedGroups(Group group) {
         if (assignedGroups == null) {
-            assignedGroups = new ArrayList<Group>();
+			assignedGroups = new HashSet<Group>();
         }
         this.assignedGroups.add(group);
     }
@@ -102,12 +112,11 @@ public class Role implements Serializable, GrantedAuthority {
         this.roleName = roleName;
     }
 
-	@Transient
-    public List<Group> getAssignedGroups() {
+	public Set<Group> getAssignedGroups() {
         return assignedGroups;
     }
 
-    public void setAssignedGroups(List<Group> assignedGroups) {
+	public void setAssignedGroups(Set<Group> assignedGroups) {
         this.assignedGroups = assignedGroups;
     }
     
