@@ -406,4 +406,14 @@ public class UserServiceImpl implements IUserService {
         }
         return null;
     }
+
+    @Override
+    public User getUserByFirstAndLastName(String username) {
+        for (User user : userDao.fetchAll()) {
+            if(user.getFirstName()+" "+user.getLastName()==username){
+                return user;
+            }
+        }
+        return null;
+    }
 }
