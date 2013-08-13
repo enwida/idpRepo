@@ -45,7 +45,9 @@ public class Group implements Serializable{
 	@Column(name = AUTO_PASS)
     private boolean autoPass;
 
-	@ManyToMany(mappedBy="groups")
+	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@JoinTable(name = Constants.USER_GROUP_TABLE_NAME, schema = Constants.USER_GROUP_TABLE_SCHEMA_NAME,
+		joinColumns = {@JoinColumn(name=GROUP_ID)}, inverseJoinColumns={@JoinColumn(name=User.USER_ID)})
 	private List<User> assignedUsers;
 	
 	@ManyToMany(cascade = CascadeType.ALL)

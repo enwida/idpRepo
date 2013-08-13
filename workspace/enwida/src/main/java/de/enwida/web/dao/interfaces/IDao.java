@@ -25,4 +25,6 @@ public interface IDao <T> {
 	public Long getNextSequenceNumber(String schema, String sequenceName);
 
 	List<T> fetchAll();
+	
+	public void refresh(T entity);
 }

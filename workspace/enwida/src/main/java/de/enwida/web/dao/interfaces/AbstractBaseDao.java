@@ -142,4 +142,8 @@ public abstract class AbstractBaseDao<T> implements IDao<T> {
 		}
 		return nextCounter.longValue();
 	}
+	
+	public void refresh(T entity) {
+		em.refresh(entity);
+	}
 }
