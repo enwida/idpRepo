@@ -3,7 +3,6 @@ package de.enwida.web.service.implementation;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.sql.Date;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
@@ -239,9 +238,7 @@ public class UserServiceImpl implements IUserService {
     
     @Override
     public void assignUserToGroup(User user, Group group) {
-    	final List<Group> groups = new ArrayList<>(user.getGroups());
-    	groups.add(group);
-    	user.setGroups(groups);
+		user.getGroups().add(group);
     	userDao.update(user);
     	userDao.refresh(user);
     	groupDao.refresh(group);
@@ -258,8 +255,7 @@ public class UserServiceImpl implements IUserService {
     
     @Override
     public void revokeUserFromGroup(User user, Group group) {
-    	final List<Group> groups = new ArrayList<>(user.getGroups());
-    	final Iterator<Group> iter = groups.iterator();
+		final Iterator<Group> iter = user.getGroups().iterator();
 
     	while (iter.hasNext()) {
     		if (iter.next().getGroupID() == group.getGroupID()) {
@@ -267,7 +263,6 @@ public class UserServiceImpl implements IUserService {
     			break;
     		}
     	}
-    	user.setGroups(groups);
     	userDao.update(user);
     	userDao.refresh(user);
     	groupDao.refresh(group);
