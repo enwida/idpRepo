@@ -15,10 +15,10 @@
     <file name="tipsy.js" />
     <file name="d3.v3.min.js" />
     <file name="d3-legend.js" />
-    <file name="jquery.base64.min.js" />
     <file name="underscore-min.js" />
     <file name="bootstrap.min.js" />
     <file name="bootstrap-datepicker.js" />
+    <file name="Bacon.js" />
     <file name="require.js" />
   </filelist>
 

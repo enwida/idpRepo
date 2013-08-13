@@ -2,18 +2,21 @@ package de.enwida.web.dao.interfaces;
 
 import java.util.List;
 
+import de.enwida.web.model.Right;
 import de.enwida.web.model.Role;
 
 public interface IRoleDao extends IDao<Role> {
 
-    List<Role> getUserRoles(long userID) throws Exception;
-
     Role fetchById(long id);
 
-    void addRole(Role role) throws Exception;
+    Role addRole(Role role);
 
-    void removeRole(Role role) throws Exception;
+    void removeRole(Role role);
 
     List<Role> fetchAll();
+
+    List<Right> getAllAspects(long roleID);
+
+    Role save(Role role);
 
 }

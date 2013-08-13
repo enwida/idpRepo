@@ -25,6 +25,7 @@ define ->
   linesMatter = ["bar"]
 
   getOptimalResolution: (type, timeRange, filters, width, lines=1) ->
+    return null if not filters? or filters.length is 0
     return "HOURLY" if type is "carpet"
 
     optimalDataPointCount = width / densities[type].optimalDensity

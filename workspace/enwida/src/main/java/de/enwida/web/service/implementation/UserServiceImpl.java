@@ -69,14 +69,8 @@ public class UserServiceImpl implements IUserService {
      * @throws Exception 
      */
     @Override
-    public User getUser(Long id) throws Exception {
-        
-        User user = userDao.fetchById(id);
-        if (user==null)
-            return null;
-        user.setRoles(roleDao.getUserRoles(user.getUserID()));
-        user.setGroups(groupDao.getUserGroups(user.getUserID()));
-        return user;
+    public User getUser(Long id) {
+        return userDao.fetchById(id);
     }
 
     /**
@@ -116,18 +110,18 @@ public class UserServiceImpl implements IUserService {
                 
         if(userId != -1)
         {           
-            Group group = groupDao.getGroupByCompanyName(user.getCompanyName());
+            Group group = this.getGroupByCompanyName(user.getCompanyName());
             
             if(group != null && group.isAutoPass())
             {
                 Group newGroup = groupDao.fetchById(group.getGroupID());
-             //  userDao.assignUserToGroup(userId, newGroup.getGroupID());
+                this.assignUserToGroup(userId, newGroup.getGroupID());
 
             }
             else
             {
                 // saving in default group (Anonymous)
-                Group anonymousGroup = groupDao.getGroupByName("anonymous");
+                Group anonymousGroup = groupDao.fetchByName("anonymous");
                 if(anonymousGroup == null)
                 {
                     anonymousGroup = new Group();
@@ -167,7 +161,7 @@ public class UserServiceImpl implements IUserService {
      */
     @Override
     public List<Group> getUserGroups(long userID)throws Exception {
-        return groupDao.getUserGroups(userID);
+        return userDao.fetchById(userID).getGroups();
     }
 
     /**
@@ -213,14 +207,8 @@ public class UserServiceImpl implements IUserService {
      * Gets the user based on userName
      */
     @Override
-    public User getUser(String userName)throws Exception  {
-        User user= userDao.fetchByName(userName);
-        if (user==null)
-            return null;
-		// TODO:FIX
-		// user.setRoles(roleDao.getUserRoles(user.getUserID()));
-		// user.setGroups(groupDao.getUserGroups(user.getUserID()));
-        return user;
+    public User getUser(String userName)  {
+        return userDao.fetchByName(userName);
     }
     /**
      * Resets user Password and send an email link
@@ -249,17 +237,27 @@ public class UserServiceImpl implements IUserService {
      * Assign users into group
      */
     @Override
-    public void assignUserToGroup(int userID, int groupID) throws Exception{
-        //TODO:Fix here
-       // userDao.assignUserToGroup(userID,groupID);
+    public void assignUserToGroup(long userID, long groupID){
+        User user=userDao.fetchById(userID);
+        Group group=groupDao.fetchById(groupID);
+        if (!group.getAssignedUsers().contains(user)){
+            group.getAssignedUsers().add(user);
+        }
+        if(group!=null  || user!=null)
+            groupDao.save(group);
     }
     /**
      * deAssign users into group
      */
     @Override
-    public void deassignUserToGroup(int userID, int groupID) throws Exception {
-        //TODO:Fix here
-        // userDao.deassignUserFromGroup(userID,groupID);
+    public void deassignUserFromGroup(long userID, long groupID) {
+        User user=userDao.fetchById(userID);
+        Group group=groupDao.fetchById(groupID);
+        if (group.getAssignedUsers().contains(user)){
+            group.getAssignedUsers().remove(user);
+        }
+        if(group!=null  || user!=null)
+            groupDao.save(group);
     }
     /**
      * Gets all groups with users attached
@@ -267,9 +265,6 @@ public class UserServiceImpl implements IUserService {
     @Override
     public List<Group> getAllGroupsWithUsers() throws Exception {
         List<Group> groups = groupDao.fetchAll();
-        for (Group group : groups) {
-            group.setAssignedUsers(userDao.getUsersByGroupID(group.getGroupID()));
-        }
         return groups;
     }
 
@@ -277,26 +272,30 @@ public class UserServiceImpl implements IUserService {
      * Assigns role to group
      */
     @Override
-    public void assignRoleToGroup(int roleID, int groupID) throws Exception {
-        //TODO:Fix here
+    public void assignRoleToGroup(long roleID, long groupID) {
         Role role=roleDao.fetchById(roleID);
         Group group=groupDao.fetchById(groupID);
-         groupDao.assignRoleToGroup(roleID,groupID);
+        if (!group.getAssignedRoles().contains(role)){
+            group.getAssignedRoles().add(role);
+        }
+        if(role!=null  || group!=null)
+            groupDao.save(group);
     }
 
     @Override
-    public void deassignRoleToGroup(int roleID, int groupID) throws Exception {
-        //TODO:Fix here
-        groupDao.deassignRoleFromGroup(roleID,groupID);
+    public void deassignRoleToGroup(long roleID, long groupID){
+        Role role=roleDao.fetchById(roleID);
+        Group group=groupDao.fetchById(groupID);
+        if (group.getAssignedRoles().contains(role)){
+            group.getAssignedRoles().remove(role);
+        }
+        if(role!=null  || group!=null)
+            groupDao.save(group);
     }
 
     @Override
     public List<Role> getAllRolesWithGroups()throws Exception  {
-        List<Role> roles = roleDao.fetchAll();
-        for (Role role : roles) {
-            role.setAssignedGroups(groupDao.getGroupsByRole(role.getRoleID()));
-        }
-        return roles;
+        return roleDao.fetchAll();
     }
 
     @Override
@@ -394,5 +393,27 @@ public class UserServiceImpl implements IUserService {
     @Override
     public boolean saveUser(User user) throws Exception {
         return saveUser(user,null);
+    }
+    
+    @Override
+    public Group getGroupByCompanyName(final String companyName)
+    {
+        for (Group group : groupDao.fetchAll()) {
+            for (User user : group.getAssignedUsers()) {
+                if(user.getCompanyName()==companyName)
+                    return group;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public User getUserByFirstAndLastName(String username) {
+        for (User user : userDao.fetchAll()) {
+            if(user.getFirstName()+" "+user.getLastName()==username){
+                return user;
+            }
+        }
+        return null;
     }
 }

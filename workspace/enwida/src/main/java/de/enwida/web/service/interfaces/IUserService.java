@@ -22,7 +22,7 @@ public interface IUserService {
      * @return the user created in database
      * @throws Exception 
      */
-    public User getUser(Long id) throws Exception;
+    public User getUser(Long id);
 
     /**
      * Gets all the users from DB
@@ -30,7 +30,7 @@ public interface IUserService {
      * @param userName
      * @return the user created in database
      */
-    public User getUser(String userName)throws Exception;
+    public User getUser(String userName);
 
     /**
      * Gets all the users
@@ -144,7 +144,7 @@ public interface IUserService {
      * @param groupID
      * @return
      */
-    public void assignUserToGroup(int userID, int groupID) throws Exception;
+    public void assignUserToGroup(long userID, long groupID);
 
     /**
      * Deassigns User into Group
@@ -153,7 +153,7 @@ public interface IUserService {
      * @param groupID
      * @return
      */
-    public void deassignUserToGroup(int userID, int groupID) throws Exception;
+    public void deassignUserFromGroup(long userID, long groupID);
 
     /**
      * Get All Groups with Users attached
@@ -171,8 +171,7 @@ public interface IUserService {
      * @return
      * @throws Exception
      */
-    public void assignRoleToGroup(int selectedRole, int selectedGroup)
-            throws Exception;
+    public void assignRoleToGroup(long selectedRole, long selectedGroup);
 
     /**
      * Deassigns role to the groups
@@ -182,8 +181,7 @@ public interface IUserService {
      * @return
      * @throws Exception
      */
-    public void deassignRoleToGroup(int selectedRole, int selectedGroup)
-            throws Exception;
+    public void deassignRoleToGroup(long selectedRole, long selectedGroup);
 
     /**
      * Get All roles with Groups attached
@@ -255,4 +253,8 @@ public interface IUserService {
     public UploadedFile getFileByFilePath(String filePath);
 
     public int getUploadedFileVersion(UploadedFile file, User user);
+
+    Group getGroupByCompanyName(String companyName);
+
+    public User getUserByFirstAndLastName(String username);
 }

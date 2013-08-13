@@ -37,7 +37,7 @@ public class Group implements Serializable{
 	@Id
 	@Column(name = GROUP_ID)
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int groupId;
+	private long groupId;
     
 	@Column(name = GROUP_NAME)
     private String groupName;
@@ -45,10 +45,7 @@ public class Group implements Serializable{
 	@Column(name = AUTO_PASS)
     private boolean autoPass;
 
-	@ManyToMany(cascade = CascadeType.ALL)
-	@ElementCollection(targetClass = User.class, fetch = FetchType.EAGER)
-	@JoinTable(name = Constants.USER_GROUP_TABLE_NAME, schema = Constants.USER_GROUP_TABLE_SCHEMA_NAME, uniqueConstraints = { @UniqueConstraint(columnNames = {
-			User.USER_ID, Group.GROUP_ID }) }, joinColumns = { @JoinColumn(name = GROUP_ID, referencedColumnName = GROUP_ID) }, inverseJoinColumns = { @JoinColumn(name = User.USER_ID, referencedColumnName = User.USER_ID) })
+	@ManyToMany(mappedBy="groups")
 	private List<User> assignedUsers;
 	
 	@ManyToMany(cascade = CascadeType.ALL)
@@ -64,14 +61,6 @@ public class Group implements Serializable{
     public void setGroupID(Long groupID) {
 		this.groupId = groupID.intValue();
     }
-
-	public int getGroupId() {
-		return groupId;
-	}
-
-	public void setGroupId(int groupId) {
-		this.groupId = groupId;
-	}
 
 	public String getGroupName() {
         return groupName;
@@ -91,6 +80,9 @@ public class Group implements Serializable{
 
     @Transient
     public List<User> getAssignedUsers() {
+        if (assignedUsers == null) {
+            assignedUsers = new ArrayList<User>();
+        }
         return assignedUsers;
     }
 
@@ -107,6 +99,9 @@ public class Group implements Serializable{
 
 	@Transient
 	public List<Role> getAssignedRoles() {
+        if (assignedRoles == null) {
+            assignedRoles = new ArrayList<Role>();
+        }
 		return assignedRoles;
 	}
 

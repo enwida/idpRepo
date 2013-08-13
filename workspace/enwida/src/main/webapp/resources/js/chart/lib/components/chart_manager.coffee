@@ -1,19 +1,23 @@
-define [ "components/navigation"
-         "components/visual"
+define [ "components/visual"
+         "components/productSelection"
+         "components/timeSelection"
          "components/lines"
          "components/infobox"
-         "components/download"
          "util/loading"
          "util/lines_preprocessor"
+         "util/resolution"
+         "util/product_tree"
         ],
 
-  (Navigation
-   Visual
+  (Visual
+   ProductSelection
+   TimeSelection
    Lines
    Infobox
-   Download
    Loading
    LinesPreprocessor
+   Resolution
+   ProductTree
   ) ->
 
     flight.component ->
@@ -41,6 +45,15 @@ define [ "components/navigation"
         Loading.of @select("visual"),
           @attr.navigationData?.width,
           @attr.navigationData?.height
+
+      @getNavigationData = (callback) ->
+        $.ajax "navigation",
+          data: chartId: @attr.id
+          error: (err) -> callback err
+          success: (data) =>
+            console.log data
+            @navigationData = data
+            callback null, data
 
       @getLines = (options, callback) ->
         @getMsg().showLoading()
@@ -70,17 +83,22 @@ define [ "components/navigation"
           success: =>
             @logDebug "Sent disabled lines"
 
-      @onGetLines = (a, opts) ->
+      @onGetLines = (selections) ->
+        # Calculate resolution
+        selections.resolution = @optimalResolution selections
+
         # Update info box
-        opts.title = @attr.navigationData.title
+        selections.title = @attr.navigationData.title
         @trigger @select("infobox"), "updateInfo",
           navigationData: @attr.navigationData
-          selections: opts
+          selections: selections
 
-        @getLines opts, (err, data) =>
-          throw err if err?
+        @getLines selections, (err, data) =>
+          if err?
+            console.log err
+            return @trigger "chartMessage", msg: "Sorry, something went wrong."
           if data.length is 0
-            return @getMsg().showText "No data"
+            return @trigger "chartMessage", msg: "No data"
 
           @attr.data = data = LinesPreprocessor.transform @attr.type, data
           @triggerDraw data
@@ -88,25 +106,31 @@ define [ "components/navigation"
 
       @triggerDraw = (data) ->
         if data.length is @attr.disabledLines.length
-          return @getMsg().showText "No lines selected"
+          return @trigger "chartMessage", msg: "No lines selected"
 
         @trigger @select("visual"), "draw",
           data: data
+          navigation: @attr.navigationData
           disabledLines: @attr.disabledLines
-
-        @trigger @select("download"), "downloadLink"
 
       @toggleLine = (_, opts) ->
         @attr.disabledLines = opts.disabledLines
         @reportDisabledLines opts.disabledLines
         @triggerDraw @attr.data
 
+      @optimalResolution = (selections) ->
+        leaf = @attr.treeHelper.traverse selections.tso, selections.product
+        Resolution.getOptimalResolution \
+          @attr.type, selections.timeRange,
+          leaf.resolution, @attr.width, @attr.navigationData.aspects.length
+
       @defaultAttrs
         navigation: ".navigation"
         visual: ".visual"
         lines: ".lines"
         infobox: ".infobox"
-        download: ".download"
+        productSelection: ".productSelection"
+        timeSelection: ".timeSelection"
         disabledLines: []
 
       @after "initialize", ->
@@ -116,15 +140,19 @@ define [ "components/navigation"
 
         # Event handlers
         @on "getLines", @onGetLines
-        @on "updateNavigation", (_, opts) ->
-          @attr.navigationData = opts.data
-          @applyVisibility()
-          @trigger @select("visual"), "navigationData", opts
-          @trigger @select("lines"), "disabledLines",
-            lines: opts.data?.defaults?.disabledLines
         @on "toggleLine", @toggleLine
         @on "errorMessage", (_, opts) ->
           @$node.text opts.msg
+        @on "chartMessage", (_, opts) ->
+          @getMsg().showText opts.msg
+
+        productStream = @$node.asEventStream("productSelectionChanged", (_, v) -> v)
+        timeStream = @$node.asEventStream("timeSelectionChanged", (_, v) -> v)
+        productStream.onValue (selections) =>
+          leaf = @attr.treeHelper.traverse selections.tso, selections.product
+          @trigger @select("timeSelection"), "timeRestrictions", leaf.timeRange
+        selectionStream = Bacon.combineWith $.extend, productStream, timeStream
+        selectionStream.onValue (selections) => @onGetLines selections
 
         # Parse element attributes
         @attr.type = @$node.attr("data-chart-type") ? "line"
@@ -137,11 +165,7 @@ define [ "components/navigation"
         # Add visual
         visual = $("<div>").addClass "visual"
         @$node.append visual
-        Visual.attachTo visual,
-          id: @attr.id
-          type: @attr.type
-          width: @attr.width
-          height: @attr.height
+        Visual.attachTo visual, @attr
 
         # Add info box
         infoBox = $("<div>").addClass("infobox").css("width", "#{@attr.width}px")
@@ -154,23 +178,31 @@ define [ "components/navigation"
           @$node.append lines
           Lines.attachTo lines
 
-        # Add navigation
-        navigation = $("<div>").addClass "navigation"
-        @$node.append navigation
-        Navigation.attachTo navigation,
-          id: @attr.id
-          width: @attr.width
-          type: @attr.type
+        selection = $("<div>").addClass("selection")
+        @$node.append selection
 
-        # Add download
-        download = $("<div>").addClass("download")
-        a = $("<a>").attr("download", "chart.svg").attr("title", "chart.svg")
-        button = $("<button>").addClass("btn").addClass("btn-default")
-          .attr("type", "button")
-          .text("Download")
-        a.append button
-        download.append a
-        @$node.append download
-        Download.attachTo download
+        # Add product selection
+        productSelection = $("<div>").addClass "productSelection"
+        selection.append productSelection
+        ProductSelection.attachTo productSelection, @attr
 
+        # Add time selection
+        timeSelection = $("<div>").addClass "timeSelection"
+        selection.append timeSelection
+        TimeSelection.attachTo timeSelection, @attr
+
+        @getNavigationData (err, data) =>
+          if err?
+            console.log err
+            return @trigger "errorMessage", msg: "Sorry, something went wrong."
+          unless typeof data is "object" and data?.allResolutions?.length > 0
+            return @trigger "errorMessage", msg: "Sorry, you do not have the permission to see this chart."
+            return
+
+          @attr.navigationData = data
+          @attr.treeHelper = ProductTree.init data
+          @applyVisibility()
+
+          @trigger @select("productSelection"), "refresh", data: data
+          @trigger @select("timeSelection"), "refresh", data: data
 

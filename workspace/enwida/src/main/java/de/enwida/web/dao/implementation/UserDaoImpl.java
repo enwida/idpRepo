@@ -1,14 +1,8 @@
 package de.enwida.web.dao.implementation;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.List;
 import java.util.Set;
 
-import javax.persistence.TypedQuery;
-
 import org.apache.log4j.Logger;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 import de.enwida.web.controller.AdminController;
@@ -16,7 +10,6 @@ import de.enwida.web.dao.interfaces.AbstractBaseDao;
 import de.enwida.web.dao.interfaces.IUserDao;
 import de.enwida.web.db.model.UploadedFile;
 import de.enwida.web.model.User;
-import de.enwida.web.utils.Constants;
 
 @Repository
 public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
@@ -31,6 +24,8 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
     @Override
 	public long save(User user)
 	{
+        if(user==null) return 0;
+        
 		User exisinguser = fetchByName(user.getUserName());
 		try {
 			if (exisinguser == null) {
@@ -46,18 +41,10 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
 		return user.getUserID();
 	}
   
-	@SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
     public boolean checkUserActivationId(String username, String activationCode) {
-        //TODO:Fix here
-        String sql = "select activation_id from "+Constants.USERS_SCHEMA_NAME+Constants.USER_TABLE_NAME+" where users.user_name=?";
-        String activationID = (String) this.jdbcTemplate.queryForObject(sql, new Object[] { username }, new RowMapper() {
-            @Override
-            public String mapRow(ResultSet rs, int arg1) throws SQLException {
-                return rs.getString("activation_id");
-            }
-        });
-        return activationID.equalsIgnoreCase(activationCode);
+        User user=this.fetchByName(username);
+        return user.getActivationKey().equals(activationCode);
     }
     
 
@@ -83,15 +70,6 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
     @Override
     public boolean usernameAvailablility(String userName) {
         return this.fetchByName(userName)!=null;
-    }
-
-    @Override
-    public List<User> getUsersByGroupID(Long groupID) {
-        TypedQuery<User> typedQuery = em.createQuery("from "
-                                + User.class.getName()
-                                + " INNER JOIN users.user_group ON users.users.user_id=users.user_group.user_id WHERE user_group.group_ID=:groupID",
-                        User.class);
-        return typedQuery.setParameter("groupID", groupID).getResultList();
     }
 
     @Override

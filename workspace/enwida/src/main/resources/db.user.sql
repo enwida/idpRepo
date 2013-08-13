@@ -1,7 +1,5 @@
 --drop all tables	
-DROP SCHEMA IF EXISTS users CASCADE;
-
-CREATE SCHEMA users;
+DROP SCHEMA IF EXISTS users CASCADE;CREATE SCHEMA users;
 
 
 CREATE TABLE users.user

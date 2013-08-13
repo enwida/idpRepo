@@ -2,8 +2,6 @@ package de.enwida.web.dao.interfaces;
 
 import java.lang.reflect.ParameterizedType;
 import java.math.BigInteger;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -17,13 +15,12 @@ import javax.sql.DataSource;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 
 import de.enwida.web.utils.Constants;
 
-public abstract class AbstractBaseDao<T> implements IDao<T>, RowMapper<T> {
+public abstract class AbstractBaseDao<T> implements IDao<T> {
 
     private Class<T> modelClass;
     protected JdbcTemplate jdbcTemplate;
@@ -57,10 +54,6 @@ public abstract class AbstractBaseDao<T> implements IDao<T>, RowMapper<T> {
         SqlParameterSource namedParameters = new BeanPropertySqlParameterSource(
                 obj);
         return (List<T>) this.jdbcTemplate.queryForList(sql, namedParameters);
-    }
-	
-    public T mapRow(ResultSet rs, int rowNum) throws SQLException {
-        return null;
     }
 
 	@Override
@@ -100,7 +93,7 @@ public abstract class AbstractBaseDao<T> implements IDao<T>, RowMapper<T> {
      */
     public T fetchByName(String name) {
         T entity = null;
-        TypedQuery<T> typedQuery = em.createQuery( "from " + modelClass.getName()+" WHERE name= :name", modelClass);
+        TypedQuery<T> typedQuery = em.createQuery( "from " + this.modelClass.getSimpleName()+" WHERE name= :name", modelClass);
 		try {
 			entity = typedQuery.setParameter("name", name).getSingleResult();
 		} catch (NoResultException noresult) {
@@ -109,7 +102,7 @@ public abstract class AbstractBaseDao<T> implements IDao<T>, RowMapper<T> {
 					+ " with name : " + name);
 		} catch (NonUniqueResultException notUnique) {
 			// if more than one result
-			logger.error("More than one record found for "
+			logger.info("More than one record found for "
 					+ modelClass.getSimpleName() + " with name : " + name);
 		}
         return entity;

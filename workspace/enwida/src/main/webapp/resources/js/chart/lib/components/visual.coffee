@@ -21,12 +21,12 @@ define [ "drawable/line_chart"
       posneg : PosNegChart
       carpet : CarpetChart
 
-    @onNavigationData = (_, opts) ->
-      @attr.chartOptions.xLabel = opts.data.xAxisLabel
-      @attr.chartOptions.yLabel = opts.data.yAxisLabel
+    @applyNavigation = (data) ->
+      @attr.chartOptions.xLabel = data.xAxisLabel
+      @attr.chartOptions.yLabel = data.yAxisLabel
       @attr.chartOptions.scale =
         x:
-          type: if opts.data.isDateScale then "date" else "linear"
+          type: if data.isDateScale then "date" else "linear"
 
     @getChart = (lines) ->
       @attr.chartOptions.lines = lines
@@ -41,6 +41,7 @@ define [ "drawable/line_chart"
     @draw = (_, opts) ->
       @$node.empty()
       @attr.chartOptions.disabledLines = opts.disabledLines
+      @applyNavigation opts.navigation
       chart = @getChart opts.data
       chart.draw()
       @hideDisabledLines opts.disabledLines
@@ -51,7 +52,6 @@ define [ "drawable/line_chart"
       @$node.find("rect").tipsy(gravity: "sw", html: true, opacity: 0.95)
 
     @after "initialize", ->
-      @on "navigationData", @onNavigationData
       @on "draw", @draw
 
       @attr.chartOptions =

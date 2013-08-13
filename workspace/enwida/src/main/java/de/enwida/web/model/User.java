@@ -2,6 +2,7 @@ package de.enwida.web.model;
 
 import java.io.Serializable;
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -59,7 +60,7 @@ public class User implements Serializable, UserDetails {
 	@Id
 	@Column(name = USER_ID)
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int userId;
+	private long userId;
 
 	@Column(name = USER_NAME, nullable = false, unique = true)
     private String userName;
@@ -101,9 +102,11 @@ public class User implements Serializable, UserDetails {
 	private String activationKey;
 
 	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-	@ElementCollection(targetClass = Group.class)
-	@JoinTable(name = Constants.USER_GROUP_TABLE_NAME, schema = Constants.USER_GROUP_TABLE_SCHEMA_NAME, uniqueConstraints = { @UniqueConstraint(columnNames = {
-			User.USER_ID, Group.GROUP_ID }) }, joinColumns = { @JoinColumn(name = USER_ID, referencedColumnName = USER_ID) }, inverseJoinColumns = { @JoinColumn(name = Group.GROUP_ID, referencedColumnName = Group.GROUP_ID) })
+//	@ElementCollection(targetClass = Group.class)
+//	@JoinTable(name = Constants.USER_GROUP_TABLE_NAME, schema = Constants.USER_GROUP_TABLE_SCHEMA_NAME, uniqueConstraints = { @UniqueConstraint(columnNames = {
+//			User.USER_ID, Group.GROUP_ID }) }, joinColumns = { @JoinColumn(name = USER_ID, referencedColumnName = USER_ID) }, inverseJoinColumns = { @JoinColumn(name = Group.GROUP_ID, referencedColumnName = Group.GROUP_ID) })
+	@JoinTable(name = Constants.USER_GROUP_TABLE_NAME, schema = Constants.USER_GROUP_TABLE_SCHEMA_NAME,
+		joinColumns = {@JoinColumn(name=USER_ID)}, inverseJoinColumns={@JoinColumn(name=Group.GROUP_ID)})
 	private List<Group> groups;
 
 	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "user")
@@ -119,8 +122,8 @@ public class User implements Serializable, UserDetails {
 
 	@Transient
 	private Collection<GrantedAuthority> authorities = new HashSet<GrantedAuthority>();
-
-	@Transient
+   
+	@Transient	
 	private List<Role> roles;
 
     public User(String userName, String password,
@@ -173,11 +176,11 @@ public class User implements Serializable, UserDetails {
 		this.userId = userID.intValue();
     }
 
-	public int getUserId() {
+	public long getUserId() {
 		return userId;
 	}
 
-	public void setUserId(int userId) {
+	public void setUserId(long userId) {
 		this.userId = userId;
 	}
 
@@ -185,15 +188,6 @@ public class User implements Serializable, UserDetails {
     public String toString() {
         return this.getUserName();
     }
-
-	@Transient
-	public List<Role> getRoles() {
-		return roles;
-	}
-
-	public void setRoles(List<Role> roles) {
-		this.roles = roles;
-	}
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
@@ -270,6 +264,9 @@ public class User implements Serializable, UserDetails {
 
 	@Transient
     public List<Group> getGroups() {
+	    if( groups==null){
+	        this.groups=new ArrayList<Group>();
+	    }
         return groups;
     }
 
@@ -395,5 +392,21 @@ new NavigationSettings(chartId, updateddefaults, this,
 	public boolean isEnabled() {
 		return enabled;
 	}
+
+    public List<Role> getRoles() {
+        if (roles==null){
+            roles=new ArrayList<Role>();
+            for (Group group : this.getGroups()) {
+                for (Role role : group.getAssignedRoles()) {
+                    roles.add(role);
+                }
+            }
+        }
+        return roles;
+    }
+
+    public void setRoles(List<Role> roles) {
+       this.roles=roles;
+    }
 
 }
