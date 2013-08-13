@@ -26,12 +26,12 @@ public class LineServiceImpl implements ILineService {
     private LineManager lineManager;
 
     public IDataLine getLine(LineRequest request, User user) throws Exception {
-        if (!isAllowed(request, user)) {
-            throw new SecurityException("Access to line denied");
-        }
-        if (!availibilityService.isAvailable(getDataAvailibility(request))) {
-            throw new IllegalAccessError("Data not available");
-        }
+//        if (!isAllowed(request, user)) {
+//            throw new SecurityException("Access to line denied");
+//        }
+//        if (!availibilityService.isAvailable(getDataAvailibility(request))) {
+//            throw new IllegalAccessError("Data not available");
+//        }
         return lineManager.getLine(request);
     }
     

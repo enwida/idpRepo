@@ -94,8 +94,8 @@ public class NavigationServiceImpl implements INavigationService {
         
         // Fetch the related aspects and shrink the navigation data
         // under security and availability perspective
-        shrinkNavigationOnAvailibility(navigationData, user);
-        shrinkNavigationOnSecurity(navigationData, user);
+//        shrinkNavigationOnAvailibility(navigationData, user);
+//        shrinkNavigationOnSecurity(navigationData, user);
         
         // Localize Strings
         return navigationLocalizer.localize(navigationData, chartId, locale);
