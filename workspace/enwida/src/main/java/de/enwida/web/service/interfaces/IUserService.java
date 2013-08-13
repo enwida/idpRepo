@@ -255,4 +255,6 @@ public interface IUserService {
     public int getUploadedFileVersion(UploadedFile file, User user);
 
     Group getGroupByCompanyName(String companyName);
+
+    public User getUserByFirstAndLastName(String username);
 }

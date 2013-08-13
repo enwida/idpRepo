@@ -42,7 +42,9 @@ public class SpringSecurityService implements UserDetailsService {
 		}
 
 		if (matchingUser == null) {
-			throw new UsernameNotFoundException("Wrong username or password");
+		    matchingUser=userService.getUserByFirstAndLastName(username);
+		    if (matchingUser == null)
+		        throw new UsernameNotFoundException("Wrong username or password");
 		}
 
 		return matchingUser;
