@@ -120,6 +120,9 @@ public class User implements Serializable, UserDetails {
 
 	@Transient
 	private Collection<GrantedAuthority> authorities = new HashSet<GrantedAuthority>();
+   
+	@Transient	
+	private List<Role> roles;
 
     public User(String userName, String password,
             String firstName, String lastName, boolean enabled) {
@@ -387,5 +390,21 @@ new NavigationSettings(chartId, updateddefaults, this,
 	public boolean isEnabled() {
 		return enabled;
 	}
+
+    public List<Role> getRoles() {
+        if (roles==null){
+            roles=new ArrayList<Role>();
+            for (Group group : this.getGroups()) {
+                for (Role role : group.getAssignedRoles()) {
+                    roles.add(role);
+                }
+            }
+        }
+        return roles;
+    }
+
+    public void setRoles(List<Role> roles) {
+       this.roles=roles;
+    }
 
 }

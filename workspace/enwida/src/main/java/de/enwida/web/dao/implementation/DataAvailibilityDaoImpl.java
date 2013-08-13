@@ -4,11 +4,15 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
+import javax.persistence.TypedQuery;
+
 import org.springframework.stereotype.Repository;
 
 import de.enwida.web.dao.interfaces.AbstractBaseDao;
 import de.enwida.web.dao.interfaces.IDataAvailibilityDao;
+import de.enwida.web.db.model.UserLines;
 import de.enwida.web.model.DataAvailibility;
+import de.enwida.web.model.Right;
 
 @Repository
 public class DataAvailibilityDaoImpl extends AbstractBaseDao<DataAvailibility> implements IDataAvailibilityDao {
@@ -28,29 +32,24 @@ public class DataAvailibilityDaoImpl extends AbstractBaseDao<DataAvailibility> i
 	}
 
 	public DataAvailibility getByExample(DataAvailibility dataAvailibility) {
-		String SELECT_QUERY = "SELECT * FROM availability WHERE product = ? AND timefrom <= ? AND timeto >= ? AND tablename SIMILAR TO ?;";
+        TypedQuery<DataAvailibility> typedQuery = em.createQuery( "FROM availability WHERE product = ? AND timefrom <= ? AND timeto >= ? AND tablename SIMILAR TO ?",
+                DataAvailibility.class);
+        typedQuery.setParameter("product", dataAvailibility.getProduct());
+        typedQuery.setParameter("timefrom", dataAvailibility.getTimeFrom());
+        typedQuery.setParameter("timeto", dataAvailibility.getTimeTo());
+        typedQuery.setParameter("tablename", dataAvailibility.getTableName());
 		
-		Object[] param = new Object[4];
-		param[0] = dataAvailibility.getProduct();
-		param[1] = new java.sql.Timestamp(dataAvailibility.getTimeFrom().getTime());
-		param[2] = new java.sql.Timestamp(dataAvailibility.getTimeTo().getTime());
-		param[3] = "%" + dataAvailibility.getTableName() + "%";
-		
-		DataAvailibility dAvailability = jdbcTemplate.queryForObject(SELECT_QUERY, param, this);
-		return dAvailability;
+		return typedQuery.getSingleResult();
 	}
 
 
 	public List<DataAvailibility> getListByExample(DataAvailibility dataAvailibility) {
-		String SELECT_QUERY = "SELECT * FROM availability WHERE product = ? AND tso = ? AND tablename SIMILAR TO ?;";
-		
-		Object[] param = new Object[3];
-		param[0] = dataAvailibility.getProduct();
-		param[1] = dataAvailibility.getTso();		
-		param[2] = "%" + dataAvailibility.getTableName() + "%";		
-		
-		List<DataAvailibility> dAvailibilities = jdbcTemplate.query(SELECT_QUERY, param, this);
-		return dAvailibilities;	
+        TypedQuery<DataAvailibility> typedQuery = em.createQuery( " FROM availability WHERE product = ? AND tso = ? AND tablename SIMILAR TO ?",
+                DataAvailibility.class);
+        typedQuery.setParameter("product", dataAvailibility.getProduct());
+        typedQuery.setParameter("tso", dataAvailibility.getTso());
+        typedQuery.setParameter("tablename", dataAvailibility.getTableName());
+		return typedQuery.getResultList();	
 	}
 
 }
