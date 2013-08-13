@@ -124,9 +124,6 @@ define ["../util/time_utils", "../util/resolution"], (TimeUtils, Resolution) ->
           startDate     : limits.from ? "1900-01-01"
           endDate       : limits.to ? new Date()
 
-        # TODO: remove, use defaults
-        element.datepicker "update", new Date()
-
     @syncDatepickers = (date, sender) ->
       for timeRange in @timeRanges
         continue if timeRange is sender

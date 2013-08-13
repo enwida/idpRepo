@@ -67,9 +67,6 @@ define ->
         element.val id
         node = (_.find node.children, (c) -> c.id is id) ? node.children[0]
 
-      # Apply restrictions of leaf node
-      # TODO
-
     @getProduct = ->
       result = ""
       for name in @productParts
