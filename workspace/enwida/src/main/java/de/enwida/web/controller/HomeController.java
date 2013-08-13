@@ -18,6 +18,18 @@ public class HomeController {
 		return "index";
 	}
 	
+   @RequestMapping(value = "/403", method = RequestMethod.GET)
+    public String error403(Locale locale) {
+    
+        return "403";
+    }
+   
+   @RequestMapping(value = "/404", method = RequestMethod.GET)
+   public String error404(Locale locale) {
+   
+       return "404";
+   }
+	
    @RequestMapping(value = "/j_spring_security_check", method = RequestMethod.POST)
     public String login(Locale locale) {
     
