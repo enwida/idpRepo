@@ -30,7 +30,7 @@ define ->
     @setupEvents = ->
       @$node.find("select").change =>
         tso = @select("tso").val()
-        product = @getProduct()
+        product = @normalizeProduct()
         @trigger "productSelectionChanged", tso: tso, product: product
         @setProduct product
 
@@ -76,6 +76,11 @@ define ->
         element = @select("product").find(".#{name}")
         result += element.val()
       result
+    
+    @normalizeProduct = ->
+      product = @getProduct()
+      @setProduct product
+      @getProduct()
 
     @getProductTree = ->
       tso = @select("tso").val()
