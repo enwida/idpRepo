@@ -2,6 +2,7 @@ package de.enwida.web.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -85,7 +86,7 @@ public class Group implements Serializable{
         if (assignedUsers == null) {
             assignedUsers = new ArrayList<User>();
         }
-        return assignedUsers;
+        return Collections.unmodifiableList(assignedUsers);
     }
 
     public void setAssignedUsers(List<User> assignedUsers) {

@@ -2,7 +2,6 @@ package de.enwida.web;
 
 import junit.framework.Assert;
 
-import org.hibernate.cfg.beanvalidation.GroupsPerOperation;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,56 +76,100 @@ public class UserManagement {
 	
 	@Test
 	@Transactional
-	public void groupIsAssignedToUser() throws Exception {
+	public void cannotModifyGroupsOfUserDirectly() throws Exception {
 		final User user = addTestUser("test");
 		final Group group = addTestGroup("test");
 		
 		Assert.assertTrue(user.getGroups().isEmpty());
 		Assert.assertTrue(group.getAssignedUsers().isEmpty());
 		
-		user.getGroups().add(group);
-		// Changes only in memory
-		Assert.assertTrue(group.getAssignedUsers().isEmpty());
+		try {
+			user.getGroups().add(group); // should throw
+			throw new Exception("Read-only list expected");
+		} catch (UnsupportedOperationException e) {
+			// Expected
+		}
 		
-		userDao.update(user);
-		
-		final User freshUser = userService.getUser("test");
-		userDao.refresh(freshUser);
-		Assert.assertTrue(freshUser.getGroups().size() == 1);
-		Assert.assertEquals(freshUser.getGroups().get(0).getGroupName(), "test");
+		userService.assignUserToGroup(user, group);
+		Assert.assertTrue(user.getGroups().size() == 1);
 
-		final Group freshGroup = groupDao.fetchByName("test");
-		groupDao.refresh(freshGroup);
-		Assert.assertTrue(freshGroup.getAssignedUsers().size() == 1);
-		Assert.assertEquals(freshGroup.getAssignedUsers().get(0).getUsername(), "test");
-	}
-
+		try {
+			user.getGroups().clear();
+			throw new Exception("Read-only list expected");
+		} catch (UnsupportedOperationException e) {
+			// Expected
+		}	
+	}	
 	@Test
 	@Transactional
-	public void userIsAssignedToGroup() throws Exception {
+	public void cannotModifyUsersOfGroupDirectly() throws Exception {
 		final User user = addTestUser("test");
 		final Group group = addTestGroup("test");
 		
 		Assert.assertTrue(user.getGroups().isEmpty());
 		Assert.assertTrue(group.getAssignedUsers().isEmpty());
 		
-		group.getAssignedUsers().add(user);
-		// Changes only in memory
-		Assert.assertTrue(user.getGroups().isEmpty());
+		try {
+			group.getAssignedUsers().add(user); // should throw
+			throw new Exception("Read-only list expected");
+		} catch (UnsupportedOperationException e) {
+			// Expected
+		}
 		
-		groupDao.update(group);
+		userService.assignUserToGroup(user, group);
+		Assert.assertTrue(group.getAssignedUsers().size() == 1);
 
-		final Group freshGroup = groupDao.fetchByName("test");
-		groupDao.refresh(freshGroup);
-		Assert.assertTrue(freshGroup.getAssignedUsers().size() == 1);
-		Assert.assertEquals(freshGroup.getAssignedUsers().get(0).getUsername(), "test");
+		try {
+			group.getAssignedUsers().clear();
+			throw new Exception("Read-only list expected");
+		} catch (UnsupportedOperationException e) {
+			// Expected
+		}	
+	}
+	
+	@Test
+	@Transactional
+	public void groupsAreAssignedToUser() throws Exception {
+		final User user = addTestUser("test");
+		final Group group1 = addTestGroup("test1");
+		final Group group2 = addTestGroup("test2");
+		
+		Assert.assertTrue(user.getGroups().isEmpty());
+		Assert.assertTrue(group1.getAssignedUsers().isEmpty());
+		Assert.assertTrue(group2.getAssignedUsers().isEmpty());
+		
+		userService.assignUserToGroup(user, group1);
+		userService.assignUserToGroup(user, group2);
+
+		Assert.assertTrue(user.getGroups().size() == 2);
+		Assert.assertTrue(user.getGroups().contains(group1));
+		Assert.assertTrue(user.getGroups().contains(group2));
+		
+		Assert.assertTrue(group1.getAssignedUsers().size() == 1);
+		Assert.assertTrue(group1.getAssignedUsers().contains(user));
+
+		Assert.assertTrue(group2.getAssignedUsers().size() == 1);
+		Assert.assertTrue(group2.getAssignedUsers().contains(user));
+		
+		// Check with fresh instances
 		
 		final User freshUser = userService.getUser("test");
 		userDao.refresh(freshUser);
-		Assert.assertTrue(freshGroup.getAssignedUsers().size() == 1);
-		Assert.assertEquals(freshUser.getGroups().get(0).getGroupName(), "test");
-	}
+		Assert.assertTrue(freshUser.getGroups().size() == 2);
+		Assert.assertTrue(user.getGroups().contains(group1));
+		Assert.assertTrue(user.getGroups().contains(group2));
 
+		final Group freshGroup1 = groupDao.fetchByName("test1");
+		groupDao.refresh(freshGroup1);
+		Assert.assertTrue(freshGroup1.getAssignedUsers().size() == 1);
+		Assert.assertTrue(group1.getAssignedUsers().contains(user));
+
+		final Group freshGroup2 = groupDao.fetchByName("test2");
+		groupDao.refresh(freshGroup2);
+		Assert.assertTrue(freshGroup2.getAssignedUsers().size() == 1);
+		Assert.assertTrue(group2.getAssignedUsers().contains(user));
+	}
+	
 
 //    @Test
 //    @Transactional

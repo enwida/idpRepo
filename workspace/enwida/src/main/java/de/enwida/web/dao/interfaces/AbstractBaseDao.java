@@ -73,6 +73,7 @@ public abstract class AbstractBaseDao<T> implements IDao<T> {
 
 	public T update(T entity) {
 		entity = em.merge(entity);
+		em.flush();
 		return entity;
 	}
 
