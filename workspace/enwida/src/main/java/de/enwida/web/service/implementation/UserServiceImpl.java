@@ -296,7 +296,11 @@ public class UserServiceImpl implements IUserService {
 	@Override
 	public void assignUserToGroup(User user, Group group) {
 		user.getGroups().add(group);
-		user = userDao.update(user);
+		Set<Group> newGroups = new HashSet<Group>(user.getGroups());
+		user.setGroups(null);
+		userDao.update(user);
+		user.setGroups(newGroups);
+		userDao.update(user);
 	}
 
     @Override
