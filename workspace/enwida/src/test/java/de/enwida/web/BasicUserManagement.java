@@ -2,6 +2,8 @@ package de.enwida.web;
 
 import java.util.Calendar;
 
+import javax.transaction.NotSupportedException;
+
 import org.apache.log4j.Logger;
 import org.junit.Assert;
 import org.junit.Before;
@@ -158,7 +160,7 @@ public class BasicUserManagement {
 		userService.assignGroupToUser(user, group1);
 		userService.assignGroupToUser(user, group2);
 		
-		final Group freshGroup1 = userService.assignGroupToUser(user, group1);
+		final Group freshGroup1 = userService.revokeUserFromGroup(user, group1);
 		
 		// Group was removed from user object
 		Assert.assertEquals(1, user.getGroups().size());
@@ -175,6 +177,26 @@ public class BasicUserManagement {
 		// User is removed from freshly fetched group object
 		final Group fetchedGroup = userService.getGroup("testgroup1");
 		Assert.assertTrue(fetchedGroup.getAssignedUsers().isEmpty());
+	}
+	
+	@Test
+	public void doNotAllowDirectModificationOfUserGroupsRelationshiop() throws Exception {
+		final User user = saveTestUser("testuser");
+		final Group group = saveTestGroup("testgroup");
+		
+		try {
+			user.getGroups().add(group);
+			throw new Exception("Shouldn't be reachable; UnsupportedOperationException expected");
+		} catch (UnsupportedOperationException e) {
+			// Expected
+		}
+		
+		try {
+			group.getAssignedUsers().add(user);
+			throw new Exception("Shouldn't be reachable; UnsupportedOperationException expected");
+		} catch (UnsupportedOperationException e) {
+			// Expected
+		}
 	}
 	
 
