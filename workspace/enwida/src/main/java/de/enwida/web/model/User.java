@@ -303,8 +303,8 @@ public class User implements Serializable, UserDetails {
 				}
 			}
 		} else {
-			getNavigationSettings().add(
-new NavigationSettings(chartId, updateddefaults, this,
+			getNavigationSettings()
+					.add(new NavigationSettings(chartId, updateddefaults, this,
 							null));
 		}
 	}
