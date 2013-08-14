@@ -52,9 +52,13 @@ public class AdminController {
 	
 	
 	@RequestMapping(value="/admin_editaspect", method = RequestMethod.GET)
-	public String editAspect(HttpServletRequest request,Model model,long roleID,int start,int max) {
+	public String editAspect(HttpServletRequest request,Model model,long roleID,Integer start,Integer max) {
 	    List<Right> aspectRights;
         List<Role> roles = null;
+        //Dont load all data
+        if(start==null || max==null){
+            start=max=10;
+        }
         try {
             aspectRights = aspectService.getAllAspects(roleID,start,max);
             roles = userService.fetchAllRoles();

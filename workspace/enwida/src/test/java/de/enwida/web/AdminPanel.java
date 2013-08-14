@@ -1,6 +1,5 @@
 package de.enwida.web;
 
-import java.net.URL;
 import java.util.List;
 
 import junit.framework.Assert;
@@ -19,8 +18,8 @@ import com.gargoylesoftware.htmlunit.html.HtmlPasswordInput;
 import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
 import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
 
-import de.enwida.web.dao.implementation.UserDaoImpl;
 import de.enwida.web.model.User;
+import de.enwida.web.service.interfaces.IUserService;
 import de.enwida.web.utils.LogoFinder;
  
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -32,14 +31,11 @@ public class AdminPanel {
     final WebClient webClient = new WebClient();
     
     @Autowired
-    private UserDaoImpl userDao;
-    
-    private User user;
+    private IUserService userService;
     
     private String webSiteLink="http://localhost:8080/enwida/";
     
-    private HtmlPage page;
-    
+    private HtmlPage page; 
 
     private String link=webSiteLink+"user/admin/";
     
@@ -55,32 +51,32 @@ public class AdminPanel {
     @Test
     public void loginWithInvalidMailAddress() throws Exception{
       //Login with Invalid mail address
-        Assert.assertEquals(false, Login("test","q12wq12w2"));
+        Assert.assertEquals(false, Login("test","secret2"));
     }
     
     @Test
     public void loginWithValidMailAddress() throws Exception{
         //Login with valid mail address
-        Assert.assertEquals(true, Login("test","q12wq12w"));
+        Assert.assertEquals(true, Login("test","secret"));
     }
     
     @Test
     public void LoginWithFirstAndLastName() throws Exception{
         
         //login with first and last name
-        Assert.assertEquals(true, Login("test test","q12wq12w"));
+        Assert.assertEquals(true, Login("test test","secret"));
     }
     
     @Test   
     public void LoginWithNotEnabledUser() throws Exception{
         //register new user
-        registerUser("test@enwida.de","q12wq12w");
-        Assert.assertEquals(false, Login("test@enwida.de","q12wq12w"));
+        registerUser("test@enwida.de","secret");
+        Assert.assertEquals(false, Login("test@enwida.de","secret"));
     }
     
     @Test   
     public void LoginEnabledUser() throws Exception{
-        Assert.assertEquals(false, Login("test","q12wq12w"));
+        Assert.assertEquals(true, Login("test","secret"));
     }
     
     private boolean link(String gotoLink,String pageTitle) throws Exception {
@@ -93,14 +89,14 @@ public class AdminPanel {
     @Test
     public void CheckUserDetails() throws Exception{
         
-        Login("test", "q12wq12w");
+        Login("test", "secret");
         //Go to UserList page
         String link=webSiteLink+"user/admin/";
         //Get user lists
         page = webClient.getPage(link);
         List<HtmlAnchor> list = page.getAnchors();
         for (HtmlAnchor htmlAnchor : list) {
-            if (htmlAnchor.asText()=="test@enwida.de"){
+            if (htmlAnchor.asText().contains("test")){
                 anchor=htmlAnchor;
                 break;
             }
