@@ -39,12 +39,12 @@ public class SpringSecurityService implements UserDetailsService {
 		User matchingUser = null;
 
 		try {
-			matchingUser = userService.getUser(username);
+			matchingUser = userService.fetchUser(username);
 		} catch (Exception e) {
 			logger.error("Unable to fetch user for name : " + username, e);
 		}
 		if (matchingUser == null) {
-		    matchingUser=userService.getUserByFirstAndLastName(username);
+		    matchingUser=userService.fetchUserByFirstAndLastName(username);
 		    if (matchingUser == null)
 		        throw new UsernameNotFoundException("Wrong username or password");
 		}

@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.mchange.util.AssertException;
+
 import de.enwida.transport.Aspect;
 import de.enwida.transport.DataResolution;
 import de.enwida.web.dao.interfaces.IGroupDao;
@@ -39,16 +41,16 @@ public class BasicUserManagement {
 
 	@Before
 	public void cleanup() throws Exception {
-		for (final Right right : userService.getAllRights()) {
+		for (final Right right : userService.fetchAllRig()) {
 			userService.deleteRight(right.getRightID());
 		}
-		for (final Role role : userService.getAllRoles()) {
+		for (final Role role : userService.fetchAllRoles()) {
 			userService.deleteRole(role.getRoleID());
 		}
-		for (final Group group : userService.getAllGroups()) {
+		for (final Group group : userService.fetchAllGroups()) {
 			userService.deleteGroup(group.getGroupID());
 		}
-		for (final User user : userService.getAllUsers()) {
+		for (final User user : userService.fetchAllUsers()) {
 			userService.deleteUser(user.getUserId());
 		}
 	}
@@ -61,7 +63,7 @@ public class BasicUserManagement {
 	@Test
 	public void userIsSaved() throws Exception {
 		final User user = saveTestUser("testuser");
-		final User testee = userService.getUser("testuser");
+		final User testee = userService.fetchUser("testuser");
 		
 		// Instance is fresh from database
 		Assert.assertFalse(user == testee);
@@ -80,7 +82,7 @@ public class BasicUserManagement {
 	@Test
 	public void groupIsSaved() throws Exception {
 		final Group group = saveTestGroup("testgroup");
-		final Group testee = userService.getGroup("testgroup");
+		final Group testee = userService.fetchGroup("testgroup");
 		
 		// Instance is fresh from database
 		Assert.assertFalse(group == testee);
@@ -94,7 +96,7 @@ public class BasicUserManagement {
 	@Test
 	public void roleIsSaved() throws Exception {
 		final Role role = saveTestRole("testrole");
-		final Role testee = userService.getRole("testrole");
+		final Role testee = userService.fetchRole("testrole");
 		
 		// Instance if fresh from database
 		Assert.assertFalse(role == testee);
@@ -108,7 +110,7 @@ public class BasicUserManagement {
 	@Test
 	public void rightIsSaved() throws Exception {
 		final Right right = saveTestRight(211);
-		final Right testee = userService.getRight(right.getRightID());
+		final Right testee = userService.fetchRight(right.getRightID());
 		
 		// Instance is fresh from database
 		Assert.assertFalse(right == testee);
@@ -154,19 +156,44 @@ public class BasicUserManagement {
 		Assert.assertTrue(group2.getAssignedUsers().isEmpty());
 		
 		// Groups got added to freshly fetched user object
-		final User fetchedUser = userService.getUser("testuser");
+		final User fetchedUser = userService.fetchUser("testuser");
 		Assert.assertEquals(2, fetchedUser.getGroups().size());
 		Assert.assertTrue(fetchedUser.getGroups().contains(group1));
 		Assert.assertTrue(fetchedUser.getGroups().contains(group2));
 		
 		// User got added to freshly fetched group objects
-		final Group fetchedGroup1 = userService.getGroup("testgroup1");
-		final Group fetchedGroup2 = userService.getGroup("testgroup2");
+		final Group fetchedGroup1 = userService.fetchGroup("testgroup1");
+		final Group fetchedGroup2 = userService.fetchGroup("testgroup2");
 
 		Assert.assertEquals(1, fetchedGroup1.getAssignedUsers().size());
 		Assert.assertTrue(fetchedGroup1.getAssignedUsers().contains(user));
 		Assert.assertEquals(1, fetchedGroup2.getAssignedUsers().size());
 		Assert.assertTrue(fetchedGroup2.getAssignedUsers().contains(user));
+	}
+	
+	@Test public void addGroupsToUserById() throws Exception {
+		final User user = saveTestUser("testuser");
+		final Group group1 = saveTestGroup("testgroup1");
+		final Group group2 = saveTestGroup("testgroup2");
+		
+		Assert.assertTrue(user.getGroups().isEmpty());
+		
+		userService.assignGroupToUser(user.getUserId(), group1.getGroupID());
+		userService.assignGroupToUser(user.getUserId(), group2.getGroupID());
+		
+		// Changes are NOT reflected in stale objects
+		Assert.assertTrue(user.getGroups().isEmpty());
+		Assert.assertTrue(group1.getAssignedUsers().isEmpty());
+		Assert.assertTrue(group2.getAssignedUsers().isEmpty());
+		
+		// Changes are visible as soon as you fetch new objects
+		final User fetchedUser = userService.fetchUser("testuser");
+		final Group fetchedGroup1 = userService.fetchGroup("testgroup1");
+		final Group fetchedGroup2 = userService.fetchGroup("testgroup1");
+		
+		Assert.assertEquals(2, fetchedUser.getGroups().size());
+		Assert.assertEquals(1, fetchedGroup1.getAssignedUsers().size());
+		Assert.assertEquals(1, fetchedGroup2.getAssignedUsers().size());
 	}
 	
 	@Test
@@ -219,12 +246,12 @@ public class BasicUserManagement {
 		Assert.assertTrue(freshGroup1.getAssignedUsers().isEmpty());
 
 		// Group is removed from freshly fetched user object
-		final User fetchedUser = userService.getUser("testuser");
+		final User fetchedUser = userService.fetchUser("testuser");
 		Assert.assertEquals(1, fetchedUser.getGroups().size());
 		Assert.assertTrue(fetchedUser.getGroups().contains(group2));
 		
 		// User is removed from freshly fetched group object
-		final Group fetchedGroup = userService.getGroup("testgroup1");
+		final Group fetchedGroup = userService.fetchGroup("testgroup1");
 		Assert.assertTrue(fetchedGroup.getAssignedUsers().isEmpty());
 	}
 	
@@ -280,19 +307,44 @@ public class BasicUserManagement {
 		Assert.assertTrue(role2.getAssignedGroups().isEmpty());
 		
 		// Roles were added to freshly fetched group object
-		final Group fetchedGroup = userService.getGroup("testgroup");
+		final Group fetchedGroup = userService.fetchGroup("testgroup");
 		Assert.assertEquals(2, fetchedGroup.getAssignedRoles().size());
 		Assert.assertTrue(fetchedGroup.getAssignedRoles().contains(role1));
 		Assert.assertTrue(fetchedGroup.getAssignedRoles().contains(role2));
 		
 		// Group was added to freshly fetched role objects
-		final Role fetchedRole1 = userService.getRole("testrole1");
-		final Role fetchedRole2 = userService.getRole("testrole2");
+		final Role fetchedRole1 = userService.fetchRole("testrole1");
+		final Role fetchedRole2 = userService.fetchRole("testrole2");
 		
 		Assert.assertEquals(1, fetchedRole1.getAssignedGroups().size());
 		Assert.assertTrue(fetchedRole1.getAssignedGroups().contains(group));
 		Assert.assertEquals(1, fetchedRole2.getAssignedGroups().size());
 		Assert.assertTrue(freshRole2.getAssignedGroups().contains(group));
+	}
+
+	@Test public void addRolesToGroupById() throws Exception {
+		final Group group = saveTestGroup("testgroup");
+		final Role role1 = saveTestRole("testrole1");
+		final Role role2 = saveTestRole("testrole2");
+		
+		Assert.assertTrue(group.getAssignedRoles().isEmpty());
+		
+		userService.assignRoleToGroup(role1.getRoleID(), group.getGroupID());
+		userService.assignRoleToGroup(role2.getRoleID(), group.getGroupID());
+		
+		// Changes are NOT reflected in stale objects
+		Assert.assertTrue(group.getAssignedRoles().isEmpty());
+		Assert.assertTrue(role1.getAssignedGroups().isEmpty());
+		Assert.assertTrue(role2.getAssignedGroups().isEmpty());
+		
+		// Changes are visible as soon as you fetch new objects
+		final Group fetchedGroup = userService.fetchGroup("testgroup");
+		final Role fetchedRole1 = userService.fetchRole("testrole1");
+		final Role fetchedRole2 = userService.fetchRole("testrole2");
+		
+		Assert.assertEquals(2, fetchedGroup.getAssignedRoles().size());
+		Assert.assertEquals(1, fetchedRole1.getAssignedGroups().size());
+		Assert.assertEquals(1, fetchedRole2.getAssignedGroups().size());
 	}
 	
 	@Test
@@ -345,12 +397,12 @@ public class BasicUserManagement {
 		Assert.assertTrue(freshRole1.getAssignedGroups().isEmpty());
 
 		// Role is removed from freshly fetched group object
-		final Group fetchedGroup = userService.getGroup("testgroup");
+		final Group fetchedGroup = userService.fetchGroup("testgroup");
 		Assert.assertEquals(1, fetchedGroup.getAssignedRoles().size());
 		Assert.assertTrue(fetchedGroup.getAssignedRoles().contains(role2));
 		
 		// User is removed from freshly fetched group object
-		final Role fetchedRole1 = userService.getRole("testrole1");
+		final Role fetchedRole1 = userService.fetchRole("testrole1");
 		Assert.assertTrue(fetchedRole1.getAssignedGroups().isEmpty());
 	}
 	
@@ -415,13 +467,13 @@ public class BasicUserManagement {
 		Assert.assertTrue(freshRole.getRights().contains(right2));
 		
 		// Role is removed from freshly fetched rights
-		final Right fetchedRight1 = userService.getRight(right1.getRightID());
-		final Right fetchedRight2 = userService.getRight(right2.getRightID());
+		final Right fetchedRight1 = userService.fetchRight(right1.getRightID());
+		final Right fetchedRight2 = userService.fetchRight(right2.getRightID());
 		Assert.assertNull(fetchedRight1.getRole());
 		Assert.assertEquals(role, fetchedRight2.getRole());
 		
 		// Right is removed from freshly fetched role
-		final Role fetchedRole = userService.getRole("testrole");
+		final Role fetchedRole = userService.fetchRole("testrole");
 		Assert.assertEquals(1, freshRole.getRights().size());
 		Assert.assertTrue(fetchedRole.getRights().contains(right2));
 	}
@@ -450,11 +502,11 @@ public class BasicUserManagement {
 		Assert.assertTrue(role.getRights().isEmpty());
 		
 		// Role is assigned to freshly fetched right objects
-		final Right fetchedRight1 = userService.getRight(right1.getRightID());
-		final Right fetchedRight2 = userService.getRight(right2.getRightID());
+		final Right fetchedRight1 = userService.fetchRight(right1.getRightID());
+		final Right fetchedRight2 = userService.fetchRight(right2.getRightID());
 
 		// Rights were assigned to freshly fetched role object
-		final Role fetchedRole = userService.getRole("testrole");
+		final Role fetchedRole = userService.fetchRole("testrole");
 		Assert.assertEquals(2, fetchedRole.getRights().size());
 		Assert.assertTrue(fetchedRole.getRights().contains(right1));
 		Assert.assertTrue(fetchedRole.getRights().contains(right2));
@@ -479,7 +531,7 @@ public class BasicUserManagement {
 	}
 	
 	@Test
-	public void transitveClosure() throws Exception {
+	public void transitiveClosure() throws Exception {
 		final User user1 = saveTestUser("testuser1");
 		final User user2 = saveTestUser("testuser2");
 		final Group group1 = saveTestGroup("testgroup1");
@@ -515,7 +567,7 @@ public class BasicUserManagement {
 		userService.assignRightToRole(right6, role4);
 
 		// Check user 1
-		final User freshUser1 = userService.getUser("testuser1");
+		final User freshUser1 = userService.fetchUser("testuser1");
 		Assert.assertEquals(2, freshUser1.getGroups().size());
 		Assert.assertTrue(freshUser1.getGroups().contains(group1));
 		Assert.assertTrue(freshUser1.getGroups().contains(group2));
@@ -535,7 +587,7 @@ public class BasicUserManagement {
 		Assert.assertEquals(5, freshUser1.getAllRights().size());
 
 		// Check user 2
-		final User freshUser2 = userService.getUser("testuser2");
+		final User freshUser2 = userService.fetchUser("testuser2");
 		Assert.assertEquals(2, freshUser2.getGroups().size());
 		Assert.assertTrue(freshUser2.getGroups().contains(group2));
 		Assert.assertTrue(freshUser2.getGroups().contains(group3));
@@ -555,13 +607,13 @@ public class BasicUserManagement {
 		Assert.assertEquals(2, freshUser2.getAllRights().size());
 		
 		// Check groups
-		final Group freshGroup1 = userService.getGroup("testgroup1");
+		final Group freshGroup1 = userService.fetchGroup("testgroup1");
 		Assert.assertEquals(4, freshGroup1.getAllRights().size());
 
-		final Group freshGroup2 = userService.getGroup("testgroup2");
+		final Group freshGroup2 = userService.fetchGroup("testgroup2");
 		Assert.assertEquals(1, freshGroup2.getAllRights().size());
 
-		final Group freshGroup3 = userService.getGroup("testgroup3");
+		final Group freshGroup3 = userService.fetchGroup("testgroup3");
 		Assert.assertEquals(1, freshGroup3.getAllRights().size());
 	}
 	
@@ -577,13 +629,13 @@ public class BasicUserManagement {
     
     private Group saveTestGroup(String name) throws Exception {
     	final Group group = new Group(name);
-    	userService.addGroup(group);
+    	userService.saveGroup(group);
     	return group;
     }
     
     private Role saveTestRole(String name) throws Exception {
     	final Role role = new Role(name);
-    	userService.addRole(role);
+    	userService.saveRole(role);
     	return role;
     }
     
@@ -592,7 +644,7 @@ public class BasicUserManagement {
     	final CalendarRange timeRange = new CalendarRange(dateFormat.parse("2010-01-01"), dateFormat.parse("2012-01-01"));
 
     	final Right right = new Right(99, product, DataResolution.MONTHLY.toString(), timeRange, Aspect.CR_VOL_ACTIVATION.toString(), true);
-    	userService.addRight(right);
+    	userService.saveRight(right);
     	return right;
     }
     

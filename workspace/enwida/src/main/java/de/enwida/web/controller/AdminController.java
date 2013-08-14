@@ -57,7 +57,7 @@ public class AdminController {
         List<Role> roles = null;
         try {
             aspectRights = aspectService.getAllAspects(roleID,start,max);
-            roles = userService.getAllRoles();
+            roles = userService.fetchAllRoles();
             //Get all roles
             model.addAttribute("roles", roles);
             //Get all aspects status of requested role
@@ -80,8 +80,8 @@ public class AdminController {
 	    List<User> users;
         try { 
             //Get all the groups
-            List<Group> groups=userService.getAllGroups();
-            users = userService.getAllUsers();
+            List<Group> groups=userService.fetchAllGroups();
+            users = userService.fetchAllUsers();
             model.addAttribute("users", users);  
             model.addAttribute("groups", groups);
         } catch (Exception e) {
@@ -110,17 +110,17 @@ public class AdminController {
                 }else if (action.equalsIgnoreCase("add")){
                             Group group=new Group();
                             group.setGroupName(newGroup);            
-                            userService.addGroup(group);
+                            userService.saveGroup(group);
                 }
                 //Print info message
                 //TODO:These messages will be localized
                 model.addAttribute("info", "OK");
             }
             //Get groups with user information attached
-            List<Group> groupsWithUsers= userService.getAllGroups();
+            List<Group> groupsWithUsers= userService.fetchAllGroups();
             model.addAttribute("groupsWithUsers", groupsWithUsers);
             //Get all the users
-            List<User> users= userService.getAllUsers();
+            List<User> users= userService.fetchAllUsers();
             model.addAttribute("users", users);
             
         } catch (Exception e) {
@@ -140,13 +140,13 @@ public class AdminController {
     @RequestMapping(value="/admin_rolelist", method = RequestMethod.GET)
     public String roleList(HttpServletRequest request,Model model) {
         try {
-            List<Role> roles= userService.getAllRoles();
+            List<Role> roles= userService.fetchAllRoles();
             model.addAttribute("roles", roles);
             
-            List<Role> rolesWithGroups= userService.getAllRolesWithGroups();
+            List<Role> rolesWithGroups= userService.fetchAllRoles();
             model.addAttribute("rolesWithGroups", rolesWithGroups);
             
-            List<Group> groups= userService.getAllGroups();
+            List<Group> groups= userService.fetchAllGroups();
             model.addAttribute("groups", groups);
         } catch (Exception e) {
             model.addAttribute("error", messageSource.getMessage("de.enwida.userManagement.error.notAllowed", null, request.getLocale()));
@@ -218,7 +218,7 @@ public class AdminController {
         
         User user = null;
         try {
-            user = userService.getUser(userID);
+            user = userService.fetchUser(userID);
         } catch (Exception e) {
             logger.info(e.getMessage());
         }
@@ -239,7 +239,7 @@ public class AdminController {
     {
         User newUser = null;
         try {
-            newUser = userService.getUser(userID);
+            newUser = userService.fetchUser(userID);
             newUser.setFirstName(user.getFirstName());
             newUser.setLastName(user.getLastName());
             newUser.setTelephone(user.getTelephone());
@@ -281,7 +281,7 @@ public class AdminController {
     {
         System.out.println("DeleteUser");
         try {
-            User user=userService.getUser(userID);
+            User user=userService.fetchUser(userID);
             userService.deleteUser(user);
             
         } catch (Exception e) {
@@ -326,7 +326,7 @@ public class AdminController {
         group.setGroupName(newGroup);
         group.setAutoPass(autoPass);
         try {
-            userService.addGroup(group);
+            userService.saveGroup(group);
             
         } catch (Exception e) {
             model.addAttribute("error", messageSource.getMessage("de.enwida.userManagement.error.notAllowed", null, request.getLocale()));
