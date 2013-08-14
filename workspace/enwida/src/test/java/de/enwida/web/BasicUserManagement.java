@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.mchange.util.AssertException;
+
 import de.enwida.transport.Aspect;
 import de.enwida.transport.DataResolution;
 import de.enwida.web.dao.interfaces.IGroupDao;
@@ -169,6 +171,31 @@ public class BasicUserManagement {
 		Assert.assertTrue(fetchedGroup2.getAssignedUsers().contains(user));
 	}
 	
+	@Test public void addGroupsToUserById() throws Exception {
+		final User user = saveTestUser("testuser");
+		final Group group1 = saveTestGroup("testgroup1");
+		final Group group2 = saveTestGroup("testgroup2");
+		
+		Assert.assertTrue(user.getGroups().isEmpty());
+		
+		userService.assignGroupToUser(user.getUserId(), group1.getGroupID());
+		userService.assignGroupToUser(user.getUserId(), group2.getGroupID());
+		
+		// Changes are NOT reflected in stale objects
+		Assert.assertTrue(user.getGroups().isEmpty());
+		Assert.assertTrue(group1.getAssignedUsers().isEmpty());
+		Assert.assertTrue(group2.getAssignedUsers().isEmpty());
+		
+		// Changes are visible as soon as you fetch new objects
+		final User fetchedUser = userService.getUser("testuser");
+		final Group fetchedGroup1 = userService.getGroup("testgroup1");
+		final Group fetchedGroup2 = userService.getGroup("testgroup1");
+		
+		Assert.assertEquals(2, fetchedUser.getGroups().size());
+		Assert.assertEquals(1, fetchedGroup1.getAssignedUsers().size());
+		Assert.assertEquals(1, fetchedGroup2.getAssignedUsers().size());
+	}
+	
 	@Test
 	public void addGroupTwice() throws Exception {
 		final User user = saveTestUser("testuser");
@@ -293,6 +320,31 @@ public class BasicUserManagement {
 		Assert.assertTrue(fetchedRole1.getAssignedGroups().contains(group));
 		Assert.assertEquals(1, fetchedRole2.getAssignedGroups().size());
 		Assert.assertTrue(freshRole2.getAssignedGroups().contains(group));
+	}
+
+	@Test public void addRolesToGroupById() throws Exception {
+		final Group group = saveTestGroup("testgroup");
+		final Role role1 = saveTestRole("testrole1");
+		final Role role2 = saveTestRole("testrole2");
+		
+		Assert.assertTrue(group.getAssignedRoles().isEmpty());
+		
+		userService.assignRoleToGroup(role1.getRoleID(), group.getGroupID());
+		userService.assignRoleToGroup(role2.getRoleID(), group.getGroupID());
+		
+		// Changes are NOT reflected in stale objects
+		Assert.assertTrue(group.getAssignedRoles().isEmpty());
+		Assert.assertTrue(role1.getAssignedGroups().isEmpty());
+		Assert.assertTrue(role2.getAssignedGroups().isEmpty());
+		
+		// Changes are visible as soon as you fetch new objects
+		final Group fetchedGroup = userService.getGroup("testgroup");
+		final Role fetchedRole1 = userService.getRole("testrole1");
+		final Role fetchedRole2 = userService.getRole("testrole2");
+		
+		Assert.assertEquals(2, fetchedGroup.getAssignedRoles().size());
+		Assert.assertEquals(1, fetchedRole1.getAssignedGroups().size());
+		Assert.assertEquals(1, fetchedRole2.getAssignedGroups().size());
 	}
 	
 	@Test
@@ -479,7 +531,7 @@ public class BasicUserManagement {
 	}
 	
 	@Test
-	public void transitveClosure() throws Exception {
+	public void transitiveClosure() throws Exception {
 		final User user1 = saveTestUser("testuser1");
 		final User user2 = saveTestUser("testuser2");
 		final Group group1 = saveTestGroup("testgroup1");
