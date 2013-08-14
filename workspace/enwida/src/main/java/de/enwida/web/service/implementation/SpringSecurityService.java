@@ -1,7 +1,10 @@
 package de.enwida.web.service.implementation;
 
+import java.util.Collection;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -40,13 +43,13 @@ public class SpringSecurityService implements UserDetailsService {
 		} catch (Exception e) {
 			logger.error("Unable to fetch user for name : " + username, e);
 		}
-
 		if (matchingUser == null) {
 		    matchingUser=userService.getUserByFirstAndLastName(username);
 		    if (matchingUser == null)
 		        throw new UsernameNotFoundException("Wrong username or password");
 		}
-
+        //I dont know why but this trigger is required here.Otherwise roles are not fetched
+        matchingUser.getAuthorities();
 		return matchingUser;
 	}
 
