@@ -196,7 +196,6 @@ public class User implements Serializable, UserDetails {
         this.joiningDate = joiningDate;
     }
 
-    @Transient
 	public int getLoginCount() {
         return loginCount;
     }
@@ -205,7 +204,6 @@ public class User implements Serializable, UserDetails {
         this.loginCount = loginCount;
     }
 
-    @Transient
 	public Date getLastLogin() {
         return lastLogin;
     }
@@ -239,7 +237,6 @@ public class User implements Serializable, UserDetails {
         this.companyLogo = companyLogo;
     }
 
-    @Transient
     public String getConfirmPassword() {
         return confirmPassword;
     }
