@@ -22,6 +22,7 @@ import de.enwida.transport.IDataLine;
 import de.enwida.transport.LineRequest;
 import de.enwida.transport.XYDataLine;
 import de.enwida.transport.XYDataPoint;
+import de.enwida.web.model.ChartNavigationData;
 import de.enwida.web.service.interfaces.ILineService;
 import de.enwida.web.service.interfaces.INavigationService;
 import de.enwida.web.service.interfaces.IUserService;
@@ -49,9 +50,11 @@ public class DownloadController {
 	    @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Calendar endTime,
 	    @RequestParam DataResolution resolution,
 	    @RequestParam String disabledLines,
-	    Locale locale) {
-
-        final List<Aspect> originalAspects = navigationService.getDefaultNavigationData(chartId).getAspects();
+	    Locale locale) throws Exception {
+    	
+    	// TODO: enable security
+    	final ChartNavigationData navigationData = navigationService.getNavigationData(chartId, null, locale);
+        final List<Aspect> originalAspects = navigationData.getAspects();
         final List<Aspect> aspects = new ArrayList<>(originalAspects);
         final String[] lineStrings = disabledLines.split(",");
         
@@ -75,10 +78,10 @@ public class DownloadController {
 				e.printStackTrace();
 			}
         }
-        return createCSV(lines);
+        return createCSV(lines, navigationData.getxAxisLabel());
     }
     
-    private String createCSV(List<IDataLine> lines) {
+    private String createCSV(List<IDataLine> lines, String xTitle) {
     	final StringBuilder result = new StringBuilder();
     	final SortedMap<Double, List<Double>> csvDataLines = new TreeMap<>();
     	
@@ -98,9 +101,9 @@ public class DownloadController {
     	}
 
     	// Heading
-    	result.append("x");
-    	for (int i = 0; i < lines.size(); i++) {
-    		result.append(",").append("y").append(i);
+    	result.append(xTitle);
+    	for (final IDataLine line : lines) {
+    		result.append(",").append(line.getTitle());
     	}
 
     	for (final Double x : csvDataLines.keySet()) {
