@@ -20,11 +20,6 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
 	
     private static org.apache.log4j.Logger logger = Logger.getLogger(AdminController.class);
 
-	@Override
-	public void deleteUser(User user) {
-		delete(user);
-	}
-	
     @Override
 	public long save(User user)
 	{
@@ -36,14 +31,14 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
 				// create the user and refresh the user object
 				create(user);
 			} else {
-			    user.setUserID(exisinguser.getUserID());
+			    user.setUserID(exisinguser.getUserId());
 				user = update(user);
 			}
 		} catch (Exception e) {
 			logger.error("Error saving user : " + user.getUserName(), e);
 		}
 
-		return user.getUserID();
+		return user.getUserId();
 	}
   
     @Override

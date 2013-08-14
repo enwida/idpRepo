@@ -40,7 +40,7 @@ public interface IUserService {
      * @return the collection of users
      * @throws Exception 
      */
-    public List<User> getUsers() throws Exception;
+    public List<User> getAllUsers() throws Exception;
 
     /**
      * Send activation to saved user
@@ -72,13 +72,6 @@ public interface IUserService {
     public String getPassword(String email)throws Exception;
 
     /**
-     * Finds all the user from database
-     * 
-     * @return Collection of users
-     */
-    public List<User> getAllUsers()throws Exception;
-
-    /**
      * Gets all the groups of a user
      * 
      * @param userID
@@ -107,6 +100,24 @@ public interface IUserService {
      * @param role
      */
     public void addRole(Role role)throws Exception;
+    
+    /**
+     * Adds right to DB
+     * @throws Exception 
+     */
+    public void addRight(Right right) throws Exception;
+    
+    /**
+     * Fetch role from DB
+     * @param roleName
+     */
+    public Role getRole(String roleName);
+    
+    /**
+     * Fetch right from DB
+     * @param rightId
+     */
+    public Right getRight(Long rightId);
 
     /**
      * Get all roles
@@ -114,6 +125,11 @@ public interface IUserService {
      * @return collection of roles
      */
     public List<Role> getAllRoles()throws Exception;
+    
+    /**
+     * Get all rights
+     */
+    public List<Right> getAllRights() throws Exception;
 
     /**
      * Update User information based on userID
@@ -140,40 +156,48 @@ public interface IUserService {
     public void deleteUser(User user) throws Exception;
 
     /**
-	 * Assigns group to user
-	 * 
-	 * @param users
-	 * @param groupID
-	 * @return
-	 */
-
-	public void assignGroupToUser(User user, Group group);
-
-    /**
-     * Revokes User into Group
+     * Deletes the user from DB
      * 
      * @param user
-     * @param group
      * @return
      */
+    public void deleteUser(long userId) throws Exception;
 
-    public void revokeUserFromGroup(User user, Group group);
+    /**
+	 * Assigns group to user. {@link User} object will be updated in place; updated {@link Group} will be returned.
+	 * 
+	 * @param user the persisted user object
+	 * @param group the persisted group object
+	 * @return the fresh group object
+	 */
+	public Group assignGroupToUser(User user, Group group);
+
+    /**
+	 * Assigns group to user.
+	 * 
+	 * @param user ID
+	 * @param group ID
+	 * @return the fresh group object
+	 */
+	public void assignGroupToUser(long userId, Long groupID);
+
+    /**
+	 * Revokes group from user. {@link User} object will be updated in place; updated {@link Group} will be returned.
+	 * 
+	 * @param user the persisted user object
+	 * @param group the persisted group object
+	 * @return the fresh group object
+	 */
+    public Group revokeUserFromGroup(User user, Group group);
+
     /**
      * Revokes User from Group
      * 
-     * @param userID
-     * @param groupID
+     * @param user ID
+     * @param group ID
      * @return
      */
     public void revokeUserFromGroup(long userID, long groupID);
-
-    /**
-     * Get All Groups with Users attached
-     * 
-     * @return Collection of groups
-     * @throws Exception 
-     */
-    public List<Group> getAllGroupsWithUsers() throws Exception;
 
     /**
      * Assigns role to the groups
@@ -186,18 +210,35 @@ public interface IUserService {
     public void assignRoleToGroup(long selectedRole, long selectedGroup);
 
     /**
-     * Deassigns role to the groups
-     * 
-     * @param selectedRole
-     * @param selectedGroup
-     * @return
-     * @throws Exception
-     */
-    public void deassignRoleToGroup(long selectedRole, long selectedGroup);
+	 * Assigns role to group. {@link Group} object will be updated in place; updated {@link Role} will be returned.
+	 * 
+	 * @param role the persisted role object
+	 * @param group the persisted group object
+	 * @return the fresh {@link Role} object
+	 */	public Role assignRoleToGroup(Role role, Group group);
+
+	/**
+	 * Revoke role from group.
+	 * @param role ID
+	 * @param group ID
+	 */
+	public void revokeRoleFromGroup(long roleId, long groupId);
+
+    /**
+	 * Revoke role from group. {@link Group} object will be updated in place; updated {@link Role} will be returned.
+	 * 
+	 * @param role the persisted role object
+	 * @param group the persisted group object
+	 * @return the fresh {@link Role} object
+	 */	public Role revokeRoleFromGroup(Role role, Group group);
+
+	// TODO: comments
+	public Role assignRightToRole(Right right, Role role);
+
+	public Role revokeRightFromRole(Right right, Role role);
 
     /**
      * Get All roles with Groups attached
-     * 
      * @return List of Roles
      */
     public List<Role> getAllRolesWithGroups()throws Exception;
@@ -218,7 +259,21 @@ public interface IUserService {
      * @param groupID
      * @throws Exception
      */
-    public void removeGroup(int groupID) throws Exception;
+    public void deleteGroup(long groupID) throws Exception;
+    
+    /**
+     * Removes the role from DB
+     * @param role ID
+     * @throws Exception
+     */
+    public void deleteRole(long roleID) throws Exception;
+    
+    /**
+     * Removes the right from DB
+     * @param right ID
+     * @throws Exception
+     */
+    public void deleteRight(long rightID) throws Exception;
 
     /**
      * Checks user availability
@@ -257,7 +312,23 @@ public interface IUserService {
      * @throws Exception 
      */
     public User getCurrentUser() throws Exception;
-
+    
+    /**
+     * Persists the given group
+     * @param group
+     * @return the saved group object
+     * @throws Exception 
+     */
+    public Group saveGroup(Group group) throws Exception;
+    
+    /**
+     * Fetch the group from database
+     * @param groupName name of the group
+     * @return the group object
+     * @throws Exception
+     */
+    public Group getGroup(String groupName) throws Exception;
+    
     public Long getNextSequence(String schema, String sequenceName);
 
     public UploadedFile getFile(int fileId);
@@ -275,19 +346,5 @@ public interface IUserService {
 	Role findRole(Role role);
 
 	Right findRight(Right right);
-
-	void revokeGroupFromUser(User user, Group group);
-
-	void assignUserToGroup(User user, Group group);
-
-	void assignUserToGroup(long userId, Long groupID);
-
-	void assignRoleToGroup(Role role, Group group);
-
-	void revokeRoleFromGroup(Role role, Group group);
-
-	void assignRightToRole(Right right, Role role);
-
-	void revokeRightFromRole(Right right, Role role);
 
 }

@@ -11,8 +11,6 @@ import de.enwida.web.model.User;
 public interface IUserDao extends IDao<User> {
 	long save(User user);
 
-    void deleteUser(User user) throws Exception;
-
     boolean checkUserActivationId(String username, String activationCode) throws Exception;
 
     void activateUser(String username) throws Exception;

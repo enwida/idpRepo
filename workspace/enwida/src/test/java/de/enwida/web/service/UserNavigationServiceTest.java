@@ -56,7 +56,7 @@ public class UserNavigationServiceTest {
 		User user1 = new User("username1", "password1", "firstname",
 				"lastname", false);
 		userService.saveUser(user1);
-		System.out.println(userService.getUsers());
+		System.out.println(userService.getAllUsers());
 		User user = userService.getUser("username1");
 		NavigationSettings navSet = new NavigationSettings();
 		navSet.setChartId(100);

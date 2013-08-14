@@ -2,9 +2,12 @@ package de.enwida.web.model;
 
 import java.io.Serializable;
 import java.sql.Date;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -59,7 +62,7 @@ public class User implements Serializable, UserDetails {
 	@Id
 	@Column(name = USER_ID)
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private long userId;
+	private Long userId;
 
 	@Column(name = USER_NAME, nullable = false, unique = true)
     private String userName;
@@ -100,24 +103,27 @@ public class User implements Serializable, UserDetails {
 	@Column(name = ACTIVATION_ID)
 	private String activationKey;
 
-	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, targetEntity = Group.class)
+	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@JoinTable(name = Constants.USER_GROUP_TABLE_NAME, schema = Constants.USER_GROUP_TABLE_SCHEMA_NAME,
 		joinColumns = {@JoinColumn(name=USER_ID)}, inverseJoinColumns={@JoinColumn(name=Group.GROUP_ID)})
-	private Set<Group> groups = new HashSet<Group>(0);
+	private Set<Group> groups;
 
 	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "user",targetEntity=NavigationSettings.class)
 	// @ElementCollection(targetClass = NavigationSettings.class)
-	private Set<NavigationSettings> navigationSettings = new HashSet<NavigationSettings>(0);
+	private Set<NavigationSettings> navigationSettings;
 
 	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "uploader", targetEntity = UploadedFile.class)
 	// @ElementCollection(targetClass = UploadedFile.class)
-	private Set<UploadedFile> uploadedFiles = new HashSet<UploadedFile>(0);
+	private Set<UploadedFile> uploadedFiles;
 
 	@Transient
 	private Map<Integer, NavigationDefaults> chartDefaults;
 
 	@Transient
 	private Collection<GrantedAuthority> authorities = new HashSet<GrantedAuthority>();
+   
+	@Transient	
+	private List<Role> roles;
 
     public User(String userName, String password,
             String firstName, String lastName, boolean enabled) {
@@ -129,7 +135,7 @@ public class User implements Serializable, UserDetails {
     }
 
     public User() {
-		// Nothing to be done here
+        // TODO Auto-generated constructor stub
     }
 
     public String getLastName() {
@@ -162,15 +168,11 @@ public class User implements Serializable, UserDetails {
         this.userName = userName;
     }
 
-	public Long getUserID() {
-		return new Long(userId);
-    }
-
 	public void setUserID(Long userID) {
-		this.userId = userID.intValue();
+		this.userId = userID;
     }
 
-	public long getUserId() {
+	public Long getUserId() {
 		return userId;
 	}
 
@@ -196,6 +198,7 @@ public class User implements Serializable, UserDetails {
         this.joiningDate = joiningDate;
     }
 
+    @Transient
 	public int getLoginCount() {
         return loginCount;
     }
@@ -204,6 +207,7 @@ public class User implements Serializable, UserDetails {
         this.loginCount = loginCount;
     }
 
+    @Transient
 	public Date getLastLogin() {
         return lastLogin;
     }
@@ -237,6 +241,7 @@ public class User implements Serializable, UserDetails {
         this.companyLogo = companyLogo;
     }
 
+    @Transient
     public String getConfirmPassword() {
         return confirmPassword;
     }
@@ -254,7 +259,10 @@ public class User implements Serializable, UserDetails {
     }
 
 	public Set<Group> getGroups() {
-		return groups;
+	    if(groups==null) {
+			this.groups = new HashSet<Group>();
+	    }
+	    return Collections.unmodifiableSet(groups);
     }
 
 	public void setGroups(Set<Group> groups) {
@@ -277,7 +285,11 @@ public class User implements Serializable, UserDetails {
 		this.chartDefaults = chartDefaults;
 	}
 
+	@Transient
 	public Set<NavigationSettings> getNavigationSettings() {
+		if (navigationSettings == null) {
+			navigationSettings = new HashSet<NavigationSettings>();
+		}
 		return navigationSettings;
 	}
 
@@ -294,8 +306,8 @@ public class User implements Serializable, UserDetails {
 				}
 			}
 		} else {
-			getNavigationSettings()
-					.add(new NavigationSettings(chartId, updateddefaults, this,
+			getNavigationSettings().add(
+new NavigationSettings(chartId, updateddefaults, this,
 							null));
 		}
 	}
@@ -309,6 +321,7 @@ public class User implements Serializable, UserDetails {
 		}
 	}
 
+	@Transient
 	public Set<UploadedFile> getUploadedFiles() {
 		return uploadedFiles;
 	}
@@ -319,6 +332,9 @@ public class User implements Serializable, UserDetails {
 
 	public void addUploadedFile(UploadedFile uploadedFile) {
 		if (uploadedFile != null) {
+			if (uploadedFiles == null) {
+				this.uploadedFiles = new HashSet<UploadedFile>();
+			}
 			this.uploadedFiles.add(uploadedFile);
 		}
 	}
@@ -372,15 +388,21 @@ public class User implements Serializable, UserDetails {
 		return enabled;
 	}
 
-	public Set<Role> getRoles() {
-		Set<Role> roles = new HashSet<Role>();
-		for (Group group : this.getGroups()) {
-			for (Role role : group.getAssignedRoles()) {
-				roles.add(role);
-			}
-		}
-		return roles;
-	}
+    public List<Role> getRoles() {
+        if (roles==null){
+            roles=new ArrayList<Role>();
+            for (Group group : this.getGroups()) {
+                for (Role role : group.getAssignedRoles()) {
+                    roles.add(role);
+                }
+            }
+        }
+        return roles;
+    }
+
+    public void setRoles(List<Role> roles) {
+       this.roles=roles;
+    }
 
 	@Override
 	public int hashCode() {
@@ -392,8 +414,8 @@ public class User implements Serializable, UserDetails {
 		if (!(obj instanceof User)) {
 			return false;
 		}
-		final User user = (User) obj;
-		return user.userName.equals(userName);
+		final User other = (User) obj;
+		return userName.equals(other.userName);
 	}
 
 }

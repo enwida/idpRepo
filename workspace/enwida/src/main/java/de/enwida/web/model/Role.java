@@ -1,6 +1,8 @@
 package de.enwida.web.model;
 
 import java.io.Serializable;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -11,12 +13,9 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 
 import org.springframework.security.core.GrantedAuthority;
 
@@ -38,21 +37,19 @@ public class Role implements Serializable, GrantedAuthority {
     @Id
     @Column(name = ROLE_ID)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long roleID;
+    private Long roleID;
 
-    @Column(name = ROLE_NAME)
+    @Column(name = ROLE_NAME, unique = true)
     private String roleName;
 
     @Column(name = DESCRIPTION) 
     private String description;
+
+	@ManyToMany(mappedBy = "assignedRoles", fetch = FetchType.EAGER)
+	private Set<Group> assignedGroups;
     
-	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, targetEntity = Group.class)
-	@JoinTable(name = Constants.GROUP_ROLE_TABLE_NAME, schema = Constants.GROUP_ROLE_TABLE_SCHEMA_NAME, uniqueConstraints = { @UniqueConstraint(columnNames = {
-			Role.ROLE_ID, Group.GROUP_ID }) }, joinColumns = { @JoinColumn(name = ROLE_ID) }, inverseJoinColumns = { @JoinColumn(name = Group.GROUP_ID) })
-	private Set<Group> assignedGroups = new HashSet<Group>(0);
-    
-	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "role", targetEntity = Right.class)
-	private Set<Right> rights = new HashSet<Right>(0);
+	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "role")
+	private Set<Right> rights;
     
 	/**
 	 * 
@@ -71,10 +68,6 @@ public class Role implements Serializable, GrantedAuthority {
 		this.roleID = roleID;
 	}
 
-	public void addAssignedGroups(Group group) {
-        this.assignedGroups.add(group);
-    }
-    
     public String getDescription() {
         return description;
     }
@@ -82,7 +75,7 @@ public class Role implements Serializable, GrantedAuthority {
         this.description = description;
     }
 
-    public long getRoleID() {
+    public Long getRoleID() {
         return roleID;
     }
     public void setRoleID(long roleID) {
@@ -96,7 +89,10 @@ public class Role implements Serializable, GrantedAuthority {
     }
 
 	public Set<Group> getAssignedGroups() {
-        return assignedGroups;
+		if (assignedGroups == null) {
+			assignedGroups = new HashSet<>();
+		}
+        return Collections.unmodifiableSet(assignedGroups);
     }
 
 	public void setAssignedGroups(Set<Group> assignedGroups) {
@@ -104,7 +100,10 @@ public class Role implements Serializable, GrantedAuthority {
     }
     
 	public Set<Right> getRights() {
-		return rights;
+		if (rights == null) {
+			return new HashSet<Right>();
+		}
+		return Collections.unmodifiableSet(rights);
 	}
 
 	public void setRights(Set<Right> rights) {
@@ -120,41 +119,19 @@ public class Role implements Serializable, GrantedAuthority {
 	public String getAuthority() {
 		return this.roleName;
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#hashCode()
-	 */
+	
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result
-				+ ((roleName == null) ? 0 : roleName.hashCode());
-		return result;
+		return roleName.hashCode();
 	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
+	
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
+		if (!(obj instanceof Role)) {
 			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Role other = (Role) obj;
-		if (roleName == null) {
-			if (other.roleName != null)
-				return false;
-		} else if (!roleName.equals(other.roleName))
-			return false;
-		return true;
+		}
+		final Role other = (Role) obj;
+		return roleName.equals(other.roleName);
 	}
 
 }

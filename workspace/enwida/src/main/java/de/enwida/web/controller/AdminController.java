@@ -106,7 +106,7 @@ public class AdminController {
             if (action!=null){
                 //Check which action to be executed
                 if( action.equalsIgnoreCase("delete")){
-                            userService.removeGroup(groupID);
+                            userService.deleteGroup(groupID);
                 }else if (action.equalsIgnoreCase("add")){
                             Group group=new Group();
                             group.setGroupName(newGroup);            
@@ -117,10 +117,10 @@ public class AdminController {
                 model.addAttribute("info", "OK");
             }
             //Get groups with user information attached
-            List<Group> groupsWithUsers= userService.getAllGroupsWithUsers();
+            List<Group> groupsWithUsers= userService.getAllGroups();
             model.addAttribute("groupsWithUsers", groupsWithUsers);
             //Get all the users
-            List<User> users= userService.getUsers();
+            List<User> users= userService.getAllUsers();
             model.addAttribute("users", users);
             
         } catch (Exception e) {
@@ -296,7 +296,7 @@ public class AdminController {
     public String assignUserToGroup(HttpServletRequest request,Model model,int selectedUser,int selectedGroup)
     {
         try {
-			userService.assignUserToGroup(new Long(selectedUser), new Long(
+			userService.assignGroupToUser(new Long(selectedUser), new Long(
 					selectedGroup));
             model.addAttribute("info", "OK");       
         } catch (Exception e) {   
@@ -352,7 +352,7 @@ public class AdminController {
     public String deassignRoleToGroup(HttpServletRequest request,Model model,int selectedRole,int selectedGroup)
     {
         try {
-            userService.deassignRoleToGroup(selectedRole,selectedGroup);  
+            userService.revokeRoleFromGroup(selectedRole,selectedGroup);  
             model.addAttribute("info", "OK");       
         } catch (Exception e) {   
             logger.info(e.getMessage());

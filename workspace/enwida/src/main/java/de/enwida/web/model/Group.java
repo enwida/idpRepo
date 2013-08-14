@@ -1,6 +1,7 @@
 package de.enwida.web.model;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -11,8 +12,11 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import de.enwida.web.utils.Constants;
 
@@ -32,7 +36,7 @@ public class Group implements Serializable{
 	@Id
 	@Column(name = GROUP_ID)
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private long groupId;
+	private Long groupId;
     
 	@Column(name = GROUP_NAME, unique = true, nullable = false)
     private String groupName;
@@ -40,18 +44,20 @@ public class Group implements Serializable{
 	@Column(name = AUTO_PASS)
     private boolean autoPass;
 
-	@ManyToMany(mappedBy = "groups", fetch = FetchType.EAGER, cascade = CascadeType.ALL, targetEntity = User.class)
-	private Set<User> assignedUsers = new HashSet<User>(0);
-	
-	@ManyToMany(mappedBy = "assignedGroups", fetch = FetchType.EAGER, cascade = CascadeType.ALL, targetEntity = Role.class)
-	private Set<Role> assignedRoles = new HashSet<Role>(0);
+	@ManyToMany(mappedBy = "groups", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	private Set<User> assignedUsers;
+
+	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@JoinTable(name = Constants.GROUP_ROLE_TABLE_NAME, schema = Constants.GROUP_ROLE_TABLE_SCHEMA_NAME, uniqueConstraints = { @UniqueConstraint(columnNames = {
+			Role.ROLE_ID, Group.GROUP_ID }) }, joinColumns = { @JoinColumn(name = GROUP_ID) }, inverseJoinColumns = { @JoinColumn(name = Role.ROLE_ID) })
+	private Set<Role> assignedRoles;
 
     public Long getGroupID() {
-		return new Long(groupId);
+		return groupId;
     }
 
     public void setGroupID(Long groupID) {
-		this.groupId = groupID.intValue();
+		this.groupId = groupID;
     }
 
 	public String getGroupName() {
@@ -71,19 +77,21 @@ public class Group implements Serializable{
 	}
 
 	public Set<User> getAssignedUsers() {
-		return assignedUsers;
+        if (assignedUsers == null) {
+			assignedUsers = new HashSet<User>();
+        }
+        return Collections.unmodifiableSet(assignedUsers);
     }
 
 	public void setAssignedUsers(Set<User> assignedUsers) {
         this.assignedUsers = assignedUsers;
     }
 
-    public void addAssignedUsers(User user) {
-        this.assignedUsers.add(user);
-    }
-
 	public Set<Role> getAssignedRoles() {
-		return assignedRoles;
+        if (assignedRoles == null) {
+			assignedRoles = new HashSet<Role>();
+        }
+		return Collections.unmodifiableSet(assignedRoles);
 	}
 
 	public void setAssignedRoles(Set<Role> assignedRoles) {
@@ -114,7 +122,7 @@ public class Group implements Serializable{
 			return false;
 		}
 		final Group other = (Group) obj;
-		return other.groupName.equals(groupName);
+		return groupName.equals(other.groupName);
 	}
 
 }

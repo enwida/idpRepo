@@ -77,23 +77,20 @@ public class RightDaoImpl extends AbstractBaseDao<Right> implements IRightDao {
     
 	@Override
 	public Right addRight(Right right) {
-
-		Right exist = fetchById(right.getRightID());
-		if (exist == null) {
-			// create or refresh
-			create(right);
-		} else {
+		Right exist = null;
+		
+		if (right.getRightID() != null) {
+			exist = fetchById(right.getRightID());
+		}
+		if (exist != null) {
 			right.setRightID(exist.getRightID());
 			right = update(right);
+		} else {
+			create(right);
 		}
 		return right;
     }
     
-    @Override
-    public void removeRight(Right right) throws Exception {
-        delete(right);
-    }
-
     public List<Right> getListByExample(Right dataAuthorization)
             throws Exception {
         TypedQuery<Right> typedQuery = em.createQuery( "from "+ Right.class.getName()
