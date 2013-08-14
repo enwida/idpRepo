@@ -19,7 +19,7 @@ import de.enwida.web.service.interfaces.IUserService;
  * 
  */
 @TransactionConfiguration(transactionManager = "jpaTransactionManager", defaultRollback = true)
-@Transactional
+@Transactional(rollbackFor = Exception.class)
 @Service("springSecurityService")
 public class SpringSecurityService implements UserDetailsService {
 	/**

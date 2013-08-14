@@ -9,6 +9,8 @@ import javax.persistence.TypedQuery;
 
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Repository;
+import org.springframework.test.context.transaction.TransactionConfiguration;
+import org.springframework.transaction.annotation.Transactional;
 
 import de.enwida.web.dao.interfaces.AbstractBaseDao;
 import de.enwida.web.dao.interfaces.IUserLinesDao;
@@ -20,6 +22,8 @@ import de.enwida.web.db.model.UserLinesMetaData;
  *
  */
 @Repository
+@TransactionConfiguration(transactionManager = "jpaTransactionManager", defaultRollback = true)
+@Transactional(rollbackFor = Exception.class)
 public class UserLinesDaoImpl extends AbstractBaseDao<UserLines> implements
 		IUserLinesDao {
 

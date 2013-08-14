@@ -5,6 +5,7 @@ import java.util.Set;
 
 import de.enwida.web.db.model.UploadedFile;
 import de.enwida.web.model.Group;
+import de.enwida.web.model.Right;
 import de.enwida.web.model.Role;
 import de.enwida.web.model.User;
 
@@ -139,22 +140,14 @@ public interface IUserService {
     public void deleteUser(User user) throws Exception;
 
     /**
-     * Assigns User into Group
-     * 
-     * @param userID
-     * @param groupID
-     * @return
-     */
+	 * Assigns group to user
+	 * 
+	 * @param users
+	 * @param groupID
+	 * @return
+	 */
 
-    public void assignUserToGroup(User user, Group group);
-    /**
-     * Assigns User into Group
-     * 
-     * @param user
-     * @param groupp
-     * @return
-     */
-    public void assignUserToGroup(long userID, long groupID);
+	public void assignGroupToUser(User user, Group group);
 
     /**
      * Revokes User into Group
@@ -276,4 +269,21 @@ public interface IUserService {
     Group getGroupByCompanyName(String companyName);
 
     public User getUserByFirstAndLastName(String username);
+
+	Group findGroup(Group group);
+
+	Role findRole(Role role);
+
+	Right findRight(Right right);
+
+	void revokeGroupFromUser(User user, Group group);
+
+	void assignUserToGroup(User user, Group group);
+
+	void assignUserToGroup(long userId, Long groupID);
+
+	void assignRoleToGroup(Role role, Group group);
+
+	void revokeRoleFromGroup(Role role, Group group);
+
 }

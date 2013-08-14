@@ -1,20 +1,20 @@
 package de.enwida.web.dao.implementation;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.List;
 
 import javax.persistence.TypedQuery;
 
 import org.springframework.stereotype.Repository;
+import org.springframework.test.context.transaction.TransactionConfiguration;
+import org.springframework.transaction.annotation.Transactional;
 
 import de.enwida.web.dao.interfaces.AbstractBaseDao;
 import de.enwida.web.dao.interfaces.IDataAvailibilityDao;
-import de.enwida.web.db.model.UserLines;
 import de.enwida.web.model.DataAvailibility;
-import de.enwida.web.model.Right;
 
 @Repository
+@TransactionConfiguration(transactionManager = "jpaTransactionManager", defaultRollback = true)
+@Transactional(rollbackFor = Exception.class)
 public class DataAvailibilityDaoImpl extends AbstractBaseDao<DataAvailibility> implements IDataAvailibilityDao {
 
 	public boolean isAvailableByExample(DataAvailibility dataAvailibility) {

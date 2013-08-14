@@ -4,6 +4,8 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Repository;
+import org.springframework.test.context.transaction.TransactionConfiguration;
+import org.springframework.transaction.annotation.Transactional;
 
 import de.enwida.web.controller.AdminController;
 import de.enwida.web.dao.interfaces.AbstractBaseDao;
@@ -12,6 +14,8 @@ import de.enwida.web.db.model.UploadedFile;
 import de.enwida.web.model.User;
 
 @Repository
+@TransactionConfiguration(transactionManager = "jpaTransactionManager", defaultRollback = true)
+@Transactional(rollbackFor = Exception.class)
 public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
 	
     private static org.apache.log4j.Logger logger = Logger.getLogger(AdminController.class);

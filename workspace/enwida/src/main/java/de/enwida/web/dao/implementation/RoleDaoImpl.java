@@ -3,14 +3,17 @@ package de.enwida.web.dao.implementation;
 import java.util.List;
 
 import org.springframework.stereotype.Repository;
+import org.springframework.test.context.transaction.TransactionConfiguration;
+import org.springframework.transaction.annotation.Transactional;
 
 import de.enwida.web.dao.interfaces.AbstractBaseDao;
 import de.enwida.web.dao.interfaces.IRoleDao;
 import de.enwida.web.model.Right;
 import de.enwida.web.model.Role;
-import de.enwida.web.model.User;
 
 @Repository
+@TransactionConfiguration(transactionManager = "jpaTransactionManager", defaultRollback = true)
+@Transactional(rollbackFor = Exception.class)
 public class RoleDaoImpl extends AbstractBaseDao<Role> implements IRoleDao {
 
     @Override
@@ -33,12 +36,11 @@ public class RoleDaoImpl extends AbstractBaseDao<Role> implements IRoleDao {
         if (exist == null) {
             // create or refresh
             create(role);
-            exist=role;
         } else {
-            exist = update(exist);
+			role.setRoleID(exist.getRoleID());
+			role = update(role);
         }
-
-        return exist;
+		return role;
     }
   
 

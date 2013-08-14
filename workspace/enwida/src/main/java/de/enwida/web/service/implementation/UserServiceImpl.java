@@ -4,7 +4,7 @@ import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.sql.Date;
 import java.util.Calendar;
-import java.util.Iterator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
-import de.enwida.web.controller.AdminController;
 import de.enwida.web.dao.interfaces.IFileDao;
 import de.enwida.web.dao.interfaces.IGroupDao;
 import de.enwida.web.dao.interfaces.IRightDao;
@@ -23,19 +22,21 @@ import de.enwida.web.dao.interfaces.IRoleDao;
 import de.enwida.web.dao.interfaces.IUserDao;
 import de.enwida.web.db.model.UploadedFile;
 import de.enwida.web.model.Group;
+import de.enwida.web.model.Right;
 import de.enwida.web.model.Role;
 import de.enwida.web.model.User;
 import de.enwida.web.service.interfaces.IUserService;
+import de.enwida.web.utils.Constants;
 import de.enwida.web.utils.EnwidaUtils;
 
 @Service("userService")
 @TransactionConfiguration(transactionManager = "jpaTransactionManager", defaultRollback = true)
-@Transactional
+@Transactional(rollbackFor = Exception.class)
 public class UserServiceImpl implements IUserService {
 
-    /**
-     * User Data Access Object
-     */
+	/**
+	 * User Data Access Object
+	 */
     @Autowired
     private IUserDao userDao;
     /**
@@ -54,6 +55,9 @@ public class UserServiceImpl implements IUserService {
     @Autowired
     private IRightDao rightDao;
     
+	/**
+	 * File Data Access Object
+	 */
     @Autowired
     private IFileDao fileDao;
     
@@ -65,15 +69,47 @@ public class UserServiceImpl implements IUserService {
     /**
      * Log4j static class
      */
-    private static org.apache.log4j.Logger logger = Logger.getLogger(AdminController.class);
-    /**
-     * Gets the User from UserID
-     * @throws Exception 
-     */
+	private Logger logger = Logger.getLogger(getClass());
+    
+	/**
+	 * Gets the User from UserID
+	 * 
+	 * @throws Exception
+	 */
     @Override
     public User getUser(Long id) {
         return userDao.fetchById(id);
     }
+
+	/**
+	 * Gets the Group from Group Name
+	 * 
+	 * @throws Exception
+	 */
+	@Override
+	public Group findGroup(Group group) {
+		return groupDao.fetchByName(group.getGroupName());
+	}
+
+	/**
+	 * Gets the role from Role Name
+	 * 
+	 * @throws Exception
+	 */
+	@Override
+	public Role findRole(Role role) {
+		return roleDao.fetchByName(role.getRoleName());
+	}
+
+	/**
+	 * Gets the role from Role Name
+	 * 
+	 * @throws Exception
+	 */
+	@Override
+	public Right findRight(Right right) {
+		return rightDao.fetchById(right.getRightID());
+	}
 
     /**
      * Gets all the user from database
@@ -88,7 +124,6 @@ public class UserServiceImpl implements IUserService {
      * Saves user into Database
      * @throws Exception 
      */
-    @Transactional
     @Override
     public boolean saveUser(User user, String activationHost) throws Exception 
     {
@@ -123,11 +158,12 @@ public class UserServiceImpl implements IUserService {
             else
             {
                 // saving in default group (Anonymous)
-				Group anonymousGroup = groupDao.fetchByName("Anonymous");
+				Group anonymousGroup = groupDao
+						.fetchByName(Constants.ANONYMOUS_GROUP);
                 if(anonymousGroup == null)
                 {
                     anonymousGroup = new Group();
-					anonymousGroup.setGroupName("Anonymous");
+					anonymousGroup.setGroupName(Constants.ANONYMOUS_GROUP);
                     anonymousGroup.setAutoPass(true);
                     anonymousGroup = groupDao.addGroup(anonymousGroup);
                 }
@@ -151,9 +187,17 @@ public class UserServiceImpl implements IUserService {
         }        
     }
 
-    /**
-     * Gets user Password from the mail
-     */
+	@Override
+	public void assignUserToGroup(long userId, Long groupID) {
+		User user = userDao.fetchById(userId);
+		Group group = groupDao.fetchById(groupID);
+		assignUserToGroup(user, group);
+
+	}
+
+	/**
+	 * Gets user Password from the mail
+	 */
     @Override
     public String getPassword(String email)throws Exception {
         return userDao.fetchByName(email).getPassword();
@@ -175,12 +219,14 @@ public class UserServiceImpl implements IUserService {
     }
 
     /**
-     * Adds new group
-     */
+	 * Adds new group
+	 * 
+	 * @throws Exception
+	 */
     @Override
-    public Group addGroup(Group newGroup) {
+	public Group addGroup(Group newGroup) throws Exception {
         newGroup.setAutoPass(false);
-        return groupDao.addGroup(newGroup);
+		return groupDao.addGroup(newGroup);
     }
 
     /**
@@ -236,41 +282,54 @@ public class UserServiceImpl implements IUserService {
         userDao.deleteUser(user);
     }
     
-    @Override
-    public void assignUserToGroup(User user, Group group) {
-		user.getGroups().add(group);
-    	userDao.update(user);
-    	userDao.refresh(user);
-    	groupDao.refresh(group);
-    }
-    /**
-     * Assign users into group
-     */
-    @Override
-    public void assignUserToGroup(long userID, long groupID){
-        final User user = userDao.fetchById(userID);
-        final Group group = groupDao.fetchById(groupID);
-        assignUserToGroup(user, group);
-    }
+	/**
+	 * Assign group to user
+	 */
+	@Override
+	public void assignGroupToUser(User user, Group group) {
+		assignUserToGroup(user, group);
+	}
     
+	/**
+	 * Assign users into group
+	 */
+	@Override
+	public void assignUserToGroup(User user, Group group) {
+		user.getGroups().add(group);
+		user = userDao.update(user);
+	}
+
     @Override
     public void revokeUserFromGroup(User user, Group group) {
-		final Iterator<Group> iter = user.getGroups().iterator();
+		revokeGroupFromUser(user, group);
+	}
 
-    	while (iter.hasNext()) {
-    		if (iter.next().getGroupID() == group.getGroupID()) {
-    			iter.remove();
-    			break;
-    		}
-    	}
-    	userDao.update(user);
-    	userDao.refresh(user);
-    	groupDao.refresh(group);
+	@Override
+	public void revokeGroupFromUser(User user, Group group) {
+		user.getGroups().remove(group);
+		Set<Group> remainingGroups = new HashSet<Group>(user.getGroups());
+		user.setGroups(null);
+		userDao.update(user);
+		user.setGroups(remainingGroups);
+		userDao.update(user);
     }
+
+	@Override
+	public void revokeRoleFromGroup(Role role, Group group) {
+		role.getAssignedGroups().remove(group);
+		Set<Group> remainingGroups = new HashSet<Group>(
+				role.getAssignedGroups());
+		role.setAssignedGroups(null);
+		roleDao.update(role);
+		role.setAssignedGroups(remainingGroups);
+		roleDao.update(role);
+	}
     
     /**
-     * deAssign users into group
-     */
+	 * deAssign users into group
+	 * 
+	 * @throws Exception
+	 */
     @Override
     public void revokeUserFromGroup(long userID, long groupID) {
         User user=userDao.fetchById(userID);
@@ -279,7 +338,11 @@ public class UserServiceImpl implements IUserService {
             group.getAssignedUsers().remove(user);
         }
         if(group!=null  || user!=null)
-            groupDao.save(group);
+			try {
+				groupDao.save(group);
+			} catch (Exception e) {
+				logger.error("Unable to save group", e);
+			}
     }
     /**
      * Gets all groups with users attached
@@ -289,6 +352,15 @@ public class UserServiceImpl implements IUserService {
         List<Group> groups = groupDao.fetchAll();
         return groups;
     }
+
+	/**
+	 * Assigns role to group
+	 */
+	@Override
+	public void assignRoleToGroup(Role role, Group group) {
+		role.addAssignedGroups(group);
+		roleDao.save(role);
+	}
 
     /**
      * Assigns role to group
@@ -301,7 +373,11 @@ public class UserServiceImpl implements IUserService {
             group.getAssignedRoles().add(role);
         }
         if(role!=null  || group!=null)
-            groupDao.save(group);
+			try {
+				groupDao.save(group);
+			} catch (Exception e) {
+				logger.error("Unable to save group", e);
+			}
     }
 
     @Override
@@ -312,7 +388,11 @@ public class UserServiceImpl implements IUserService {
             group.getAssignedRoles().remove(role);
         }
         if(role!=null  || group!=null)
-            groupDao.save(group);
+			try {
+				groupDao.save(group);
+			} catch (Exception e) {
+				logger.error("Unable to save group", e);
+			}
     }
 
     @Override

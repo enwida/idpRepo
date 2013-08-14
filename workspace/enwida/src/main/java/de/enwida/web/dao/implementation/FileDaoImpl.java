@@ -6,6 +6,8 @@ package de.enwida.web.dao.implementation;
 import javax.persistence.TypedQuery;
 
 import org.springframework.stereotype.Repository;
+import org.springframework.test.context.transaction.TransactionConfiguration;
+import org.springframework.transaction.annotation.Transactional;
 
 import de.enwida.web.dao.interfaces.AbstractBaseDao;
 import de.enwida.web.dao.interfaces.IFileDao;
@@ -16,6 +18,8 @@ import de.enwida.web.db.model.UploadedFile;
  *
  */
 @Repository
+@TransactionConfiguration(transactionManager = "jpaTransactionManager", defaultRollback = true)
+@Transactional(rollbackFor = Exception.class)
 public class FileDaoImpl extends AbstractBaseDao<UploadedFile> implements
 		IFileDao {
 

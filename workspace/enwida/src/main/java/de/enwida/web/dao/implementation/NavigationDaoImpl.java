@@ -14,6 +14,8 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Repository;
+import org.springframework.test.context.transaction.TransactionConfiguration;
+import org.springframework.transaction.annotation.Transactional;
 
 import de.enwida.transport.DataResolution;
 import de.enwida.web.dao.interfaces.AbstractBaseDao;
@@ -27,6 +29,8 @@ import de.enwida.web.utils.ProductLeaf;
 import de.enwida.web.utils.ProductNode;
 
 @Repository
+@TransactionConfiguration(transactionManager = "jpaTransactionManager", defaultRollback = true)
+@Transactional(rollbackFor = Exception.class)
 public class NavigationDaoImpl extends AbstractBaseDao<NavigationSettings>
 		implements INavigationDao {
 

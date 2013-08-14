@@ -13,7 +13,7 @@ import de.enwida.web.service.interfaces.IAspectService;
 
 @TransactionConfiguration(defaultRollback = true)
 @Service("aspectService")
-@Transactional
+@Transactional(rollbackFor = Exception.class)
 public class AspectServiceImpl implements IAspectService {
 
 	@Autowired

@@ -63,7 +63,31 @@ public class Right implements Serializable {
     @Column(name = ENABLED)
     private boolean enabled;
     
-    public long getRightID() {
+	/**
+	 * 
+	 */
+	public Right() {
+	}
+
+	/**
+	 * @param tso
+	 * @param product
+	 * @param resolution
+	 * @param timeRange
+	 * @param aspect
+	 * @param enabled
+	 */
+	public Right(int tso, int product, String resolution,
+			CalendarRange timeRange, String aspect, boolean enabled) {
+		this.tso = tso;
+		this.product = product;
+		this.resolution = resolution;
+		this.timeRange = timeRange;
+		this.aspect = aspect;
+		this.enabled = enabled;
+	}
+
+	public long getRightID() {
         return rightID;
     }
     public void setRightID(long rightID) {

@@ -21,7 +21,7 @@ import de.enwida.web.utils.ProductRestriction;
 
 @TransactionConfiguration(defaultRollback = true)
 @Service("availabilityService")
-@Transactional
+@Transactional(rollbackFor = Exception.class)
 public class AvailibilityServiceImpl implements IAvailibilityService {
 
 	@Autowired

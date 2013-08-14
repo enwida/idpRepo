@@ -68,36 +68,73 @@ public abstract class AbstractBaseDao<T> implements IDao<T> {
 	}
 
 	public void create(T entity) {
-		em.persist(entity);
+		try {
+			em.persist(entity);
+		} catch (Exception e) {
+			logger.error("Unable to create "
+					+ entity.getClass().getSimpleName(), e);
+			throw e;
+		}
 	}
 
 	public T update(T entity) {
-		entity = em.merge(entity);
-		em.flush();
+		try {
+			entity = em.merge(entity);
+		} catch (Exception e) {
+			logger.error("Unable to update "
+					+ entity.getClass().getSimpleName(), e);
+			throw e;
+		}
 		return entity;
 	}
 	
 	public void create(T entity, boolean flushImmediate) {
-        em.persist(entity);
-        if(flushImmediate){
-            em.flush();em.refresh(entity);
-        }
+		try {
+			em.persist(entity);
+			if (flushImmediate) {
+				em.flush();
+				em.refresh(entity);
+			}
+		} catch (Exception e) {
+			logger.error("Unable to do immediate create "
+					+ entity.getClass().getSimpleName(), e);
+			throw e;
+		}
     }
 
     public T update(T entity,boolean flushImmediate) {
-        entity = em.merge(entity);
-        if(flushImmediate){
-            em.flush();em.refresh(entity);
-        }
+		try {
+			entity = em.merge(entity);
+			if (flushImmediate) {
+				em.flush();
+				em.refresh(entity);
+			}
+		} catch (Exception e) {
+			logger.error("Unable to do immediate update "
+					+ entity.getClass().getSimpleName(), e);
+			throw e;
+		}
         return entity;
     }
 	
-	public void refresh(T entity){
-	    em.refresh(entity);
+	public void refresh(T entity) {
+		try {
+			em.refresh(entity);
+		} catch (Exception e) {
+			logger.error("Unable to do refresh "
+					+ entity.getClass().getSimpleName(), e);
+			throw e;
+		}
 	}
 
 	public void delete(T entity) {
-		em.remove(entity);
+		try {
+			em.remove(entity);
+		} catch (Exception e) {
+			logger.error("Unable to do remove "
+					+ entity.getClass().getSimpleName(), e);
+			throw e;
+		}
 	}
 
 	public void deleteById(long entityId) {
@@ -159,6 +196,7 @@ public abstract class AbstractBaseDao<T> implements IDao<T> {
 
 		} catch (Exception e) {
 			logger.error("Unable to reset sequence value : ", e);
+			throw e;
 		}
 		return nextCounter.longValue();
 	}

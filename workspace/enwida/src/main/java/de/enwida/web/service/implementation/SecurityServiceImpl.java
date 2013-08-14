@@ -23,7 +23,7 @@ import de.enwida.web.service.interfaces.ISecurityService;
 import de.enwida.web.utils.ProductRestriction;
 
 @TransactionConfiguration(defaultRollback = true)
-@Transactional
+@Transactional(rollbackFor = Exception.class)
 @Service("securityService")
 public class SecurityServiceImpl implements ISecurityService {
 

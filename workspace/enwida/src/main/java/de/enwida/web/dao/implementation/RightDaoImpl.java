@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.TypedQuery;
-import javax.sql.DataSource;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.test.context.transaction.TransactionConfiguration;
+import org.springframework.transaction.annotation.Transactional;
 
 import de.enwida.transport.Aspect;
 import de.enwida.web.dao.interfaces.AbstractBaseDao;
@@ -17,10 +17,9 @@ import de.enwida.web.model.AuthorizationRequest;
 import de.enwida.web.model.Right;
 
 @Repository
+@TransactionConfiguration(transactionManager = "jpaTransactionManager", defaultRollback = true)
+@Transactional(rollbackFor = Exception.class)
 public class RightDaoImpl extends AbstractBaseDao<Right> implements IRightDao {
-	
-	@Autowired
-	private DataSource datasource;
 	
 	/**
 	 * Enables or disables the Aspects in the database.So that right won't see that aspect 
@@ -76,8 +75,18 @@ public class RightDaoImpl extends AbstractBaseDao<Right> implements IRightDao {
         return ranges;
     }
     
-    public void addRight(Right right) {
-        create(right);
+	@Override
+	public Right addRight(Right right) {
+
+		Right exist = fetchById(right.getRightID());
+		if (exist == null) {
+			// create or refresh
+			create(right);
+		} else {
+			right.setRightID(exist.getRightID());
+			right = update(right);
+		}
+		return right;
     }
     
     @Override

@@ -23,7 +23,7 @@ import de.enwida.web.service.interfaces.IUserLinesService;
  */
 @Service("userLinesService")
 @TransactionConfiguration(transactionManager = "jpaTransactionManager", defaultRollback = true)
-@Transactional
+@Transactional(rollbackFor = Exception.class)
 public class UserLinesServiceImpl implements IUserLinesService {
 
 	private Logger logger = Logger.getLogger(getClass());

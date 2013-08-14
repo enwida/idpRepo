@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import de.enwida.web.service.interfaces.ICookieSecurityService;
 
-@Transactional
+@Transactional(rollbackFor = Exception.class)
 @TransactionConfiguration(defaultRollback = true)
 @Service("cookieSecurityService")
 public class CookieSecurityServiceImpl implements ICookieSecurityService {

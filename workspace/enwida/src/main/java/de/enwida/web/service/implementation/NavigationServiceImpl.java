@@ -46,7 +46,7 @@ import de.enwida.web.utils.ProductLeaf;
 import de.enwida.web.utils.ProductRestriction;
 
 @TransactionConfiguration(defaultRollback = true)
-@Transactional
+@Transactional(rollbackFor = Exception.class)
 @Service("navigationService")
 public class NavigationServiceImpl implements INavigationService {
 

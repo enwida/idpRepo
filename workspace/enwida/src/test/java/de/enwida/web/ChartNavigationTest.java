@@ -97,7 +97,7 @@ public class ChartNavigationTest {
 		group.setGroupName(groupName);
 		try {
             userService.addGroup(group);
-            userService.assignUserToGroup(user.getUserId(), group.getGroupID().intValue());
+			userService.assignUserToGroup(user.getUserId(), group.getGroupID());
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
