@@ -120,7 +120,7 @@ public class AdminController {
             List<Group> groupsWithUsers= userService.getAllGroupsWithUsers();
             model.addAttribute("groupsWithUsers", groupsWithUsers);
             //Get all the users
-            List<User> users= userService.getUsers();
+            List<User> users= userService.getAllUsers();
             model.addAttribute("users", users);
             
         } catch (Exception e) {
@@ -296,7 +296,7 @@ public class AdminController {
     public String assignUserToGroup(HttpServletRequest request,Model model,int selectedUser,int selectedGroup)
     {
         try {
-			userService.assignUserToGroup(new Long(selectedUser), new Long(
+			userService.assignGroupToUser(new Long(selectedUser), new Long(
 					selectedGroup));
             model.addAttribute("info", "OK");       
         } catch (Exception e) {   

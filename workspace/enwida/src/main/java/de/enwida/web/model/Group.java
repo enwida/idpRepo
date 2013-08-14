@@ -1,6 +1,7 @@
 package de.enwida.web.model;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -32,7 +33,7 @@ public class Group implements Serializable{
 	@Id
 	@Column(name = GROUP_ID)
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private long groupId;
+	private Long groupId;
     
 	@Column(name = GROUP_NAME, unique = true, nullable = false)
     private String groupName;
@@ -54,11 +55,11 @@ public class Group implements Serializable{
 	private Set<Role> assignedRoles;
 
     public Long getGroupID() {
-		return new Long(groupId);
+		return groupId;
     }
 
     public void setGroupID(Long groupID) {
-		this.groupId = groupID.intValue();
+		this.groupId = groupID;
     }
 
 	public String getGroupName() {
@@ -81,25 +82,18 @@ public class Group implements Serializable{
         if (assignedUsers == null) {
 			assignedUsers = new HashSet<User>();
         }
-		return assignedUsers;
+        return Collections.unmodifiableSet(assignedUsers);
     }
 
 	public void setAssignedUsers(Set<User> assignedUsers) {
         this.assignedUsers = assignedUsers;
     }
 
-    public void addAssignedUsers(User user) {
-        if (assignedUsers == null) {
-			assignedUsers = new HashSet<User>();
-        }
-        this.assignedUsers.add(user);
-    }
-
 	public Set<Role> getAssignedRoles() {
         if (assignedRoles == null) {
 			assignedRoles = new HashSet<Role>();
         }
-		return assignedRoles;
+		return Collections.unmodifiableSet(assignedRoles);
 	}
 
 	public void setAssignedRoles(Set<Role> assignedRoles) {

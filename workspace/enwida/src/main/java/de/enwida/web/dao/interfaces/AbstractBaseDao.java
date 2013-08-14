@@ -78,14 +78,7 @@ public abstract class AbstractBaseDao<T> implements IDao<T> {
 	}
 
 	public T update(T entity) {
-		try {
-			entity = em.merge(entity);
-		} catch (Exception e) {
-			logger.error("Unable to update "
-					+ entity.getClass().getSimpleName(), e);
-			throw e;
-		}
-		return entity;
+		return update(entity, false);
 	}
 	
 	public void create(T entity, boolean flushImmediate) {

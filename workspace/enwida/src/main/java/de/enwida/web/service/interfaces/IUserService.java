@@ -40,7 +40,7 @@ public interface IUserService {
      * @return the collection of users
      * @throws Exception 
      */
-    public List<User> getUsers() throws Exception;
+    public List<User> getAllUsers() throws Exception;
 
     /**
      * Send activation to saved user
@@ -70,13 +70,6 @@ public interface IUserService {
      * @return Password of user
      */
     public String getPassword(String email)throws Exception;
-
-    /**
-     * Finds all the user from database
-     * 
-     * @return Collection of users
-     */
-    public List<User> getAllUsers()throws Exception;
 
     /**
      * Gets all the groups of a user
@@ -140,29 +133,45 @@ public interface IUserService {
     public void deleteUser(User user) throws Exception;
 
     /**
-	 * Assigns group to user
-	 * 
-	 * @param users
-	 * @param groupID
-	 * @return
-	 */
-
-	public void assignGroupToUser(User user, Group group);
-
-    /**
-     * Revokes User into Group
+     * Deletes the user from DB
      * 
      * @param user
-     * @param group
      * @return
      */
+    public void deleteUser(long userId) throws Exception;
 
-    public void revokeUserFromGroup(User user, Group group);
+    /**
+	 * Assigns group to user. {@link User} object will be updated in place; updated {@link Group} will be returned.
+	 * 
+	 * @param user the persisted user object
+	 * @param group the persisted group object
+	 * @return the fresh group object
+	 */
+	public Group assignGroupToUser(User user, Group group);
+
+    /**
+	 * Assigns group to user.
+	 * 
+	 * @param user ID
+	 * @param group ID
+	 * @return the fresh group object
+	 */
+	public void assignGroupToUser(long userId, Long groupID);
+
+    /**
+	 * Revokes group from user. {@link User} object will be updated in place; updated {@link Group} will be returned.
+	 * 
+	 * @param user the persisted user object
+	 * @param group the persisted group object
+	 * @return the fresh group object
+	 */
+    public Group revokeUserFromGroup(User user, Group group);
+
     /**
      * Revokes User from Group
      * 
-     * @param userID
-     * @param groupID
+     * @param user ID
+     * @param group ID
      * @return
      */
     public void revokeUserFromGroup(long userID, long groupID);
@@ -257,7 +266,23 @@ public interface IUserService {
      * @throws Exception 
      */
     public User getCurrentUser() throws Exception;
-
+    
+    /**
+     * Persists the given group
+     * @param group
+     * @return the saved group object
+     * @throws Exception 
+     */
+    public Group saveGroup(Group group) throws Exception;
+    
+    /**
+     * Fetch the group from database
+     * @param groupName name of the group
+     * @return the group object
+     * @throws Exception
+     */
+    public Group getGroup(String groupName) throws Exception;
+    
     public Long getNextSequence(String schema, String sequenceName);
 
     public UploadedFile getFile(int fileId);
@@ -275,12 +300,6 @@ public interface IUserService {
 	Role findRole(Role role);
 
 	Right findRight(Right right);
-
-	void revokeGroupFromUser(User user, Group group);
-
-	void assignUserToGroup(User user, Group group);
-
-	void assignUserToGroup(long userId, Long groupID);
 
 	void assignRoleToGroup(Role role, Group group);
 

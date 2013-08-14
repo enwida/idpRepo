@@ -116,7 +116,7 @@ public class UserServiceImpl implements IUserService {
      * @throws Exception 
      */
     @Override
-    public List<User> getUsers() throws Exception {
+    public List<User> getAllUsers() throws Exception {
         return userDao.fetchAll();
     }
 
@@ -127,7 +127,7 @@ public class UserServiceImpl implements IUserService {
     @Override
     public boolean saveUser(User user, String activationHost) throws Exception 
     {
-        
+    	// FIXME: what is the return value?
         Date date = new Date(Calendar.getInstance().getTimeInMillis());
         user.setJoiningDate(date);
         user.setEnabled(false);
@@ -152,7 +152,7 @@ public class UserServiceImpl implements IUserService {
             if(group != null && group.isAutoPass())
             {
                 Group newGroup = groupDao.fetchById(group.getGroupID());
-                this.assignUserToGroup(userId, newGroup.getGroupID());
+                this.assignGroupToUser(userId, newGroup.getGroupID());
 
             }
             else
@@ -186,14 +186,6 @@ public class UserServiceImpl implements IUserService {
             return false;
         }        
     }
-
-	@Override
-	public void assignUserToGroup(long userId, Long groupID) {
-		User user = userDao.fetchById(userId);
-		Group group = groupDao.fetchById(groupID);
-		assignUserToGroup(user, group);
-
-	}
 
 	/**
 	 * Gets user Password from the mail
@@ -282,41 +274,69 @@ public class UserServiceImpl implements IUserService {
         userDao.deleteUser(user);
     }
     
-	/**
-	 * Assign group to user
-	 */
-	@Override
-	public void assignGroupToUser(User user, Group group) {
-		assignUserToGroup(user, group);
-	}
+    @Override
+    public void deleteUser(long userId) throws Exception {
+    	userDao.deleteById(userId);
+    }
     
 	/**
-	 * Assign users into group
+	 * Caution: user and group parameters should be persisted and in clean state!
+	 * Dirty attributes might be applied (i.e. committed to database, eventually).
+	 * @return the updated and managed group object
+	 * @throws Exception 
 	 */
 	@Override
-	public void assignUserToGroup(User user, Group group) {
-		user.getGroups().add(group);
-		Set<Group> newGroups = new HashSet<Group>(user.getGroups());
-		user.setGroups(null);
-		userDao.update(user);
-		user.setGroups(newGroups);
-		userDao.update(user);
-	}
+	public Group assignGroupToUser(User user, Group group) {
+		if (user.getUserId() == null) {
+			throw new IllegalArgumentException("user object is not persisted");
+		}
+		if (group.getGroupID() == null) {
+			throw new IllegalArgumentException("group object is not persisted");
+		}
+		// Modify user's set of groups
+ 		final Set<Group> groups = new HashSet<>(user.getGroups());
+		groups.add(group);
+		user.setGroups(groups);
+		userDao.update(user, true); // with flush
 
-    @Override
-    public void revokeUserFromGroup(User user, Group group) {
-		revokeGroupFromUser(user, group);
+		// Refresh the group in order to reflect the changes
+		group = groupDao.update(group);
+		groupDao.refresh(group);
+		return group;
 	}
-
+    
 	@Override
-	public void revokeGroupFromUser(User user, Group group) {
-		user.getGroups().remove(group);
-		Set<Group> remainingGroups = new HashSet<Group>(user.getGroups());
-		user.setGroups(null);
-		userDao.update(user);
-		user.setGroups(remainingGroups);
-		userDao.update(user);
-    }
+	public void assignGroupToUser(long userId, Long groupID) {
+		User user = userDao.fetchById(userId);
+		Group group = groupDao.fetchById(groupID);
+		assignGroupToUser(user, group);
+	}
+
+	/**
+	 * Caution: user and group parameters should be persisted and in clean state!
+	 * Dirty attributes might be applied (i.e. committed to database, eventually).
+	 * @return the updated and managed group object
+	 * @throws Exception 
+	 */
+    @Override
+    public Group revokeUserFromGroup(User user, Group group) {
+		if (user.getUserId() == null) {
+			throw new IllegalArgumentException("user object is not persisted");
+		}
+		if (group.getGroupID() == null) {
+			throw new IllegalArgumentException("group object is not persisted");
+		}
+		// Modify user's set of groups
+ 		final Set<Group> groups = new HashSet<>(user.getGroups());
+		groups.remove(group);
+		user.setGroups(groups);
+		userDao.update(user, true); // with flush
+
+		// Refresh the group in order to reflect the changes
+		group = groupDao.update(group);
+		groupDao.refresh(group);
+		return group;
+	}
 
 	@Override
 	public void revokeRoleFromGroup(Role role, Group group) {
@@ -422,10 +442,6 @@ public class UserServiceImpl implements IUserService {
         return roleDao.fetchAll();
     }
 
-    @Override
-	public List<User> getAllUsers() throws Exception {
-        return userDao.fetchAll();
-    }
     /**
      * Enables or Disables the user
      */
@@ -517,6 +533,16 @@ public class UserServiceImpl implements IUserService {
     @Override
     public boolean saveUser(User user) throws Exception {
         return saveUser(user,null);
+    }
+    
+    @Override
+    public Group saveGroup(Group group) throws Exception {
+    	return groupDao.save(group);
+    }
+    
+    @Override
+    public Group getGroup(String groupName) throws Exception {
+    	return groupDao.fetchByName(groupName);
     }
     
     @Override

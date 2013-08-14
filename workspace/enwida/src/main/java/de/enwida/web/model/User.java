@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -60,7 +61,7 @@ public class User implements Serializable, UserDetails {
 	@Id
 	@Column(name = USER_ID)
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private long userId;
+	private Long userId;
 
 	@Column(name = USER_NAME, nullable = false, unique = true)
     private String userName;
@@ -165,15 +166,11 @@ public class User implements Serializable, UserDetails {
         this.userName = userName;
     }
 
-	public Long getUserID() {
-		return new Long(userId);
-    }
-
 	public void setUserID(Long userID) {
-		this.userId = userID.intValue();
+		this.userId = userID;
     }
 
-	public long getUserId() {
+	public Long getUserId() {
 		return userId;
 	}
 
@@ -260,10 +257,10 @@ public class User implements Serializable, UserDetails {
     }
 
 	public Set<Group> getGroups() {
-	    if( groups==null){
+	    if(groups==null) {
 			this.groups = new HashSet<Group>();
 	    }
-		return groups;
+	    return Collections.unmodifiableSet(groups);
     }
 
 	public void setGroups(Set<Group> groups) {
