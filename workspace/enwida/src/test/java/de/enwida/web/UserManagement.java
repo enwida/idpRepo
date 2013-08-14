@@ -104,7 +104,28 @@ public class UserManagement {
 	public void roleRightTest() throws Exception {
 		role = addTestRole("testrole1");
 		right = addTestRight(1);
-		Right right1 = addTestRight(2);
+		Right right2 = addTestRight(2);
+		Right right3 = addTestRight(3);
+
+		assignRightToRole(right, role);
+		assignRightToRole(right2, role);
+		assignRightToRole(right3, role);
+
+		removeRightFromRole(right2, role);
+	}
+
+	private void assignRightToRole(Right right, Role role) {
+		userService.assignRightToRole(right, role);
+		role = roleDao.fetchById(role.getRoleID());
+		System.out.println(role.getRights());
+		System.out.println(right.getRole());
+	}
+
+	private void removeRightFromRole(Right right, Role role) {
+		userService.revokeRightFromRole(right);
+		role = roleDao.fetchById(role.getRoleID());
+		System.out.println(role.getRights());
+		System.out.println(right.getRole());
 	}
 
 	@Test

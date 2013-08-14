@@ -362,6 +362,24 @@ public class UserServiceImpl implements IUserService {
 		roleDao.save(role);
 	}
 
+	/**
+	 * Assigns role to group
+	 */
+	@Override
+	public void assignRightToRole(Right right, Role role) {
+		right.setRole(role);
+		rightDao.update(right);
+	}
+
+	/**
+	 * Assigns role to group
+	 */
+	@Override
+	public void revokeRightFromRole(Right right) {
+		right.setRole(null);
+		rightDao.update(right);
+	}
+
     /**
      * Assigns role to group
      */

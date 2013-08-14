@@ -140,4 +140,15 @@ public class Right implements Serializable {
     public void setTimeRange(CalendarRange timeRange) {
         this.timeRange = timeRange;
     }
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "Right [rightID=" + rightID + "]";
+	}
+
 }

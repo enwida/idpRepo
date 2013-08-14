@@ -286,4 +286,8 @@ public interface IUserService {
 
 	void revokeRoleFromGroup(Role role, Group group);
 
+	void assignRightToRole(Right right, Role role);
+
+	void revokeRightFromRole(Right right);
+
 }
