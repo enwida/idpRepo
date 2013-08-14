@@ -51,8 +51,8 @@ public class UserManagement {
 		assignUserToGroup(user, group);
 		assignUserToGroup(user, group2);
 		
-		removeUserFromGroup(user, group);
-		removeUserFromGroup(user, group2);
+		// removeUserFromGroup(user, group);
+		// removeUserFromGroup(user, group2);
 
 	}
 

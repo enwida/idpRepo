@@ -46,23 +46,13 @@ public class Role implements Serializable, GrantedAuthority {
     @Column(name = DESCRIPTION) 
     private String description;
     
-	// @ManyToMany(mappedBy = "assignedRoles", cascade = CascadeType.ALL,
-	// targetEntity = Group.class, fetch = FetchType.EAGER)
-	// @ElementCollection(targetClass = Group.class, fetch = FetchType.EAGER)
-	// @JoinTable(name = Constants.GROUP_ROLE_TABLE_NAME, schema =
-	// Constants.USER_GROUP_TABLE_SCHEMA_NAME, uniqueConstraints = {
-	// @UniqueConstraint(columnNames = {
-	// Role.ROLE_ID, Group.GROUP_ID }) }, joinColumns = { @JoinColumn(name =
-	// ROLE_ID, referencedColumnName = ROLE_ID) }, inverseJoinColumns = {
-	// @JoinColumn(name = Group.GROUP_ID, referencedColumnName = Group.GROUP_ID)
-	// })
 	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, targetEntity = Group.class)
 	@JoinTable(name = Constants.GROUP_ROLE_TABLE_NAME, schema = Constants.GROUP_ROLE_TABLE_SCHEMA_NAME, uniqueConstraints = { @UniqueConstraint(columnNames = {
 			Role.ROLE_ID, Group.GROUP_ID }) }, joinColumns = { @JoinColumn(name = ROLE_ID) }, inverseJoinColumns = { @JoinColumn(name = Group.GROUP_ID) })
-	private Set<Group> assignedGroups;
+	private Set<Group> assignedGroups = new HashSet<Group>(0);
     
 	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "role", targetEntity = Right.class)
-	private Set<Right> rights;
+	private Set<Right> rights = new HashSet<Right>(0);
     
 	/**
 	 * 
@@ -82,9 +72,6 @@ public class Role implements Serializable, GrantedAuthority {
 	}
 
 	public void addAssignedGroups(Group group) {
-        if (assignedGroups == null) {
-			assignedGroups = new HashSet<Group>();
-        }
         this.assignedGroups.add(group);
     }
     
@@ -117,9 +104,6 @@ public class Role implements Serializable, GrantedAuthority {
     }
     
 	public Set<Right> getRights() {
-		if (rights == null) {
-			return new HashSet<Right>();
-		}
 		return rights;
 	}
 
@@ -135,6 +119,42 @@ public class Role implements Serializable, GrantedAuthority {
 	@Override
 	public String getAuthority() {
 		return this.roleName;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((roleName == null) ? 0 : roleName.hashCode());
+		return result;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Role other = (Role) obj;
+		if (roleName == null) {
+			if (other.roleName != null)
+				return false;
+		} else if (!roleName.equals(other.roleName))
+			return false;
+		return true;
 	}
 
 }

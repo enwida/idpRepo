@@ -2,11 +2,9 @@ package de.enwida.web.model;
 
 import java.io.Serializable;
 import java.sql.Date;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -104,24 +102,21 @@ public class User implements Serializable, UserDetails {
 	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, targetEntity = Group.class)
 	@JoinTable(name = Constants.USER_GROUP_TABLE_NAME, schema = Constants.USER_GROUP_TABLE_SCHEMA_NAME,
 		joinColumns = {@JoinColumn(name=USER_ID)}, inverseJoinColumns={@JoinColumn(name=Group.GROUP_ID)})
-	private Set<Group> groups;
+	private Set<Group> groups = new HashSet<Group>(0);
 
 	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "user",targetEntity=NavigationSettings.class)
 	// @ElementCollection(targetClass = NavigationSettings.class)
-	private Set<NavigationSettings> navigationSettings;
+	private Set<NavigationSettings> navigationSettings = new HashSet<NavigationSettings>(0);
 
 	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "uploader", targetEntity = UploadedFile.class)
 	// @ElementCollection(targetClass = UploadedFile.class)
-	private Set<UploadedFile> uploadedFiles;
+	private Set<UploadedFile> uploadedFiles = new HashSet<UploadedFile>(0);
 
 	@Transient
 	private Map<Integer, NavigationDefaults> chartDefaults;
 
 	@Transient
 	private Collection<GrantedAuthority> authorities = new HashSet<GrantedAuthority>();
-   
-	@Transient	
-	private List<Role> roles;
 
     public User(String userName, String password,
             String firstName, String lastName, boolean enabled) {
@@ -133,7 +128,7 @@ public class User implements Serializable, UserDetails {
     }
 
     public User() {
-        // TODO Auto-generated constructor stub
+		// Nothing to be done here
     }
 
     public String getLastName() {
@@ -260,9 +255,6 @@ public class User implements Serializable, UserDetails {
     }
 
 	public Set<Group> getGroups() {
-	    if( groups==null){
-			this.groups = new HashSet<Group>();
-	    }
 		return groups;
     }
 
@@ -286,11 +278,7 @@ public class User implements Serializable, UserDetails {
 		this.chartDefaults = chartDefaults;
 	}
 
-	@Transient
 	public Set<NavigationSettings> getNavigationSettings() {
-		if (navigationSettings == null) {
-			navigationSettings = new HashSet<NavigationSettings>();
-		}
 		return navigationSettings;
 	}
 
@@ -307,8 +295,8 @@ public class User implements Serializable, UserDetails {
 				}
 			}
 		} else {
-			getNavigationSettings().add(
-new NavigationSettings(chartId, updateddefaults, this,
+			getNavigationSettings()
+					.add(new NavigationSettings(chartId, updateddefaults, this,
 							null));
 		}
 	}
@@ -322,7 +310,6 @@ new NavigationSettings(chartId, updateddefaults, this,
 		}
 	}
 
-	@Transient
 	public Set<UploadedFile> getUploadedFiles() {
 		return uploadedFiles;
 	}
@@ -333,9 +320,6 @@ new NavigationSettings(chartId, updateddefaults, this,
 
 	public void addUploadedFile(UploadedFile uploadedFile) {
 		if (uploadedFile != null) {
-			if (uploadedFiles == null) {
-				this.uploadedFiles = new HashSet<UploadedFile>();
-			}
 			this.uploadedFiles.add(uploadedFile);
 		}
 	}
@@ -389,21 +373,15 @@ new NavigationSettings(chartId, updateddefaults, this,
 		return enabled;
 	}
 
-    public List<Role> getRoles() {
-        if (roles==null){
-            roles=new ArrayList<Role>();
-            for (Group group : this.getGroups()) {
-                for (Role role : group.getAssignedRoles()) {
-                    roles.add(role);
-                }
-            }
-        }
-        return roles;
-    }
-
-    public void setRoles(List<Role> roles) {
-       this.roles=roles;
-    }
+	public Set<Role> getRoles() {
+		Set<Role> roles = new HashSet<Role>();
+		for (Group group : this.getGroups()) {
+			for (Role role : group.getAssignedRoles()) {
+				roles.add(role);
+			}
+		}
+		return roles;
+	}
 
 	@Override
 	public int hashCode() {

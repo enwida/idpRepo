@@ -362,8 +362,12 @@ public class UserServiceImpl implements IUserService {
 	 */
 	@Override
 	public void assignRoleToGroup(Role role, Group group) {
-		role.addAssignedGroups(group);
-		roleDao.save(role);
+		role.getAssignedGroups().add(group);
+		Set<Group> newGroups = new HashSet<Group>(role.getAssignedGroups());
+		role.setAssignedGroups(null);
+		roleDao.update(role);
+		role.setAssignedGroups(newGroups);
+		roleDao.update(role);
 	}
 
 	/**
@@ -372,6 +376,10 @@ public class UserServiceImpl implements IUserService {
 	@Override
 	public void assignRightToRole(Right right, Role role) {
 		role.getRights().add(right);
+		Set<Right> newRights = new HashSet<Right>(role.getRights());
+		role.setRights(null);
+		roleDao.update(role);
+		role.setRights(newRights);
 		roleDao.update(role);
 	}
 
@@ -381,6 +389,10 @@ public class UserServiceImpl implements IUserService {
 	@Override
 	public void revokeRightFromRole(Right right, Role role) {
 		role.getRights().remove(right);
+		Set<Right> newRights = new HashSet<Right>(role.getRights());
+		role.setRights(null);
+		roleDao.update(role);
+		role.setRights(newRights);
 		roleDao.update(role);
 	}
 

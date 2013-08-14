@@ -41,17 +41,10 @@ public class Group implements Serializable{
     private boolean autoPass;
 
 	@ManyToMany(mappedBy = "groups", fetch = FetchType.EAGER, cascade = CascadeType.ALL, targetEntity = User.class)
-	private Set<User> assignedUsers;
+	private Set<User> assignedUsers = new HashSet<User>(0);
 	
-	// @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER,
-	// targetEntity = Role.class)
-	// @JoinTable(name = Constants.GROUP_ROLE_TABLE_NAME, schema =
-	// Constants.GROUP_ROLE_TABLE_SCHEMA_NAME, uniqueConstraints = {
-	// @UniqueConstraint(columnNames = {
-	// Role.ROLE_ID, Group.GROUP_ID }) }, joinColumns = { @JoinColumn(name =
-	// GROUP_ID) }, inverseJoinColumns = { @JoinColumn(name = Role.ROLE_ID) })
 	@ManyToMany(mappedBy = "assignedGroups", fetch = FetchType.EAGER, cascade = CascadeType.ALL, targetEntity = Role.class)
-	private Set<Role> assignedRoles;
+	private Set<Role> assignedRoles = new HashSet<Role>(0);
 
     public Long getGroupID() {
 		return new Long(groupId);
@@ -78,9 +71,6 @@ public class Group implements Serializable{
 	}
 
 	public Set<User> getAssignedUsers() {
-        if (assignedUsers == null) {
-			assignedUsers = new HashSet<User>();
-        }
 		return assignedUsers;
     }
 
@@ -89,16 +79,10 @@ public class Group implements Serializable{
     }
 
     public void addAssignedUsers(User user) {
-        if (assignedUsers == null) {
-			assignedUsers = new HashSet<User>();
-        }
         this.assignedUsers.add(user);
     }
 
 	public Set<Role> getAssignedRoles() {
-        if (assignedRoles == null) {
-			assignedRoles = new HashSet<Role>();
-        }
 		return assignedRoles;
 	}
 
