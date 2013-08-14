@@ -72,8 +72,8 @@ CREATE TABLE users.group_role (
 -- Before inserting any data in any of the tables make sure all the DDL commands are executed	
 INSERT INTO users.users(user_id,
 		name, user_password, first_name, last_name, enabled, 
-		joining_date, telephone, company_name,1)
-VALUES (1,'test', 'q12wq12w', 'test', 'test', true, '2013-07-02', '0049 89 1234567','enwida','login_count');
+		joining_date, telephone, company_name,login_count)
+VALUES (1,'test', 'q12wq12w', 'test', 'test', true, '2013-07-02', '0049 89 1234567','enwida',1);
 
 
 
@@ -131,7 +131,7 @@ BEGIN
 	   FOR pCounter IN 200 .. productMAX  LOOP
 		FOR rCounter IN  array_lower(resolution, 1) .. array_upper(resolution, 1)  LOOP
   			FOR aCounter IN 0 .. aspectMax  LOOP
-		            INSERT INTO users.rights (role_id,tso,product,resolution,time1,time2,aspect_id,enabled)
+		            INSERT INTO users.rights (role_id,tso,product,resolution,start_date,end_date,aspect,enabled)
 				VALUES (role_id,tso,pCounter,resolution[rCounter],'1970-01-01','2500-01-01',aCounter,true);
 		        END LOOP;
 		END LOOP;
