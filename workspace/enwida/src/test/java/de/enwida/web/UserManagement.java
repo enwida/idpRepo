@@ -16,6 +16,7 @@ import de.enwida.web.dao.interfaces.IRightDao;
 import de.enwida.web.dao.interfaces.IRoleDao;
 import de.enwida.web.dao.interfaces.IUserDao;
 import de.enwida.web.model.Group;
+import de.enwida.web.model.Role;
 import de.enwida.web.model.User;
 import de.enwida.web.service.implementation.MailServiceImpl;
 import de.enwida.web.service.interfaces.IUserService;
@@ -170,38 +171,18 @@ public class UserManagement {
 		Assert.assertTrue(group2.getAssignedUsers().contains(user));
 	}
 	
+    @Test
+    @Transactional
+    public void roleIsAddedToDatabase() throws Exception {
+        final String roleName = "test";
+        final Role role = addTestRole(roleName);
 
-//    @Test
-//    @Transactional
-//	public void testGroup(){
-//        user=userDao.fetchByName("test");
-//		Group adminGroup = new Group("Admin");
-//		adminGroup =groupDao.addGroup(adminGroup);
-//
-//		Group anonymousGroup = new Group("Anonymous");
-//		anonymousGroup = groupDao.addGroup(anonymousGroup);
-//
-//		// save user in any group and remove it
-//		 userService.assignUserToGroup(user.getUserID(),adminGroup.getGroupID());
-//		 
-//		// save user in anonymous group
-//		 userService.assignUserToGroup(user.getUserID(),anonymousGroup.getGroupID());
-//
-//        //CheckGroups
-//        Assert.assertTrue(anonymousGroup.getAssignedUsers().contains(user));
-//        Assert.assertTrue(adminGroup.getAssignedUsers().contains(user));
-//	}
-//
-//    @Test
-//    @Transactional
-//	public void updateUser() throws Exception {
-//		user=userDao.fetchByName("test");
-//		user.setCompanyName("test");
-//		userDao.updateUser(user);
-//        userDao.save(user);
-//		User user2 = userDao.fetchByName(user.getUserName());
-//		assertEquals("test", user2.getCompanyName());
-//	}
+        final Role testee = roleDao.fetchByName(roleName);
+        roleDao.refresh(testee);
+        Assert.assertNotNull(testee);
+        Assert.assertEquals(role.getRoleName(), testee.getRoleName());
+    }
+
 //
 //    @Test
 //    @Transactional
@@ -260,8 +241,14 @@ public class UserManagement {
     }
     
     private Group addTestGroup(String name) throws Exception {
-    	final Group group = new Group(name);
-    	userService.addGroup(group);
-    	return group;
+        final Group group = new Group(name);
+        userService.addGroup(group);
+        return group;
+    }
+    
+    private Role addTestRole(String name) throws Exception {
+        final Role role = new Role(name);
+        userService.addRole(role);
+        return role;
     }
  }

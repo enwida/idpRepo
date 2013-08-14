@@ -5,7 +5,7 @@ DROP SCHEMA IF EXISTS users CASCADE;CREATE SCHEMA users;
 CREATE TABLE users.user
 (
   user_id serial NOT NULL,
-  user_name character varying NOT NULL,
+  name character varying NOT NULL,
   user_password character varying(45) NOT NULL,
   first_name character varying(45) NOT NULL,
   last_name character varying(45) NOT NULL,
@@ -22,14 +22,14 @@ CREATE TABLE users.user
 
 CREATE TABLE users.groups (
     group_id SERIAL PRIMARY KEY,
-    group_name character varying(45) NOT NULL,
+    name character varying(45) NOT NULL,
     auto_pass boolean NOT NULL
 );
 
 
 CREATE TABLE users.roles (
     role_id SERIAL PRIMARY KEY,
-    role_name character varying(45),
+    name character varying(45),
     description character varying(45)
 );
 
@@ -68,27 +68,30 @@ CREATE TABLE users.group_role (
 	CONSTRAINT "FK_roles_rights" FOREIGN KEY (role_id) REFERENCES users.roles(role_id)  ON DELETE CASCADE
 	);
 	
--- Before inserting any data in any of the tables make sure all the DDL commands are executed	
-INSERT INTO users.user(
-		user_name, user_password, first_name, last_name, enabled, 
-		joining_date, telephone, company_name)
-VALUES ('test', 'q12wq12w', 'test', 'test', true, '2013-07-02', '0049 89 1234567','enwida');
 
-INSERT INTO users.roles( role_name, description)
-    VALUES ('admin','adminstrator');
+-- Before inserting any data in any of the tables make sure all the DDL commands are executed	
+INSERT INTO users.users(user_id,
+		name, user_password, first_name, last_name, enabled, 
+		joining_date, telephone, company_name)
+VALUES (1,'test', 'q12wq12w', 'test', 'test', true, '2013-07-02', '0049 89 1234567','enwida');
+
+
+
+INSERT INTO users.roles(role_id,name, description)
+    VALUES (1,'admin','adminstrator');
 
     
-INSERT INTO users.roles( role_name, description)
-    VALUES ('chart','This user can see all charts');
+INSERT INTO users.roles(role_id,name, description)
+    VALUES (2,'chart','This user can see all charts');
 
-INSERT INTO users.roles( role_name, description)
-    VALUES ('anonymous','all anonymous users');
+INSERT INTO users.roles(role_id,name, description)
+    VALUES (3,'anonymous','all anonymous users');
 	
-INSERT INTO users.groups(group_name, auto_pass)
-VALUES ('adminGroup', TRUE);
+INSERT INTO users.groups(group_id,name, auto_pass)
+VALUES (1,'adminGroup', TRUE);
 
-INSERT INTO users.groups(group_name, auto_pass)
-VALUES ('anonymous', TRUE);
+INSERT INTO users.groups(group_id,name, auto_pass)
+VALUES (2,'anonymous', TRUE);
 
 
 
@@ -105,52 +108,7 @@ INSERT INTO users.group_role(group_id,role_id)
 INSERT INTO users.group_role(group_id,role_id)
 values (2,3);
 
- --Creates dummy Rights
-CREATE OR REPLACE FUNCTION getAllRights() RETURNS SETOF users.rights AS
-$BODY$
-DECLARE
-    r users.rights%rowtype;
-    DECLARE id INT=0;
-BEGIN
-    LOOP
-	id=id+1;
-        INSERT INTO users.rights(
-            right_id, role_id, tso, product, resolution, time1, time2, aspect_id,enabled)
-	VALUES (id, 1, 1, 1, 1, '2012.1.1.', '2012.1.1.', 1, true);
-	EXIT WHEN id> 100;
-    END LOOP;
-    RETURN;
-END
-$BODY$
-LANGUAGE 'plpgsql' ;
---Deletes previous data
-delete from users.rights;
---generates new dummy data
-SELECT  getAllRights();
 
---If user is not using user_name, we can login him with login_name which first and lastName
---This is for users
-CREATE OR REPLACE VIEW users.allUsers AS 
-select user_name ,user_password,enabled
-from users.user
-UNION
-select users.first_name ||' '|| users.last_name,user_password,enabled
-from users.user;
---This for roles
-CREATE OR REPLACE VIEW users.allRoles AS 
-SELECT users.user_name, roles.role_name FROM users.user
-    		 INNER JOIN users.user_group ON user_group.user_id=users.user_id 
-    		 INNER JOIN users.group_role ON group_role.group_id=user_group.group_id
-    		 INNER JOIN users.roles ON roles.role_ID=group_role.role_id
-UNION
-	SELECT users.first_name ||' '|| users.last_name, roles.role_name  FROM users.user
-    		 INNER JOIN users.user_group ON user_group.user_id=users.user_id 
-    		 INNER JOIN users.group_role ON group_role.group_id=user_group.group_id
-    		 INNER JOIN users.roles ON roles.role_ID=group_role.role_id;
-  
-    		 
- --Give all permissions to role 2(chart)
- 
 --First delete previous rights
 delete from users.rights ;
 --Create rights
