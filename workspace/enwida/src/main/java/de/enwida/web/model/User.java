@@ -33,6 +33,7 @@ import de.enwida.web.db.model.NavigationDefaults;
 import de.enwida.web.db.model.NavigationSettings;
 import de.enwida.web.db.model.UploadedFile;
 import de.enwida.web.utils.Constants;
+import de.enwida.web.utils.EnwidaUtils;
 
 @Entity
 @Table(name = Constants.USER_TABLE_NAME, schema = Constants.USER_TABLE_SCHEMA_NAME)
@@ -154,7 +155,8 @@ public class User implements Serializable, UserDetails {
     }
 
     public void setPassword(String password) {
-        this.password = password;
+        //Always hash the password
+        this.password = EnwidaUtils.md5(password);
     }
 
 
@@ -245,7 +247,7 @@ public class User implements Serializable, UserDetails {
     }
 
     public void setConfirmPassword(String confirmPassword) {
-        this.confirmPassword = confirmPassword;
+        this.confirmPassword = EnwidaUtils.md5(confirmPassword);;
     }
 
     public String getActivationKey() {

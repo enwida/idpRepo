@@ -10,7 +10,9 @@
         			http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
   
 	<authentication-manager>
-	   <authentication-provider user-service-ref="springSecurityService"/>
+	   <authentication-provider user-service-ref="springSecurityService">
+	   		<password-encoder hash="md5" />
+	   </authentication-provider>
 	</authentication-manager>
 	
 	<!--  This is required here since it is used in loginsuccesshandler bean-->

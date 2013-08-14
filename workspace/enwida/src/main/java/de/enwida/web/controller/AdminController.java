@@ -52,11 +52,11 @@ public class AdminController {
 	
 	
 	@RequestMapping(value="/admin_editaspect", method = RequestMethod.GET)
-	public String editAspect(HttpServletRequest request,Model model,long roleID) {
+	public String editAspect(HttpServletRequest request,Model model,long roleID,int start,int max) {
 	    List<Right> aspectRights;
         List<Role> roles = null;
         try {
-            aspectRights = aspectService.getAllAspects(roleID);
+            aspectRights = aspectService.getAllAspects(roleID,start,max);
             roles = userService.getAllRoles();
             //Get all roles
             model.addAttribute("roles", roles);

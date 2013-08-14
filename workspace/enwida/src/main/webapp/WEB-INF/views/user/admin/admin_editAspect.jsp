@@ -49,8 +49,8 @@ $("#myselect").val(get_url_parameter('roleID'));
 			<tr>
 				<td>${right.aspect}</td>
 				<td>${right.product}</td>
-				<td>${right.timeFrom}</td>
-				<td>${right.timeTo}</td>
+				<td>${right.timeRange.from}</td>
+				<td>${right.timeRange.to}</td>
 				<td>${right.resolution}</td>
 				<td>${right.tso}</td>
 				<td><input type="checkbox"

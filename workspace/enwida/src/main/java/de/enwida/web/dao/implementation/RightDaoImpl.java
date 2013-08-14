@@ -97,7 +97,7 @@ public class RightDaoImpl extends AbstractBaseDao<Right> implements IRightDao {
     public List<Right> getListByExample(Right dataAuthorization)
             throws Exception {
         TypedQuery<Right> typedQuery = em.createQuery( "from "+ Right.class.getName()
-                                + "  WHERE role_id = ? AND tso = ? AND product = ? AND aspect_id = ? AND enabled = ?;",
+                                + "  WHERE role_id = ? AND tso = ? AND product = ? AND aspect_id = ? AND enabled = ?",
                         Right.class);
         typedQuery.setParameter("groupID", dataAuthorization.getRole());
         typedQuery.setParameter("tso", dataAuthorization.getTso());
@@ -113,9 +113,11 @@ public class RightDaoImpl extends AbstractBaseDao<Right> implements IRightDao {
     }
 
     @Override
-    public List<Right> getAllAspects(long roleID) {
+    public List<Right> getAllAspects(long roleID,int startPosition,int maxResult) {
         TypedQuery<Right> typedQuery = em.createQuery( "from "+ Right.class.getName()
-                + "  WHERE role_id = ? AND enabled = TRUE;", Right.class);
+                + "  WHERE role_id = :roleID AND enabled = TRUE", Right.class);
+        typedQuery.setFirstResult(startPosition);
+        typedQuery.setMaxResults(maxResult);
             typedQuery.setParameter("roleID", roleID);
             return typedQuery.getResultList();
     }
