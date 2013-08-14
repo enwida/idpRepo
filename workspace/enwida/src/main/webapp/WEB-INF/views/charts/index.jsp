@@ -7,32 +7,6 @@
 	<link rel="stylesheet" href="/enwida/resources/css/chart/chart.css" >
     <script src="/enwida/resources/js/chart/assets.js"></script>
     <script src="/enwida/resources/js/chart/charts.js"></script>
-    
-    <style>
-    	li {
-    		margin: 10px 0;
-    	}
-    	a {
-    		color: steelblue;
-    		text-decoration: none;
-    	}
-    	a:hover {
-    		border-bottom: 1px dotted steelblue;
-    	}
-    	#chart {
-    		margin-top: 60px;
-    	}
-    	#chart h3 {
-    		margin-left: 20px;
-    	}
-    	.legend-box {
-    		fill: transparent;
-    		stroke: #222;
-    	}
-    	.legend-items {
-    		font-size: 16px;
-    	}
-    </style>
 </head>
 <body>
 
