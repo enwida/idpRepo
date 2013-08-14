@@ -7,6 +7,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.bcel.generic.ATHROW;
 import org.apache.log4j.FileAppender;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -39,6 +40,9 @@ public class UserLog extends HandlerInterceptorAdapter{
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         boolean loggedin = false;
         String logFileName = null;
+        //this is not expected but if there is no auth, dont go further
+        if(auth==null)
+            return;
         // if user name is anonymous
         if (auth.getName().equalsIgnoreCase("anonymousUser")) {
             loggedin = false;
