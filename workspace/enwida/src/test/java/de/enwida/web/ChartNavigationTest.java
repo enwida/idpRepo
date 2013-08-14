@@ -67,7 +67,7 @@ public class ChartNavigationTest {
 
 	@Before
 	public void setup() throws Exception {
-		User user = userService.getUser(username);
+		User user = userService.fetchUser(username);
 		if (user != null) {
 			// Test user is already there
 			return;
@@ -85,7 +85,7 @@ public class ChartNavigationTest {
 	
 	private Group setupGroup(User user) throws Exception {
 		
-        for (final Group group : userService.getAllGroups()) {
+        for (final Group group : userService.fetchAllGroups()) {
         	if (group.getGroupName().equals(groupName)) {
         		// Test group is already there
         		return group;
@@ -96,7 +96,7 @@ public class ChartNavigationTest {
 		group.setGroupID(42l);
 		group.setGroupName(groupName);
 		try {
-            userService.addGroup(group);
+            userService.saveGroup(group);
 			userService.assignGroupToUser(user.getUserId(), group.getGroupID());
         } catch (Exception e) {
             // TODO Auto-generated catch block
@@ -884,7 +884,7 @@ public class ChartNavigationTest {
 
 	
 	private User getTestUser() throws Exception {
-		final User user = userService.getUser(username);
+		final User user = userService.fetchUser(username);
 		Assert.assertNotNull(user);
 		
 		// FIXME mock the roles
