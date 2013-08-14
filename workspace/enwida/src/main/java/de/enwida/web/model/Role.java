@@ -54,8 +54,7 @@ public class Role implements Serializable, GrantedAuthority {
             Role.ROLE_ID, Group.GROUP_ID }) }, joinColumns = { @JoinColumn(name = ROLE_ID, referencedColumnName = ROLE_ID) }, inverseJoinColumns = { @JoinColumn(name = Group.GROUP_ID, referencedColumnName = Group.GROUP_ID) })
     private  List<Group> assignedGroups;
     
-	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "role")
-    @ElementCollection(targetClass = Right.class)
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "role")
     private List<Right> rights;
     
 	/**

@@ -72,8 +72,8 @@ CREATE TABLE users.group_role (
 -- Before inserting any data in any of the tables make sure all the DDL commands are executed	
 INSERT INTO users.users(user_id,
 		name, user_password, first_name, last_name, enabled, 
-		joining_date, telephone, company_name)
-VALUES (1,'test', 'q12wq12w', 'test', 'test', true, '2013-07-02', '0049 89 1234567','enwida');
+		joining_date, telephone, company_name,1)
+VALUES (1,'test', 'q12wq12w', 'test', 'test', true, '2013-07-02', '0049 89 1234567','enwida','login_count');
 
 
 

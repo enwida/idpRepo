@@ -41,7 +41,7 @@ public class Right implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long rightID;
     
-	@ManyToOne(targetEntity = Role.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@ManyToOne(targetEntity = Role.class, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = Role.ROLE_ID)
 	private Role role;
     
@@ -70,7 +70,6 @@ public class Right implements Serializable {
         this.rightID = rightID;
     }
 
-	@Transient
 	public Role getRole() {
 		return role;
 	}
