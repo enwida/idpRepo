@@ -1,6 +1,6 @@
 package de.enwida.web.dao.implementation;
 
-import java.util.List;
+import java.util.Set;
 
 import org.springframework.stereotype.Repository;
 import org.springframework.test.context.transaction.TransactionConfiguration;
@@ -45,7 +45,7 @@ public class RoleDaoImpl extends AbstractBaseDao<Role> implements IRoleDao {
   
 
     @Override
-    public List<Right> getAllAspects(long roleID) {
+	public Set<Right> getAllAspects(long roleID) {
         Role role = this.fetchById(roleID);
         return role.getRights();
     }
