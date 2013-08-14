@@ -48,8 +48,6 @@ public class SpringSecurityService implements UserDetailsService {
 		    if (matchingUser == null)
 		        throw new UsernameNotFoundException("Wrong username or password");
 		}
-        //I dont know why but this trigger is required here.Otherwise roles are not fetched
-        matchingUser.getAuthorities();
 		return matchingUser;
 	}
 
