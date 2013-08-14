@@ -53,8 +53,9 @@ public class LoginSuccessHandler extends
 			try {
 				userSession.setUserInSession(auth.getName());
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error(
+						"Login Success: unable to set user '" + auth.getName()
+								+ "' in session", e);
 			}
 		}
             
