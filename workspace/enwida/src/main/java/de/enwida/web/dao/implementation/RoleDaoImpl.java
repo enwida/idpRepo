@@ -22,12 +22,6 @@ public class RoleDaoImpl extends AbstractBaseDao<Role> implements IRoleDao {
     }
     
     @Override
-    public void removeRole(Role role){
-        delete(role);
-    }    
-    
-    
-    @Override
     public Role save(Role role)
     {
         if(role==null) return null;
@@ -43,7 +37,6 @@ public class RoleDaoImpl extends AbstractBaseDao<Role> implements IRoleDao {
 		return role;
     }
   
-
     @Override
 	public Set<Right> getAllAspects(long roleID) {
         Role role = this.fetchById(roleID);

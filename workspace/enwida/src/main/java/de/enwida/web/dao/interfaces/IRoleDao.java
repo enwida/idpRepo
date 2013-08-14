@@ -12,8 +12,6 @@ public interface IRoleDao extends IDao<Role> {
 
     Role addRole(Role role);
 
-    void removeRole(Role role);
-
     List<Role> fetchAll();
 
 	Set<Right> getAllAspects(long roleID);

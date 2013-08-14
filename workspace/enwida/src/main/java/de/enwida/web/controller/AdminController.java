@@ -106,7 +106,7 @@ public class AdminController {
             if (action!=null){
                 //Check which action to be executed
                 if( action.equalsIgnoreCase("delete")){
-                            userService.removeGroup(groupID);
+                            userService.deleteGroup(groupID);
                 }else if (action.equalsIgnoreCase("add")){
                             Group group=new Group();
                             group.setGroupName(newGroup);            
@@ -117,7 +117,7 @@ public class AdminController {
                 model.addAttribute("info", "OK");
             }
             //Get groups with user information attached
-            List<Group> groupsWithUsers= userService.getAllGroupsWithUsers();
+            List<Group> groupsWithUsers= userService.getAllGroups();
             model.addAttribute("groupsWithUsers", groupsWithUsers);
             //Get all the users
             List<User> users= userService.getAllUsers();

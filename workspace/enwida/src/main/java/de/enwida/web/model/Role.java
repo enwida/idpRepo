@@ -1,6 +1,7 @@
 package de.enwida.web.model;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -47,7 +48,7 @@ public class Role implements Serializable, GrantedAuthority {
 	@ManyToMany(mappedBy = "assignedRoles", fetch = FetchType.EAGER)
 	private Set<Group> assignedGroups;
     
-	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "role", targetEntity = Right.class)
+	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "role")
 	private Set<Right> rights;
     
 	/**
@@ -102,7 +103,7 @@ public class Role implements Serializable, GrantedAuthority {
 		if (rights == null) {
 			return new HashSet<Right>();
 		}
-		return rights;
+		return Collections.unmodifiableSet(rights);
 	}
 
 	public void setRights(Set<Right> rights) {

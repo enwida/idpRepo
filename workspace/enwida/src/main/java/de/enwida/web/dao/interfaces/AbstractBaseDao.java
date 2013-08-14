@@ -132,7 +132,9 @@ public abstract class AbstractBaseDao<T> implements IDao<T> {
 
 	public void deleteById(long entityId) {
 		T entity = fetchById(entityId);
-		delete(entity);
+		if (entity != null) {
+			delete(entity);
+		}
 	}
 	
 	 /**
@@ -192,5 +194,13 @@ public abstract class AbstractBaseDao<T> implements IDao<T> {
 			throw e;
 		}
 		return nextCounter.longValue();
+	}
+	
+	/**
+	 * Flush cached statements to DB
+	 */
+	@Override
+	public void flush() {
+		em.flush();
 	}
 }

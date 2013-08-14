@@ -20,11 +20,6 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
 	
     private static org.apache.log4j.Logger logger = Logger.getLogger(AdminController.class);
 
-	@Override
-	public void deleteUser(User user) {
-		delete(user);
-	}
-	
     @Override
 	public long save(User user)
 	{

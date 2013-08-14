@@ -9,7 +9,6 @@ import de.enwida.web.model.Right;
 public interface IRightDao extends IDao<Right> {
 
 	Right addRight(Right right) throws Exception;
-    void removeRight(Right right) throws Exception;
     boolean enableDisableAspect(long rightID, boolean enabled)throws Exception;
     public void enableLine(Right dataAuthorization)throws Exception;
     public boolean isAuthorizedByExample(Right dataAuthorization)throws Exception;

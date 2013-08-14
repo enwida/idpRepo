@@ -6,7 +6,7 @@ import javax.sql.DataSource;
 
 public interface IDao <T> {
 
-	void setDataSource(DataSource ds);
+	public void setDataSource(DataSource ds);
 
 	public List<T> findByExample(T obj);
 
@@ -30,5 +30,7 @@ public interface IDao <T> {
 
 	public Long getNextSequenceNumber(String schema, String sequenceName);
 
-	List<T> fetchAll();
+	public List<T> fetchAll();
+	
+	public void flush();
 }

@@ -19,13 +19,6 @@ public class GroupDaoImpl extends AbstractBaseDao<Group> implements IGroupDao {
 	    return save(newGroup);
     }
 
-
-    @Override
-    public void removeGroup(long groupID) throws Exception {
-        Group group=fetchById(groupID);
-        delete(group);
-    }
-    
     @Override
 	public Group save(Group group) throws Exception
     {

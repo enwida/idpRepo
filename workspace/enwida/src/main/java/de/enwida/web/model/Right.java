@@ -38,9 +38,9 @@ public class Right implements Serializable {
     @Id
     @Column(name = RIGHT_ID)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long rightID;
+    private Long rightID;
     
-	@ManyToOne(targetEntity = Role.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = Role.ROLE_ID)
 	private Role role;
     
@@ -86,7 +86,7 @@ public class Right implements Serializable {
 		this.enabled = enabled;
 	}
 
-	public long getRightID() {
+	public Long getRightID() {
         return rightID;
     }
     public void setRightID(long rightID) {
@@ -139,36 +139,18 @@ public class Right implements Serializable {
         this.timeRange = timeRange;
     }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#hashCode()
-	 */
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + (int) (rightID ^ (rightID >>> 32));
-		return result;
+		return rightID.intValue();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
+		if (!(obj instanceof Right)) {
 			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Right other = (Right) obj;
-		if (rightID != other.rightID)
-			return false;
-		return true;
+		}
+		final Right other = (Right) obj;
+		return rightID.equals(other.rightID);
 	}
 
 	/*

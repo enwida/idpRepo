@@ -102,10 +102,22 @@ public interface IUserService {
     public void addRole(Role role)throws Exception;
     
     /**
+     * Adds right to DB
+     * @throws Exception 
+     */
+    public void addRight(Right right) throws Exception;
+    
+    /**
      * Fetch role from DB
      * @param roleName
      */
     public Role getRole(String roleName);
+    
+    /**
+     * Fetch right from DB
+     * @param rightId
+     */
+    public Right getRight(Long rightId);
 
     /**
      * Get all roles
@@ -113,6 +125,11 @@ public interface IUserService {
      * @return collection of roles
      */
     public List<Role> getAllRoles()throws Exception;
+    
+    /**
+     * Get all rights
+     */
+    public List<Right> getAllRights() throws Exception;
 
     /**
      * Update User information based on userID
@@ -183,14 +200,6 @@ public interface IUserService {
     public void revokeUserFromGroup(long userID, long groupID);
 
     /**
-     * Get All Groups with Users attached
-     * 
-     * @return Collection of groups
-     * @throws Exception 
-     */
-    public List<Group> getAllGroupsWithUsers() throws Exception;
-
-    /**
      * Assigns role to the groups
      * 
      * @param selectedRole
@@ -223,6 +232,11 @@ public interface IUserService {
 	 * @return the fresh {@link Role} object
 	 */	public Role revokeRoleFromGroup(Role role, Group group);
 
+	// TODO: comments
+	public Role assignRightToRole(Right right, Role role);
+
+	public Role revokeRightFromRole(Right right, Role role);
+
     /**
      * Get All roles with Groups attached
      * @return List of Roles
@@ -245,7 +259,21 @@ public interface IUserService {
      * @param groupID
      * @throws Exception
      */
-    public void removeGroup(int groupID) throws Exception;
+    public void deleteGroup(long groupID) throws Exception;
+    
+    /**
+     * Removes the role from DB
+     * @param role ID
+     * @throws Exception
+     */
+    public void deleteRole(long roleID) throws Exception;
+    
+    /**
+     * Removes the right from DB
+     * @param right ID
+     * @throws Exception
+     */
+    public void deleteRight(long rightID) throws Exception;
 
     /**
      * Checks user availability
@@ -318,9 +346,5 @@ public interface IUserService {
 	Role findRole(Role role);
 
 	Right findRight(Right right);
-
-	void assignRightToRole(Right right, Role role);
-
-	void revokeRightFromRole(Right right, Role role);
 
 }

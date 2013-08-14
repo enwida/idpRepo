@@ -1,8 +1,7 @@
 package de.enwida.web;
 
-import java.util.Calendar;
+import java.text.SimpleDateFormat;
 
-import org.apache.log4j.Logger;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -11,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import de.enwida.transport.Aspect;
+import de.enwida.transport.DataResolution;
 import de.enwida.web.dao.interfaces.IGroupDao;
 import de.enwida.web.dao.interfaces.IRightDao;
 import de.enwida.web.dao.interfaces.IRoleDao;
@@ -24,7 +25,6 @@ import de.enwida.web.service.interfaces.IUserService;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:/root-context-test.xml")
 public class BasicUserManagement {
-	private Logger logger = Logger.getLogger(getClass());
     
     @Autowired
     private IUserService userService;
@@ -37,6 +37,15 @@ public class BasicUserManagement {
 
 	@Before
 	public void cleanup() throws Exception {
+		for (final Right right : userService.getAllRights()) {
+			userService.deleteRight(right.getRightID());
+		}
+		for (final Role role : userService.getAllRoles()) {
+			userService.deleteRole(role.getRoleID());
+		}
+		for (final Group group : userService.getAllGroups()) {
+			userService.deleteGroup(group.getGroupID());
+		}
 		for (final User user : userService.getAllUsers()) {
 			userService.deleteUser(user.getUserId());
 		}
@@ -92,6 +101,24 @@ public class BasicUserManagement {
 		Assert.assertEquals(role, testee);
 		Assert.assertEquals(role.getRoleID(), testee.getRoleID());
 		Assert.assertEquals(role.getRoleName(), testee.getRoleName());
+	}
+	
+	@Test
+	public void rightIsSaved() throws Exception {
+		final Right right = saveTestRight(211);
+		final Right testee = userService.getRight(right.getRightID());
+		
+		// Instance is fresh from database
+		Assert.assertFalse(right == testee);
+		
+		Assert.assertNotNull(testee);
+		Assert.assertEquals(right, testee);
+		Assert.assertEquals(right.getRightID(), testee.getRightID());
+		Assert.assertEquals(right.getAspect(), testee.getAspect());
+		Assert.assertEquals(right.getResolution(), testee.getResolution());
+		Assert.assertEquals(right.getProduct(), testee.getProduct());
+		Assert.assertEquals(right.getTimeRange(), testee.getTimeRange());
+		Assert.assertEquals(right.getTso(), testee.getTso());
 	}
 
 	/***
@@ -344,6 +371,110 @@ public class BasicUserManagement {
 			// Expected
 		}
 	}
+
+	/***
+	 ***** Role -> Rights relationship tests
+	 ***/
+
+	@Test
+	public void addNonPersistedRight() throws Exception {
+		final Role role = saveTestRole("testrole");
+
+		// Right is not persisted 
+		final Right right = new Right();
+		
+		// Assigning it should cause an exception
+		try {
+			userService.assignRightToRole(right, role);
+			throw new Exception("Shouldn't be reachable; IllegalArgumentException expected");
+		} catch (IllegalArgumentException e) {
+			// Expected
+			Assert.assertTrue(e.getMessage().toLowerCase().contains("persisted"));
+		}
+	}
+	
+	@Test
+	public void revokeRightFromRole() throws Exception {
+		final Role role = saveTestRole("testrole");
+		final Right right1 = saveTestRight(211);
+		final Right right2 = saveTestRight(221);
+		
+		userService.assignRightToRole(right1, role);
+		userService.assignRightToRole(right2, role);
+		
+		final Role freshRole = userService.revokeRightFromRole(right1, role);
+		
+		// Role is removed from right
+		Assert.assertNull(right1.getRole());
+		Assert.assertEquals(role, right2.getRole());
+		
+		// Right is removed from fresh role
+		Assert.assertEquals(1, freshRole.getRights().size());
+		Assert.assertTrue(freshRole.getRights().contains(right2));
+		
+		// Role is removed from freshly fetched rights
+		final Right fetchedRight1 = userService.getRight(right1.getRightID());
+		final Right fetchedRight2 = userService.getRight(right2.getRightID());
+		Assert.assertNull(fetchedRight1.getRole());
+		Assert.assertEquals(role, fetchedRight2.getRole());
+		
+		// Right is removed from freshly fetched role
+		final Role fetchedRole = userService.getRole("testrole");
+		Assert.assertEquals(1, freshRole.getRights().size());
+		Assert.assertTrue(fetchedRole.getRights().contains(right2));
+	}
+	
+	@Test
+	public void addRightsToRole() throws Exception {
+		final Role role = saveTestRole("testrole");
+		final Right right1 = saveTestRight(211);
+		final Right right2 = saveTestRight(221);
+		
+		Assert.assertTrue(role.getRights().isEmpty());
+		
+		userService.assignRightToRole(right1, role);
+		final Role freshRole = userService.assignRightToRole(right2, role);
+		
+		// Role is assigned to right objects
+		Assert.assertEquals(role, right1.getRole());
+		Assert.assertEquals(role, right2.getRole());
+
+		// Rights were added to fresh role object
+		Assert.assertEquals(2, freshRole.getRights().size());
+		Assert.assertTrue(freshRole.getRights().contains(right1));
+		Assert.assertTrue(freshRole.getRights().contains(right2));
+		
+		// Rights are NOT added to stale role object
+		Assert.assertTrue(role.getRights().isEmpty());
+		
+		// Role is assigned to freshly fetched right objects
+		final Right fetchedRight1 = userService.getRight(right1.getRightID());
+		final Right fetchedRight2 = userService.getRight(right2.getRightID());
+
+		// Rights were assigned to freshly fetched role object
+		final Role fetchedRole = userService.getRole("testrole");
+		Assert.assertEquals(2, fetchedRole.getRights().size());
+		Assert.assertTrue(fetchedRole.getRights().contains(right1));
+		Assert.assertTrue(fetchedRole.getRights().contains(right2));
+		
+		Assert.assertEquals(role, fetchedRight1.getRole());
+		Assert.assertEquals(role, fetchedRight2.getRole());
+	}
+	
+	@Test
+	public void assignRightTwice() throws Exception {
+		final Role role = saveTestRole("testrole");
+		final Right right = saveTestRight(211);
+		
+		userService.assignRightToRole(right, role);
+
+		// Second add succeeds due to set semantics
+		final Role freshRole = userService.assignRightToRole(right, role);
+
+		Assert.assertEquals(1, freshRole.getRights().size());
+		Assert.assertTrue(freshRole.getRights().contains(right));
+		Assert.assertEquals(role, right.getRole());
+	}
 	    private User saveTestUser(String name) throws Exception {
 		final User user = new User(name, "secret", "test", "test", true);
 		user.setCompanyName("enwida.de");
@@ -362,16 +493,14 @@ public class BasicUserManagement {
     	userService.addRole(role);
     	return role;
     }
+    
+    private Right saveTestRight(int product) throws Exception {
+    	final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    	final CalendarRange timeRange = new CalendarRange(dateFormat.parse("2010-01-01"), dateFormat.parse("2012-01-01"));
 
-	private Right addTestRight(long id) throws Exception {
-		Right right = rightDao.fetchById(id);
-		if (right == null) {
-			Calendar cal1 = Calendar.getInstance();
-			Calendar cal2 = Calendar.getInstance();
-			right = new Right(99, 110, "WEEKLY", new CalendarRange(cal1, cal2),
-					"POWER", true);
-		}
-		rightDao.addRight(right);
-		return right;
-	}
+    	final Right right = new Right(99, product, DataResolution.MONTHLY.toString(), timeRange, Aspect.CR_VOL_ACTIVATION.toString(), true);
+    	userService.addRight(right);
+    	return right;
+    }
+    
  }
