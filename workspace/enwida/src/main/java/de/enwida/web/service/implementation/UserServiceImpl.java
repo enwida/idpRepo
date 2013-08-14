@@ -77,7 +77,7 @@ public class UserServiceImpl implements IUserService {
 	 * @throws Exception
 	 */
     @Override
-    public User getUser(Long id) {
+    public User fetchUser(Long id) {
         return userDao.fetchById(id);
     }
 
@@ -116,7 +116,7 @@ public class UserServiceImpl implements IUserService {
      * @throws Exception 
      */
     @Override
-    public List<User> getAllUsers() throws Exception {
+    public List<User> fetchAllUsers() throws Exception {
         return userDao.fetchAll();
     }
 
@@ -147,7 +147,7 @@ public class UserServiceImpl implements IUserService {
                 
         if(userId != -1)
         {           
-            Group group = this.getGroupByCompanyName(user.getCompanyName());
+            Group group = this.fetchGroupByCompanyName(user.getCompanyName());
             
             if(group != null && group.isAutoPass())
             {
@@ -194,19 +194,12 @@ public class UserServiceImpl implements IUserService {
     public String getPassword(String email)throws Exception {
         return userDao.fetchByName(email).getPassword();
     }
-    /**
-     * Get all user group
-     */
-    @Override
-	public Set<Group> getUserGroups(long userID) throws Exception {
-        return userDao.fetchById(userID).getGroups();
-    }
 
     /**
      * Gets all the groups
      */
     @Override
-    public List<Group> getAllGroups() {
+    public List<Group> fetchAllGroups() {
         return groupDao.fetchAll();
     }
 
@@ -216,7 +209,7 @@ public class UserServiceImpl implements IUserService {
 	 * @throws Exception
 	 */
     @Override
-	public Group addGroup(Group newGroup) throws Exception {
+	public Group saveGroup(Group newGroup) throws Exception {
         newGroup.setAutoPass(false);
 		return groupDao.addGroup(newGroup);
     }
@@ -225,12 +218,12 @@ public class UserServiceImpl implements IUserService {
      * Adds new role to the DB
      */
     @Override
-    public void addRole(Role role)throws Exception  {
+    public void saveRole(Role role) throws Exception  {
         roleDao.addRole(role);
     }
     
     @Override
-    public void addRight(Right right) throws Exception {
+    public void saveRight(Right right) throws Exception {
     	rightDao.addRight(right);
     }
     
@@ -238,12 +231,12 @@ public class UserServiceImpl implements IUserService {
      * Gets all Roles
      */
     @Override
-    public List<Role> getAllRoles()throws Exception  {
+    public List<Role> fetchAllRoles()throws Exception  {
         return roleDao.fetchAll();
     }
     
     @Override
-    public List<Right> getAllRights() throws Exception {
+    public List<Right> fetchAllRig() throws Exception {
     	return rightDao.fetchAll();
     }
     
@@ -258,7 +251,7 @@ public class UserServiceImpl implements IUserService {
      * Gets the user based on userName
      */
     @Override
-    public User getUser(String userName)  {
+    public User fetchUser(String userName)  {
         return userDao.fetchByName(userName);
     }
     /**
@@ -479,11 +472,6 @@ public class UserServiceImpl implements IUserService {
  		return role;
 	}
 
-    @Override
-    public List<Role> getAllRolesWithGroups()throws Exception  {
-        return roleDao.fetchAll();
-    }
-
     /**
      * Enables or Disables the user
      */
@@ -570,7 +558,7 @@ public class UserServiceImpl implements IUserService {
     @Override
     public User getCurrentUser()throws Exception  {
         String userName = SecurityContextHolder.getContext().getAuthentication().getName();
-        User user=this.getUser(userName);
+        User user=this.fetchUser(userName);
         //If user is not found return anonymous user;
         if (user==null){
             user=new User();
@@ -589,27 +577,22 @@ public class UserServiceImpl implements IUserService {
     }
     
     @Override
-    public Group saveGroup(Group group) throws Exception {
-    	return groupDao.save(group);
-    }
-    
-    @Override
-    public Group getGroup(String groupName) throws Exception {
+    public Group fetchGroup(String groupName) throws Exception {
     	return groupDao.fetchByName(groupName);
     }
     
     @Override
-    public Role getRole(String roleName) {
+    public Role fetchRole(String roleName) {
     	return roleDao.fetchByName(roleName);
     }
     
     @Override
-    public Right getRight(Long rightId) {
+    public Right fetchRight(Long rightId) {
     	return rightDao.fetchById(rightId);
     }
     
     @Override
-    public Group getGroupByCompanyName(final String companyName)
+    public Group fetchGroupByCompanyName(final String companyName)
     {
         for (Group group : groupDao.fetchAll()) {
             for (User user : group.getAssignedUsers()) {
@@ -621,7 +604,7 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public User getUserByFirstAndLastName(String username) {
+    public User fetchUserByFirstAndLastName(String username) {
         for (User user : userDao.fetchAll()) {
             if(user.getFirstName()+" "+user.getLastName()==username){
                 return user;

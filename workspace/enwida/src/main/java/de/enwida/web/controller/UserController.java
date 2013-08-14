@@ -93,7 +93,7 @@ public class UserController {
 	@RequestMapping(value="/user", method = RequestMethod.GET)
 	public String displayDashboard(Model model, Locale locale) {
 		try{
-	        User u = userService.getUser(new Long(0));
+	        User u = userService.fetchUser(new Long(0));
 	        model.addAttribute("user", u);		    
 		}catch(Exception e){
             logger.info(e.getMessage());
@@ -409,7 +409,7 @@ public class UserController {
 
 		boolean isMultipart = ServletFileUpload.isMultipartContent(request);
 		// fetch all files related to user
-		User user = userService.getUser("username1");
+		User user = userService.fetchUser("username1");
 		List<UploadedFile> filetable = new ArrayList<UploadedFile>(
 				user.getUploadedFiles());
 

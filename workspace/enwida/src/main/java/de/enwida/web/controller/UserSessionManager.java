@@ -37,7 +37,7 @@ public class UserSessionManager implements Serializable {
 	}
 
 	public void setUserInSession(String username) throws Exception {
-		User user = userService.getUser(username);
+		User user = userService.fetchUser(username);
 		setUser(user);
 	}
 

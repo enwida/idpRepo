@@ -1,7 +1,6 @@
 package de.enwida.web.service.interfaces;
 
 import java.util.List;
-import java.util.Set;
 
 import de.enwida.web.db.model.UploadedFile;
 import de.enwida.web.model.Group;
@@ -24,7 +23,7 @@ public interface IUserService {
      * @return the user created in database
      * @throws Exception 
      */
-    public User getUser(Long id);
+    public User fetchUser(Long id);
 
     /**
      * Gets all the users from DB
@@ -32,7 +31,7 @@ public interface IUserService {
      * @param userName
      * @return the user created in database
      */
-    public User getUser(String userName);
+    public User fetchUser(String userName);
 
     /**
      * Gets all the users
@@ -40,7 +39,7 @@ public interface IUserService {
      * @return the collection of users
      * @throws Exception 
      */
-    public List<User> getAllUsers() throws Exception;
+    public List<User> fetchAllUsers() throws Exception;
 
     /**
      * Send activation to saved user
@@ -72,19 +71,11 @@ public interface IUserService {
     public String getPassword(String email)throws Exception;
 
     /**
-     * Gets all the groups of a user
-     * 
-     * @param userID
-     * @return collection of groups
-     */
-	public Set<Group> getUserGroups(long userID) throws Exception;
-
-    /**
      * Gets all the groups
      * 
      * @return collection of groups
      */
-    public List<Group> getAllGroups()throws Exception;
+    public List<Group> fetchAllGroups()throws Exception;
 
     /**
      * Add a group into database
@@ -92,44 +83,44 @@ public interface IUserService {
      * @param userID
      * @return collection of groups
      */
-    public Group addGroup(Group newGroup)throws Exception;
+    public Group saveGroup(Group newGroup)throws Exception;
 
     /**
      * Adds role to the DB
      * 
      * @param role
      */
-    public void addRole(Role role)throws Exception;
+    public void saveRole(Role role)throws Exception;
     
     /**
      * Adds right to DB
      * @throws Exception 
      */
-    public void addRight(Right right) throws Exception;
+    public void saveRight(Right right) throws Exception;
     
     /**
      * Fetch role from DB
      * @param roleName
      */
-    public Role getRole(String roleName);
+    public Role fetchRole(String roleName);
     
     /**
      * Fetch right from DB
      * @param rightId
      */
-    public Right getRight(Long rightId);
+    public Right fetchRight(Long rightId);
 
     /**
      * Get all roles
      * 
      * @return collection of roles
      */
-    public List<Role> getAllRoles()throws Exception;
+    public List<Role> fetchAllRoles()throws Exception;
     
     /**
      * Get all rights
      */
-    public List<Right> getAllRights() throws Exception;
+    public List<Right> fetchAllRig() throws Exception;
 
     /**
      * Update User information based on userID
@@ -238,12 +229,6 @@ public interface IUserService {
 	public Role revokeRightFromRole(Right right, Role role);
 
     /**
-     * Get All roles with Groups attached
-     * @return List of Roles
-     */
-    public List<Role> getAllRolesWithGroups()throws Exception;
-
-    /**
      * Enables or disables the user
      * 
      * @param userID
@@ -314,20 +299,12 @@ public interface IUserService {
     public User getCurrentUser() throws Exception;
     
     /**
-     * Persists the given group
-     * @param group
-     * @return the saved group object
-     * @throws Exception 
-     */
-    public Group saveGroup(Group group) throws Exception;
-    
-    /**
      * Fetch the group from database
      * @param groupName name of the group
      * @return the group object
      * @throws Exception
      */
-    public Group getGroup(String groupName) throws Exception;
+    public Group fetchGroup(String groupName) throws Exception;
     
     public Long getNextSequence(String schema, String sequenceName);
 
@@ -337,9 +314,9 @@ public interface IUserService {
 
     public int getUploadedFileVersion(UploadedFile file, User user);
 
-    Group getGroupByCompanyName(String companyName);
+    Group fetchGroupByCompanyName(String companyName);
 
-    public User getUserByFirstAndLastName(String username);
+    public User fetchUserByFirstAndLastName(String username);
 
 	Group findGroup(Group group);
 
