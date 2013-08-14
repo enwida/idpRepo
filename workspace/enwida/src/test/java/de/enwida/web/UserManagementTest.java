@@ -49,7 +49,7 @@ public class UserManagementTest {
     @Test
     public void createInitialValues() throws Exception{
         //Get user
-        User user=userService.getUser("test");
+        User user=userService.fetchUser("test");
         //if there is no test user create it
         if(user==null){
               user = new User("test", "secret", "test", "test", true);
@@ -57,8 +57,8 @@ public class UserManagementTest {
               userService.saveUser(user);
         }
         //create admin group
-        userService.addGroup(new Group("admin"));
-        Group adminGroup=userService.getGroup("admin");
+        userService.saveGroup(new Group("admin"));
+        Group adminGroup=userService.fetchGroup("admin");
         //Check if group is saved
         if(adminGroup==null){
             //this is not expected
@@ -68,8 +68,8 @@ public class UserManagementTest {
         userService.assignGroupToUser(user, adminGroup);
         
         //create anonymous group
-        userService.addGroup(new Group("anonymous"));
-        Group anonymousGroup=userService.getGroup("anonymous");
+        userService.saveGroup(new Group("anonymous"));
+        Group anonymousGroup=userService.fetchGroup("anonymous");
         if(anonymousGroup==null){
             //this is not expected
             throw new Exception("Group is not saved");
@@ -78,8 +78,8 @@ public class UserManagementTest {
         userService.assignGroupToUser(user, anonymousGroup);
         
         //Create Admin role
-        userService.addRole(new Role("admin"));
-        Role adminRole=userService.getRole("admin");
+        userService.saveRole(new Role("admin"));
+        Role adminRole=userService.fetchRole("admin");
         if(adminRole==null){
             //this is not expected
             throw new Exception("AdminRole is not saved");
@@ -89,8 +89,8 @@ public class UserManagementTest {
         userService.assignRoleToGroup(adminRole, adminGroup);
         
         //Create Anonymous role
-        userService.addRole(new Role("anonymous"));
-        Role anonymousRole=userService.getRole("anonymous");
+        userService.saveRole(new Role("anonymous"));
+        Role anonymousRole=userService.fetchRole("anonymous");
         if(anonymousRole==null){
             //this is not expected
             throw new Exception("AnonymousRole is not saved");
