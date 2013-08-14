@@ -352,7 +352,7 @@ public class AdminController {
     public String deassignRoleToGroup(HttpServletRequest request,Model model,int selectedRole,int selectedGroup)
     {
         try {
-            userService.deassignRoleToGroup(selectedRole,selectedGroup);  
+            userService.revokeRoleFromGroup(selectedRole,selectedGroup);  
             model.addAttribute("info", "OK");       
         } catch (Exception e) {   
             logger.info(e.getMessage());

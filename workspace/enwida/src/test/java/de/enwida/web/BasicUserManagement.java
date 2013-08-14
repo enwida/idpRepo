@@ -2,8 +2,6 @@ package de.enwida.web;
 
 import java.util.Calendar;
 
-import javax.transaction.NotSupportedException;
-
 import org.apache.log4j.Logger;
 import org.junit.Assert;
 import org.junit.Before;
@@ -19,6 +17,7 @@ import de.enwida.web.dao.interfaces.IRoleDao;
 import de.enwida.web.db.model.CalendarRange;
 import de.enwida.web.model.Group;
 import de.enwida.web.model.Right;
+import de.enwida.web.model.Role;
 import de.enwida.web.model.User;
 import de.enwida.web.service.interfaces.IUserService;
 
@@ -43,6 +42,11 @@ public class BasicUserManagement {
 		}
 	}
 	
+	
+	/***
+	 ***** Basic persistence tests
+	 ***/
+	
 	@Test
 	public void userIsSaved() throws Exception {
 		final User user = saveTestUser("testuser");
@@ -64,9 +68,7 @@ public class BasicUserManagement {
 	
 	@Test
 	public void groupIsSaved() throws Exception {
-		final Group group = new Group("testgroup");
-		userService.saveGroup(group);
-		
+		final Group group = saveTestGroup("testgroup");
 		final Group testee = userService.getGroup("testgroup");
 		
 		// Instance is fresh from database
@@ -77,6 +79,24 @@ public class BasicUserManagement {
 		Assert.assertEquals(group.getGroupID(), testee.getGroupID());
 		Assert.assertEquals(group.getGroupName(), testee.getGroupName());
 	}
+	
+	@Test
+	public void roleIsSaved() throws Exception {
+		final Role role = saveTestRole("testrole");
+		final Role testee = userService.getRole("testrole");
+		
+		// Instance if fresh from database
+		Assert.assertFalse(role == testee);
+		
+		Assert.assertNotNull(testee);
+		Assert.assertEquals(role, testee);
+		Assert.assertEquals(role.getRoleID(), testee.getRoleID());
+		Assert.assertEquals(role.getRoleName(), testee.getRoleName());
+	}
+
+	/***
+	 ***** Users <-> Groups relationship tests
+	 ***/
 
 	@Test
 	public void addGroupsToUser() throws Exception {
@@ -180,7 +200,7 @@ public class BasicUserManagement {
 	}
 	
 	@Test
-	public void doNotAllowDirectModificationOfUserGroupsRelationshiop() throws Exception {
+	public void doNotAllowDirectModificationOfUserGroupsRelationship() throws Exception {
 		final User user = saveTestUser("testuser");
 		final Group group = saveTestGroup("testgroup");
 		
@@ -200,259 +220,131 @@ public class BasicUserManagement {
 	}
 	
 
-//	@Test
-//	public void groupRoleTest() throws Exception {
-//		user = addTestUser("testuser");
-//		group = addTestGroup("testgroup1");
-//		role = addTestRole("testrole1");
-//		Role role2 = addTestRole("testrole2");
-//		Role role3 = addTestRole("testrole3");
-//
-//		assignUserToGroup(user, group);
-//		assignRoleToGroup(group, role);
-//		assignRoleToGroup(group, role2);
-//		assignRoleToGroup(group, role3);
-//
-//		removeRoleFromGroup(group, role2);
-//
-//	}
-//
-//	private void assignRoleToGroup(Group group, Role role) {
-//		userService.assignRoleToGroup(role, group);
-//		group = groupDao.fetchByName(group.getGroupName());
-//		System.out.println(role.getAssignedGroups());
-//		System.out.println(group.getAssignedRoles());
-//	}
-//
-//	private void removeRoleFromGroup(Group group, Role role) {
-//		userService.revokeRoleFromGroup(role, group);
-//		group = groupDao.fetchByName(group.getGroupName());
-//		System.out.println(role.getAssignedGroups());
-//		System.out.println(group.getAssignedRoles());
-//	}
-//
-//	@Test
-//	public void roleRightTest() throws Exception {
-//		role = addTestRole("testrole1");
-//		right = addTestRight(1);
-//		Right right2 = addTestRight(2);
-//		Right right3 = addTestRight(3);
-//
-//		assignRightToRole(right, role);
-//		assignRightToRole(right2, role);
-//		assignRightToRole(right3, role);
-//
-//		removeRightFromRole(right2, role);
-//		user = userService.getUser("testuser");
-//		logger.debug("Authorities : " + user.getAuthorities());
-//	}
-//
-//	private void assignRightToRole(Right right, Role role) {
-//		userService.assignRightToRole(right, role);
-//		right = rightDao.fetchById(right.getRightID());
-//		System.out.println(role.getRights());
-//		System.out.println(right.getRole());
-//	}
-//
-//	private void removeRightFromRole(Right right, Role role) {
-//		userService.revokeRightFromRole(right, role);
-//		right = rightDao.fetchById(right.getRightID());
-//		System.out.println(role.getRights());
-//		System.out.println(right.getRole());
-//	}
-//
-//	@Test
-//	@Ignore
-//	// @Transactional
-//	public void userIsAddedToDatabase() throws Exception {
-//		final String userName = "test";
-//		final User user = addTestUser(userName);
-//		
-//		final User testee = userService.getUser(userName);
-//		// userDao.refresh(testee);
-//		Assert.assertNotNull(testee);
-//		Assert.assertEquals(testee.getUsername(), user.getUserName());
-//		Assert.assertEquals(testee.getCompanyName(), user.getCompanyName());
-//		Assert.assertEquals(testee.getFirstName(), user.getFirstName());
-//		Assert.assertEquals(testee.getLastName(), user.getLastName());
-//		Assert.assertEquals(testee.getPassword(), user.getPassword());
-//	}
-//	
-//	@Test
-//	@Ignore
-//	public void groupIsAddedToDatabase() throws Exception {
-//		final String groupName = "test";
-//		final Group group = addTestGroup(groupName);
-//		
-//		// final Group testee =
-//		// userService.getGroupDao().fetchByName(groupName);
-//		// Assert.assertNotNull(testee);
-//		// Assert.assertEquals(group.getGroupName(), testee.getGroupName());
-//	}
-//	
-//	// @Test
-//	@Transactional
-//	@Ignore
-//	public void cannotModifyGroupsOfUserDirectly() throws Exception {
-//		final User user = addTestUser("test");
-//		final Group group = addTestGroup("test");
-//		
-//		// Assert.assertTrue(user.getGroups().isEmpty());
-//		// Assert.assertTrue(group.getAssignedUsers().isEmpty());
-//		
-//		try {
-//			user.getGroups().add(group); // should throw
-//			// throw new Exception("Read-only list expected");
-//		} catch (UnsupportedOperationException e) {
-//			// Expected
-//		}
-//		
-//		// userService.assignUserToGroup(user, group);
-//		Assert.assertTrue(user.getGroups().size() == 1);
-//
-//		try {
-//			// user.getGroups().clear();
-//			// throw new Exception("Read-only list expected");
-//		} catch (UnsupportedOperationException e) {
-//			// Expected
-//		}	
-//	}//	
-//
-//	@Test
-//	@Ignore
-//	public void cannotModifyUsersOfGroupDirectly() throws Exception {
-//		final User user = addTestUser("test");
-//		final Group group = addTestGroup("test");
-//		
-//		Assert.assertTrue(user.getGroups().isEmpty());
-//		Assert.assertTrue(group.getAssignedUsers().isEmpty());
-//		
-//		try {
-//			group.getAssignedUsers().add(user); // should throw
-//			// throw new Exception("Read-only list expected");
-//		} catch (UnsupportedOperationException e) {
-//			// Expected
-//		}
-//		
-//		// userService.assignUserToGroup(user, group);
-//		Assert.assertTrue(group.getAssignedUsers().size() == 1);
-//
-//		try {
-//			// group.getAssignedUsers().clear();
-//			// throw new Exception("Read-only list expected");
-//		} catch (UnsupportedOperationException e) {
-//			// Expected
-//		}	
-//	}
-//	
-//	@Test
-//	@Ignore
-//	public void groupsAreAssignedToUser() throws Exception {
-//		final User user = addTestUser("test");
-//		final Group group1 = addTestGroup("test1");
-//		final Group group2 = addTestGroup("test2");
-//		
-//		// Assert.assertTrue(user.getGroups().isEmpty());
-//		// Assert.assertTrue(group1.getAssignedUsers().isEmpty());
-//		// Assert.assertTrue(group2.getAssignedUsers().isEmpty());
-//		
-//		// userService.assignUserToGroup(user, group1);
-//		// userService.assignUserToGroup(user, group2);
-//
-//		// Assert.assertTrue(user.getGroups().size() == 2);
-//		Assert.assertTrue(user.getGroups().contains(group1));
-//		Assert.assertTrue(user.getGroups().contains(group2));
-//		
-//		Assert.assertTrue(group1.getAssignedUsers().size() == 1);
-//		Assert.assertTrue(group1.getAssignedUsers().contains(user));
-//
-//		Assert.assertTrue(group2.getAssignedUsers().size() == 1);
-//		Assert.assertTrue(group2.getAssignedUsers().contains(user));
-//		
-//		// Check with fresh instances
-//		
-//		final User freshUser = userService.getUser("test");
-//		// userDao.refresh(freshUser);
-//		// Assert.assertTrue(freshUser.getGroups().size() == 2);
-//		Assert.assertTrue(user.getGroups().contains(group1));
-//		Assert.assertTrue(user.getGroups().contains(group2));
-//
-//		// final Group freshGroup1 =
-//		// daoService.getGroupDao().fetchByName("test1");
-//		// // groupDao.refresh(freshGroup1);
-//		// Assert.assertTrue(freshGroup1.getAssignedUsers().size() == 1);
-//		// Assert.assertTrue(group1.getAssignedUsers().contains(user));
-//		//
-//		// final Group freshGroup2 =
-//		// daoService.getGroupDao().fetchByName("test2");
-//		// // groupDao.refresh(freshGroup2);
-//		// Assert.assertTrue(freshGroup2.getAssignedUsers().size() == 1);
-//		// Assert.assertTrue(group2.getAssignedUsers().contains(user));
-//	}
-//	
-//    @Test
-//    @Transactional
-//    public void roleIsAddedToDatabase() throws Exception {
-//        final String roleName = "test";
-//        final Role role = addTestRole(roleName);
-//
-//        final Role testee = roleDao.fetchByName(roleName);
-//        roleDao.refresh(testee);
-//        Assert.assertNotNull(testee);
-//        Assert.assertEquals(role.getRoleName(), testee.getRoleName());
-//    }
+	/***
+	 ***** Groups <-> Roles relationship tests
+	 ***/
 
-//
-//    @Test
-//    @Transactional
-//	public void testMail() throws Exception {
-//		mailService.SendEmail("olcaytarazan@gmail.com", "User Management Test","Ignore");
-//	}
-//	    
-//    @Test
-//    @Transactional
-//	public void testRole()  {
-//	    //Create roles
-//		Role adminRole = new Role("Admin");
-//		Role anonymousRole = new Role("Anonymous");
-//		Role testRole = new Role("Test");
-//		//Add roles
-//		adminRole=roleDao.addRole(adminRole);
-//		anonymousRole=roleDao.addRole(anonymousRole);
-//		testRole=roleDao.addRole(testRole);
-// 
-//		//Get Groups
-//        Group adminGroup = new Group("Admin");
-//        adminGroup =groupDao.addGroup(adminGroup);
-//
-//        Group anonymousGroup = new Group("Anonymous");
-//        anonymousGroup = groupDao.addGroup(anonymousGroup);
-//
-//        //Assign
-//        userService.assignRoleToGroup(adminRole.getRoleID(), adminGroup.getGroupID());
-//        userService.assignRoleToGroup(anonymousRole.getRoleID(), anonymousGroup.getGroupID());
-//        
-//        
-//        //CheckRoles
-//        Assert.assertTrue(adminGroup.getAssignedRoles().contains(adminRole));
-//        Assert.assertTrue(anonymousGroup.getAssignedRoles().contains(anonymousRole));
-//		
-//	}
-//    @Test
-//    @Transactional
-//	public void testRight() throws Exception {
-//
-//		Right right1 = new Right();
-//		Right right2 = new Right();
-//		rightDao.addRight(right1);
-//		rightDao.addRight(right2);
-//        rightDao.enableDisableAspect(right1.getRightID(), true);
-//		rightDao.removeRight(right1);
-//		rightDao.removeRight(right2);
-//
-//	}
-    
-    private User saveTestUser(String name) throws Exception {
+	@Test
+	public void addRolesToGroup() throws Exception {
+		final Group group = saveTestGroup("testgroup");
+		final Role role1 = saveTestRole("testrole1");
+		final Role role2 = saveTestRole("testrole2");
+		
+		Assert.assertTrue(group.getAssignedRoles().isEmpty());
+		
+		final Role freshRole1 = userService.assignRoleToGroup(role1, group);
+		final Role freshRole2 = userService.assignRoleToGroup(role2, group);
+		
+		// Roles were added to group object
+		Assert.assertEquals(2, group.getAssignedRoles().size());
+		Assert.assertTrue(group.getAssignedRoles().contains(role1));
+		Assert.assertTrue(group.getAssignedRoles().contains(role2));
+		
+		// Group was added to fresh role objects
+		Assert.assertEquals(1, freshRole1.getAssignedGroups().size());
+		Assert.assertTrue(freshRole1.getAssignedGroups().contains(group));
+		Assert.assertEquals(1, freshRole2.getAssignedGroups().size());
+		Assert.assertTrue(freshRole2.getAssignedGroups().contains(group));
+		
+		// Group was NOT added to stale role objects
+		Assert.assertTrue(role1.getAssignedGroups().isEmpty());
+		Assert.assertTrue(role2.getAssignedGroups().isEmpty());
+		
+		// Roles were added to freshly fetched group object
+		final Group fetchedGroup = userService.getGroup("testgroup");
+		Assert.assertEquals(2, fetchedGroup.getAssignedRoles().size());
+		Assert.assertTrue(fetchedGroup.getAssignedRoles().contains(role1));
+		Assert.assertTrue(fetchedGroup.getAssignedRoles().contains(role2));
+		
+		// Group was added to freshly fetched role objects
+		final Role fetchedRole1 = userService.getRole("testrole1");
+		final Role fetchedRole2 = userService.getRole("testrole2");
+		
+		Assert.assertEquals(1, fetchedRole1.getAssignedGroups().size());
+		Assert.assertTrue(fetchedRole1.getAssignedGroups().contains(group));
+		Assert.assertEquals(1, fetchedRole2.getAssignedGroups().size());
+		Assert.assertTrue(freshRole2.getAssignedGroups().contains(group));
+	}
+	
+	@Test
+	public void addRoleTwice() throws Exception {
+		final Group group = saveTestGroup("testgroup");
+		final Role role = saveTestRole("testrole");
+		
+		userService.assignRoleToGroup(role, group);
+
+		// Second add succeeds due to set semantics
+		final Role freshRole = userService.assignRoleToGroup(role, group);
+		
+		Assert.assertEquals(1, group.getAssignedRoles().size());
+		Assert.assertEquals(1, freshRole.getAssignedGroups().size());
+	}
+	
+	@Test
+	public void addNonPersistedRole() throws Exception {
+		final Group group = new Group("testgroup");
+
+		// Role is not persisted 
+		final Role role = new Role("testrole");
+		
+		// Assigning it should cause an exception
+		try {
+			userService.assignRoleToGroup(role, group);
+			throw new Exception("Shouldn't be reachable; IllegalArgumentException expected");
+		} catch (IllegalArgumentException e) {
+			// Expected
+			Assert.assertTrue(e.getMessage().toLowerCase().contains("persisted"));
+		}
+	}
+	
+	@Test
+	public void revokeRolesFromUser() throws Exception {
+		final Group group = saveTestGroup("testgroup");
+		final Role role1 = saveTestRole("testrole1");
+		final Role role2 = saveTestRole("testrole2");
+		
+		userService.assignRoleToGroup(role1, group);
+		userService.assignRoleToGroup(role2, group);
+		
+		final Role freshRole1 = userService.revokeRoleFromGroup(role1, group);
+		
+		// Role was removed from group object
+		Assert.assertEquals(1, group.getAssignedRoles().size());
+		Assert.assertTrue(group.getAssignedRoles().contains(role2));
+
+		// Group is removed from fresh role object
+		Assert.assertTrue(freshRole1.getAssignedGroups().isEmpty());
+
+		// Role is removed from freshly fetched group object
+		final Group fetchedGroup = userService.getGroup("testgroup");
+		Assert.assertEquals(1, fetchedGroup.getAssignedRoles().size());
+		Assert.assertTrue(fetchedGroup.getAssignedRoles().contains(role2));
+		
+		// User is removed from freshly fetched group object
+		final Role fetchedRole1 = userService.getRole("testrole1");
+		Assert.assertTrue(fetchedRole1.getAssignedGroups().isEmpty());
+	}
+	
+	@Test
+	public void doNotAllowDirectModificationOfGroupRoleRelationship() throws Exception {
+		final Group group = saveTestGroup("testgroup");
+		final Role role = saveTestRole("testrole");
+		
+		try {
+			group.getAssignedRoles().add(role);
+			throw new Exception("Shouldn't be reachable; UnsupportedOperationException expected");
+		} catch (UnsupportedOperationException e) {
+			// Expected
+		}
+		
+		try {
+			role.getAssignedGroups().add(group);
+			throw new Exception("Shouldn't be reachable; UnsupportedOperationException expected");
+		} catch (UnsupportedOperationException e) {
+			// Expected
+		}
+	}
+	    private User saveTestUser(String name) throws Exception {
 		final User user = new User(name, "secret", "test", "test", true);
 		user.setCompanyName("enwida.de");
 		userService.saveUser(user);
@@ -463,6 +355,12 @@ public class BasicUserManagement {
     	final Group group = new Group(name);
     	userService.addGroup(group);
     	return group;
+    }
+    
+    private Role saveTestRole(String name) throws Exception {
+    	final Role role = new Role(name);
+    	userService.addRole(role);
+    	return role;
     }
 
 	private Right addTestRight(long id) throws Exception {

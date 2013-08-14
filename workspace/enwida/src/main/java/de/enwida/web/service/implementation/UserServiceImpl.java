@@ -338,15 +338,58 @@ public class UserServiceImpl implements IUserService {
 		return group;
 	}
 
+    @Override
+    public void assignRoleToGroup(long roleID, long groupID) {
+    	final Group group = groupDao.fetchById(groupID);
+    	final Role role = roleDao.fetchById(roleID);
+    	assignRoleToGroup(role, group);
+    }
+
 	@Override
-	public void revokeRoleFromGroup(Role role, Group group) {
-		role.getAssignedGroups().remove(group);
-		Set<Group> remainingGroups = new HashSet<Group>(
-				role.getAssignedGroups());
-		role.setAssignedGroups(null);
-		roleDao.update(role);
-		role.setAssignedGroups(remainingGroups);
-		roleDao.update(role);
+	public Role assignRoleToGroup(Role role, Group group) {
+		if (group.getGroupID() == null) {
+			throw new IllegalArgumentException("group object is not persisted");
+		}
+		if (role.getRoleID() == null) {
+			throw new IllegalArgumentException("role object is not persisted");
+		}
+		// Modify group's set of roles
+ 		final Set<Role> roles = new HashSet<>(group.getAssignedRoles());
+ 		roles.add(role);
+		group.setAssignedRoles(roles);
+		groupDao.update(group, true); // with flush
+
+		// Refresh the role in order to reflect the changes
+		role = roleDao.update(role);
+		roleDao.refresh(role);
+		return role;
+	}
+
+    @Override
+    public void revokeRoleFromGroup(long roleID, long groupID){
+    	final Group group = groupDao.fetchById(groupID);
+    	final Role role = roleDao.fetchById(roleID);
+    	revokeRoleFromGroup(role, group);
+    }
+
+	@Override
+	public Role revokeRoleFromGroup(Role role, Group group) {
+		if (group.getGroupID() == null) {
+			throw new IllegalArgumentException("group object is not persisted");
+		}
+		if (role.getRoleID() == null) {
+			throw new IllegalArgumentException("role object is not persisted");
+		}
+		// Modify group's set of roles
+ 		final Set<Role> roles = new HashSet<>(group.getAssignedRoles());
+ 		roles.remove(role);
+		group.setAssignedRoles(roles);
+		groupDao.update(group, true); // with flush
+
+		// Refresh the role in order to reflect the changes
+		role = roleDao.update(role);
+		roleDao.refresh(role);
+		return role;
 	}
     
     /**
@@ -381,15 +424,6 @@ public class UserServiceImpl implements IUserService {
 	 * Assigns role to group
 	 */
 	@Override
-	public void assignRoleToGroup(Role role, Group group) {
-		role.addAssignedGroups(group);
-		roleDao.save(role);
-	}
-
-	/**
-	 * Assigns role to group
-	 */
-	@Override
 	public void assignRightToRole(Right right, Role role) {
 		role.getRights().add(right);
 		roleDao.update(role);
@@ -403,39 +437,6 @@ public class UserServiceImpl implements IUserService {
 		role.getRights().remove(right);
 		roleDao.update(role);
 	}
-
-    /**
-     * Assigns role to group
-     */
-    @Override
-    public void assignRoleToGroup(long roleID, long groupID) {
-        Role role=roleDao.fetchById(roleID);
-        Group group=groupDao.fetchById(groupID);
-        if (!group.getAssignedRoles().contains(role)){
-            group.getAssignedRoles().add(role);
-        }
-        if(role!=null  || group!=null)
-			try {
-				groupDao.save(group);
-			} catch (Exception e) {
-				logger.error("Unable to save group", e);
-			}
-    }
-
-    @Override
-    public void deassignRoleToGroup(long roleID, long groupID){
-        Role role=roleDao.fetchById(roleID);
-        Group group=groupDao.fetchById(groupID);
-        if (group.getAssignedRoles().contains(role)){
-            group.getAssignedRoles().remove(role);
-        }
-        if(role!=null  || group!=null)
-			try {
-				groupDao.save(group);
-			} catch (Exception e) {
-				logger.error("Unable to save group", e);
-			}
-    }
 
     @Override
     public List<Role> getAllRolesWithGroups()throws Exception  {
@@ -543,6 +544,11 @@ public class UserServiceImpl implements IUserService {
     @Override
     public Group getGroup(String groupName) throws Exception {
     	return groupDao.fetchByName(groupName);
+    }
+    
+    @Override
+    public Role getRole(String roleName) {
+    	return roleDao.fetchByName(roleName);
     }
     
     @Override

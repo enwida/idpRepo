@@ -100,6 +100,12 @@ public interface IUserService {
      * @param role
      */
     public void addRole(Role role)throws Exception;
+    
+    /**
+     * Fetch role from DB
+     * @param roleName
+     */
+    public Role getRole(String roleName);
 
     /**
      * Get all roles
@@ -195,18 +201,30 @@ public interface IUserService {
     public void assignRoleToGroup(long selectedRole, long selectedGroup);
 
     /**
-     * Deassigns role to the groups
-     * 
-     * @param selectedRole
-     * @param selectedGroup
-     * @return
-     * @throws Exception
-     */
-    public void deassignRoleToGroup(long selectedRole, long selectedGroup);
+	 * Assigns role to group. {@link Group} object will be updated in place; updated {@link Role} will be returned.
+	 * 
+	 * @param role the persisted role object
+	 * @param group the persisted group object
+	 * @return the fresh {@link Role} object
+	 */	public Role assignRoleToGroup(Role role, Group group);
+
+	/**
+	 * Revoke role from group.
+	 * @param role ID
+	 * @param group ID
+	 */
+	public void revokeRoleFromGroup(long roleId, long groupId);
+
+    /**
+	 * Revoke role from group. {@link Group} object will be updated in place; updated {@link Role} will be returned.
+	 * 
+	 * @param role the persisted role object
+	 * @param group the persisted group object
+	 * @return the fresh {@link Role} object
+	 */	public Role revokeRoleFromGroup(Role role, Group group);
 
     /**
      * Get All roles with Groups attached
-     * 
      * @return List of Roles
      */
     public List<Role> getAllRolesWithGroups()throws Exception;
@@ -300,10 +318,6 @@ public interface IUserService {
 	Role findRole(Role role);
 
 	Right findRight(Right right);
-
-	void assignRoleToGroup(Role role, Group group);
-
-	void revokeRoleFromGroup(Role role, Group group);
 
 	void assignRightToRole(Right right, Role role);
 

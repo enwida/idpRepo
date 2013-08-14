@@ -103,7 +103,7 @@ public class User implements Serializable, UserDetails {
 	@Column(name = ACTIVATION_ID)
 	private String activationKey;
 
-	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, targetEntity = Group.class)
+	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@JoinTable(name = Constants.USER_GROUP_TABLE_NAME, schema = Constants.USER_GROUP_TABLE_SCHEMA_NAME,
 		joinColumns = {@JoinColumn(name=USER_ID)}, inverseJoinColumns={@JoinColumn(name=Group.GROUP_ID)})
 	private Set<Group> groups;
@@ -414,8 +414,8 @@ new NavigationSettings(chartId, updateddefaults, this,
 		if (!(obj instanceof User)) {
 			return false;
 		}
-		final User user = (User) obj;
-		return user.userName.equals(userName);
+		final User other = (User) obj;
+		return userName.equals(other.userName);
 	}
 
 }

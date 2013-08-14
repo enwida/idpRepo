@@ -12,8 +12,11 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import de.enwida.web.utils.Constants;
 
@@ -41,17 +44,12 @@ public class Group implements Serializable{
 	@Column(name = AUTO_PASS)
     private boolean autoPass;
 
-	@ManyToMany(mappedBy = "groups", fetch = FetchType.EAGER, cascade = CascadeType.ALL, targetEntity = User.class)
+	@ManyToMany(mappedBy = "groups", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
 	private Set<User> assignedUsers;
-	
-	// @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER,
-	// targetEntity = Role.class)
-	// @JoinTable(name = Constants.GROUP_ROLE_TABLE_NAME, schema =
-	// Constants.GROUP_ROLE_TABLE_SCHEMA_NAME, uniqueConstraints = {
-	// @UniqueConstraint(columnNames = {
-	// Role.ROLE_ID, Group.GROUP_ID }) }, joinColumns = { @JoinColumn(name =
-	// GROUP_ID) }, inverseJoinColumns = { @JoinColumn(name = Role.ROLE_ID) })
-	@ManyToMany(mappedBy = "assignedGroups", fetch = FetchType.EAGER, cascade = CascadeType.ALL, targetEntity = Role.class)
+
+	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@JoinTable(name = Constants.GROUP_ROLE_TABLE_NAME, schema = Constants.GROUP_ROLE_TABLE_SCHEMA_NAME, uniqueConstraints = { @UniqueConstraint(columnNames = {
+			Role.ROLE_ID, Group.GROUP_ID }) }, joinColumns = { @JoinColumn(name = GROUP_ID) }, inverseJoinColumns = { @JoinColumn(name = Role.ROLE_ID) })
 	private Set<Role> assignedRoles;
 
     public Long getGroupID() {
@@ -124,7 +122,7 @@ public class Group implements Serializable{
 			return false;
 		}
 		final Group other = (Group) obj;
-		return other.groupName.equals(groupName);
+		return groupName.equals(other.groupName);
 	}
 
 }

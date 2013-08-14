@@ -1,6 +1,7 @@
 package de.enwida.web.model;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -11,12 +12,9 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 
 import org.springframework.security.core.GrantedAuthority;
 
@@ -38,27 +36,15 @@ public class Role implements Serializable, GrantedAuthority {
     @Id
     @Column(name = ROLE_ID)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long roleID;
+    private Long roleID;
 
-    @Column(name = ROLE_NAME)
+    @Column(name = ROLE_NAME, unique = true)
     private String roleName;
 
     @Column(name = DESCRIPTION) 
     private String description;
-    
-	// @ManyToMany(mappedBy = "assignedRoles", cascade = CascadeType.ALL,
-	// targetEntity = Group.class, fetch = FetchType.EAGER)
-	// @ElementCollection(targetClass = Group.class, fetch = FetchType.EAGER)
-	// @JoinTable(name = Constants.GROUP_ROLE_TABLE_NAME, schema =
-	// Constants.USER_GROUP_TABLE_SCHEMA_NAME, uniqueConstraints = {
-	// @UniqueConstraint(columnNames = {
-	// Role.ROLE_ID, Group.GROUP_ID }) }, joinColumns = { @JoinColumn(name =
-	// ROLE_ID, referencedColumnName = ROLE_ID) }, inverseJoinColumns = {
-	// @JoinColumn(name = Group.GROUP_ID, referencedColumnName = Group.GROUP_ID)
-	// })
-	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, targetEntity = Group.class)
-	@JoinTable(name = Constants.GROUP_ROLE_TABLE_NAME, schema = Constants.GROUP_ROLE_TABLE_SCHEMA_NAME, uniqueConstraints = { @UniqueConstraint(columnNames = {
-			Role.ROLE_ID, Group.GROUP_ID }) }, joinColumns = { @JoinColumn(name = ROLE_ID) }, inverseJoinColumns = { @JoinColumn(name = Group.GROUP_ID) })
+
+	@ManyToMany(mappedBy = "assignedRoles", fetch = FetchType.EAGER)
 	private Set<Group> assignedGroups;
     
 	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "role", targetEntity = Right.class)
@@ -81,13 +67,6 @@ public class Role implements Serializable, GrantedAuthority {
 		this.roleID = roleID;
 	}
 
-	public void addAssignedGroups(Group group) {
-        if (assignedGroups == null) {
-			assignedGroups = new HashSet<Group>();
-        }
-        this.assignedGroups.add(group);
-    }
-    
     public String getDescription() {
         return description;
     }
@@ -95,7 +74,7 @@ public class Role implements Serializable, GrantedAuthority {
         this.description = description;
     }
 
-    public long getRoleID() {
+    public Long getRoleID() {
         return roleID;
     }
     public void setRoleID(long roleID) {
@@ -109,7 +88,10 @@ public class Role implements Serializable, GrantedAuthority {
     }
 
 	public Set<Group> getAssignedGroups() {
-        return assignedGroups;
+		if (assignedGroups == null) {
+			assignedGroups = new HashSet<>();
+		}
+        return Collections.unmodifiableSet(assignedGroups);
     }
 
 	public void setAssignedGroups(Set<Group> assignedGroups) {
@@ -135,6 +117,20 @@ public class Role implements Serializable, GrantedAuthority {
 	@Override
 	public String getAuthority() {
 		return this.roleName;
+	}
+	
+	@Override
+	public int hashCode() {
+		return roleName.hashCode();
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (!(obj instanceof Role)) {
+			return false;
+		}
+		final Role other = (Role) obj;
+		return roleName.equals(other.roleName);
 	}
 
 }
