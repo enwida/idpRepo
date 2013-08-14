@@ -4,6 +4,7 @@ import java.util.Calendar;
 
 import junit.framework.Assert;
 
+import org.apache.log4j.Logger;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,6 +26,7 @@ import de.enwida.web.service.interfaces.IUserService;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:/root-context-test.xml")
 public class UserManagement {
+	private Logger logger = Logger.getLogger(getClass());
     
     @Autowired
     private IUserService userService;
@@ -41,7 +43,6 @@ public class UserManagement {
 	private Right right;
 
 	@Test
-	@Ignore
 	public void userGroupTest() throws Exception {
 		user = addTestUser("testuser");
 		group = addTestGroup("testgroup1");
@@ -112,18 +113,20 @@ public class UserManagement {
 		assignRightToRole(right3, role);
 
 		removeRightFromRole(right2, role);
+		user = userService.getUser("testuser");
+		logger.debug("Authorities : " + user.getAuthorities());
 	}
 
 	private void assignRightToRole(Right right, Role role) {
 		userService.assignRightToRole(right, role);
-		role = roleDao.fetchById(role.getRoleID());
+		right = rightDao.fetchById(right.getRightID());
 		System.out.println(role.getRights());
 		System.out.println(right.getRole());
 	}
 
 	private void removeRightFromRole(Right right, Role role) {
-		userService.revokeRightFromRole(right);
-		role = roleDao.fetchById(role.getRoleID());
+		userService.revokeRightFromRole(right, role);
+		right = rightDao.fetchById(right.getRightID());
 		System.out.println(role.getRights());
 		System.out.println(right.getRole());
 	}

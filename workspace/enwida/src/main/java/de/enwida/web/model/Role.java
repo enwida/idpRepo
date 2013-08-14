@@ -2,10 +2,8 @@ package de.enwida.web.model;
 
 import java.io.Serializable;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
-import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -18,7 +16,6 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 
 import org.springframework.security.core.GrantedAuthority;
@@ -27,7 +24,6 @@ import de.enwida.web.utils.Constants;
 
 @Entity
 @Table(name = Constants.ROLE_TABLE_NAME, schema = Constants.ROLE_TABLE_SCHEMA_NAME)
-@Cacheable(true)
 public class Role implements Serializable, GrantedAuthority {
 
     /**
@@ -66,7 +62,7 @@ public class Role implements Serializable, GrantedAuthority {
 	private Set<Group> assignedGroups;
     
 	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "role", targetEntity = Right.class)
-    private List<Right> rights;
+	private Set<Right> rights;
     
 	/**
 	 * 
@@ -120,12 +116,14 @@ public class Role implements Serializable, GrantedAuthority {
         this.assignedGroups = assignedGroups;
     }
     
-	@Transient
-    public List<Right> getRights() {
+	public Set<Right> getRights() {
+		if (rights == null) {
+			return new HashSet<Right>();
+		}
 		return rights;
 	}
 
-	public void setRights(List<Right> rights) {
+	public void setRights(Set<Right> rights) {
 		this.rights = rights;
 	}
 

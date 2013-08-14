@@ -13,7 +13,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import de.enwida.web.db.model.CalendarRange;
 import de.enwida.web.utils.Constants;
@@ -41,7 +40,7 @@ public class Right implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long rightID;
     
-	@ManyToOne(targetEntity = Role.class, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@ManyToOne(targetEntity = Role.class, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = Role.ROLE_ID)
 	private Role role;
     
@@ -139,6 +138,38 @@ public class Right implements Serializable {
     public void setTimeRange(CalendarRange timeRange) {
         this.timeRange = timeRange;
     }
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (int) (rightID ^ (rightID >>> 32));
+		return result;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Right other = (Right) obj;
+		if (rightID != other.rightID)
+			return false;
+		return true;
+	}
 
 	/*
 	 * (non-Javadoc)

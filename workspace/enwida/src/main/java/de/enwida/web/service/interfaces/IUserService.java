@@ -288,6 +288,6 @@ public interface IUserService {
 
 	void assignRightToRole(Right right, Role role);
 
-	void revokeRightFromRole(Right right);
+	void revokeRightFromRole(Right right, Role role);
 
 }
