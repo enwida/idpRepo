@@ -178,7 +178,7 @@ define [ "components/visual"
           @attr.selections = $.extend {}, selections
           @attr.downloadResolution = selections.resolution
           dataSets = TimeUtils.dataSetCount selections.timeRange, selections.resolution
-          @select("download").text "Download #{dataSets} data points"
+          @select("download").text "Download #{parseInt dataSets} data points"
           @setDownloadLink()
           @onGetLines selections
 
