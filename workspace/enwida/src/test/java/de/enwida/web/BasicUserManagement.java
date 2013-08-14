@@ -1,6 +1,8 @@
 package de.enwida.web;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -475,6 +477,97 @@ public class BasicUserManagement {
 		Assert.assertTrue(freshRole.getRights().contains(right));
 		Assert.assertEquals(role, right.getRole());
 	}
+	
+	@Test
+	public void transitveClosure() throws Exception {
+		final User user1 = saveTestUser("testuser1");
+		final User user2 = saveTestUser("testuser2");
+		final Group group1 = saveTestGroup("testgroup1");
+		final Group group2 = saveTestGroup("testgroup2");
+		final Group group3 = saveTestGroup("testgroup3");
+		final Role role1 = saveTestRole("testrole1");
+		final Role role2 = saveTestRole("testrole2");
+		final Role role3 = saveTestRole("testrole3");
+		final Role role4 = saveTestRole("testrole4");
+		final Right right1 = saveTestRight(211);
+		final Right right2 = saveTestRight(221);
+		final Right right3 = saveTestRight(222);
+		final Right right4 = saveTestRight(322);
+		final Right right5 = saveTestRight(312);
+		final Right right6 = saveTestRight(313);
+		
+		// Create the mappings
+		userService.assignGroupToUser(user1, group1);
+		userService.assignGroupToUser(user1, group2);
+		userService.assignGroupToUser(user2, group2);
+		userService.assignGroupToUser(user2, group3);
+		
+		userService.assignRoleToGroup(role1, group1);
+		userService.assignRoleToGroup(role2, group1);
+		userService.assignRoleToGroup(role3, group2);
+		userService.assignRoleToGroup(role4, group3);
+		
+		userService.assignRightToRole(right1, role1);
+		userService.assignRightToRole(right2, role1);
+		userService.assignRightToRole(right3, role2);
+		userService.assignRightToRole(right4, role2);
+		userService.assignRightToRole(right5, role3);
+		userService.assignRightToRole(right6, role4);
+
+		// Check user 1
+		final User freshUser1 = userService.getUser("testuser1");
+		Assert.assertEquals(2, freshUser1.getGroups().size());
+		Assert.assertTrue(freshUser1.getGroups().contains(group1));
+		Assert.assertTrue(freshUser1.getGroups().contains(group2));
+				
+		final List<Role> allRoles1 = new ArrayList<>();
+		for (final Group group : freshUser1.getGroups()) {
+			allRoles1.addAll(group.getAssignedRoles());
+		}
+		Assert.assertEquals(3, allRoles1.size());
+		Assert.assertEquals(3, freshUser1.getAllRoles().size());
+		
+		final List<Right> allRights1 = new ArrayList<>();
+		for (final Role role : allRoles1) {
+			allRights1.addAll(role.getRights());
+		}
+		Assert.assertEquals(5, allRights1.size());
+		Assert.assertEquals(5, freshUser1.getAllRights().size());
+
+		// Check user 2
+		final User freshUser2 = userService.getUser("testuser2");
+		Assert.assertEquals(2, freshUser2.getGroups().size());
+		Assert.assertTrue(freshUser2.getGroups().contains(group2));
+		Assert.assertTrue(freshUser2.getGroups().contains(group3));
+				
+		final List<Role> allRoles2 = new ArrayList<>();
+		for (final Group group : freshUser2.getGroups()) {
+			allRoles2.addAll(group.getAssignedRoles());
+		}
+		Assert.assertEquals(2, allRoles2.size());
+		Assert.assertEquals(2, freshUser2.getAllRoles().size());
+		
+		final List<Right> allRights2 = new ArrayList<>();
+		for (final Role role : allRoles2) {
+			allRights2.addAll(role.getRights());
+		}
+		Assert.assertEquals(2, allRights2.size());
+		Assert.assertEquals(2, freshUser2.getAllRights().size());
+		
+		// Check groups
+		final Group freshGroup1 = userService.getGroup("testgroup1");
+		Assert.assertEquals(4, freshGroup1.getAllRights().size());
+
+		final Group freshGroup2 = userService.getGroup("testgroup2");
+		Assert.assertEquals(1, freshGroup2.getAllRights().size());
+
+		final Group freshGroup3 = userService.getGroup("testgroup3");
+		Assert.assertEquals(1, freshGroup3.getAllRights().size());
+	}
+	
+	/***
+	 ***** Helper methods
+	 ***/
 	    private User saveTestUser(String name) throws Exception {
 		final User user = new User(name, "secret", "test", "test", true);
 		user.setCompanyName("enwida.de");

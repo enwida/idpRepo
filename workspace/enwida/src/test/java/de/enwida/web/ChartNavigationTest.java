@@ -894,7 +894,7 @@ public class ChartNavigationTest {
 		final Role role2 = new Role();
 		role2.setRoleID(43);
 
-		user.setRoles(Arrays.asList(new Role[] { role1, role2 }));
+//		user.setRoles(Arrays.asList(new Role[] { role1, role2 }));
 		return user;
 	}
 	

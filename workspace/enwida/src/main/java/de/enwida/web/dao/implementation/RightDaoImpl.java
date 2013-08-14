@@ -60,7 +60,7 @@ public class RightDaoImpl extends AbstractBaseDao<Right> implements IRightDao {
         TypedQuery<Right> typedQuery = em.createQuery( "from "+ Right.class.getName()
                 + "  WHERE role_id in ? AND tso = ? AND product = ? AND aspect_id = ? AND resolution = ? AND enabled = true",
         Right.class);
-        typedQuery.setParameter("role_id", request.getUser().getRoles().toArray());
+        typedQuery.setParameter("role_id", request.getUser().getAllRoles().toArray());
         typedQuery.setParameter("tso",request.getTso());
         typedQuery.setParameter("product", request.getProduct());
         typedQuery.setParameter("aspect_id", request.getAspect());
