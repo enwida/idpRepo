@@ -85,7 +85,7 @@ public class SecurityServiceImpl implements ISecurityService {
     
     public ProductRestriction getProductRestriction(int productId, int tso, Aspect aspect, User user) throws Exception {
         final List<ProductRestriction> restrictions = new ArrayList<ProductRestriction>();
-        for (final Role role : user.getRoles()) {
+        for (final Role role : user.getAllRoles()) {
             final ProductRestriction restriction = getProductRestriction(productId, tso, aspect, role.getRoleID().intValue());
             restrictions.add(restriction);
         }

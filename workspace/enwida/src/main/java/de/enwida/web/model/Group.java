@@ -1,8 +1,10 @@
 package de.enwida.web.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -104,6 +106,14 @@ public class Group implements Serializable{
 
     public void setAutoPass(boolean autoPass) {
         this.autoPass = autoPass;
+    }
+    
+    public List<Right> getAllRights() {
+    	final List<Right> result = new ArrayList<>();
+    	for (final Role role : getAssignedRoles()) {
+    		result.addAll(role.getRights());
+    	}
+    	return result;
     }
     
     @Override
