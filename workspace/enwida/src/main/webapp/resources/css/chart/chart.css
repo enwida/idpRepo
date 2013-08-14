@@ -160,7 +160,7 @@ a:hover {
 .selection {
 	padding: 10px;
 	margin-left: 40px;
-	margin-top: 5px;
+	margin-top: 10px;
 }
 
 .selection select {
@@ -211,6 +211,39 @@ svg.legend {
 	padding-right: 30px;
 }
 
-.chartDownload {
+.buttons {
+	margin-top: 0;
 	margin-left: 50px;
+    border-top: 1px solid #e0e0e0;
+    padding-top: 18px;
+}
+
+.buttons a.btn {
+	margin-right: 20px;
+}
+
+.buttons .chartDownload {
+	display: inline;
+}
+
+.dataSheet {
+	margin-top: 30px;
+	margin-left: 50px;
+}
+
+.dataSheet td {
+	padding: 8px 20px;
+	margin-right: 10px;
+}
+
+.dataSheet tr.header td {
+	background: #e0e0e0;
+}
+
+.dataSheet tr.odd td {
+	background: #f8f8f8;
+}
+
+.dataSheet tr.even td {
+	background: #efefef;
 }

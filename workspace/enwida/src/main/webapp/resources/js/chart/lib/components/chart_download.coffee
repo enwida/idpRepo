@@ -11,13 +11,6 @@ define ->
           .addClass("btn")
           .text("Download SVG"))
 
-      @$node.append($("<a>")
-        .addClass("downloadCsv")
-        .attr("href", "download?chartId=#{@attr.id}")
-        .append("<button>")
-          .addClass("btn")
-          .text("Download CSV"))
-
     @after "initialize", ->
       @createElements()
 

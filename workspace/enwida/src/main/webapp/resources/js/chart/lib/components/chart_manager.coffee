@@ -4,6 +4,7 @@ define [ "components/visual"
          "components/lines"
          "components/infobox"
          "components/chart_download"
+         "components/data_sheet"
          "util/loading"
          "util/lines_preprocessor"
          "util/resolution"
@@ -16,6 +17,7 @@ define [ "components/visual"
    Lines
    Infobox
    ChartDownload
+   DataSheet
    Loading
    LinesPreprocessor
    Resolution
@@ -105,6 +107,9 @@ define [ "components/visual"
           @attr.data = data = LinesPreprocessor.transform @attr.type, data
           @triggerDraw data
           @trigger @select("lines"), "updateLines", lines: data
+          @trigger @select("dataSheet"), "refresh",
+            lines: data
+            navigationData: @attr.navigationData
 
       @triggerDraw = (data) ->
         if data.length is @attr.disabledLines.length
@@ -136,6 +141,7 @@ define [ "components/visual"
         productSelection: ".productSelection"
         timeSelection: ".timeSelection"
         chartDownload: ".chartDownload"
+        dataSheet: ".dataSheet"
         disabledLines: []
 
       @after "initialize", ->
@@ -172,19 +178,25 @@ define [ "components/visual"
         @$node.append visual
         Visual.attachTo visual, @attr
 
+        # Add controls
+        controls = $("<div>")
+          .addClass("controls")
+          .css("width", "#{@attr.width}px")
+        @$node.append controls
+
         # Add info box
-        infoBox = $("<div>").addClass("infobox").css("width", "#{@attr.width}px")
-        @$node.append infoBox
+        infoBox = $("<div>").addClass("infobox")
+        controls.append infoBox
         Infobox.attachTo infoBox
 
         # Add lines
         if @attr.type isnt "carpet"
-          lines = $("<div>").addClass("lines").css("width", "#{@attr.width}px")
-          @$node.append lines
+          lines = $("<div>").addClass("lines")
+          controls.append lines
           Lines.attachTo lines
 
         selection = $("<div>").addClass("selection")
-        @$node.append selection
+        controls.append selection
 
         # Add product selection
         productSelection = $("<div>").addClass "productSelection"
@@ -196,10 +208,34 @@ define [ "components/visual"
         selection.append timeSelection
         TimeSelection.attachTo timeSelection, @attr
 
-        # Add chart download
-        chartDownload = $("<div>").addClass "chartDownload"
-        @$node.append chartDownload
+
+        # Add buttons
+        buttons = $("<div>").addClass "buttons"
+        controls.append buttons
+
+        # SVG download
+        chartDownload = $("<div>").addClass("chartDownload")
+        buttons.append chartDownload
         ChartDownload.attachTo chartDownload, @attr
+
+        # CSV download
+        buttons.append($("<a>")
+          .addClass("downloadCsv")
+          .attr("href", "download?chartId=#{@attr.id}")
+          .append("<button>")
+            .addClass("btn")
+            .text("Download CSV"))
+
+        # Data sheet toggle
+        buttons.append($("<button>")
+          .addClass("btn")
+          .text("Data sheet")
+          .click => @select("dataSheet").toggle())
+
+        # Add data sheet
+        dataSheet = $("<div>").addClass("dataSheet").hide()
+        controls.append dataSheet
+        DataSheet.attachTo dataSheet, @attr
 
         @getNavigationData (err, data) =>
           if err?
