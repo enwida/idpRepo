@@ -14,6 +14,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
@@ -23,6 +24,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
@@ -174,7 +176,7 @@ public class UserController {
 		return "user/download";
 	}
 	
-	public void preProcessRegisterForm(HttpServletRequest request,ModelMap model) throws Exception{
+	public void preProcessRegisterForm(HttpServletRequest request,HttpServletResponse response,ModelMap model) throws Exception{
 	    
 	    if(request.getMethod().equalsIgnoreCase("GET")){  
 	        User user=new User();
@@ -195,8 +197,16 @@ public class UserController {
     
                     model.addAttribute("username", name);
                     model.addAttribute("userStatus", userStatus);
-                    model.addAttribute("userStatusURL", userStatusURL);     
-                    model.addAttribute("content","user/index");        
+                    model.addAttribute("userStatusURL", userStatusURL);  
+                    model.addAttribute("content","user/index");    
+                    //We dont want prelogin
+                    //clear the session and security context and redirect user to main page
+                    SecurityContextHolder.clearContext();
+                    HttpSession session = request.getSession(false);
+                    if (session != null) {
+                        session.invalidate();
+                    }     
+                    response.sendRedirect("index");
                 }
             }else{
                 model.addAttribute("content","user/register");
@@ -206,9 +216,9 @@ public class UserController {
 	}
 	
 	@RequestMapping(value="/register",method=RequestMethod.GET)
-    public String showForm(ModelMap model, HttpServletRequest request,Principal principal){
+    public String showForm(ModelMap model, HttpServletRequest request,HttpServletResponse response,Principal principal){
 	    try {
-            preProcessRegisterForm(request,model);
+            preProcessRegisterForm(request,response,model);
         } catch (Exception e) {
             logger.info(e.getMessage());
             model.addAttribute("Error", messageSource.getMessage("de.enwida.userManagement.notAllowed", null, request.getLocale()));
@@ -221,10 +231,10 @@ public class UserController {
     }
 	
 	@RequestMapping(value="/register",method=RequestMethod.POST)
-	public String processForm(@ModelAttribute(value="USER") User user, ModelMap model, HttpServletRequest request)
+	public String processForm(@ModelAttribute(value="USER") User user, ModelMap model, HttpServletRequest request,HttpServletResponse response)
 	{
 		try {
-            preProcessRegisterForm(request,model);
+            preProcessRegisterForm(request,response,model);
         } catch (Exception e) {
             logger.info(e.getMessage());
             model.addAttribute("Error",messageSource.getMessage("de.enwida.userManagement.notAllowed", null, request.getLocale()));

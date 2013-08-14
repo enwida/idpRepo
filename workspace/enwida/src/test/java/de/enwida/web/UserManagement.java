@@ -53,6 +53,23 @@ public class UserManagement {
 	public void testMail() throws Exception {
 		mailService.SendEmail("olcaytarazan@gmail.com", "User Management Test","Ignore");
     }
+    
+    @Test
+    @Transactional
+    public void createTestUser() throws Exception {
+        //Create an admin user to use for testing
+        addTestUser("test");
+        user=userService.getUser("test");
+        //create required groups
+        addTestGroup("admin");
+        addTestGroup("anonymous");
+        //create required roles
+        addTestRole("admin");
+        addTestRole("anonymous");
+        assignUserToGroup(user,  userService.findGroup(new Group("admin")));
+        groupDao.refresh(new Group("admin"));
+//        Assert.assertTrue(testee.getRoles().contains(new Role("admin")));
+    }
 
  }
 

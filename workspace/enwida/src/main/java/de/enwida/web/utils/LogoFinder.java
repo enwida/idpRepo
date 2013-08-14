@@ -24,6 +24,7 @@ public class LogoFinder {
 
     public String getImages(String companyName) {
         final WebClient webClient = new WebClient(BrowserVersion.FIREFOX_3_6);
+        webClient.getOptions().setJavaScriptEnabled(false);
         HtmlPage page;
         URL companyLink = null;
         try {
