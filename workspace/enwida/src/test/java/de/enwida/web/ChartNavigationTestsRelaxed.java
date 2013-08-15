@@ -9,9 +9,6 @@ import java.util.Locale;
 import java.util.Random;
 
 import org.junit.Assert;
-import org.junit.runner.RunWith;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import de.enwida.transport.Aspect;
 import de.enwida.transport.DataResolution;
@@ -21,8 +18,6 @@ import de.enwida.web.model.ProductTree;
 import de.enwida.web.model.User;
 import de.enwida.web.utils.ProductLeaf;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = "classpath:/root-context-test.xml")
 public class ChartNavigationTestsRelaxed extends ChartNavigationTest {
 	
 	@Override
