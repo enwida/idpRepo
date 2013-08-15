@@ -11,7 +11,6 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Random;
 import java.util.Set;
 
 import org.junit.Assert;
@@ -42,6 +41,11 @@ import de.enwida.web.service.interfaces.ISecurityService;
 import de.enwida.web.service.interfaces.IUserService;
 import de.enwida.web.utils.ProductLeaf;
  
+	
+/**
+ *  Warning: Running all the tests will take a lot of time (up to several hours). Use ChartNavigationTestsRelaxed for quick testing instead.
+ */
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:/root-context-test.xml")
 public class ChartNavigationTest {
@@ -49,22 +53,23 @@ public class ChartNavigationTest {
 	private static boolean isDbSchemaRecreated = false;
 	
 	@Autowired
-	private INavigationService navigationService;
+	protected INavigationService navigationService;
 	
 	@Autowired
-	private ISecurityService securityService;
+	protected ISecurityService securityService;
 	
 	@Autowired
-	private IUserService userService;
+	protected IUserService userService;
 	
 	@Autowired
-	private IRightDao rightDao;
+	protected IRightDao rightDao;
 	
 	@Autowired
-	private AbstractDataSource dataSource;
+	protected AbstractDataSource dataSource;
 	
-	private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-	private static final String username = "navigationTester";
+	protected static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+	protected static final String username = "navigationTester";
+	
 	
 	@Before
 	public void cleanup() throws Exception {
@@ -532,6 +537,7 @@ public class ChartNavigationTest {
 				stmt.execute();
 			}
 		}
+		connection.close();
 		user = userService.syncUser(user);
 		
 		for (final int key : navigationService.getAllDefaultNavigationData().keySet()) {
@@ -582,6 +588,7 @@ public class ChartNavigationTest {
 				stmt.execute();
 			}
 		}
+		connection.close();
 		user = userService.syncUser(user);
 		
 		for (final int key : navigationService.getAllDefaultNavigationData().keySet()) {
@@ -643,6 +650,7 @@ public class ChartNavigationTest {
 				stmt.execute();
 			}
 		}
+		connection.close();
 		user = userService.syncUser(user);
 		
 		for (final int key : navigationService.getAllDefaultNavigationData().keySet()) {
@@ -713,6 +721,7 @@ public class ChartNavigationTest {
 			stmt.setInt(4, productIdRestricted);
 			stmt.execute();
 		}
+		connection.close();
 		user = userService.syncUser(user);
 
 		for (final int key : navigationService.getAllDefaultNavigationData().keySet()) {
@@ -798,7 +807,7 @@ public class ChartNavigationTest {
 		Assert.assertTrue(range.getFrom().compareTo(range.getTo()) <= 0);
 	}
 	
-	private void checkLinesStrict(User user, ChartNavigationData navigationData, Calendar startTime, Calendar endTime) throws Exception {
+	protected void checkLines(User user, ChartNavigationData navigationData, Calendar startTime, Calendar endTime) throws Exception {
 		final int[] allProducts = new int[] { 200, 300, 211, 212, 221, 222, 311, 321, 312, 322, 313, 323, 314, 324, 315, 325, 316, 326 };
 		
 		for (final ProductTree tree : navigationData.getProductTrees()) {
@@ -852,67 +861,8 @@ public class ChartNavigationTest {
 			}
 		}
 	}
-	private void checkLines(User user, ChartNavigationData navigationData, Calendar startTime, Calendar endTime) throws Exception {
-		final Random random = new Random();
-		final int[] allProducts = new int[] { 200, 300, 211, 212, 221, 222, 311, 321, 312, 322, 313, 323, 314, 324, 315, 325, 316, 326 };
-		
-		for (final ProductTree tree : navigationData.getProductTrees()) {
-			for (int productCount = 0; productCount < allProducts.length / 3; productCount++) {
-				final int product = allProducts[random.nextInt(allProducts.length)];
 
-				for (int resolutionCount = 0; resolutionCount < DataResolution.values().length / 2; resolutionCount++) {
-					final DataResolution resolution = DataResolution.values()[random.nextInt(DataResolution.values().length)];
-					
-					for (final Aspect aspect : navigationData.getAspects()) {
-						System.out.println("Product: " + product + " | Aspect: " + aspect.toString());
-
-						final ProductLeaf leaf = tree.getLeaf(product);
-						if (leaf == null || !leaf.getResolution().contains(resolution)) {
-							final Calendar savedStartTime = startTime;
-							final Calendar savedEndTime = endTime;
-
-							if (startTime == null) {
-								startTime = Calendar.getInstance();
-								startTime.setTime(dateFormat.parse("2011-01-01"));
-							}
-							if (endTime == null) {
-								endTime = Calendar.getInstance();
-								endTime.setTime(dateFormat.parse("2012-01-01"));
-							}
-
-							final LineRequest lineRequest = new LineRequest(aspect, product, tree.getTso(), startTime, endTime, resolution, Locale.ENGLISH);
-							Assert.assertFalse(securityService.isAllowed(lineRequest, user));
-							
-							startTime = savedStartTime;
-							endTime = savedEndTime;
-						} else {
-							if (startTime == null) {
-								startTime = leaf.getTimeRange().getFrom();
-							}
-							if (endTime == null) {
-								endTime = leaf.getTimeRange().getTo();
-							}
-
-							final LineRequest lineRequest = new LineRequest(aspect, product, tree.getTso(), startTime, endTime, resolution, Locale.ENGLISH);
-							Assert.assertTrue(securityService.isAllowed(lineRequest, user));
-
-							// Enlarge time range
-							final Calendar t1 = (Calendar) startTime.clone();
-							final Calendar t2 = (Calendar) endTime.clone();
-							t1.add(Calendar.YEAR, -2);
-							t2.add(Calendar.YEAR, 2);
-							lineRequest.setStartTime(t1);
-							lineRequest.setEndTime(t2);
-
-							Assert.assertFalse(securityService.isAllowed(lineRequest, user));
-						}
-					}
-				}
-			}
-		}
-	}
-	
-	private void checkLines(User user, ChartNavigationData navigationData) throws Exception {
+	protected void checkLines(User user, ChartNavigationData navigationData) throws Exception {
 		checkLines(user, navigationData, null, null);
 	}
 	
@@ -963,6 +913,7 @@ public class ChartNavigationTest {
 				}
 			}
 		}
+		connection.close();
 		return role;
 	}
 	
