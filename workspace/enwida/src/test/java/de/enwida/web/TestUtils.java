@@ -16,7 +16,7 @@ import de.enwida.web.utils.Constants;
 public class TestUtils {
 
 	public static void cleanupDatabase(IUserService userService) throws Exception {
-		for (final Right right : userService.fetchAllRig()) {
+		for (final Right right : userService.fetchAllRights()) {
 			userService.deleteRight(right.getRightID());
 		}
 		for (final Role role : userService.fetchAllRoles()) {

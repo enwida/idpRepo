@@ -120,7 +120,7 @@ public interface IUserService {
     /**
      * Get all rights
      */
-    public List<Right> fetchAllRig() throws Exception;
+    public List<Right> fetchAllRights() throws Exception;
 
     /**
      * Update User information based on userID

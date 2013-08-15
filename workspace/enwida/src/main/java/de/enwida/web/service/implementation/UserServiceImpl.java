@@ -236,7 +236,7 @@ public class UserServiceImpl implements IUserService {
     }
     
     @Override
-    public List<Right> fetchAllRig() throws Exception {
+    public List<Right> fetchAllRights() throws Exception {
     	return rightDao.fetchAll();
     }
     
