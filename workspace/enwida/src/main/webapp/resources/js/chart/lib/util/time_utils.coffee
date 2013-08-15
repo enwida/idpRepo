@@ -63,3 +63,27 @@ define ->
     from : time
     to   : @addRange time, timeRange
 
+  dataSetCount: (timeRange, resolution) ->
+    # Normalize time range
+    timeRange.from = new Date timeRange.from
+    timeRange.to   = new Date timeRange.to
+
+    diff = timeRange.to - timeRange.from
+    switch resolution
+      when "QUATER_HOURLY" then diff / (15*60*1000)
+      when "HOURLY"        then diff / (60*60*1000)
+      when "DAILY"         then diff / (24*60*60*1000)
+      when "WEEKLY"        then diff / (7*24*60*60*1000)
+      when "MONTHLY"
+        years = timeRange.to.getFullYear() - timeRange.from.getFullYear()
+        months = timeRange.to.getMonth() - timeRange.from.getMonth()
+        years * 12 + months
+      when "YEARLY"
+        timeRange.to.getFullYear() - timeRange.from.getFullYear()
+
+  asUTC: (date) ->
+    new Date date.getTime() + date.getTimezoneOffset() * 60 * 1000
+
+  fromUTC: (date) ->
+    new Date date.getTime() - date.getTimezoneOffset() * 60 * 1000
+

@@ -9,6 +9,7 @@
 
   <filelist id="jsAssets" dir="assets">
     <file name="jquery-1.9.1.min.js" />
+    <file name="jquery.base64.min.js" />
     <file name="es5-sham.min.js" />
     <file name="es5-shim.min.js" />
     <file name="flight.js" />
@@ -67,6 +68,22 @@
       <arg value="baseUrl=lib" />
       <arg value="name=../charts" />
       <arg value="out=charts.js" />
+    </exec>
+
+    <!-- Unix command -->
+    <exec executable="node_modules/.bin/r.js" osfamily="unix">
+      <arg value="-o" />
+      <arg value="baseUrl=lib" />
+      <arg value="name=../download" />
+      <arg value="out=download.js" />
+    </exec>
+
+    <!-- Windows command -->
+    <exec executable="node_modules\.bin\r.js.cmd" osfamily="windows">
+      <arg value="-o" />
+      <arg value="baseUrl=lib" />
+      <arg value="name=../download" />
+      <arg value="out=download.js" />
     </exec>
   </target>
 

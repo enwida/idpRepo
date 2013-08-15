@@ -77,9 +77,9 @@ define ["../util/time_utils", "../util/resolution"], (TimeUtils, Resolution) ->
       # Time restrictions
       timeRestrictionStream = @$node.asEventStream "timeRestrictions", (_, v) -> v
       timeRestrictionStream.onValue (timeRange) =>
-        elements = @$node.find(".datepicker-generic .from")
-        elements.datepicker "setStartDate", new Date timeRange.from
-        elements.datepicker "setEndDate", new Date timeRange.to
+        elements = @$node.find ".datepicker-generic .from"
+        elements.datepicker "setStartDate", TimeUtils.fromUTC new Date timeRange.from
+        elements.datepicker "setEndDate", TimeUtils.fromUTC new Date timeRange.to
 
       @attr.fromDateBus = fromDateBus
 
@@ -123,9 +123,6 @@ define ["../util/time_utils", "../util/resolution"], (TimeUtils, Resolution) ->
           minViewMode   : @viewModes[timeRange]
           startDate     : limits.from ? "1900-01-01"
           endDate       : limits.to ? new Date()
-
-        # TODO: remove, use defaults
-        element.datepicker "update", new Date()
 
     @syncDatepickers = (date, sender) ->
       for timeRange in @timeRanges

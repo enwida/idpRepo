@@ -156,9 +156,10 @@ public class ChartDataController {
         }
     }
     
-    
-
-    
+    @RequestMapping(value = "/download", method = RequestMethod.GET)
+    public String download(@RequestParam int chartId) {
+    	return "charts/download";
+    }
     
 	private NavigationDefaults getNavigationDefaults(int chartId,
 			HttpServletRequest request)
