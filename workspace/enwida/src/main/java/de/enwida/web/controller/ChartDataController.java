@@ -30,6 +30,7 @@ import de.enwida.transport.LineRequest;
 import de.enwida.web.db.model.NavigationDefaults;
 import de.enwida.web.db.model.NavigationSettings;
 import de.enwida.web.model.ChartNavigationData;
+import de.enwida.web.model.User;
 import de.enwida.web.service.interfaces.ILineService;
 import de.enwida.web.service.interfaces.INavigationService;
 import de.enwida.web.service.interfaces.IUserService;
@@ -63,12 +64,14 @@ public class ChartDataController {
     @RequestMapping(value = "/navigation", method = RequestMethod.GET)
     @ResponseBody
     public ChartNavigationData getNavigationData(@RequestParam int chartId,
-	    HttpServletRequest request, Principal principal, Locale locale) {
+	    HttpServletRequest request, Principal principal, Locale locale) throws Exception {
 
-		ChartNavigationData chartNavigationData = new ChartNavigationData();
+    	final User user = userService.getCurrentUser();
+		final ChartNavigationData chartNavigationData = navigationService.getNavigationData(chartId, user, locale);
+
+		// Apply defaults
     	try {
-			final NavigationDefaults defaults = getNavigationDefaults(chartId,
-					request);
+			final NavigationDefaults defaults = getNavigationDefaults(chartId, request);
         	if (defaults != null) {
             	chartNavigationData.setDefaults(defaults);
         	}
