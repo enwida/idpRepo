@@ -25,8 +25,8 @@ define ["../util/time_utils", "../util/resolution"], (TimeUtils, Resolution) ->
         from : new Date data.timeRangeMax.from
         to   : new Date data.timeRangeMax.to
 
-      @fillTimeRange()
       @fillDatePickers dateLimits
+      @fillTimeRange()
 
       # Apply defaults
       defaultRange = data.defaults.timeRange
@@ -55,34 +55,47 @@ define ["../util/time_utils", "../util/resolution"], (TimeUtils, Resolution) ->
       fromDateStreams = @$node.find(".datepicker-generic .from").map (_, e) ->
         $(e).asEventStream("changeDate").map (e) -> e.date
       fromDateStream = Bacon.mergeAll(fromDateStreams...)
-      fromDateBus = new Bacon.Bus()
-      fromDateBus.plug fromDateStream
+      @attr.fromDateBus.plug fromDateStream
+      validFromDateBus = new Bacon.Bus()
+
+      # Create stream containing time range restrictions
+      timeRestrictionStream = @$node.asEventStream "timeRestrictions", (_, v) -> v
+
+      # Forward valid dates on bus
+      timeRestrictionStream.toProperty().combine(@attr.fromDateBus, -> arguments)
+        .onValue ([timeRange, date]) =>
+          validDate = TimeUtils.nearestInTimeRange date, timeRange
+          @getCurrentDatePicker().datepicker "setDate", new Date validDate
+          validFromDateBus.push validDate
 
       # Keep datepicker dates in sync
-      syncStream = timeRangeStream.toProperty().sampledBy fromDateBus, (timeRange, date) -> [date, timeRange]
+      syncStream = timeRangeStream.toProperty().sampledBy validFromDateBus, (timeRange, date) -> [date, timeRange]
       syncStream.onValue (args) => @syncDatepickers args...
 
       # Create date range emitting stream
       dateRangeStream = Bacon.combineWith ((fromDate, timeRange) =>
-        toDate = TimeUtils.addRange fromDate, timeRange
+        # TODO: try to get rid of this
+        fromDate = @getFromDate()
+        fromDate = TimeUtils.normalizedToTimeRange fromDate, timeRange
+        toDate   = TimeUtils.addRange fromDate, timeRange
         from: fromDate, to: toDate
-      ), fromDateBus, timeRangeStream
-      dateRangeStream.onValue (timeRange) =>
-        @trigger "timeSelectionChanged", timeRange: timeRange
+      ), validFromDateBus, timeRangeStream, timeRestrictionStream
+
+      timeRestrictionStream.toProperty().sampledBy(dateRangeStream, -> arguments)
+        .onValue ([timeRestriction, timeRange]) =>
+          timeRange.to = TimeUtils.nearestInTimeRange timeRange.to, timeRestriction
+          @trigger "timeSelectionChanged", timeRange: timeRange
 
       # Next/prev buttons
       @$node.find(".nextPeriode").click => @nextPeriode()
       @$node.find(".prevPeriode").click => @prevPeriode()
 
-      # Time restrictions
-      timeRestrictionStream = @$node.asEventStream "timeRestrictions", (_, v) -> v
+      # Apply time range restrictions to datepickers
       timeRestrictionStream.onValue (timeRange) =>
         elements = @$node.find ".datepicker-generic .from"
         elements.datepicker "setStartDate", TimeUtils.fromUTC new Date timeRange.from
         elements.datepicker "setEndDate", TimeUtils.fromUTC new Date timeRange.to
-
-      @attr.fromDateBus = fromDateBus
-
+      
     @createElements = ->
       @$node.empty()
 
@@ -107,9 +120,6 @@ define ["../util/time_utils", "../util/resolution"], (TimeUtils, Resolution) ->
         continue unless _(@attr.navigationData.timeRanges).contains(timeRange)
         timeRangeName = @attr.navigationData.localizations.timeRanges[timeRange]
         element.append($("<option>").val(timeRange).text(timeRangeName))
-
-      # Trigger first change element
-      element.change()
 
     @fillDatePickers = (limits={}) ->
       @timeRanges.forEach (timeRange) =>
@@ -166,7 +176,6 @@ define ["../util/time_utils", "../util/resolution"], (TimeUtils, Resolution) ->
       datePicker = @getCurrentDatePicker()
       datePicker.datepicker "setDate", date
       @attr.fromDateBus.push date
-      @syncDatepickers date, @getCurrentTimeRange()
 
     @prevPeriode = ->
       modifier = TimeUtils.getDateModifier @getCurrentTimeRange()
@@ -185,6 +194,7 @@ define ["../util/time_utils", "../util/resolution"], (TimeUtils, Resolution) ->
       timeRange: ".timerange"
 
     @after "initialize", ->
+      @attr.fromDateBus = new Bacon.Bus()
       @on "refresh", (_, opts) => @refresh opts.data
 
 

@@ -55,7 +55,9 @@ define [ "components/visual"
           data: chartId: @attr.id
           error: (err) -> callback err
           success: (data) =>
+            @logDebug "Got navigation data:"
             console.log data
+
             @navigationData = data
             callback null, data
 
@@ -90,6 +92,9 @@ define [ "components/visual"
       @onGetLines = (selections) ->
         # Calculate resolution
         selections.resolution = @optimalResolution selections
+
+        @logDebug "Getting lines:"
+        @logDebug JSON.stringify selections
 
         # Update info box
         selections.title = @attr.navigationData.title
