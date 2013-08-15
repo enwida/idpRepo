@@ -36,16 +36,16 @@
 	<tbody>
 		<c:forEach var="user" items="${users}">
 			<tr>
-				<td><a href='admin_user.html?userID=${user.userID}'>${user.userName}</a></td>
+				<td><a href='admin_user.html?userID=${user.userId}'>${user.userName}</a></td>
 				<td><input type="checkbox"
-					onclick="enableDisableUser(${user.userID},this.checked);"
+					onclick="enableDisableUser(${user.userId},this.checked);"
 					${user.enabled == 'true' ? 'checked' : ''}></td>
 				<td>${user.firstName} ${user.lastName}</td>
 				<td>${user.lastLogin}</td>
 				<td>${user.telephone}</td>
 				<td>${user.companyName}</td>
 				<td>
-					<a href='admin_editgroup.html?userID=${user.userID}'><message:message code="de.enwida.userManagement.userList.editGroup" /></a>
+					<a href='admin_editgroup.html?userID=${user.userId}'><message:message code="de.enwida.userManagement.userList.editGroup" /></a>
 				</td>
 			</tr>
 		</c:forEach>

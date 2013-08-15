@@ -28,8 +28,10 @@
 		 <beans:property name="defaultTargetUrl" value="/user/" />
 		 <beans:property name="useReferer" value="true"/>
 	 </beans:bean>
-
-
+	 
+	 <beans:bean id="rememberMeEventHandler" class="de.enwida.web.application.RememberMeEventHandler"/>
+	 
+	 
     <http use-expressions="true" auto-config="true" >
 <!--  		<intercept-url pattern="/dashboard" access="hasRole('ROLE USER')"/> -->
 	    <intercept-url pattern="/" access="permitAll" />

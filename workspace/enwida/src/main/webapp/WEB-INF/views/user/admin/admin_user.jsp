@@ -34,12 +34,12 @@
 			<tr>
 				<td><message:message code="de.enwida.userManagement.groups" /></td>
 				<td>${user.groups} 
-					<a href="admin_editgroup.html?userID=${user.userID}"><message:message code="de.enwida.admin_editgroup.title" /></a>
+					<a href="admin_editgroup.html?userID=${user.userId}"><message:message code="de.enwida.admin_editgroup.title" /></a>
 				</td>
 			</tr>
 			<tr>
 				<td><message:message code="de.enwida.userManagement.roles" /></td>
-				<td>${user.roles}</td>
+				<td>${user.authorities}</td>
 			</tr>
 		</table>
 		<input type="submit" class="btn btn-primary" name="delete" value="<message:message code="de.enwida.userManagement.delete" />" />

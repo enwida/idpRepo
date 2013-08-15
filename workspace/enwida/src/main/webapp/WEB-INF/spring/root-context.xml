@@ -69,6 +69,7 @@
 	
 	<!-- This class onApplicationEvent is triggered when root conetxt is loaded -->
 	<bean id="eventListenerBean" class="de.enwida.web.application.ApplicationContextInitializer" />
+	
 
 	<bean id="mailService" class="de.enwida.web.service.implementation.MailServiceImpl">
 	 	 <property name="starttls" value="${mail.smtp.starttls.enable}"/>

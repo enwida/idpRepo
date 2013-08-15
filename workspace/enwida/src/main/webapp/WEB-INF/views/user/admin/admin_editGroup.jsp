@@ -36,7 +36,7 @@
 			<c:forEach var="group" items="${groupsWithUsers}">
 				<tr>
 					<td>${group.groupName}</td>
-					<td><c:forEach var="user" items="${group.assignedUsers}"><a href='admin_user.html?userID=${user.userID}'>${user.userName}</a>,</c:forEach>
+					<td><c:forEach var="user" items="${group.assignedUsers}"><a href='admin_user.html?userID=${user.userId}'>${user.userName}</a>,</c:forEach>
 					</td>
 					<td><input type="checkbox" checked="${group.autoPass}"/></td>
 					<td>
@@ -56,7 +56,7 @@
 	</table>
 <script>
 $(function() {
-	$('#selectedUser option[value='+QueryString.userID+']').attr('selected','selected');
+	$('#selectedUser option[value='+QueryString.userId+']').attr('selected','selected');
 	$('#selectedGroup option[value='+QueryString.groupID+']').attr('selected','selected');
 });
 </script>
@@ -79,7 +79,7 @@ $(function() {
 			<td>
 				<select id="selectedUser" name="selectedUser">
 						<c:forEach var="user" items="${users}">
-							<option value="${user.userID}">${user.userName}</option>
+							<option value="${user.userId}">${user.userName}</option>
 						</c:forEach>
 				</select>
 			</td>
