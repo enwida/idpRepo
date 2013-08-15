@@ -15,6 +15,7 @@ import de.enwida.web.dao.interfaces.IRightDao;
 import de.enwida.web.db.model.CalendarRange;
 import de.enwida.web.model.AuthorizationRequest;
 import de.enwida.web.model.Right;
+import de.enwida.web.model.Role;
 
 @Repository
 @TransactionConfiguration(transactionManager = "jpaTransactionManager", defaultRollback = true)
@@ -36,19 +37,16 @@ public class RightDaoImpl extends AbstractBaseDao<Right> implements IRightDao {
             throws Exception {
 
         TypedQuery<Right> typedQuery = em.createQuery("from " + Right.class.getName()
-                                + "  WHERE role_id = ? AND tso = ? AND product = ? AND aspect_id = ? AND resolution = ? AND time1 <= ? AND time2 >= ? AND enabled = ?",
+                                + "  WHERE role_id = :role_id AND tso = :tso AND product = :product AND aspect = :aspect AND resolution = :resolution AND time1 <= :time1 AND time1 >= :time2 AND enabled = :enabled",
                         Right.class);
-        typedQuery.setParameter("role_id", dataAuthorization.getRole());
+
+        typedQuery.setParameter("role_id", dataAuthorization.getRole().getRoleID());
         typedQuery.setParameter("tso", dataAuthorization.getTso());
         typedQuery.setParameter("product", dataAuthorization.getProduct());
-        typedQuery.setParameter("aspect_id",
-                Aspect.valueOf(dataAuthorization.getAspect()).ordinal());
-        typedQuery
-                .setParameter("resolution", dataAuthorization.getResolution());
-        typedQuery.setParameter("time1", dataAuthorization.getTimeRange()
-                .getFrom());
-        typedQuery.setParameter("time2", dataAuthorization.getTimeRange()
-                .getTo());
+        typedQuery.setParameter("aspect", dataAuthorization.getAspect());
+        typedQuery.setParameter("resolution", dataAuthorization.getResolution());
+        typedQuery.setParameter("time1", dataAuthorization.getTimeRange().getFrom());
+        typedQuery.setParameter("time2", dataAuthorization.getTimeRange().getTo()); 
         typedQuery.setParameter("enabled", dataAuthorization.isEnabled());
 
         return typedQuery.getResultList().size() > 0 ? true : false;
@@ -57,17 +55,21 @@ public class RightDaoImpl extends AbstractBaseDao<Right> implements IRightDao {
     
     @Override    public List<CalendarRange> getAllowedTimeRanges(AuthorizationRequest request) throws Exception {
 
+    	final List<Long> allRoleIDs = new ArrayList<>();
+    	for (final Role role : request.getUser().getAllRoles()) {
+    		allRoleIDs.add(role.getRoleID());
+    	}
+    	
         TypedQuery<Right> typedQuery = em.createQuery( "from "+ Right.class.getName()
-                + "  WHERE role_id in ? AND tso = ? AND product = ? AND aspect_id = ? AND resolution = ? AND enabled = true",
+                + "  WHERE role_id in :role_id AND tso = :tso AND product = :product AND aspect = :aspect AND resolution = :resolution AND enabled = true",
         Right.class);
-        typedQuery.setParameter("role_id", request.getUser().getAllRoles().toArray());
+        typedQuery.setParameter("role_id", allRoleIDs);
         typedQuery.setParameter("tso",request.getTso());
         typedQuery.setParameter("product", request.getProduct());
-        typedQuery.setParameter("aspect_id", request.getAspect());
+        typedQuery.setParameter("aspect", request.getAspect().name());
         typedQuery.setParameter("resolution", request.getResolution().name());
 
         final List<CalendarRange> ranges = new ArrayList<>();
-        
         for (Right right : typedQuery.getResultList()) {
             ranges.add(right.getTimeRange());
         }
@@ -94,12 +96,12 @@ public class RightDaoImpl extends AbstractBaseDao<Right> implements IRightDao {
     public List<Right> getListByExample(Right dataAuthorization)
             throws Exception {
         TypedQuery<Right> typedQuery = em.createQuery( "from "+ Right.class.getName()
-                                + "  WHERE role_id = ? AND tso = ? AND product = ? AND aspect_id = ? AND enabled = ?",
+                                + "  WHERE role_id = :role_id AND tso = :tso AND product = :product AND aspect = :aspect AND enabled = :enabled",
                         Right.class);
-        typedQuery.setParameter("groupID", dataAuthorization.getRole());
+        typedQuery.setParameter("role_id", dataAuthorization.getRole().getRoleID());
         typedQuery.setParameter("tso", dataAuthorization.getTso());
         typedQuery.setParameter("product", dataAuthorization.getProduct());
-        typedQuery.setParameter("aspect_id", dataAuthorization.getAspect());
+        typedQuery.setParameter("aspect", dataAuthorization.getAspect());
         typedQuery.setParameter("enabled", dataAuthorization.isEnabled());
 
         return typedQuery.getResultList();

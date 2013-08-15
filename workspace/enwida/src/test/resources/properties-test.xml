@@ -10,5 +10,5 @@
 	<util:properties id="configProperties">
     </util:properties>
     <util:properties id="enwidaConfigProperties" location="classpath:/configProperties/enwida.jdbc.config" />
-    <util:properties id="applicationProperties" location="classpath:/configProperties/application.properties" />
+    <util:properties id="applicationProperties" location="classpath:/configProperties/application-test.properties" />
 </beans>

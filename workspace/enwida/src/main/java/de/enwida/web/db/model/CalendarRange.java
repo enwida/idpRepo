@@ -1,6 +1,7 @@
 package de.enwida.web.db.model;
 
 import java.beans.Transient;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -13,7 +14,9 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 @Embeddable
-public class CalendarRange implements Cloneable, Comparable<CalendarRange> {
+public class CalendarRange implements Serializable, Cloneable, Comparable<CalendarRange> {
+
+	private static final long serialVersionUID = -6504984608166283798L;
 
 	public static final String FROM = "START_DATE";
 	public static final String TO = "END_DATE";

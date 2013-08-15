@@ -612,4 +612,11 @@ public class UserServiceImpl implements IUserService {
         }
         return null;
     }
+    
+    @Override
+    public User syncUser(User user) {
+    	user = fetchUser(user.getUsername());
+    	userDao.refresh(user);
+    	return user;
+    }
 }

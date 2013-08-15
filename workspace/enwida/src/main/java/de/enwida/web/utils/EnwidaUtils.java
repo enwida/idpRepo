@@ -11,6 +11,8 @@ import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import de.enwida.transport.Aspect;
 import de.enwida.transport.DataResolution;
@@ -213,4 +215,26 @@ public class EnwidaUtils {
         }
         return md5;
     }
+	
+	/*
+	 * Returns input string with environment variable references expanded, e.g. $SOME_VAR or ${SOME_VAR}
+	 */
+	public static String resolveEnvVars(String input)
+	{
+	    if (null == input) {
+	        return null;
+	    }
+
+	    // match ${ENV_VAR_NAME} or $ENV_VAR_NAME
+	    final Pattern p = Pattern.compile("\\$\\{(\\w+)\\}|\\$(\\w+)");
+	    final Matcher m = p.matcher(input); // get a matcher object
+	    final StringBuffer sb = new StringBuffer();
+	    while(m.find()){
+	        String envVarName = null == m.group(1) ? m.group(2) : m.group(1);
+	        String envVarValue = System.getenv(envVarName);
+	        m.appendReplacement(sb, null == envVarValue ? "" : envVarValue);
+	    }
+	    m.appendTail(sb);
+	    return sb.toString();
+	}
 }

@@ -5,24 +5,24 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.postgresql.util.PSQLException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.datasource.AbstractDataSource;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.transaction.annotation.Transactional;
 
 import de.enwida.transport.Aspect;
 import de.enwida.transport.DataResolution;
@@ -63,115 +63,24 @@ public class ChartNavigationTest {
 	
 	private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 	private static final String username = "navigationTester";
-	private static final String groupName = "navigationTesterGroup";
-
+	
 	@Before
-	public void setup() throws Exception {
-		User user = userService.fetchUser(username);
-		if (user != null) {
-			// Test user is already there
-			return;
-		}
-
-		user = new User(username, "", "John", "Doe", true);
-		user.setCompanyLogo("");
-		user.setCompanyName("");
-		user.setTelephone("");
-		user.setEnabled(true);
-		userService.saveUser(user);
-		final Group group = setupGroup(user);
-		setupRoles(group);
-	}
-	
-	private Group setupGroup(User user) throws Exception {
-		
-        for (final Group group : userService.fetchAllGroups()) {
-        	if (group.getGroupName().equals(groupName)) {
-        		// Test group is already there
-        		return group;
-        	}
-        }
-		
-		final Group group = new Group();
-		group.setGroupID(42l);
-		group.setGroupName(groupName);
-		try {
-            userService.saveGroup(group);
-			userService.assignGroupToUser(user.getUserId(), group.getGroupID());
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-		
-		return group;
-	}
-	
-	private void setupRoles(Group group) throws Exception {
+	public void cleanup() throws Exception {
 		final Connection connection = dataSource.getConnection();
-		PreparedStatement stmt = connection.prepareStatement("INSERT INTO users.roles VALUES(?, ?, ?)");
-		stmt.setInt(1, 42);
-		stmt.setString(2, "navigationTestRole1");
-		stmt.setString(3, "navigation testing purposes");
-		try {
-			stmt.execute();
-		} catch (PSQLException e) {
-			// Ignore "already exists" failure
-			if (!e.getMessage().contains("already exists")) {
-				throw e;
-			}
-		}
-		
-		stmt = connection.prepareStatement("INSERT INTO users.roles VALUES(?, ?, ?)");
-		stmt.setInt(1, 43);
-		stmt.setString(2, "navigationTestRole2");
-		stmt.setString(3, "navigation testing purposes");
-		try {
-			stmt.execute();
-		} catch (PSQLException e) {
-			// Ignore "already exists" failure
-			if (!e.getMessage().contains("already exists")) {
-				throw e;
-			}
-		}
-	}
-	
-	private void setupBasicRights(int roleId) throws Exception {
-		final Connection connection = dataSource.getConnection();
-		final int[] tsos = new int[] { 99, 199 };
-		final int[] products = new int[] { 211, 212, 221, 222, 311, 312, 321, 322, 313, 323, 314, 324, 315, 325, 316, 326 };
-		final Date time1 = new Date(dateFormat.parse("2009-01-01").getTime());
-		final Date time2 = new Date(dateFormat.parse("2012-01-01").getTime());
-		
-		for (final int tso : tsos) {
-			for (final int product : products) {
-				for (final Aspect aspect : Aspect.values()) {
-					for (final DataResolution resolution : DataResolution.values()) {
-						final PreparedStatement stmt = connection.prepareStatement(
-							"INSERT INTO users.rights (role_id,tso,product,resolution,time1,time2,aspect_id,enabled) VALUES " +
-						    "(?,?,?,?,?,?,?,?)"
-					    );
-						stmt.setInt(1, roleId);
-						stmt.setInt(2, tso);
-						stmt.setInt(3, product);
-						stmt.setString(4, resolution.name());
-						stmt.setDate(5, time1);
-						stmt.setDate(6, time2);
-						stmt.setInt(7, aspect.ordinal());
-						stmt.setBoolean(8, true);
-						stmt.execute();
-					}
-				}
-			}
-		}
-	}
-	
-	private void revokeAllRights(int roleId) throws Exception {
-		final Connection connection = dataSource.getConnection();
-		final PreparedStatement stmt = connection.prepareCall("DELETE FROM users.rights WHERE role_id = ?");
-		stmt.setInt(1, roleId);
+		final PreparedStatement stmt = connection.prepareStatement("DELETE FROM users.rights");
 		stmt.execute();
+
+		for (final Role role : userService.fetchAllRoles()) {
+			userService.deleteRole(role.getRoleID());
+		}
+		for (final Group group : userService.fetchAllGroups()) {
+			userService.deleteGroup(group.getGroupID());
+		}
+		for (final User user : userService.fetchAllUsers()) {
+			userService.deleteUser(user.getUserId());
+		}
 	}
-	
+
 	@Test
 	public void serviceIsAvailable() {
 		Assert.assertNotNull(navigationService);
@@ -186,10 +95,7 @@ public class ChartNavigationTest {
 	
 	@Test
 	public void defaultRestrictionsArentExtended() throws Exception {
-		revokeAllRights(42);
-		setupBasicRights(42);
-		
-		final User user = getTestUser();
+		final User user = saveUserWithGroup(username);
 
 		for (final Integer key : navigationService.getAllDefaultNavigationData().keySet()) {
 			final ChartNavigationData defaultNavigation = navigationService.getDefaultNavigationData(key);
@@ -248,10 +154,7 @@ public class ChartNavigationTest {
 	
 	@Test
 	public void checkNoPermissions() throws Exception {
-		revokeAllRights(42);
-		revokeAllRights(43);
-		
-		final User user = getTestUser();
+		final User user = saveUserWithGroup(username);
 		final ChartNavigationData navigationData = navigationService.getNavigationDataWithoutAvailablityCheck(0, user, Locale.ENGLISH);
 		Assert.assertNotNull(navigationData);
 		Assert.assertTrue(navigationData.getAllResolutions().isEmpty());
@@ -263,22 +166,18 @@ public class ChartNavigationTest {
 	
 	@Test
 	public void checkSinglePermission() throws Exception {
-		revokeAllRights(42);
-		revokeAllRights(43);
-		
 		final Right right = new Right();
 		right.setAspect(Aspect.CR_VOL_ACTIVATION.name());
 		right.setEnabled(true);
 		right.setProduct(211);
 		right.setResolution(DataResolution.DAILY.name());
-		right.setRole(new Role(42));
-        right.setTimeRange(
-                new CalendarRange(dateFormat.parse("2008-05-18"), dateFormat.parse("2012-09-02"))
-                        );
+        right.setTimeRange(new CalendarRange(dateFormat.parse("2008-05-18"), dateFormat.parse("2012-09-02")));
 		right.setTso(99);
-		rightDao.addRight(right);
 		
-		final User user = getTestUser();
+		User user = saveUserWithGroup(username);
+		saveRole(user, "testrole1");
+		saveRight(user, right);
+		user = userService.syncUser(user);
 		
 		final ChartNavigationData navigationData = navigationService.getNavigationDataWithoutAvailablityCheck(0, user, Locale.GERMAN);
 		Assert.assertNotNull(navigationData);
@@ -295,42 +194,36 @@ public class ChartNavigationTest {
 		Assert.assertTrue(product.productId == right.getProduct());
 		Assert.assertTrue(product.resolutions.size() == 1);
 		Assert.assertEquals(product.resolutions.get(0).name(), right.getResolution());
-		Assert.assertEquals(product.timeRange.getFrom().getTimeInMillis(), right.getTimeRange().getFrom().getTime());
-		Assert.assertEquals(product.timeRange.getTo().getTimeInMillis(), right.getTimeRange().getTo().getTime());
+		Assert.assertEquals(product.timeRange.getFrom().getTimeInMillis(), right.getTimeRange().getFrom().getTimeInMillis());
+		Assert.assertEquals(product.timeRange.getTo().getTimeInMillis(), right.getTimeRange().getTo().getTimeInMillis());
 		
-		checkLines(navigationData);
+		checkLines(user, navigationData);
 	}
 
 	@Test
 	public void checkSinglePermissionPerRoleAndNonExistentTso() throws Exception {
-		revokeAllRights(42);
-		revokeAllRights(43);
-		
 		final Right right1 = new Right();
 		right1.setAspect(Aspect.CR_VOL_ACTIVATION.name());
 		right1.setEnabled(true);
 		right1.setProduct(211);
 		right1.setResolution(DataResolution.DAILY.name());
-		right1.setRole(new Role(42));
-        right1.setTimeRange(
-                new CalendarRange(dateFormat.parse("2008-05-18"), dateFormat.parse("2012-09-02"))
-                        );
+        right1.setTimeRange(new CalendarRange(dateFormat.parse("2008-05-18"), dateFormat.parse("2012-09-02")));
 		right1.setTso(99);
-		rightDao.addRight(right1);
 
 		final Right right2 = new Right();
 		right2.setAspect(Aspect.CR_VOL_ACTIVATION.name());
 		right2.setEnabled(true);
 		right2.setProduct(311);
 		right2.setResolution(DataResolution.MONTHLY.name());
-		right2.setRole(new Role(43));
-        right2.setTimeRange(
-                new CalendarRange(dateFormat.parse("2008-05-18"), dateFormat.parse("2012-09-02"))
-                        );
+        right2.setTimeRange(new CalendarRange(dateFormat.parse("2008-05-18"), dateFormat.parse("2012-09-02")));
 		right2.setTso(100);
-		rightDao.addRight(right2);
 		
-		final User user = getTestUser();
+		User user = saveUserWithGroup(username);
+		final Role role1 = saveRole(user, "testrole1");
+		final Role role2 = saveRole(user, "testrole2");
+		saveRight(role1, right1);
+		saveRight(role2, right2);
+		user = userService.syncUser(user);
 		
 		final ChartNavigationData navigationData = navigationService.getNavigationDataWithoutAvailablityCheck(0, user, Locale.GERMAN);
 		Assert.assertNotNull(navigationData);
@@ -353,42 +246,36 @@ public class ChartNavigationTest {
 		Assert.assertTrue(product.productId == right1.getProduct());
 		Assert.assertTrue(product.resolutions.size() == 1);
 		Assert.assertEquals(product.resolutions.get(0).name(), right1.getResolution());
-		Assert.assertEquals(product.timeRange.getFrom().getTimeInMillis(), right1.getTimeRange().getFrom().getTime());
-		Assert.assertEquals(product.timeRange.getTo().getTimeInMillis(), right1.getTimeRange().getTo().getTime());
+		Assert.assertEquals(product.timeRange.getFrom().getTimeInMillis(), right1.getTimeRange().getFrom().getTimeInMillis());
+		Assert.assertEquals(product.timeRange.getTo().getTimeInMillis(), right1.getTimeRange().getTo().getTimeInMillis());
 
-		checkLines(navigationData);
+		checkLines(user, navigationData);
 	}
 
 	@Test
 	public void checkSinglePermissionPerRoleAndProduct() throws Exception {
-		revokeAllRights(42);
-		revokeAllRights(43);
-		
 		final Right right1 = new Right();
 		right1.setAspect(Aspect.CR_VOL_ACTIVATION.name());
 		right1.setEnabled(true);
 		right1.setProduct(211);
 		right1.setResolution(DataResolution.DAILY.name());
-		right1.setRole(new Role(42));
-		right1.setTimeRange(
-		        new CalendarRange(dateFormat.parse("2009-05-18"), dateFormat.parse("2011-09-02"))
-		                );
+		right1.setTimeRange(new CalendarRange(dateFormat.parse("2009-05-18"), dateFormat.parse("2011-09-02")));
 		right1.setTso(99);
-		rightDao.addRight(right1);
 
 		final Right right2 = new Right();
 		right2.setAspect(Aspect.CR_VOL_ACTIVATION.name());
 		right2.setEnabled(true);
 		right2.setProduct(311);
 		right2.setResolution(DataResolution.MONTHLY.name());
-		right2.setRole(new Role(43));
-        right2.setTimeRange(
-                new CalendarRange(dateFormat.parse("2009-05-18"), dateFormat.parse("2011-09-02"))
-                        );
+        right2.setTimeRange(new CalendarRange(dateFormat.parse("2009-05-18"), dateFormat.parse("2011-09-02")));
 		right2.setTso(99);
-		rightDao.addRight(right2);
 		
-		final User user = getTestUser();
+		User user = saveUserWithGroup(username);
+		final Role role1 = saveRole(user, "testrole1");
+		final Role role2 = saveRole(user, "testrole2");
+		saveRight(role1, right1);
+		saveRight(role2, right2);
+		user = userService.syncUser(user);
 		
 		final ChartNavigationData navigationData = navigationService.getNavigationDataWithoutAvailablityCheck(0, user, Locale.GERMAN);
 		Assert.assertNotNull(navigationData);
@@ -407,49 +294,43 @@ public class ChartNavigationTest {
 		Assert.assertTrue(product1.productId == right1.getProduct());
 		Assert.assertTrue(product1.resolutions.size() == 1);
 		Assert.assertEquals(product1.resolutions.get(0).name(), right1.getResolution());
-		Assert.assertEquals(product1.timeRange.getFrom().getTimeInMillis(), right1.getTimeRange().getFrom().getTime());
-		Assert.assertEquals(product1.timeRange.getTo().getTimeInMillis(), right1.getTimeRange().getTo().getTime());		
+		Assert.assertEquals(product1.timeRange.getFrom().getTimeInMillis(), right1.getTimeRange().getFrom().getTimeInMillis());
+		Assert.assertEquals(product1.timeRange.getTo().getTimeInMillis(), right1.getTimeRange().getTo().getTimeInMillis());		
 
 		final ProductAttributes product2 = products.get(1);
 		Assert.assertTrue(product2.productId == right2.getProduct());
 		Assert.assertTrue(product2.resolutions.size() == 1);
 		Assert.assertEquals(product2.resolutions.get(0).name(), right2.getResolution());
-		Assert.assertEquals(product2.timeRange.getFrom().getTimeInMillis(), right2.getTimeRange().getFrom().getTime());
-		Assert.assertEquals(product2.timeRange.getTo().getTimeInMillis(), right2.getTimeRange().getTo().getTime());
+		Assert.assertEquals(product2.timeRange.getFrom().getTimeInMillis(), right2.getTimeRange().getFrom().getTimeInMillis());
+		Assert.assertEquals(product2.timeRange.getTo().getTimeInMillis(), right2.getTimeRange().getTo().getTimeInMillis());
 
-		checkLines(navigationData, toCalendar("2009-06-01"), toCalendar("2010-08-05"));
+		checkLines(user, navigationData, toCalendar("2009-06-01"), toCalendar("2010-08-05"));
 	}
 
 	@Test
 	public void checkSinglePermissionPerRoleForSameProduct() throws Exception {
-		revokeAllRights(42);
-		revokeAllRights(43);
-		
 		final Right right1 = new Right();
 		right1.setAspect(Aspect.CR_VOL_ACTIVATION.name());
 		right1.setEnabled(true);
 		right1.setProduct(211);
 		right1.setResolution(DataResolution.DAILY.name());
-		right1.setRole(new Role(42));
-        right1.setTimeRange(
-                new CalendarRange(dateFormat.parse("2008-05-18"), dateFormat.parse("2012-09-02"))
-                        );
+        right1.setTimeRange(new CalendarRange(dateFormat.parse("2008-05-18"), dateFormat.parse("2012-09-02")));
 		right1.setTso(99);
-		rightDao.addRight(right1);
 
 		final Right right2 = new Right();
 		right2.setAspect(Aspect.CR_VOL_ACTIVATION.name());
 		right2.setEnabled(true);
 		right2.setProduct(211);
 		right2.setResolution(DataResolution.MONTHLY.name());
-		right2.setRole(new Role(43));
-        right2.setTimeRange(
-                new CalendarRange(dateFormat.parse("2008-05-18"), dateFormat.parse("2012-09-02"))
-                        );
+        right2.setTimeRange(new CalendarRange(dateFormat.parse("2008-05-18"), dateFormat.parse("2012-09-02")));
 		right2.setTso(99);
-		rightDao.addRight(right2);
 		
-		final User user = getTestUser();
+		User user = saveUserWithGroup(username);
+		final Role role1 = saveRole(user, "testrole1");
+		final Role role2 = saveRole(user, "testrole2");
+		saveRight(role1, right1);
+		saveRight(role2, right2);
+		user = userService.syncUser(user);
 		
 		final ChartNavigationData navigationData = navigationService.getNavigationDataWithoutAvailablityCheck(0, user, Locale.GERMAN);
 		Assert.assertNotNull(navigationData);
@@ -471,41 +352,36 @@ public class ChartNavigationTest {
 		Assert.assertTrue(product1.resolutions.contains(DataResolution.valueOf(right2.getResolution())));
 		
 		// Check that the time matches the maximum of allowed times
-		Assert.assertEquals(product1.timeRange.getFrom().getTimeInMillis(), right2.getTimeRange().getFrom().getTime());
-		Assert.assertEquals(product1.timeRange.getTo().getTimeInMillis(), right1.getTimeRange().getTo().getTime());
+		Assert.assertEquals(product1.timeRange.getFrom().getTimeInMillis(), right2.getTimeRange().getFrom().getTimeInMillis());
+		Assert.assertEquals(product1.timeRange.getTo().getTimeInMillis(), right1.getTimeRange().getTo().getTimeInMillis());
 
-		checkLines(navigationData, toCalendar("2009-06-01"), toCalendar("2010-02-04"));
+		checkLines(user, navigationData, toCalendar("2009-06-01"), toCalendar("2010-02-04"));
 	}
+
 	@Test
 	public void checkTimeRangeExpansionOverRoles() throws Exception {
-		revokeAllRights(42);
-		revokeAllRights(43);
-		
 		final Right right1 = new Right();
 		right1.setAspect(Aspect.CR_VOL_ACTIVATION.name());
 		right1.setEnabled(true);
 		right1.setProduct(211);
 		right1.setResolution(DataResolution.DAILY.name());
-		right1.setRole(new Role(42));
-        right1.setTimeRange(
-                new CalendarRange(dateFormat.parse("2008-05-18"), dateFormat.parse("2012-09-02"))
-                        );
+        right1.setTimeRange(new CalendarRange(dateFormat.parse("2008-05-18"), dateFormat.parse("2012-09-02")));
 		right1.setTso(99);
-		rightDao.addRight(right1);
 
 		final Right right2 = new Right();
 		right2.setAspect(Aspect.CR_VOL_ACTIVATION.name());
 		right2.setEnabled(true);
 		right2.setProduct(211);
 		right2.setResolution(DataResolution.DAILY.name());
-		right2.setRole(new Role(43));
-        right2.setTimeRange(
-                new CalendarRange(dateFormat.parse("2008-05-18"), dateFormat.parse("2012-09-02"))
-                        );
+        right2.setTimeRange(new CalendarRange(dateFormat.parse("2008-05-18"), dateFormat.parse("2012-09-02")));
 		right2.setTso(99);
-		rightDao.addRight(right2);
 		
-		final User user = getTestUser();
+		User user = saveUserWithGroup(username);
+		final Role role1 = saveRole(user, "testrole1");
+		final Role role2 = saveRole(user, "testrole2");
+		saveRight(role1, right1);
+		saveRight(role2, right2);
+		user = userService.syncUser(user);
 		
 		final ChartNavigationData navigationData = navigationService.getNavigationDataWithoutAvailablityCheck(0, user, Locale.GERMAN);
 		Assert.assertNotNull(navigationData);
@@ -527,68 +403,55 @@ public class ChartNavigationTest {
 		Assert.assertTrue(product1.resolutions.contains(DataResolution.valueOf(right2.getResolution())));
 		
 		// Check that the time matches the maximum of allowed times
-		Assert.assertEquals(product1.timeRange.getFrom().getTimeInMillis(), right2.getTimeRange().getFrom().getTime());
-		Assert.assertEquals(product1.timeRange.getTo().getTimeInMillis(), right1.getTimeRange().getTo().getTime());
+		Assert.assertEquals(product1.timeRange.getFrom().getTimeInMillis(), right2.getTimeRange().getFrom().getTimeInMillis());
+		Assert.assertEquals(product1.timeRange.getTo().getTimeInMillis(), right1.getTimeRange().getTo().getTimeInMillis());
 
 		// Check expanding time range over roles
-		checkLines(navigationData);
+		checkLines(user, navigationData);
 	}
 
 	@Test
 	public void checkMultiplePermissionsPerRoleForSameProduct() throws Exception {
-		revokeAllRights(42);
-		revokeAllRights(43);
-		
 		final Right right1 = new Right();
 		right1.setAspect(Aspect.CR_VOL_ACTIVATION.name());
 		right1.setEnabled(true);
 		right1.setProduct(211);
 		right1.setResolution(DataResolution.DAILY.name());
-		right1.setRole(new Role(42));
-        right1.setTimeRange(
-                new CalendarRange(dateFormat.parse("2008-05-18"), dateFormat.parse("2012-09-02"))
-                        );
+        right1.setTimeRange(new CalendarRange(dateFormat.parse("2008-05-18"), dateFormat.parse("2012-09-02")));
 		right1.setTso(99);
-		rightDao.addRight(right1);
 
 		final Right right2 = new Right();
 		right2.setAspect(Aspect.CR_VOL_ACTIVATION.name());
 		right2.setEnabled(true);
 		right2.setProduct(211);
 		right2.setResolution(DataResolution.MONTHLY.name());
-		right2.setRole(new Role(43));
-        right2.setTimeRange(
-                new CalendarRange(dateFormat.parse("2008-05-18"), dateFormat.parse("2012-09-02"))
-                        );
+        right2.setTimeRange(new CalendarRange(dateFormat.parse("2008-05-18"), dateFormat.parse("2012-09-02")));
 		right2.setTso(99);
-		rightDao.addRight(right2);
 
 		final Right right3 = new Right();
 		right3.setAspect(Aspect.CR_VOL_ACTIVATION.name());
 		right3.setEnabled(true);
 		right3.setProduct(211);
 		right3.setResolution(DataResolution.WEEKLY.name());
-		right3.setRole(new Role(42));
-        right3.setTimeRange(
-                new CalendarRange(dateFormat.parse("2008-05-18"), dateFormat.parse("2012-09-02"))
-                        );
+        right3.setTimeRange(new CalendarRange(dateFormat.parse("2008-05-18"), dateFormat.parse("2012-09-02")));
 		right3.setTso(99);
-		rightDao.addRight(right3);
 
 		final Right right4 = new Right();
 		right4.setAspect(Aspect.CR_VOL_ACTIVATION.name());
 		right4.setEnabled(true);
 		right4.setProduct(211);
 		right4.setResolution(DataResolution.WEEKLY.name());
-		right4.setRole(new Role(43));
-        right4.setTimeRange(
-                new CalendarRange(dateFormat.parse("2008-03-13"), dateFormat.parse("2012-09-02"))
-                        );
+        right4.setTimeRange(new CalendarRange(dateFormat.parse("2008-03-13"), dateFormat.parse("2012-09-02")));
 		right4.setTso(99);
-		rightDao.addRight(right4);
 
-		
-		final User user = getTestUser();
+		User user = saveUserWithGroup(username);
+		final Role role1 = saveRole(user, "testrole1");
+		final Role role2 = saveRole(user, "testrole2");
+		saveRight(role1, right1);
+		saveRight(role2, right2);
+		saveRight(role1, right3);
+		saveRight(role2, right4);
+		user = userService.syncUser(user);
 		
 		final ChartNavigationData navigationData = navigationService.getNavigationDataWithoutAvailablityCheck(0, user, Locale.GERMAN);
 		Assert.assertNotNull(navigationData);
@@ -611,21 +474,23 @@ public class ChartNavigationTest {
 		Assert.assertTrue(product1.resolutions.contains(DataResolution.valueOf(right3.getResolution())));
 		
 		// Check that the time matches the maximum of allowed times
-		Assert.assertEquals(product1.timeRange.getFrom().getTimeInMillis(), right4.getTimeRange().getFrom().getTime());
-		Assert.assertEquals(product1.timeRange.getTo().getTimeInMillis(), right3.getTimeRange().getTo().getTime());
+		Assert.assertEquals(product1.timeRange.getFrom().getTimeInMillis(), right4.getTimeRange().getFrom().getTimeInMillis());
+		Assert.assertEquals(product1.timeRange.getTo().getTimeInMillis(), right3.getTimeRange().getTo().getTimeInMillis());
 
-		checkLines(navigationData, toCalendar("2009-12-01"), toCalendar("2010-05-28"));
+		checkLines(user, navigationData, toCalendar("2009-12-01"), toCalendar("2010-05-28"));
 	}
 	
 	@Test
 	public void checkWithBasicRightsOnly() throws Exception {
-		revokeAllRights(42);
-		revokeAllRights(43);
-		setupBasicRights(42);
-		setupBasicRights(43);
+		User user = saveUserWithGroup(username);
+		final Role role1 = saveRole(user, "testrole1");
+		final Role role2 = saveRole(user, "testrole2");
+		setupBasicRights(role1);
+		setupBasicRights(role2);
+		user = userService.syncUser(user);
 
 		for (final int key : navigationService.getAllDefaultNavigationData().keySet()) {
-			final ChartNavigationData navigationData = navigationService.getNavigationDataWithoutAvailablityCheck(key, getTestUser(), Locale.ENGLISH);
+			final ChartNavigationData navigationData = navigationService.getNavigationDataWithoutAvailablityCheck(key, user, Locale.ENGLISH);
 			final ChartNavigationData defaultNavigationData = navigationService.getDefaultNavigationData(key);
 
 			Assert.assertNotNull(navigationData);
@@ -647,31 +512,33 @@ public class ChartNavigationTest {
 				Assert.assertEquals(product.timeRange.getTo().getTime(), dateFormat.parse("2012-01-01"));
 			}
 
-			checkLines(navigationData);
+			checkLines(user, navigationData);
 		}
 	}
 
 	@Test
 	public void checkWithBasicRightsAndProductsRemoved() throws Exception {
-		revokeAllRights(42);
-		revokeAllRights(43);
-		setupBasicRights(42);
-		setupBasicRights(43);
-		
+		User user = saveUserWithGroup(username);
+		final Role role1 = saveRole(user, "testrole1");
+		final Role role2 = saveRole(user, "testrole2");
+		setupBasicRights(role1);
+		setupBasicRights(role2);
+
 		final int[] removedProducts = new int[] { 211, 311, 324, 222 };
 
 		final Connection connection = dataSource.getConnection();
-		for (final int roleId : new int[] { 42, 43 }) {
+		for (final long roleId : new long[] { role1.getRoleID(), role2.getRoleID() }) {
 			for (final int product : removedProducts) {
 				final PreparedStatement stmt = connection.prepareStatement("DELETE FROM users.rights WHERE role_id = ? AND product = ?");
-				stmt.setInt(1, roleId);
+				stmt.setLong(1, roleId);
 				stmt.setInt(2, product);
 				stmt.execute();
 			}
 		}
+		user = userService.syncUser(user);
 		
 		for (final int key : navigationService.getAllDefaultNavigationData().keySet()) {
-			final ChartNavigationData navigationData = navigationService.getNavigationDataWithoutAvailablityCheck(key, getTestUser(), Locale.GERMAN);
+			final ChartNavigationData navigationData = navigationService.getNavigationDataWithoutAvailablityCheck(key, user, Locale.GERMAN);
 			final ChartNavigationData defaultNavigationData = navigationService.getDefaultNavigationData(key);
 
 			Assert.assertNotNull(navigationData);
@@ -693,33 +560,35 @@ public class ChartNavigationTest {
 				Assert.assertTrue(products.size() > 0);
 			}
 
-			checkLines(navigationData);
+			checkLines(user, navigationData);
 		}
 	}
 
 	@Test
 	public void checkWithBasicRightsAndResolutionsRemoved() throws Exception {
-		revokeAllRights(42);
-		revokeAllRights(43);
-		setupBasicRights(42);
-		setupBasicRights(43);
+		User user = saveUserWithGroup(username);
+		final Role role1 = saveRole(user, "testrole1");
+		final Role role2 = saveRole(user, "testrole2");
+		setupBasicRights(role1);
+		setupBasicRights(role2);
 		
 		final int productId = 211;
 		final DataResolution[] removedResolutions = new DataResolution[] { DataResolution.WEEKLY, DataResolution.YEARLY, DataResolution.DAILY };
 
 		final Connection connection = dataSource.getConnection();
-		for (final int roleId : new int[] { 42, 43 }) {
+		for (final long roleId : new long[] { role1.getRoleID(), role2.getRoleID() }) {
 			for (final DataResolution resolution : removedResolutions) {
 				final PreparedStatement stmt = connection.prepareStatement("DELETE FROM users.rights WHERE role_id = ? AND product = ? AND resolution = ?");
-				stmt.setInt(1, roleId);
+				stmt.setLong(1, roleId);
 				stmt.setInt(2, productId);
 				stmt.setString(3, resolution.name());
 				stmt.execute();
 			}
 		}
+		user = userService.syncUser(user);
 		
 		for (final int key : navigationService.getAllDefaultNavigationData().keySet()) {
-			final ChartNavigationData navigationData = navigationService.getNavigationDataWithoutAvailablityCheck(key, getTestUser(), Locale.GERMAN);
+			final ChartNavigationData navigationData = navigationService.getNavigationDataWithoutAvailablityCheck(key, user, Locale.GERMAN);
 			final ChartNavigationData defaultNavigationData = navigationService.getDefaultNavigationData(key);
 
 			Assert.assertNotNull(navigationData);
@@ -748,37 +617,39 @@ public class ChartNavigationTest {
 				Assert.assertEquals(product.timeRange.getTo().getTime(), dateFormat.parse("2012-01-01"));
 			}
 
-			checkLines(navigationData);
+			checkLines(user, navigationData);
 		}
 	}
 
 	@Test
 	public void checkWithBasicRightsAndTimeRangeRestricted() throws Exception {
-		revokeAllRights(42);
-		revokeAllRights(43);
-		setupBasicRights(42);
-		setupBasicRights(43);
-		
+		User user = saveUserWithGroup(username);
+		final Role role1 = saveRole(user, "testrole1");
+		final Role role2 = saveRole(user, "testrole2");
+		setupBasicRights(role1);
+		setupBasicRights(role2);
+
 		final int productId = 211;
 		final java.util.Date startTime = dateFormat.parse("2011-05-09");
 		final java.util.Date endTime   = dateFormat.parse("2011-08-21");
 
 		final Connection connection = dataSource.getConnection();
 
-		for (final int roleId : new int[] { 42, 43 }) {
+		for (final long roleId : new long[] { role1.getRoleID(), role2.getRoleID() }) {
 			for (final DataResolution resolution : DataResolution.values()) {
-				final PreparedStatement stmt = connection.prepareStatement("UPDATE users.rights SET time1 = ? , time2 = ? WHERE role_id = ? AND product = ? AND resolution = ?");
+				final PreparedStatement stmt = connection.prepareStatement("UPDATE users.rights SET start_date = ? , end_date = ? WHERE role_id = ? AND product = ? AND resolution = ?");
 				stmt.setDate(1, new Date(startTime.getTime()));
 				stmt.setDate(2, new Date(endTime.getTime()));
-				stmt.setInt(3, roleId);
+				stmt.setLong(3, roleId);
 				stmt.setInt(4, productId);
 				stmt.setString(5, resolution.name());
 				stmt.execute();
 			}
 		}
+		user = userService.syncUser(user);
 		
 		for (final int key : navigationService.getAllDefaultNavigationData().keySet()) {
-			final ChartNavigationData navigationData = navigationService.getNavigationDataWithoutAvailablityCheck(key, getTestUser(), Locale.GERMAN);
+			final ChartNavigationData navigationData = navigationService.getNavigationDataWithoutAvailablityCheck(key, user, Locale.GERMAN);
 
 			Assert.assertNotNull(navigationData);
 			checkNavigationData(navigationData);
@@ -797,16 +668,17 @@ public class ChartNavigationTest {
 				}
 			}
 
-			checkLines(navigationData);
+			checkLines(user, navigationData);
 		}
 	}
 
 	@Test
 	public void checkWithBasicRightsAndSeveralRestrictions() throws Exception {
-		revokeAllRights(42);
-		revokeAllRights(43);
-		setupBasicRights(42);
-		setupBasicRights(43);
+		User user = saveUserWithGroup(username);
+		final Role role1 = saveRole(user, "testrole1");
+		final Role role2 = saveRole(user, "testrole2");
+		setupBasicRights(role1);
+		setupBasicRights(role2);
 		
 		final int productIdRemoved = 211;
 		final int productIdRestricted = 311;
@@ -814,37 +686,40 @@ public class ChartNavigationTest {
 		final DataResolution[] removedResolutions = new DataResolution[] { DataResolution.WEEKLY, DataResolution.YEARLY, DataResolution.DAILY };
 		final java.util.Date startTime = dateFormat.parse("2011-05-09");
 		final java.util.Date endTime   = dateFormat.parse("2011-08-21");
+		
+		final long[] roleIds = new long[] { role1.getRoleID(), role2.getRoleID() };
 
 		final Connection connection = dataSource.getConnection();
 
-		for (final int roleId : new int[] { 42, 43 }) {
+		for (final long roleId : roleIds) {
 			final PreparedStatement stmt = connection.prepareStatement("DELETE FROM users.rights WHERE role_id = ? AND product = ?");
-			stmt.setInt(1, roleId);
+			stmt.setLong(1, roleId);
 			stmt.setInt(2, productIdRemoved);
 			stmt.execute();
 		}
 
-		for (final int roleId : new int[] { 42, 43 }) {
+		for (final long roleId : roleIds) {
 			for (final DataResolution resolution : removedResolutions) {
 				final PreparedStatement stmt = connection.prepareStatement("DELETE FROM users.rights WHERE role_id = ? AND product = ? AND resolution = ?");
-				stmt.setInt(1, roleId);
+				stmt.setLong(1, roleId);
 				stmt.setInt(2, productIdRestricted);
 				stmt.setString(3, resolution.name());
 				stmt.execute();
 			}
 		}
 
-		for (final int roleId : new int[] { 42, 43 }) {
-			final PreparedStatement stmt = connection.prepareStatement("UPDATE users.rights SET time1 = ? , time2 = ? WHERE role_id = ? AND product = ?");
+		for (final long roleId : roleIds) {
+			final PreparedStatement stmt = connection.prepareStatement("UPDATE users.rights SET start_time = ? , end_time = ? WHERE role_id = ? AND product = ?");
 			stmt.setDate(1, new Date(startTime.getTime()));
 			stmt.setDate(2, new Date(endTime.getTime()));
-			stmt.setInt(3, roleId);
+			stmt.setLong(3, roleId);
 			stmt.setInt(4, productIdRestricted);
 			stmt.execute();
 		}
+		user = userService.syncUser(user);
 
 		for (final int key : navigationService.getAllDefaultNavigationData().keySet()) {
-			final ChartNavigationData navigationData = navigationService.getNavigationDataWithoutAvailablityCheck(key, getTestUser(), Locale.GERMAN);
+			final ChartNavigationData navigationData = navigationService.getNavigationDataWithoutAvailablityCheck(key, user, Locale.GERMAN);
 			final ChartNavigationData defaultNavigationData = navigationService.getDefaultNavigationData(key);
 
 			Assert.assertNotNull(navigationData);
@@ -877,27 +752,10 @@ public class ChartNavigationTest {
 					}
 				}
 			}
-			checkLines(navigationData, toCalendar(startTime), toCalendar(endTime));
+			checkLines(user, navigationData, toCalendar(startTime), toCalendar(endTime));
 		}
 	}
 
-
-	
-	private User getTestUser() throws Exception {
-		final User user = userService.fetchUser(username);
-		Assert.assertNotNull(user);
-		
-		// FIXME mock the roles
-		final Role role1 = new Role();
-		role1.setRoleID(42);
-		
-		final Role role2 = new Role();
-		role2.setRoleID(43);
-
-//		user.setRoles(Arrays.asList(new Role[] { role1, role2 }));
-		return user;
-	}
-	
 	private void checkNavigationData(ChartNavigationData navigationData) {
 		Assert.assertNotNull(navigationData);
 		
@@ -943,15 +801,74 @@ public class ChartNavigationTest {
 		Assert.assertTrue(range.getFrom().compareTo(range.getTo()) <= 0);
 	}
 	
-	private void checkLines(ChartNavigationData navigationData, Calendar startTime, Calendar endTime) throws Exception {
+	private void checkLinesStrict(User user, ChartNavigationData navigationData, Calendar startTime, Calendar endTime) throws Exception {
 		final int[] allProducts = new int[] { 200, 300, 211, 212, 221, 222, 311, 321, 312, 322, 313, 323, 314, 324, 315, 325, 316, 326 };
-		final User user = getTestUser();
-
+		
 		for (final ProductTree tree : navigationData.getProductTrees()) {
 			for (final int product : allProducts) {
 				for (final DataResolution resolution : DataResolution.values()) {
 					for (final Aspect aspect : navigationData.getAspects()) {
-						// System.out.println("Product: " + product + " | Aspect: " + aspect.toString());
+						System.out.println("Product: " + product + " | Aspect: " + aspect.toString());
+
+						final ProductLeaf leaf = tree.getLeaf(product);
+						if (leaf == null || !leaf.getResolution().contains(resolution)) {
+							final Calendar savedStartTime = startTime;
+							final Calendar savedEndTime = endTime;
+
+							if (startTime == null) {
+								startTime = Calendar.getInstance();
+								startTime.setTime(dateFormat.parse("2011-01-01"));
+							}
+							if (endTime == null) {
+								endTime = Calendar.getInstance();
+								endTime.setTime(dateFormat.parse("2012-01-01"));
+							}
+
+							final LineRequest lineRequest = new LineRequest(aspect, product, tree.getTso(), startTime, endTime, resolution, Locale.ENGLISH);
+							Assert.assertFalse(securityService.isAllowed(lineRequest, user));
+							
+							startTime = savedStartTime;
+							endTime = savedEndTime;
+						} else {
+							if (startTime == null) {
+								startTime = leaf.getTimeRange().getFrom();
+							}
+							if (endTime == null) {
+								endTime = leaf.getTimeRange().getTo();
+							}
+
+							final LineRequest lineRequest = new LineRequest(aspect, product, tree.getTso(), startTime, endTime, resolution, Locale.ENGLISH);
+							Assert.assertTrue(securityService.isAllowed(lineRequest, user));
+
+							// Enlarge time range
+							final Calendar t1 = (Calendar) startTime.clone();
+							final Calendar t2 = (Calendar) endTime.clone();
+							t1.add(Calendar.YEAR, -2);
+							t2.add(Calendar.YEAR, 2);
+							lineRequest.setStartTime(t1);
+							lineRequest.setEndTime(t2);
+
+							Assert.assertFalse(securityService.isAllowed(lineRequest, user));
+						}
+					}
+				}
+			}
+		}
+	}
+	private void checkLines(User user, ChartNavigationData navigationData, Calendar startTime, Calendar endTime) throws Exception {
+		final Random random = new Random();
+		final int[] allProducts = new int[] { 200, 300, 211, 212, 221, 222, 311, 321, 312, 322, 313, 323, 314, 324, 315, 325, 316, 326 };
+		
+		for (final ProductTree tree : navigationData.getProductTrees()) {
+			for (int productCount = 0; productCount < allProducts.length / 3; productCount++) {
+				final int product = allProducts[random.nextInt(allProducts.length)];
+
+				for (int resolutionCount = 0; resolutionCount < DataResolution.values().length / 2; resolutionCount++) {
+					final DataResolution resolution = DataResolution.values()[random.nextInt(DataResolution.values().length)];
+					
+					for (final Aspect aspect : navigationData.getAspects()) {
+						System.out.println("Product: " + product + " | Aspect: " + aspect.toString());
+
 						final ProductLeaf leaf = tree.getLeaf(product);
 						if (leaf == null || !leaf.getResolution().contains(resolution)) {
 							final Calendar savedStartTime = startTime;
@@ -998,8 +915,8 @@ public class ChartNavigationTest {
 		}
 	}
 	
-	private void checkLines(ChartNavigationData navigationData) throws Exception {
-		checkLines(navigationData, null, null);
+	private void checkLines(User user, ChartNavigationData navigationData) throws Exception {
+		checkLines(user, navigationData, null, null);
 	}
 	
 	private Calendar toCalendar(java.util.Date date) {
@@ -1011,5 +928,72 @@ public class ChartNavigationTest {
 	private Calendar toCalendar(String source) throws ParseException {
 		return toCalendar(dateFormat.parse(source));
 	}
+
+	@Transactional
+	private Role setupBasicRights(Role role) throws Exception {
+		final Connection connection = dataSource.getConnection();
+		final int[] tsos = new int[] { 99, 199 };
+		final int[] products = new int[] { 211, 212, 221, 222, 311, 312, 321, 322, 313, 323, 314, 324, 315, 325, 316, 326 };
+		final Date time1 = new Date(dateFormat.parse("2009-01-01").getTime());
+		final Date time2 = new Date(dateFormat.parse("2012-01-01").getTime());
+//		final CalendarRange timeRange = new CalendarRange(time1, time2);
+		
+		for (final int tso : tsos) {
+			for (final int product : products) {
+				for (final Aspect aspect : Aspect.values()) {
+					for (final DataResolution resolution : DataResolution.values()) {
+						final PreparedStatement stmt = connection.prepareStatement("INSERT INTO users.rights (aspect,product,resolution,start_date,end_date,tso,enabled,role_id) VALUES (?,?,?,?,?,?,?,?)");
+						stmt.setString(1, aspect.name());
+						stmt.setInt(2, product);
+						stmt.setString(3, resolution.name());
+						stmt.setDate(4, time1);
+						stmt.setDate(5, time2);
+						stmt.setInt(6, tso);
+						stmt.setBoolean(7, true);
+						stmt.setLong(8, role.getRoleID());
+						stmt.execute();
+						
+						// TOO SLOW:
+//						final Right right = new Right(tso, product, resolution.name(), timeRange, aspect.name(), true);
+//						userService.saveRight(right);
+//						right.setRole(role);
+//						userService.saveRight(right);
+
+//						if (++i % 100 == 0) {
+//							System.out.println(i + " rights inserted");
+//						}
+					}
+				}
+			}
+		}
+		return role;
+	}
 	
+	private User saveUserWithGroup(String username) throws Exception {
+		final User user = new User(username, "secret", "test", "test", true);
+		user.setCompanyName("enwida.de");
+		userService.saveUser(user);
+		
+		final Group group = new Group("testgroup");
+		userService.saveGroup(group);
+		
+		userService.assignGroupToUser(user, group);
+		return user;
+	}
+	
+	private Role saveRole(User user, String roleName) throws Exception {
+		final Role role = new Role(roleName);
+		userService.saveRole(role);
+		return userService.assignRoleToGroup(role, user.getGroups().iterator().next());
+	}
+	
+	private Role saveRight(User user, Right right) throws Exception {
+		userService.saveRight(right);
+		return userService.assignRightToRole(right, user.getAllRoles().get(0));
+	}
+	
+	private Role saveRight(Role role, Right right) throws Exception {
+		userService.saveRight(right);
+		return userService.assignRightToRole(right, role);
+	}
 }
