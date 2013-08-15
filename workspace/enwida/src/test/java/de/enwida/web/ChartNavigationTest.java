@@ -46,6 +46,8 @@ import de.enwida.web.utils.ProductLeaf;
 @ContextConfiguration(locations = "classpath:/root-context-test.xml")
 public class ChartNavigationTest {
 
+	private static boolean isDbSchemaRecreated = false;
+	
 	@Autowired
 	private INavigationService navigationService;
 	
@@ -67,19 +69,14 @@ public class ChartNavigationTest {
 	@Before
 	public void cleanup() throws Exception {
 		final Connection connection = dataSource.getConnection();
-		final PreparedStatement stmt = connection.prepareStatement("DELETE FROM users.rights");
-		stmt.execute();
+		
+		if (!isDbSchemaRecreated) {
+			TestUtils.recreateUsersSchema(connection);
+			isDbSchemaRecreated = true;
+		}
 
-		for (final Role role : userService.fetchAllRoles()) {
-			userService.deleteRole(role.getRoleID());
-		}
-		for (final Group group : userService.fetchAllGroups()) {
-			userService.deleteGroup(group.getGroupID());
-		}
-		for (final User user : userService.fetchAllUsers()) {
-			userService.deleteUser(user.getUserId());
-		}
-	}
+		TestUtils.cleanupDatabase(connection);
+		connection.close();	}
 
 	@Test
 	public void serviceIsAvailable() {
