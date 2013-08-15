@@ -45,6 +45,11 @@ define ->
     modifier = @getDateModifier timeRange
     @modifyDate time, modifier
 
+  subtractRange: (time, timeRange) ->
+    modifier = @getDateModifier timeRange
+    modifier.backwards = true
+    @modifyDate time, modifier
+
   getWeekStart: (date) ->
     result = new Date date
     while result.getDay() isnt 1
@@ -86,6 +91,12 @@ define ->
 
   fromUTC: (date) ->
     new Date date.getTime() - date.getTimezoneOffset() * 60 * 1000
+
+  isInTimeRange: (date, timeRange) ->
+    date >= timeRange.from and date <= timeRange.to
+
+  isTimeRangeInside: (testee, timeRange) ->
+    @isInTimeRange(testee.from, timeRange) and @isInTimeRange(testee.to, timeRange)
 
   nearestInTimeRange: (date, timeRange) ->
     from = new Date timeRange.from

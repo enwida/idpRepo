@@ -9,6 +9,7 @@ define [ "components/visual"
          "util/lines_preprocessor"
          "util/resolution"
          "util/product_tree"
+         "util/time_utils"
         ],
 
   (Visual
@@ -22,6 +23,7 @@ define [ "components/visual"
    LinesPreprocessor
    Resolution
    ProductTree
+   TimeUtils
   ) ->
 
     flight.component ->
@@ -90,6 +92,12 @@ define [ "components/visual"
             @logDebug "Sent disabled lines"
 
       @onGetLines = (selections) ->
+        # Check if time selection is within bounds
+        leaf = @attr.treeHelper.traverse selections.tso, selections.product
+        if not TimeUtils.isTimeRangeInside selections.timeRange, leaf.timeRange
+          @logDebug "No line request made due to time restrictions"
+          return
+
         # Calculate resolution
         selections.resolution = @optimalResolution selections
 
@@ -162,13 +170,26 @@ define [ "components/visual"
         @on "chartMessage", (_, opts) ->
           @getMsg().showText opts.msg
 
+        # Compare methods
+        productSelectionEquals = -> false # TODO
+        timeSelectionEquals = (a, b) ->
+          new Date(a.timeRange.from).getTime() == new Date(b.timeRange.from).getTime() and \
+          new Date(a.timeRange.to).getTime() == new Date(b.timeRange.to).getTime()
+
+        # Streams from selection subsystems
         productStream = @$node.asEventStream("productSelectionChanged", (_, v) -> v)
         timeStream = @$node.asEventStream("timeSelectionChanged", (_, v) -> v)
+        selectionStream = productStream.toProperty().sampledBy timeStream, $.extend
+
+        # Order is important here!
+        # Call onValue on selectionStream before calling it on productStream
+        selectionStream.onValue (selections) =>
+          @onGetLines selections
+
         productStream.onValue (selections) =>
           leaf = @attr.treeHelper.traverse selections.tso, selections.product
           @trigger @select("timeSelection"), "timeRestrictions", leaf.timeRange
-        selectionStream = Bacon.combineWith $.extend, productStream, timeStream
-        selectionStream.onValue (selections) => @onGetLines selections
+          @trigger @select("timeSelection"), "requestTimeSelection"
 
         # Parse element attributes
         @attr.type = @$node.attr("data-chart-type") ? "line"
