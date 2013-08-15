@@ -57,7 +57,7 @@ public class SecurityServiceImpl implements ISecurityService {
         return false;
 	}
 
-    public ProductRestriction getProductRestriction(int productId, int tso, Aspect aspect, int role) throws Exception {
+    public ProductRestriction getProductRestriction(int productId, int tso, Aspect aspect, long role) throws Exception {
     	
         final Right dataAuthorization = new Right();
 		dataAuthorization.setRole(new Role(role));
@@ -86,7 +86,7 @@ public class SecurityServiceImpl implements ISecurityService {
     public ProductRestriction getProductRestriction(int productId, int tso, Aspect aspect, User user) throws Exception {
         final List<ProductRestriction> restrictions = new ArrayList<ProductRestriction>();
         for (final Role role : user.getAllRoles()) {
-            final ProductRestriction restriction = getProductRestriction(productId, tso, aspect, role.getRoleID().intValue());
+            final ProductRestriction restriction = getProductRestriction(productId, tso, aspect, role.getRoleID());
             restrictions.add(restriction);
         }
         return ProductRestriction.combineMaximum(restrictions);
