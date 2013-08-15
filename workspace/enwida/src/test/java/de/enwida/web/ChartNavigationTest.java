@@ -709,7 +709,7 @@ public class ChartNavigationTest {
 		}
 
 		for (final long roleId : roleIds) {
-			final PreparedStatement stmt = connection.prepareStatement("UPDATE users.rights SET start_time = ? , end_time = ? WHERE role_id = ? AND product = ?");
+			final PreparedStatement stmt = connection.prepareStatement("UPDATE users.rights SET start_date = ? , end_date = ? WHERE role_id = ? AND product = ?");
 			stmt.setDate(1, new Date(startTime.getTime()));
 			stmt.setDate(2, new Date(endTime.getTime()));
 			stmt.setLong(3, roleId);
