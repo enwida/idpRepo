@@ -41,6 +41,7 @@ import de.enwida.web.service.interfaces.IAvailibilityService;
 import de.enwida.web.service.interfaces.INavigationService;
 import de.enwida.web.service.interfaces.ISecurityService;
 import de.enwida.web.utils.ChartNavigationLocalizer;
+import de.enwida.web.utils.EnwidaUtils;
 import de.enwida.web.utils.ObjectMapperFactory;
 import de.enwida.web.utils.ProductLeaf;
 import de.enwida.web.utils.ProductRestriction;
@@ -67,16 +68,14 @@ public class NavigationServiceImpl implements INavigationService {
 	@Autowired
 	private ChartNavigationLocalizer navigationLocalizer;
 
-	@Value("${ENWIDA_HOME}/conf/navigation")
+	@Value("#{applicationProperties['navigation.json.dir']}")
 	protected String jsonDir;
 
 	private ObjectMapper objectMapper;
 	private Hashtable<Integer, ChartNavigationData> defaultNavigationData =  new Hashtable<Integer, ChartNavigationData>();
 	
-
 	@PostConstruct
-	public void init()
-			throws IOException {
+	public void init() throws IOException {
 		objectMapper = objectMapperFactory.create();
 		readJsonNavigationFiles();
 		// System.out.println(jsonDir);
@@ -192,6 +191,7 @@ public class NavigationServiceImpl implements INavigationService {
     }
     
 	private void readJsonNavigationFiles() {
+		jsonDir = EnwidaUtils.resolveEnvVars(jsonDir);
 		final Pattern fileNamePattern = Pattern.compile("^(\\d+)\\.json$");
 		final File dir = new File(jsonDir);
 		

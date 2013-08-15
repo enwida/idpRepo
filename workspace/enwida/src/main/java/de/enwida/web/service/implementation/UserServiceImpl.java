@@ -236,7 +236,7 @@ public class UserServiceImpl implements IUserService {
     }
     
     @Override
-    public List<Right> fetchAllRig() throws Exception {
+    public List<Right> fetchAllRights() throws Exception {
     	return rightDao.fetchAll();
     }
     
@@ -606,10 +606,17 @@ public class UserServiceImpl implements IUserService {
     @Override
     public User fetchUserByFirstAndLastName(String username) {
         for (User user : userDao.fetchAll()) {
-            if(user.getFirstName()+" "+user.getLastName()==username){
+            if(username.equalsIgnoreCase(user.getFirstName()+" "+user.getLastName())){
                 return user;
             }
         }
         return null;
+    }
+    
+    @Override
+    public User syncUser(User user) {
+    	user = fetchUser(user.getUsername());
+    	userDao.refresh(user);
+    	return user;
     }
 }

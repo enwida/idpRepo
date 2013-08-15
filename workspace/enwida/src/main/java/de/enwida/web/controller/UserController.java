@@ -166,10 +166,19 @@ public class UserController {
 	}
 	
 	@RequestMapping(value="/loginFailed", method = RequestMethod.GET)
-	public String loginFailed(ModelMap model) {
-	    model.addAttribute("error", "true");
-		return "user/login";
-	}
+    public String loginFailed(HttpServletRequest request,HttpServletResponse response,ModelMap model,Principal principal) {
+        //if user is logged in, dont return him to loginFailed page
+	    if(principal!=null){
+            try {
+                response.sendRedirect("index");
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+        model.addAttribute("error", "true");
+        return "user/login";
+    }
 	
 	@RequestMapping(value="/download", method = RequestMethod.GET)
 	public String download(ModelMap model) {

@@ -2,15 +2,24 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="message"%>
 <%@ page session="false" %>
 <div>
-	<h1>
+	<h4>
 	<form action="admin_editaspect.html" method="GET">
-		<message:message code="de.enwida.userManagement.roleName" />: <select name="roleID" id="myselect" onchange="this.form.submit()">
+	<table>
+		<tr>
+			<td>
+				<message:message code="de.enwida.userManagement.roleName" />: <select name="roleID" id="myselect">
 						<c:forEach var="role" items="${roles}">
 							<option value="${role.roleID}">${role.roleName}</option>
 						</c:forEach>
 					</select>
+			</td>
+			<td><message:message code="de.enwida.userManagement.start" />:<input type='text' name='start' id='start'  value="10" /></td>
+			<td><message:message code="de.enwida.userManagement.max" />:<input type='text' name='max' id='max'   value="10" /></td>
+			<td><input name="submit" type="submit" value='ok' class="btn btn-primary" /></td>
+		</tr>
+	</table>			
 	</form>
-	</h1>
+	</h4>
 	<script>
 $("#myselect").val(get_url_parameter('roleID'));
 </script>

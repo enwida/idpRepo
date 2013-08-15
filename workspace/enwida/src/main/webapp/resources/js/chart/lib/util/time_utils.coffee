@@ -45,6 +45,11 @@ define ->
     modifier = @getDateModifier timeRange
     @modifyDate time, modifier
 
+  subtractRange: (time, timeRange) ->
+    modifier = @getDateModifier timeRange
+    modifier.backwards = true
+    @modifyDate time, modifier
+
   getWeekStart: (date) ->
     result = new Date date
     while result.getDay() isnt 1
@@ -63,3 +68,58 @@ define ->
     from : time
     to   : @addRange time, timeRange
 
+  dataSetCount: (timeRange, resolution) ->
+    # Normalize time range
+    timeRange.from = new Date timeRange.from
+    timeRange.to   = new Date timeRange.to
+
+    diff = timeRange.to - timeRange.from
+    switch resolution
+      when "QUATER_HOURLY" then diff / (15*60*1000)
+      when "HOURLY"        then diff / (60*60*1000)
+      when "DAILY"         then diff / (24*60*60*1000)
+      when "WEEKLY"        then diff / (7*24*60*60*1000)
+      when "MONTHLY"
+        years = timeRange.to.getFullYear() - timeRange.from.getFullYear()
+        months = timeRange.to.getMonth() - timeRange.from.getMonth()
+        years * 12 + months
+      when "YEARLY"
+        timeRange.to.getFullYear() - timeRange.from.getFullYear()
+
+  asUTC: (date) ->
+    new Date date.getTime() + date.getTimezoneOffset() * 60 * 1000
+
+  fromUTC: (date) ->
+    new Date date.getTime() - date.getTimezoneOffset() * 60 * 1000
+
+  isInTimeRange: (date, timeRange) ->
+    date >= timeRange.from and date <= timeRange.to
+
+  isTimeRangeInside: (testee, timeRange) ->
+    @isInTimeRange(testee.from, timeRange) and @isInTimeRange(testee.to, timeRange)
+
+  nearestInTimeRange: (date, timeRange) ->
+    from = new Date timeRange.from
+    to   = new Date timeRange.to
+
+    new Date \
+      if date < from
+        from
+      else
+        if date <= to then date else to
+
+  normalizedToTimeRange: (date, timeRange) ->
+    date = new Date date
+    date.setMilliseconds 0
+    date.setSeconds 0
+    date.setMinutes 0
+    date.setHours 0
+
+    switch timeRange
+      when "Month"
+        date.setDate 1
+      when "Year"
+        date.setDate 1
+        date.setMonth 0
+
+    date
