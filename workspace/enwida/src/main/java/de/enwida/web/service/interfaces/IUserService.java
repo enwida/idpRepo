@@ -120,7 +120,7 @@ public interface IUserService {
     /**
      * Get all rights
      */
-    public List<Right> fetchAllRig() throws Exception;
+    public List<Right> fetchAllRights() throws Exception;
 
     /**
      * Update User information based on userID
@@ -305,6 +305,13 @@ public interface IUserService {
      * @throws Exception
      */
     public Group fetchGroup(String groupName) throws Exception;
+    
+    /**
+     * Synchronize user object with database content. Use this if you need to have all current mappings.
+     * @param user prototype object
+     * @return up-to-date user object with all mappings
+     */
+    public User syncUser(User user);
     
     public Long getNextSequence(String schema, String sequenceName);
 

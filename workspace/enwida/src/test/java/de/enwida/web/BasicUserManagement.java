@@ -1,8 +1,11 @@
 package de.enwida.web;
 
+import java.sql.Connection;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.sql.DataSource;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -11,8 +14,6 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import com.mchange.util.AssertException;
 
 import de.enwida.transport.Aspect;
 import de.enwida.transport.DataResolution;
@@ -30,31 +31,35 @@ import de.enwida.web.service.interfaces.IUserService;
 @ContextConfiguration(locations = "classpath:/root-context-test.xml")
 public class BasicUserManagement {
     
+	private static boolean isDbSchemaRecreated = false;
+	
     @Autowired
     private IUserService userService;
+
 	@Autowired
 	private IGroupDao groupDao;
+
 	@Autowired
 	private IRoleDao roleDao;
+
 	@Autowired
 	private IRightDao rightDao;
 
+	@Autowired
+	private DataSource dataSource;
+	
 	@Before
 	public void cleanup() throws Exception {
-		for (final Right right : userService.fetchAllRig()) {
-			userService.deleteRight(right.getRightID());
+		final Connection connection = dataSource.getConnection();
+		
+		if (!isDbSchemaRecreated) {
+			TestUtils.recreateUsersSchema(connection);
+			isDbSchemaRecreated = true;
 		}
-		for (final Role role : userService.fetchAllRoles()) {
-			userService.deleteRole(role.getRoleID());
-		}
-		for (final Group group : userService.fetchAllGroups()) {
-			userService.deleteGroup(group.getGroupID());
-		}
-		for (final User user : userService.fetchAllUsers()) {
-			userService.deleteUser(user.getUserId());
-		}
+
+		TestUtils.cleanupDatabase(connection);
+		connection.close();
 	}
-	
 	
 	/***
 	 ***** Basic persistence tests

@@ -42,7 +42,7 @@
 	
 	<bean scope="singleton" id="navigationLocalizer" class="de.enwida.web.utils.ChartNavigationLocalizer">
 	</bean>
-	
+
 	<bean id="lineManager" class="de.enwida.chart.LineManager">	
 		<property name="messageSource" ref="messageSource" />
 	</bean>
