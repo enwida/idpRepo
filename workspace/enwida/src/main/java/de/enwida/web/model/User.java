@@ -318,8 +318,10 @@ public class User implements Serializable, UserDetails {
 		}
 	}
 
-	@Transient
 	public Set<UploadedFile> getUploadedFiles() {
+		if (uploadedFiles == null) {
+			this.uploadedFiles = new HashSet<UploadedFile>(0);
+		}
 		return uploadedFiles;
 	}
 
@@ -327,15 +329,20 @@ public class User implements Serializable, UserDetails {
 		this.uploadedFiles = uploadedFiles;
 	}
 
+	@Deprecated
 	public void addUploadedFile(UploadedFile uploadedFile) {
 		if (uploadedFile != null) {
 			if (uploadedFiles == null) {
 				this.uploadedFiles = new HashSet<UploadedFile>();
+			} else {
+				// prepare new set for mappings
+				this.uploadedFiles = new HashSet<>(this.uploadedFiles);
 			}
 			this.uploadedFiles.add(uploadedFile);
 		}
 	}
 
+	@Deprecated
 	public void removeUploadedFile(UploadedFile uploadedFile) {
 		if (uploadedFile != null && uploadedFiles != null
 				&& uploadedFiles.contains(uploadedFile)) {

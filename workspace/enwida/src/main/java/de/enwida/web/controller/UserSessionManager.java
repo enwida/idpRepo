@@ -32,12 +32,17 @@ public class UserSessionManager implements Serializable {
 		return user;
 	}
 
-	public void setUser(User user) {
+	private void setUser(User user) {
 		this.user = user;
 	}
 
 	public void setUserInSession(String username) throws Exception {
 		User user = userService.fetchUser(username);
+		setUser(user);
+	}
+
+	public void setUserInSession(User user) throws Exception {
+		user = userService.fetchUser(user.getUsername());
 		setUser(user);
 	}
 
