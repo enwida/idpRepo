@@ -33,8 +33,16 @@ define ->
       form.appendTo(@$node).submit().remove()
 
     @getSvgDump = ->
-      $("svg").attr({ version: '1.1' , xmlns: "http://www.w3.org/2000/svg"})
-      @$node.closest(".chart").find(".visual").html()
+      svg = @$node.closest(".chart").find("svg").clone()
+      svg.attr({ version: '1.1' , xmlns: "http://www.w3.org/2000/svg"})
+      @removeTooltip svg
+      $("<div>").append(svg).html()
+
+    @removeTooltip = (node) ->
+      for child in $(node).children()
+        @removeTooltip child
+      $(node).removeAttr "original-title"
+      $(node).removeAttr "data-legend"
 
     @after "initialize", ->
       @createElements()
