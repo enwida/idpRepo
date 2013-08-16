@@ -96,7 +96,7 @@ public class AdminPanel {
         page = webClient.getPage(link);
         List<HtmlAnchor> list = page.getAnchors();
         for (HtmlAnchor htmlAnchor : list) {
-            if (htmlAnchor.asText().contains("test")){
+            if (htmlAnchor.toString().contains("userID=")){
                 anchor=htmlAnchor;
                 break;
             }
