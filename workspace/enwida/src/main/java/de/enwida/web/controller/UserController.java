@@ -403,8 +403,8 @@ public class UserController {
 
 							model.put("successmsg", uploadsuccessmsg);
 							// update uploaded files list
-							filetable.clear();
-							filetable.addAll(user.getUploadedFiles());
+							//filetable.clear();
+							filetable.add(file);
 						} else {
 							model.put("errormsg", "Duplicate file uploaded");
 						}
