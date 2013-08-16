@@ -1,6 +1,9 @@
 package de.enwida.web.controller;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -18,6 +21,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -33,6 +37,7 @@ import de.enwida.web.model.ChartNavigationData;
 import de.enwida.web.model.User;
 import de.enwida.web.service.interfaces.ILineService;
 import de.enwida.web.service.interfaces.INavigationService;
+import de.enwida.web.service.interfaces.IRasterizerService;
 import de.enwida.web.service.interfaces.IUserService;
 
 /**
@@ -55,6 +60,9 @@ public class ChartDataController {
 
 	@Autowired
 	private UserSessionManager userSession;
+	
+	@Autowired
+	private IRasterizerService rasterizerService;
 
 	@RequestMapping(value = "/chart", method = RequestMethod.GET)
     public String exampleChart(Principal principal) {
@@ -159,6 +167,33 @@ public class ChartDataController {
     @RequestMapping(value = "/download", method = RequestMethod.GET)
     public String download(@RequestParam int chartId) {
     	return "charts/download";
+    }
+    
+    @RequestMapping(value = "svg", method = RequestMethod.POST)
+    @ResponseBody
+    public String downloadSvg(@RequestParam String svgData, HttpServletResponse response) {
+    	response.setHeader("Content-Disposition", "attachment;filename=chart.svg");
+    	response.setContentType("image/svg");
+    	return svgData;
+    }
+    
+    @RequestMapping(value = "/png", method = RequestMethod.POST)
+    public void rasterize(@RequestParam String svgData, HttpServletResponse response) {
+    	try {
+    		final InputStream in = new ByteArrayInputStream(svgData.getBytes("UTF-8"));
+    		final OutputStream out = response.getOutputStream();
+
+	    	response.setHeader("Content-Disposition", "attachment;filename=chart.png");
+	    	response.setContentType("image/png");
+
+    		rasterizerService.rasterize(in, out);
+
+	    	in.close();
+	    	out.close();
+    	} catch (Exception e) {
+    		logger.error(e);
+    		response.setStatus(500);
+    	}
     }
     
 	private NavigationDefaults getNavigationDefaults(int chartId,

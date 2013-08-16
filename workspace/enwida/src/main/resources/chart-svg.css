@@ -1,0 +1,33 @@
+.legend-box {
+	fill: none;
+	stroke: #222;
+}
+.legend-items {
+	font-size: 16px;
+}
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+.axis text {
+  font-size: 12px;
+}
+.line {
+  fill: none;
+  stroke-width: 1.5px;
+}
+.line0 {
+  stroke: steelblue;
+}
+.line1 {
+  stroke: red;
+}
+.line2 {
+  stroke: green;
+}
+.chart[data-chart-type="minmax"] .line1 {
+	fill: #FFA340;
+	stroke: none;
+}
