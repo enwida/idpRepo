@@ -54,7 +54,7 @@ public class UploadedFile implements Serializable, Comparable<UploadedFile> {
 	@Id
 	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "FILE_SEQ")
 	@Column(name = ID)
-	private int id;
+	private long id;
 
 	@Column(name = DISPLAY_FILE_NAME, unique = false, nullable = false, length = 255)
 	private String displayFileName;
@@ -89,11 +89,11 @@ public class UploadedFile implements Serializable, Comparable<UploadedFile> {
 	@Transient
 	private File actualFile;
 
-	public int getId() {
+	public long getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(long id) {
 		this.id = id;
 	}
 
@@ -180,16 +180,26 @@ public class UploadedFile implements Serializable, Comparable<UploadedFile> {
 		return actualFile;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#hashCode()
+	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + id;
+		result = prime * result + (int) (id ^ (id >>> 32));
 		result = prime * result
 				+ ((uploadDate == null) ? 0 : uploadDate.hashCode());
 		return result;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
