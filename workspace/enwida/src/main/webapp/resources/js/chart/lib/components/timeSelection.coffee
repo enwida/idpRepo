@@ -68,12 +68,14 @@ define ["../util/time_utils", "../util/resolution"], (TimeUtils, Resolution) ->
         streams.sync  = new Bacon.Bus()
         streams.out   = new Bacon.Bus()
 
+        # Merge sync date when datepicker becomes visible
         Bacon.combineAsArray(streams.sync, streams.in).sampledBy(timeRangeStream, -> arguments)
           .onValue ([[[syncDate, sender], date], tr]) =>
             if tr is timeRange
               date = @mergeDate date, syncDate, tr, sender
               streams.in.push date
           
+        # Stream which emits valid dates (i.e. with restrictions applied)
         streams.valid = datepickerBoundariesStream.combine streams.in,
           ([from, to], date) ->
             timeRestriction = from: from, to: to
@@ -82,6 +84,8 @@ define ["../util/time_utils", "../util/resolution"], (TimeUtils, Resolution) ->
             date = TimeUtils.nearestInTimeRange date, timeRestriction
             [date, timeRange]
 
+        # Stream which emits valid dates only if the corresponding date picker
+        # is active
         streams.currentValid = Bacon.combineAsArray(streams.valid, timeRangeStream).flatMap \
           ([[date, timeRange], currentTimeRange]) =>
             if timeRange is currentTimeRange
@@ -98,23 +102,37 @@ define ["../util/time_utils", "../util/resolution"], (TimeUtils, Resolution) ->
       validDateStreams = _(dpStreams).chain().values().map((s) -> s.valid.toEventStream()).value()
       validDateStream = Bacon.mergeAll validDateStreams...
 
-      # Setup
+      # Setup valid incoming date stream for the currently active date picker
       currentValidDateStreams = _(dpStreams).chain().values().map((s) -> s.currentValid.toEventStream()).value()
       currentValidDateStream = Bacon.mergeAll currentValidDateStreams
 
-      # Prev button
+      # Prev button stream
       currentValidDateStream.toProperty().sampledBy(prevStream)
         .onValue ([date, timeRange]) =>
           date = TimeUtils.subtractRange date, timeRange
           dpStreams[timeRange].in.push date
           dpStreams[timeRange].out.push()
 
-      # Next button
+      # Next button stream
       currentValidDateStream.toProperty().sampledBy(nextStream)
         .onValue ([date, timeRange]) =>
           date = TimeUtils.addRange date, timeRange
           dpStreams[timeRange].in.push date
           dpStreams[timeRange].out.push()
+
+      # Setup date range stream
+      dateRangeStream = Bacon.combineWith (([fromDate, timeRange], timeRestriction) =>
+        toDate = TimeUtils.addRange fromDate, timeRange
+        toDate = TimeUtils.nearestInTimeRange toDate, timeRestriction
+        [fromDate, toDate]
+      ), currentValidDateStream, timeRestrictionStream
+
+      # Setup stream which controls when an event is fired to the parent
+      fireStream = @$node.asEventStream "requestTimeSelection"
+      fireBus = @attr.fireBus = new Bacon.Bus()
+      fireBus.plug fireStream
+      fireBus.plug fromDateStream
+      fireBus.plug timeRangeStream
 
       # Handle new boundaries event
       datepickerBoundariesStream.onValue ([from, to]) =>
@@ -128,25 +146,11 @@ define ["../util/time_utils", "../util/resolution"], (TimeUtils, Resolution) ->
         datepicker = @getDatepickerElement timeRange
         datepicker.datepicker "setDate", date
 
-      # Sync to other date pickers
+      # Handle date sync across date pickers
       timeRangeStream.toProperty().sampledBy(fromDateStream, -> arguments)
         .onValue ([timeRange, date]) =>
           for tr in @timeRanges
             dpStreams[tr].sync.push [date, timeRange]
-
-      # Setup date range stream
-      dateRangeStream = Bacon.combineWith (([fromDate, timeRange], timeRestriction) =>
-        toDate = TimeUtils.addRange fromDate, timeRange
-        toDate = TimeUtils.nearestInTimeRange toDate, timeRestriction
-        [fromDate, toDate]
-      ), currentValidDateStream, timeRestrictionStream
-
-      # Setup fire bus
-      fireStream = @$node.asEventStream "requestTimeSelection"
-      fireBus = @attr.fireBus = new Bacon.Bus()
-      fireBus.plug fireStream
-      fireBus.plug fromDateStream
-      fireBus.plug timeRangeStream
 
       # Handle event firing
       dateRangeStream.sampledBy(fireBus)
@@ -170,7 +174,6 @@ define ["../util/time_utils", "../util/resolution"], (TimeUtils, Resolution) ->
 
       # Bind the time value of the time range selector to the datapicker's
       # visibility
-      timeRangeStream = @select("timeRange").asEventStream("change").map (e) -> $(e.target).val()
       timeRangeStream.onValue (currentTimeRange) =>
         for timeRange in @timeRanges
           datePicker = @$node.find ".datepicker-#{timeRange}"
@@ -241,32 +244,6 @@ define ["../util/time_utils", "../util/resolution"], (TimeUtils, Resolution) ->
 
     @getDatepickerElement = (timeRange) ->
       @$node.find ".datepicker-#{timeRange} .from"
-
-    @getCurrentDatePicker = ->
-      timeRange = @getCurrentTimeRange()
-      @getDatepickerElement timeRange
-
-    @getFromDate = ->
-      datePicker = @getCurrentDatePicker()
-      datePicker.data("datepicker").date
-
-    @setFromDate = (date) ->
-      datePicker = @getCurrentDatePicker()
-      datePicker.datepicker "setDate", date
-      @attr.fromDateBus.push date
-
-    @prevPeriode = ->
-      modifier = TimeUtils.getDateModifier @getCurrentTimeRange()
-      modifier.backwards = true
-      date = TimeUtils.modifyDate @getFromDate(), modifier
-      @setFromDate date
-
-    @nextPeriode = ->
-      time = TimeUtils.addRange @getFromDate(), @getCurrentTimeRange()
-      @setFromDate time
-
-    @getCurrentTimeRange = ->
-      @select("timeRange").val()
 
     @defaultAttrs
       timeRange: ".timerange"
