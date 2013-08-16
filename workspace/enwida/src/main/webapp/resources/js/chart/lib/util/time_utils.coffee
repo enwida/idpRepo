@@ -123,3 +123,25 @@ define ->
         date.setMonth 0
 
     date
+
+  mergeDate: (date, syncDate, timeRange, sender) ->
+    switch sender
+      when "Day"
+        if timeRange is "Week"
+          TimeUtils.getWeekStart syncDate
+        else
+          syncDate
+      when "Week"
+        result = new Date date
+        result.setMonth syncDate.getMonth()
+        result.setFullYear syncDate.getFullYear()
+        result
+      when "Month"
+        result = new Date date
+        result.setMonth syncDate.getMonth()
+        result.setFullYear syncDate.getFullYear()
+        result
+      when "Year"
+        result = new Date date
+        result.setFullYear syncDate.getFullYear()
+        result

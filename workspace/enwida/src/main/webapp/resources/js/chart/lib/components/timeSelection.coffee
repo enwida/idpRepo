@@ -72,7 +72,7 @@ define ["../util/time_utils", "../util/resolution"], (TimeUtils, Resolution) ->
         Bacon.combineAsArray(streams.sync, streams.in).sampledBy(timeRangeStream, -> arguments)
           .onValue ([[[syncDate, sender], date], tr]) =>
             if tr is timeRange
-              date = @mergeDate date, syncDate, tr, sender
+              date = TimeUtils.mergeDate date, syncDate, tr, sender
               streams.in.push date
           
         # Stream which emits valid dates (i.e. with restrictions applied)
@@ -219,28 +219,6 @@ define ["../util/time_utils", "../util/resolution"], (TimeUtils, Resolution) ->
           minViewMode   : @viewModes[timeRange]
           startDate     : limits.from ? "1900-01-01"
           endDate       : limits.to ? new Date()
-
-    @mergeDate = (date, syncDate, timeRange, sender) ->
-      switch sender
-        when "Day"
-          if timeRange is "Week"
-            TimeUtils.getWeekStart syncDate
-          else
-            syncDate
-        when "Week"
-          result = new Date date
-          result.setMonth syncDate.getMonth()
-          result.setFullYear syncDate.getFullYear()
-          result
-        when "Month"
-          result = new Date date
-          result.setMonth syncDate.getMonth()
-          result.setFullYear syncDate.getFullYear()
-          result
-        when "Year"
-          result = new Date date
-          result.setFullYear syncDate.getFullYear()
-          result
 
     @getDatepickerElement = (timeRange) ->
       @$node.find ".datepicker-#{timeRange} .from"

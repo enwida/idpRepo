@@ -57,7 +57,6 @@ define [ "components/visual"
           data: chartId: @attr.id
           error: (err) -> callback err
           success: (data) =>
-            console.log data
             @navigationData = data
             callback null, data
 
@@ -79,6 +78,15 @@ define [ "components/visual"
             callback err
 
       @onGetLines = (selections) ->
+        # Check for duplicate (resolution does not matter for preview chart)
+        return if @attr.lastSelections? and
+          @attr.lastSelections.tso is selections.tso and
+          @attr.lastSelections.product is selections.product and
+          @attr.lastSelections.timeRange.from.getTime() is selections.timeRange.from.getTime() and
+          @attr.lastSelections.timeRange.to.getTime() is selections.timeRange.to.getTime()
+
+        @attr.lastSelections = $.extend {}, selections
+
         # Calculate resolution
         selections.resolution = @optimalResolution selections
 
@@ -90,7 +98,7 @@ define [ "components/visual"
 
         @getLines selections, (err, data) =>
           if err?
-            console.log err
+            @logError err
             return @trigger "chartMessage", msg: "Sorry, something went wrong."
           if data.length is 0
             return @trigger "chartMessage", msg: "No data"
@@ -126,9 +134,6 @@ define [ "components/visual"
           @attr.selections,
           resolution: @attr.downloadResolution
           disabledLines: @attr.disabledLines
-
-        console.log "downloading:"
-        console.log selections
 
         query =
           chartId: @attr.id
@@ -168,19 +173,25 @@ define [ "components/visual"
         @on "chartMessage", (_, opts) ->
           @getMsg().showText opts.msg
 
+        # Setup streams
         productStream = @$node.asEventStream("productSelectionChanged", (_, v) -> v)
         timeStream = @$node.asEventStream("timeSelectionChanged", (_, v) -> v)
-        productStream.onValue (selections) =>
-          leaf = @attr.treeHelper.traverse selections.tso, selections.product
-          @trigger @select("timeSelection"), "timeRestrictions", leaf
         selectionStream = Bacon.combineWith $.extend, productStream, timeStream
+
+        # Request lines and update button test
         selectionStream.onValue (selections) =>
           @attr.selections = $.extend {}, selections
           @attr.downloadResolution = selections.resolution
           dataSets = TimeUtils.dataSetCount selections.timeRange, selections.resolution
-          @select("download").text "Download #{parseInt dataSets} data points"
+          @select("download").text "Download approx. #{parseInt dataSets} data points"
           @setDownloadLink()
           @onGetLines selections
+
+        # Forward time restrictions and request new time selections
+        productStream.onValue (selections) =>
+          leaf = @attr.treeHelper.traverse selections.tso, selections.product
+          @trigger @select("timeSelection"), "timeRestrictions", leaf
+          @trigger @select("timeSelection"), "requestTimeSelection", leaf
 
         # Parse element attributes
         @attr.type = @$node.attr("data-chart-type") ? "line"
@@ -229,7 +240,7 @@ define [ "components/visual"
 
         @getNavigationData (err, data) =>
           if err?
-            console.log err
+            @logError err
             return @trigger "errorMessage", msg: "Sorry, something went wrong."
           unless typeof data is "object" and data?.allResolutions?.length > 0
             return @trigger "errorMessage", msg: "Sorry, you do not have the permission to see this chart."

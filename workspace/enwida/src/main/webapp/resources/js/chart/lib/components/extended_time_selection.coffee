@@ -13,28 +13,37 @@ define ["../util/time_utils"], (TimeUtils) ->
 
       # Apply defaults
       defaultRange = data.defaults.timeRange
-      @setFromDate new Date defaultRange.from
-      @setToDate new Date defaultRange.to
+      @attr.fromDateBus.push new Date defaultRange.from
+      @attr.toDateBus.push new Date defaultRange.to
 
     @setupEvents = ->
-      # Show datapicker when clicking on icon
-      @$node.find(".datepicker-generic").each (_, datePicker) ->
-        $(datePicker).find(".icon").click ->
-          $(datePicker).find(".picker").datepicker "show"
-
       # Create bus for date pickers
       fromDateStream = @select("fromPicker").asEventStream "changeDate"
-      fromDateBus = new Bacon.Bus()
+      @attr.fromDateBus = fromDateBus = new Bacon.Bus()
       fromDateBus.plug fromDateStream.map (e) -> e.date
 
       toDateStream = @select("toPicker").asEventStream "changeDate"
-      toDateBus = new Bacon.Bus()
+      @attr.toDateBus = toDateBus = new Bacon.Bus()
       toDateBus.plug toDateStream.map (e) -> e.date
 
-      # Create bus for resolutions
-      resolutionStream = @select("resolution").asEventStream "change"
-      resolutionBus = new Bacon.Bus()
-      resolutionBus.plug resolutionStream.map (e) -> $(e.target).val()
+      # Create resolution stream
+      resolutionStream = @select("resolution").asEventStream("change")
+        .map => @select("resolution").val()
+
+      # Create time restriction stream
+      timeRestrictionStream = @$node.asEventStream "timeRestrictions", (_, v) -> v
+
+      # Create fire request stream
+      fireRequestStream = @$node.asEventStream "requestTimeSelection", (_, v) -> v
+
+      # Create valid date streams
+      validFromDateStream = Bacon.combineWith ((timeRestriction, resolution, date) =>
+        TimeUtils.nearestInTimeRange date, timeRestriction.timeRange
+      ), timeRestrictionStream, resolutionStream, fromDateBus
+
+      validToDateStream = Bacon.combineWith ((timeRestriction, resolution, date) =>
+        TimeUtils.nearestInTimeRange date, timeRestriction.timeRange
+      ), timeRestrictionStream, resolutionStream, toDateBus
 
       # Create date range emitting stream
       dateRangeStream = Bacon.combineWith ((fromDate, toDate, resolution) =>
@@ -42,17 +51,19 @@ define ["../util/time_utils"], (TimeUtils) ->
           from: fromDate
           to: toDate
         resolution: resolution
-      ), fromDateBus, toDateBus, resolutionBus
-      dateRangeStream.onValue (selections) =>
-        @trigger "timeSelectionChanged", selections
+      ), validFromDateStream, validToDateStream, resolutionStream
 
-      # Time restrictions
-      timeRestrictionStream = @$node.asEventStream "timeRestrictions", (_, v) -> v
-      timeRestrictionStream.onValue (restrictions) =>
+      # Create fire bus
+      @attr.fireBus = fireBus = new Bacon.Bus()
+      fireBus.plug fireRequestStream
+      fireBus.plug resolutionStream
+
+      # Handle new time restriction
+      timeRestrictionStream.onValue (restriction) =>
         element = @select "resolution"
         oldValue = element.val()
         element.empty()
-        for resolution in restrictions.resolution
+        for resolution in restriction.resolution
           element.append($("<option>")
             .attr("value", resolution)
             .text(@attr.navigationData.localizations.resolutions[resolution]))
@@ -60,11 +71,28 @@ define ["../util/time_utils"], (TimeUtils) ->
         element.change()
 
         elements = @select "datepickers"
-        elements.datepicker "setStartDate", new Date restrictions.timeRange.from
-        elements.datepicker "setEndDate", new Date restrictions.timeRange.to
+        elements.datepicker "setStartDate", new Date restriction.timeRange.from
+        elements.datepicker "setEndDate", new Date restriction.timeRange.to
 
-      @attr.fromDateBus = fromDateBus
-      @attr.toDateBus = toDateBus
+      # Handle valid dates
+      validFromDateStream.onValue (date) =>
+        @select("fromPicker").datepicker "setDate", new Date date
+
+      validToDateStream.onValue (date) =>
+        @select("toPicker").datepicker "setDate", new Date date
+
+      # Handle passing events to parent
+      dateRangeStream.sampledBy(fireBus)
+        .onValue (selections) =>
+          @trigger "timeSelectionChanged", selections
+
+      fromDateStream.onValue -> fireBus.push()
+      toDateStream.onValue   -> fireBus.push()
+
+      # Show datapicker when clicking on icon
+      @$node.find(".datepicker-generic").each (_, datePicker) ->
+        $(datePicker).find(".icon").click ->
+          $(datePicker).find(".picker").datepicker "show"
 
     @createElements = ->
       @$node.empty()
@@ -91,18 +119,6 @@ define ["../util/time_utils"], (TimeUtils) ->
         viewMode      : "days"
         startDate     : limits.from ? "1900-01-01"
         endDate       : limits.to ? new Date()
-
-    @getCurrentDate = ->
-      datePicker = @select("datepicker")
-      datePicker.data("datepicker").date
-
-    @setFromDate = (date) ->
-      @select("fromPicker").datepicker "setDate", date
-      @attr.fromDateBus.push date
-
-    @setToDate = (date) ->
-      @select("toPicker").datepicker "setDate", date
-      @attr.toDateBus.push date
 
     @defaultAttrs
       timeRange: ".timerange"
