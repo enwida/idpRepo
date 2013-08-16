@@ -8,7 +8,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationListener;
+import org.springframework.security.authentication.event.InteractiveAuthenticationSuccessEvent;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
@@ -17,7 +20,10 @@ import de.enwida.web.service.interfaces.ICookieSecurityService;
 import de.enwida.web.utils.Constants;
 
 public class LoginSuccessHandler extends
-		SavedRequestAwareAuthenticationSuccessHandler {
+		SavedRequestAwareAuthenticationSuccessHandler implements
+		ApplicationListener<InteractiveAuthenticationSuccessEvent> {
+
+	private Logger logger = Logger.getLogger(getClass());
 
 	@Autowired
     private ICookieSecurityService cookieSecurityService;
@@ -47,17 +53,7 @@ public class LoginSuccessHandler extends
         }
 
 		// update user session value if not present
-		if (userSession.getUser() == null) {
-			// Fetch User details and save in session
-			// System.out.println(userService.getUser(auth.getName()));
-			try {
-				userSession.setUserInSession(auth.getName());
-			} catch (Exception e) {
-				logger.error(
-						"Login Success: unable to set user '" + auth.getName()
-								+ "' in session", e);
-			}
-		}
+		setUserInSession(auth.getName());
             
         response.addCookie(cookie);
 
@@ -69,27 +65,38 @@ public class LoginSuccessHandler extends
             try {
                 super.onAuthenticationSuccess(request, response, authentication);
             } catch (ServletException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+				logger.error(
+						"Unable to perform default authentication success event : ",
+						e);
             }
         }
     }
 
-	// public ICookieSecurityService getCookieSecurityService() {
-	// return cookieSecurityService;
-	// }
-	//
-	// public void setCookieSecurityService(
-	// ICookieSecurityService cookieSecurityService) {
-	// this.cookieSecurityService = cookieSecurityService;
-	// }
-	//
-	// public UserSessionManager getUserSession() {
-	// return userSession;
-	// }
-	//
-	// public void setUserSession(UserSessionManager userSession) {
-	// this.userSession = userSession;
-	// }
+	/**
+	 * This method is executed when remember me authentication is successful
+	 * without user intervention (non-Javadoc)
+	 * 
+	 * @see org.springframework.context.ApplicationListener#onApplicationEvent(org.springframework.context.ApplicationEvent)
+	 */
+	@Override
+	public void onApplicationEvent(InteractiveAuthenticationSuccessEvent event) {
+		setUserInSession(event.getAuthentication().getName());
+
+	}
+
+	private void setUserInSession(String username) {
+		// update user session value if not present
+		if (userSession.getUser() == null) {
+			// Fetch User details and save in session
+			// System.out.println(userService.getUser(auth.getName()));
+			try {
+				userSession.setUserInSession(username);
+			} catch (Exception e) {
+				logger.error(
+						"Unable to set user '" + username
+						+ "' in session", e);
+			}
+		}
+	}
 
 }

@@ -331,4 +331,6 @@ public interface IUserService {
 
 	Right findRight(Right right);
 
+	User saveUserUploadedFile(User user, UploadedFile file);
+
 }
