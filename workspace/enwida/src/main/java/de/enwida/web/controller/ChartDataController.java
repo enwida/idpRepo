@@ -21,11 +21,14 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.w3c.dom.Document;
+import org.w3c.dom.bootstrap.DOMImplementationRegistry;
+import org.w3c.dom.ls.DOMImplementationLS;
+import org.w3c.dom.ls.LSSerializer;
 
 import de.enwida.transport.Aspect;
 import de.enwida.transport.DataResolution;
@@ -37,7 +40,7 @@ import de.enwida.web.model.ChartNavigationData;
 import de.enwida.web.model.User;
 import de.enwida.web.service.interfaces.ILineService;
 import de.enwida.web.service.interfaces.INavigationService;
-import de.enwida.web.service.interfaces.IRasterizerService;
+import de.enwida.web.service.interfaces.ISVGService;
 import de.enwida.web.service.interfaces.IUserService;
 
 /**
@@ -62,7 +65,7 @@ public class ChartDataController {
 	private UserSessionManager userSession;
 	
 	@Autowired
-	private IRasterizerService rasterizerService;
+	private ISVGService rasterizerService;
 
 	@RequestMapping(value = "/chart", method = RequestMethod.GET)
     public String exampleChart(Principal principal) {
@@ -172,9 +175,23 @@ public class ChartDataController {
     @RequestMapping(value = "svg", method = RequestMethod.POST)
     @ResponseBody
     public String downloadSvg(@RequestParam String svgData, HttpServletResponse response) {
-    	response.setHeader("Content-Disposition", "attachment;filename=chart.svg");
-    	response.setContentType("image/svg");
-    	return svgData;
+    	try {
+	    	response.setHeader("Content-Disposition", "attachment;filename=chart.svg");
+	    	response.setContentType("image/svg");
+	    	
+	    	final InputStream in = new ByteArrayInputStream(svgData.getBytes("UTF-8"));
+	    	final Document doc = rasterizerService.sanitizeSVG(in);
+	    	
+		    final DOMImplementationRegistry reg = DOMImplementationRegistry.newInstance();
+		    final DOMImplementationLS lsImpl = (DOMImplementationLS) reg.getDOMImplementation("LS");
+		    final LSSerializer serializer = lsImpl.createLSSerializer();
+
+		    return serializer.writeToString(doc);
+    	} catch (Exception e) {
+    		logger.error(e);
+    		response.setStatus(500);
+    		return "Error";
+    	}
     }
     
     @RequestMapping(value = "/png", method = RequestMethod.POST)
