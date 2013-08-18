@@ -147,7 +147,7 @@ define [ "components/visual"
         urlQuery = (_(_(query).keys()).map (key) ->
           [key, query[key]].join "="
         ).join "&"
-        @select("downloadLink").attr "href", "download.csv?" + urlQuery
+        @select("downloadLink").attr "href", "csv?" + urlQuery
 
       @defaultAttrs
         navigation: ".navigation"
@@ -237,6 +237,8 @@ define [ "components/visual"
         @$node.append($("<div>")
           .append(downloadLink
             .append(downloadButton)))
+
+        @getMsg().showText "Loading..."
 
         @getNavigationData (err, data) =>
           if err?

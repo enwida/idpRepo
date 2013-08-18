@@ -30,8 +30,6 @@ import org.w3c.dom.bootstrap.DOMImplementationRegistry;
 import org.w3c.dom.ls.DOMImplementationLS;
 import org.w3c.dom.ls.LSSerializer;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import de.enwida.transport.Aspect;
 import de.enwida.transport.DataResolution;
 import de.enwida.transport.IDataLine;
@@ -193,7 +191,7 @@ public class ChartDataController {
     	return "charts/download";
     }
     
-    @RequestMapping(value = "svg", method = RequestMethod.POST)
+    @RequestMapping(value = "/svg", method = RequestMethod.POST)
     @ResponseBody
     public String downloadSvg(@RequestParam String svgData, HttpServletResponse response) {
     	try {

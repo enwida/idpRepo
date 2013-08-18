@@ -263,6 +263,8 @@ define [ "components/visual"
         controls.append dataSheet
         DataSheet.attachTo dataSheet, @attr
 
+        @getMsg().showText "Loading..."
+
         @getNavigationData (err, data) =>
           if err?
             @logError err

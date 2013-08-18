@@ -1,11 +1,16 @@
 package de.enwida.web.controller;
 
+import java.io.OutputStream;
+import java.sql.Date;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 import java.util.SortedMap;
 import java.util.TreeMap;
+
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.NotImplementedException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +19,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import de.enwida.transport.Aspect;
 import de.enwida.transport.DataResolution;
@@ -41,9 +45,8 @@ public class DownloadController {
 	@Autowired
 	private IUserService userService;
 
-    @RequestMapping(value = "/download.csv", method = RequestMethod.GET)
-    @ResponseBody
-    public String getNavigationData(
+    @RequestMapping(value = "/csv", method = RequestMethod.GET)
+    public void getNavigationData(
 	    @RequestParam int chartId,
 	    @RequestParam int product,
 	    @RequestParam int tso,
@@ -51,6 +54,7 @@ public class DownloadController {
 	    @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Calendar endTime,
 	    @RequestParam DataResolution resolution,
 	    @RequestParam String disabledLines,
+	    HttpServletResponse response,
 	    Locale locale) throws Exception {
     	
     	final User user = userService.getCurrentUser();
@@ -77,11 +81,18 @@ public class DownloadController {
 				e.printStackTrace();
 			}
         }
-        return createCSV(lines, navigationData.getxAxisLabel());
+    	response.setHeader("Content-Disposition", "attachment;filename=data.csv");
+    	response.setContentType("text/csv");
+
+    	final String csvData = createCSV(lines, navigationData);
+    	final OutputStream out = response.getOutputStream();
+    	out.write(csvData.getBytes("UTF-8"));
+    	out.close();
     }
     
-    private String createCSV(List<IDataLine> lines, String xTitle) {
+    private String createCSV(List<IDataLine> lines, ChartNavigationData navigationData) {
     	final StringBuilder result = new StringBuilder();
+    	final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
     	final SortedMap<Double, List<Double>> csvDataLines = new TreeMap<>();
     	
     	for (final IDataLine line : lines) {
@@ -100,14 +111,18 @@ public class DownloadController {
     	}
 
     	// Heading
-    	result.append(xTitle);
+    	result.append(navigationData.getxAxisLabel());
     	for (final IDataLine line : lines) {
     		result.append(",").append(line.getTitle());
     	}
 
     	for (final Double x : csvDataLines.keySet()) {
     		result.append("\n");
-    		result.append(x);
+    		if (navigationData.getIsDateScale()) {
+    			result.append(dateFormat.format(new Date(x.longValue())));
+    		} else {
+	    		result.append(x);
+    		}
     		for (final Double y : csvDataLines.get(x)) {
     			result.append(",");
     			result.append(y);
