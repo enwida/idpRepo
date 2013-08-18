@@ -4,7 +4,7 @@ TRUNCATE users.groups CASCADE;
 TRUNCATE users.roles CASCADE;
 TRUNCATE users.rights CASCADE;
 
-INSERT INTO users.users (name,user_password,first_name,last_name,company_name,login_count,joining_date,enabled) VALUES ('admin','5ebe2294ecd0e0f08eab7690d2a6ee69','Admin','User','enwida.de',0,NOW(),true);
+INSERT INTO users.users (name,email,user_password,first_name,last_name,company_name,login_count,joining_date,enabled) VALUES ('admin','admin@enwida.de','5ebe2294ecd0e0f08eab7690d2a6ee69','Admin','User','enwida.de',0,NOW(),true);
 
 INSERT INTO users.groups (name,auto_pass) VALUES ('admin',false);
 INSERT INTO users.roles (name,description) VALUES ('admin','Admin role');
