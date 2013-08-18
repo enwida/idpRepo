@@ -85,6 +85,39 @@ public class BasicUserManagement {
 	}
 	
 	@Test
+	public void cannotAddUserWithSameUsername() throws Exception {
+		final User user1 = new User("testuser1@pleasedontsendmailshere.com", "test", "secret", "test", "test", true);
+		user1.setCompanyName("enwida.de");
+		userService.saveUser(user1);
+
+		final User user2 = new User("testuser2@pleasedontsendmailshere.com", "test", "secret", "test", "test", true);
+		user2.setCompanyName("enwida.de");
+		try {
+			userService.saveUser(user2);
+		} catch (Exception e) {
+			// Expected
+			return;
+		}
+		throw new Exception("Should not be reachable; exception when adding user with same name expected");
+	}
+	@Test
+	public void cannotAddUserWithSameEmail() throws Exception {
+		final User user1 = new User("testuser@pleasedontsendmailshere.com", "test1", "secret", "test", "test", true);
+		user1.setCompanyName("enwida.de");
+		userService.saveUser(user1);
+
+		final User user2 = new User("testuser@pleasedontsendmailshere.com", "test2", "secret", "test", "test", true);
+		user2.setCompanyName("enwida.de");
+		try {
+			userService.saveUser(user2);
+		} catch (Exception e) {
+			// Expected
+			return;
+		}
+		throw new Exception("Should not be reachable; exception when adding user with same email expected");
+	}
+	
+	@Test
 	public void groupIsSaved() throws Exception {
 		final Group group = saveTestGroup("testgroup");
 		final Group testee = userService.fetchGroup("testgroup");
@@ -96,6 +129,19 @@ public class BasicUserManagement {
 		Assert.assertEquals(group, testee);
 		Assert.assertEquals(group.getGroupID(), testee.getGroupID());
 		Assert.assertEquals(group.getGroupName(), testee.getGroupName());
+	}
+	
+	@Test
+	public void cannotAddGroupWithSameName() throws Exception {
+		saveTestGroup("testgroup");
+		
+		try {
+			saveTestGroup("testgroup");
+		} catch (Exception e) {
+			// Expected
+			return;
+		}
+		throw new Exception("Should not be reachable; exception when adding group with same name expected");
 	}
 	
 	@Test
@@ -111,6 +157,19 @@ public class BasicUserManagement {
 		Assert.assertEquals(role.getRoleID(), testee.getRoleID());
 		Assert.assertEquals(role.getRoleName(), testee.getRoleName());
 	}
+
+	@Test
+	public void cannotAddRoleWithSameName() throws Exception {
+		saveTestRole("testrole");
+		
+		try {
+			saveTestRole("testrole");
+		} catch (Exception e) {
+			// Expected
+			return;
+		}
+		throw new Exception("Should not be reachable; exception when adding role with same name expected");
+	}
 	
 	@Test
 	public void rightIsSaved() throws Exception {
@@ -628,8 +687,7 @@ public class BasicUserManagement {
 	 ***/
 	
     private User saveTestUser(String name) throws Exception {
-		final User user = new User("jsdfjsdg@gmail.com", name, "secret", "test", "test", true);
-		user.setEmail(name + "@pleasedontsendmailshere.com");
+		final User user = new User(name + "@pleasedontsendmailshere.com", name, "secret", "test", "test", true);
 		user.setCompanyName("enwida.de");
 		userService.saveUser(user);
 		return user;
