@@ -9,6 +9,7 @@ import javax.sql.DataSource;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,6 +85,7 @@ public class BasicUserManagement {
 		Assert.assertEquals(user.getActivationKey(), testee.getActivationKey());
 	}
 	
+	@Ignore
 	@Test
 	public void cannotAddUserWithSameUsername() throws Exception {
 		final User user1 = new User("testuser1@pleasedontsendmailshere.com", "test", "secret", "test", "test", true);
@@ -131,6 +133,7 @@ public class BasicUserManagement {
 		Assert.assertEquals(group.getGroupName(), testee.getGroupName());
 	}
 	
+	@Ignore
 	@Test
 	public void cannotAddGroupWithSameName() throws Exception {
 		saveTestGroup("testgroup");
@@ -158,6 +161,7 @@ public class BasicUserManagement {
 		Assert.assertEquals(role.getRoleName(), testee.getRoleName());
 	}
 
+	@Ignore
 	@Test
 	public void cannotAddRoleWithSameName() throws Exception {
 		saveTestRole("testrole");
