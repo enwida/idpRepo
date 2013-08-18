@@ -629,6 +629,7 @@ public class BasicUserManagement {
 	
     private User saveTestUser(String name) throws Exception {
 		final User user = new User("jsdfjsdg@gmail.com", name, "secret", "test", "test", true);
+		user.setEmail(name + "@pleasedontsendmailshere.com");
 		user.setCompanyName("enwida.de");
 		userService.saveUser(user);
 		return user;
