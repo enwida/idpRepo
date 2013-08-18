@@ -10,7 +10,7 @@ define ["util/scale"], (Scale) ->
           top: 20
           left: 50
           right: 20
-          bottom: 30
+          bottom: 40
         width: 960
         height: 500
         parent: "body"
@@ -59,6 +59,7 @@ define ["util/scale"], (Scale) ->
           .text("#{@xLabel}")
 
       @makeDateScale() if @options.scale.x.type is "date"
+      @avoidOverlaps()
 
     drawYAxis: (yAxis) ->
       @svg.append("g")
@@ -91,10 +92,30 @@ define ["util/scale"], (Scale) ->
       ]
       tickFormat = Scale.getTickFormater(formats)()
       for tick in $(@options.parent).find("g.tick text")
+        $tick = $(tick)
         date = new Date parseInt $(tick).text().replace(/,/g, "")
-        $(tick).text tickFormat date
-        $(tick).attr "original-title", d3.time.format("%Y-%m-%d %H:%M") date
-        $(tick).tipsy()
+        tickText = tickFormat date
+        $tick.text tickText
+        $tick.attr "original-title", d3.time.format("%Y-%m-%d %H:%M") date
+        $tick.tipsy()
+
+    avoidOverlaps: ->
+      lastOffset = 0
+      lastWidth = 0
+      dodgeDown = true
+      for tick in $(@options.parent).find("g.tick text")
+        $tick = $(tick)
+        xOffset = parseInt $tick.closest("g").attr("transform").match(/translate\(([0-9.]+),.+/)[1]
+        width = $tick.width()
+        if xOffset - lastOffset < lastWidth
+          if dodgeDown
+            $tick.attr "dy", "2em"
+            dodgeDown = false
+        else
+          dodgeDown = true
+
+        lastOffset = xOffset
+        lastWidth = width
 
     getTooltip: (dp, id, fy) ->
       x = dp.x
