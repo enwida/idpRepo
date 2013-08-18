@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -85,11 +86,16 @@ public class UserController {
     private static org.apache.log4j.Logger logger = Logger.getLogger(AdminController.class);
 
     @Value("#{applicationProperties['fileUploadDirectory']}")
-	protected String fileUploadDirectory;
+	private String fileUploadDirectory;
 
 	@Value("#{applicationProperties['file.upload.parse.success']}")
-	protected String uploadsuccessmsg;
+	private String uploadsuccessmsg;
 	
+	@PostConstruct
+	public void init() {
+		fileUploadDirectory = EnwidaUtils.resolveEnvVars(fileUploadDirectory);
+	}
+
 	@RequestMapping(value="/user", method = RequestMethod.GET)
 	public String displayDashboard(Model model, Locale locale) {
 		try{
@@ -197,31 +203,44 @@ public class UserController {
 	        userValidator.validate(user, result);       
 
             if (!result.hasErrors())
-            {
-                if(userService.saveUser(user,"http://localhost:8080/enwida/user/"))
-                {                           
-                    String name = user.getFirstName() + " " + user.getLastName();
-                    String userStatus="logout";
-                    String userStatusURL="../j_spring_security_logout";
-    
-                    model.addAttribute("username", name);
-                    model.addAttribute("userStatus", userStatus);
-                    model.addAttribute("userStatusURL", userStatusURL);  
-                    model.addAttribute("content","user/index");    
-                    //We dont want prelogin
-                    //clear the session and security context and redirect user to main page
-                    SecurityContextHolder.clearContext();
-                    HttpSession session = request.getSession(false);
-                    if (session != null) {
-                        session.invalidate();
-                    }     
-                    response.sendRedirect("index");
-                }
+            {                        
+            	if(user.getUserName().isEmpty())
+            	{
+            		user.setUserName(user.getEmail());
+            	}
+
+            	if(userService.saveUser(user,"http://localhost:8080/enwida/user/"))
+            	{                           
+            		String activationLink = "http://localhost:8080/enwida/user/activateuser.html?username=" + user.getUserName() + "&actId=" + user.getActivationKey();
+            		String emailText = messageSource.getMessage("de.enwida.activation.email.message", null, request.getLocale()) + 
+            				activationLink + messageSource.getMessage("de.enwida.activation.email.signature", null, request.getLocale());	
+            		mail.SendEmail(user.getEmail(), 
+            				messageSource.getMessage("de.enwida.activation.email.subject", null, request.getLocale()), 
+            				emailText );
+
+            		String name = user.getFirstName() + " " + user.getLastName();
+            		String userStatus="logout";
+            		String userStatusURL="../j_spring_security_logout";
+
+            		model.addAttribute("username", name);
+            		model.addAttribute("userStatus", userStatus);
+            		model.addAttribute("userStatusURL", userStatusURL);  
+            		model.addAttribute("content","user/index");    
+            		//We dont want prelogin
+            		//clear the session and security context and redirect user to main page
+            		SecurityContextHolder.clearContext();
+            		HttpSession session = request.getSession(false);
+            		if (session != null) {
+            			session.invalidate();
+            		}     
+            		response.sendRedirect("index");
+            	}
             }else{
                 model.addAttribute("content","user/register");
             }
             model.addAllAttributes(result.getModel());
-	    }
+            }
+	    
 	}
 	
 	@RequestMapping(value="/register",method=RequestMethod.GET)
@@ -385,14 +404,20 @@ public class UserController {
 						if (recordsInserted) {
 							// if atleast one record is written then upload
 							// file.
-							UploadedFile file = saveFile(filetobeuploaded, user);
+							UploadedFile file = saveFile(filetobeuploaded,
+									user, 0);
+							// update user in session as well
+							userSession.setUserInSession(user);
 							// update file Id (which already have owner details)
 							metaData.setFile(file);
 							userLineService.updateUserLineMetaData(metaData);
-							// update uploaded files list
-							filetable.add(file);
-							model.put("successmsg", uploadsuccessmsg);
+
 							EnwidaUtils.removeTemporaryFile(filetobeuploaded);
+
+							model.put("successmsg", uploadsuccessmsg);
+							// update uploaded files list
+							//filetable.clear();
+							filetable.add(file);
 						} else {
 							model.put("errormsg", "Duplicate file uploaded");
 						}
@@ -463,7 +488,8 @@ public class UserController {
 	}
 
 
-	private UploadedFile saveFile(File file, User user) throws Exception {
+	private UploadedFile saveFile(File file, User user, int fileId)
+			throws Exception {
 		String displayfileName = file.getName();
 
 		// Get the next generated value of file sequence
@@ -507,6 +533,8 @@ public class UserController {
 		}
 
 		// create entry in file upload table
+		// UploadedFile uploadedfile = fileId > 0 ? userService.getFile(fileId)
+		// : new UploadedFile();
 		UploadedFile uploadedfile = new UploadedFile();
 		uploadedfile.setDisplayFileName(displayfileName);
 		uploadedfile.setFileName(fileName);
@@ -517,19 +545,20 @@ public class UserController {
 
 		uploadedfile.setUploader(user);
 		// User user = userSession.getUser();
-		user.addUploadedFile(uploadedfile);
 		// update revision based on
 		// int revision = userService.getUploadedFileVersion(uploadedfile,
 		// user);
-		uploadedfile.setRevision(1);
-		user.addUploadedFile(uploadedfile);
-		userService.updateUser(user);
+		if (fileId == 0) {
+			uploadedfile.setRevision(1);
+		} else {
+			// replace option means create new revision and insert new file
+			// update modification date
+			uploadedfile.setModificationDate(new Date());
+		}
+		user = userService.saveUserUploadedFile(user, uploadedfile);
 
-		uploadedfile = userService
-				.getFileByFilePath(uploadedfile.getFilePath());
 		return uploadedfile;
 	}
-
 
 	@RequestMapping(value = "/files/{fileId}", method = RequestMethod.GET)
 	@ResponseBody

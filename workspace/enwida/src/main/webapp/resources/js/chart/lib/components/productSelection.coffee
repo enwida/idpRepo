@@ -30,7 +30,7 @@ define ->
     @setupEvents = ->
       @$node.find("select").change =>
         tso = @select("tso").val()
-        product = @getProduct()
+        product = @normalizeProduct()
         @trigger "productSelectionChanged", tso: tso, product: product
         @setProduct product
 
@@ -67,15 +67,17 @@ define ->
         element.val id
         node = (_.find node.children, (c) -> c.id is id) ? node.children[0]
 
-      # Apply restrictions of leaf node
-      # TODO
-
     @getProduct = ->
       result = ""
       for name in @productParts
         element = @select("product").find(".#{name}")
         result += element.val()
       result
+    
+    @normalizeProduct = ->
+      product = @getProduct()
+      @setProduct product
+      @getProduct()
 
     @getProductTree = ->
       tso = @select("tso").val()

@@ -164,19 +164,9 @@ public class UserServiceImpl implements IUserService {
                 {
                     anonymousGroup = new Group();
 					anonymousGroup.setGroupName(Constants.ANONYMOUS_GROUP);
-                    anonymousGroup.setAutoPass(true);
-                    anonymousGroup = groupDao.addGroup(anonymousGroup);
+                    anonymousGroup.setAutoPass(true);                    
                 }
-                 //  userDao.assignUserToGroup(userId, anonymousGroup.getGroupID());
-            }
-            
-            try 
-            {
-                mailService.SendEmail(user.getUserName(), "Activation Link", activationHost + "activateuser.html?username=" + user.getUserName() + "&actId=" + user.getActivationKey());
-            }
-            catch (Exception e) {
-                logger.error(e.getMessage());
-                return false;
+                anonymousGroup = groupDao.addGroup(anonymousGroup);
             }
             
             return true;
@@ -245,7 +235,7 @@ public class UserServiceImpl implements IUserService {
      */
     @Override
     public void updateUser(User user) throws Exception {
-        userDao.updateUser(user);
+		userDao.update(user, true);
     }
     /**
      * Gets the user based on userName
@@ -307,6 +297,30 @@ public class UserServiceImpl implements IUserService {
 		group = groupDao.update(group);
 		groupDao.refresh(group);
 		return group;
+	}
+
+	/**
+	 * Caution: user should be persisted and in clean state! Dirty attributes
+	 * might be applied (i.e. committed to database, eventually).
+	 * 
+	 * @return the updated and managed user and file object
+	 * @throws Exception
+	 */
+	@Override
+	public User saveUserUploadedFile(User user, UploadedFile file) {
+		if (user.getUserId() == null) {
+			throw new IllegalArgumentException("user object is not persisted");
+		}
+		if (file.getId() > 0) {
+			file = fileDao.update(file, true); // with flush
+		} else {
+			fileDao.create(file, true); // with flush
+		}
+
+		// Refresh the user in order to reflect the changes
+		user = userDao.update(user);
+		userDao.refresh(user);
+		return user;
 	}
     
 	@Override
@@ -619,4 +633,9 @@ public class UserServiceImpl implements IUserService {
     	userDao.refresh(user);
     	return user;
     }
+    
+	@Override
+	public boolean emailAvailability(String email) throws Exception {
+		return userDao.emailAvailablility(email);		
+	}
 }

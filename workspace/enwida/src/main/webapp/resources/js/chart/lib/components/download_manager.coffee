@@ -1,10 +1,9 @@
 define [ "components/visual"
          "components/productSelection"
-         "components/timeSelection"
+         "components/extended_time_selection"
          "components/lines"
          "components/infobox"
          "components/chart_download"
-         "components/data_sheet"
          "util/loading"
          "util/lines_preprocessor"
          "util/resolution"
@@ -18,7 +17,6 @@ define [ "components/visual"
    Lines
    Infobox
    ChartDownload
-   DataSheet
    Loading
    LinesPreprocessor
    Resolution
@@ -27,6 +25,8 @@ define [ "components/visual"
   ) ->
 
     flight.component ->
+      @dateFormat = d3.time.format "%Y-%m-%d"
+
       @applyVisibility = ->
         linesSelection   = @$node.find ".lines"
         productSelection = @$node.find ".productSelect"
@@ -57,9 +57,6 @@ define [ "components/visual"
           data: chartId: @attr.id
           error: (err) -> callback err
           success: (data) =>
-            @logDebug "Got navigation data:"
-            console.log data
-
             @navigationData = data
             callback null, data
 
@@ -80,29 +77,18 @@ define [ "components/visual"
           error: (err) =>
             callback err
 
-      @reportDisabledLines = (disabledLines) ->
-        $.ajax "disabledLines",
-          type: "POST"
-          data:
-            chartId: @attr.id
-            lines: disabledLines.join ","
-          error: (xhr, status, err) =>
-            @logError "Error while reporting disabled lines: #{err}"
-          success: =>
-            @logDebug "Sent disabled lines"
-
       @onGetLines = (selections) ->
-        # Check if time selection is within bounds
-        leaf = @attr.treeHelper.traverse selections.tso, selections.product
-        if not TimeUtils.isTimeRangeInside selections.timeRange, leaf.timeRange
-          @logDebug "No line request made due to time restrictions"
-          return
+        # Check for duplicate (resolution does not matter for preview chart)
+        return if @attr.lastSelections? and
+          @attr.lastSelections.tso is selections.tso and
+          @attr.lastSelections.product is selections.product and
+          @attr.lastSelections.timeRange.from.getTime() is selections.timeRange.from.getTime() and
+          @attr.lastSelections.timeRange.to.getTime() is selections.timeRange.to.getTime()
+
+        @attr.lastSelections = $.extend {}, selections
 
         # Calculate resolution
         selections.resolution = @optimalResolution selections
-
-        @logDebug "Getting lines:"
-        @logDebug JSON.stringify selections
 
         # Update info box
         selections.title = @attr.navigationData.title
@@ -112,7 +98,7 @@ define [ "components/visual"
 
         @getLines selections, (err, data) =>
           if err?
-            console.log err
+            @logError err
             return @trigger "chartMessage", msg: "Sorry, something went wrong."
           if data.length is 0
             return @trigger "chartMessage", msg: "No data"
@@ -120,9 +106,6 @@ define [ "components/visual"
           @attr.data = data = LinesPreprocessor.transform @attr.type, data
           @triggerDraw data
           @trigger @select("lines"), "updateLines", lines: data
-          @trigger @select("dataSheet"), "refresh",
-            lines: data
-            navigationData: @attr.navigationData
 
       @triggerDraw = (data) ->
         if data.length is @attr.disabledLines.length
@@ -137,7 +120,7 @@ define [ "components/visual"
 
       @toggleLine = (_, opts) ->
         @attr.disabledLines = opts.disabledLines
-        @reportDisabledLines opts.disabledLines
+        @setDownloadLink()
         @triggerDraw @attr.data
 
       @optimalResolution = (selections) ->
@@ -146,6 +129,26 @@ define [ "components/visual"
           @attr.type, selections.timeRange,
           leaf.resolution, @attr.width, @attr.navigationData.aspects.length
 
+      @setDownloadLink = ->
+        selections = $.extend {},
+          @attr.selections,
+          resolution: @attr.downloadResolution
+          disabledLines: @attr.disabledLines
+
+        query =
+          chartId: @attr.id
+          product: selections.product
+          tso: selections.tso
+          startTime: @dateFormat selections.timeRange.from
+          endTime: @dateFormat selections.timeRange.to
+          resolution: selections.resolution
+          disabledLines: selections.disabledLines.join ","
+
+        urlQuery = (_(_(query).keys()).map (key) ->
+          [key, query[key]].join "="
+        ).join "&"
+        @select("downloadLink").attr "href", "download.csv?" + urlQuery
+
       @defaultAttrs
         navigation: ".navigation"
         visual: ".visual"
@@ -153,8 +156,8 @@ define [ "components/visual"
         infobox: ".infobox"
         productSelection: ".productSelection"
         timeSelection: ".timeSelection"
-        chartDownload: ".chartDownload"
-        dataSheet: ".dataSheet"
+        download: ".download"
+        downloadLink: ".downloadLink"
         disabledLines: []
 
       @after "initialize", ->
@@ -170,59 +173,49 @@ define [ "components/visual"
         @on "chartMessage", (_, opts) ->
           @getMsg().showText opts.msg
 
-        # Compare methods
-        productSelectionEquals = -> false # TODO
-        timeSelectionEquals = (a, b) ->
-          new Date(a.timeRange.from).getTime() == new Date(b.timeRange.from).getTime() and \
-          new Date(a.timeRange.to).getTime() == new Date(b.timeRange.to).getTime()
-
-        # Streams from selection subsystems
+        # Setup streams
         productStream = @$node.asEventStream("productSelectionChanged", (_, v) -> v)
         timeStream = @$node.asEventStream("timeSelectionChanged", (_, v) -> v)
-        selectionStream = productStream.toProperty().sampledBy timeStream, $.extend
+        selectionStream = Bacon.combineWith $.extend, productStream, timeStream
 
-        # Order is important here!
-        # Call onValue on selectionStream before calling it on productStream
+        # Request lines and update button test
         selectionStream.onValue (selections) =>
+          @attr.selections = $.extend {}, selections
+          @attr.downloadResolution = selections.resolution
+          dataSets = TimeUtils.dataSetCount selections.timeRange, selections.resolution
+          @select("download").text "Download approx. #{parseInt dataSets} data points"
+          @setDownloadLink()
           @onGetLines selections
 
+        # Forward time restrictions and request new time selections
         productStream.onValue (selections) =>
           leaf = @attr.treeHelper.traverse selections.tso, selections.product
-          @trigger @select("timeSelection"), "timeRestrictions", leaf.timeRange
-          @trigger @select("timeSelection"), "requestTimeSelection"
+          @trigger @select("timeSelection"), "timeRestrictions", leaf
+          @trigger @select("timeSelection"), "requestTimeSelection", leaf
 
         # Parse element attributes
         @attr.type = @$node.attr("data-chart-type") ? "line"
-        @attr.width = parseInt(@$node.attr("data-width"))
-        @attr.height = parseInt(@$node.attr("data-height"))
-
-        @attr.width = 800 if isNaN @attr.width
-        @attr.height = 800 if isNaN @attr.height
+        @attr.width = 600
+        @attr.height = 300
 
         # Add visual
         visual = $("<div>").addClass "visual"
         @$node.append visual
         Visual.attachTo visual, @attr
 
-        # Add controls
-        controls = $("<div>")
-          .addClass("controls")
-          .css("width", "#{@attr.width}px")
-        @$node.append controls
-
         # Add info box
-        infoBox = $("<div>").addClass("infobox")
-        controls.append infoBox
-        Infobox.attachTo infoBox
+        #infoBox = $("<div>").addClass("infobox").css("width", "#{@attr.width}px")
+        #@$node.append infoBox
+        #Infobox.attachTo infoBox
 
         # Add lines
         if @attr.type isnt "carpet"
-          lines = $("<div>").addClass("lines")
-          controls.append lines
+          lines = $("<div>").addClass("lines").css("width", "#{@attr.width}px")
+          @$node.append lines
           Lines.attachTo lines
 
         selection = $("<div>").addClass("selection")
-        controls.append selection
+        @$node.append selection
 
         # Add product selection
         productSelection = $("<div>").addClass "productSelection"
@@ -234,38 +227,20 @@ define [ "components/visual"
         selection.append timeSelection
         TimeSelection.attachTo timeSelection, @attr
 
-
-        # Add buttons
-        buttons = $("<div>").addClass "buttons"
-        controls.append buttons
-
-        # SVG download
-        chartDownload = $("<div>").addClass("chartDownload")
-        buttons.append chartDownload
-        ChartDownload.attachTo chartDownload, @attr
-
-        # CSV download
-        buttons.append($("<a>")
-          .addClass("downloadCsv")
-          .attr("href", "download?chartId=#{@attr.id}")
-          .append("<button>")
-            .addClass("btn")
-            .text("Download CSV"))
-
-        # Data sheet toggle
-        buttons.append($("<button>")
+        # Add download button
+        downloadLink = $("<a>")
+          .addClass("downloadLink")
+        downloadButton = $("<button>")
           .addClass("btn")
-          .text("Data sheet")
-          .click => @select("dataSheet").toggle())
-
-        # Add data sheet
-        dataSheet = $("<div>").addClass("dataSheet").hide()
-        controls.append dataSheet
-        DataSheet.attachTo dataSheet, @attr
+          .addClass("download")
+          .text("Download")
+        @$node.append($("<div>")
+          .append(downloadLink
+            .append(downloadButton)))
 
         @getNavigationData (err, data) =>
           if err?
-            console.log err
+            @logError err
             return @trigger "errorMessage", msg: "Sorry, something went wrong."
           unless typeof data is "object" and data?.allResolutions?.length > 0
             return @trigger "errorMessage", msg: "Sorry, you do not have the permission to see this chart."

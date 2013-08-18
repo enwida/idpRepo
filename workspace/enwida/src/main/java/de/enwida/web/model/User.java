@@ -58,12 +58,16 @@ public class User implements Serializable, UserDetails {
 	public static final String LOGIN_COUNT = "LOGIN_COUNT";
 	public static final String LAST_LOGIN = "LAST_LOGIN";
 	public static final String TELEPHONE = "TELEPHONE";
+	public static final String EMAIL = "EMAIL";
 
 	@Id
 	@Column(name = USER_ID)
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long userId;
 
+	@Column(name = EMAIL, nullable = false, unique = true)
+    private String email;
+	
 	@Column(name = USER_NAME, nullable = false, unique = true)
     private String userName;
 
@@ -122,8 +126,10 @@ public class User implements Serializable, UserDetails {
 	@Transient
 	private Collection<GrantedAuthority> authorities = new HashSet<GrantedAuthority>();
    
-    public User(String userName, String password,
+
+    public User(String email, String userName, String password,
             String firstName, String lastName, boolean enabled) {
+    	this.setEmail(email);
         this.setUserName(userName);
         this.setLastName(lastName);
         this.setFirstName(firstName);
@@ -134,6 +140,14 @@ public class User implements Serializable, UserDetails {
     public User() {
         // TODO Auto-generated constructor stub
     }
+
+    public String getEmail() {
+ 		return email;
+ 	}
+
+ 	public void setEmail(String email) {
+ 		this.email = email;
+ 	}
 
     public String getLastName() {
         return lastName;
@@ -318,8 +332,10 @@ public class User implements Serializable, UserDetails {
 		}
 	}
 
-	@Transient
 	public Set<UploadedFile> getUploadedFiles() {
+		if (uploadedFiles == null) {
+			this.uploadedFiles = new HashSet<UploadedFile>(0);
+		}
 		return uploadedFiles;
 	}
 
@@ -327,15 +343,20 @@ public class User implements Serializable, UserDetails {
 		this.uploadedFiles = uploadedFiles;
 	}
 
+	@Deprecated
 	public void addUploadedFile(UploadedFile uploadedFile) {
 		if (uploadedFile != null) {
 			if (uploadedFiles == null) {
 				this.uploadedFiles = new HashSet<UploadedFile>();
+			} else {
+				// prepare new set for mappings
+				this.uploadedFiles = new HashSet<>(this.uploadedFiles);
 			}
 			this.uploadedFiles.add(uploadedFile);
 		}
 	}
 
+	@Deprecated
 	public void removeUploadedFile(UploadedFile uploadedFile) {
 		if (uploadedFile != null && uploadedFiles != null
 				&& uploadedFiles.contains(uploadedFile)) {

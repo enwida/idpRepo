@@ -228,13 +228,21 @@ public class EnwidaUtils {
 	    // match ${ENV_VAR_NAME} or $ENV_VAR_NAME
 	    final Pattern p = Pattern.compile("\\$\\{(\\w+)\\}|\\$(\\w+)");
 	    final Matcher m = p.matcher(input); // get a matcher object
-	    final StringBuffer sb = new StringBuffer();
-	    while(m.find()){
+		final StringBuffer sb = new StringBuffer();
+		while (m.find()) {
 	        String envVarName = null == m.group(1) ? m.group(2) : m.group(1);
 	        String envVarValue = System.getenv(envVarName);
-	        m.appendReplacement(sb, null == envVarValue ? "" : envVarValue);
-	    }
-	    m.appendTail(sb);
-	    return sb.toString();
+			// System.out.println(envVarValue + " : " + envVarValue.length());
+			m.appendReplacement(
+					sb,
+					(null == envVarValue ? "" : Matcher
+							.quoteReplacement(envVarValue)));
+		}
+		m.appendTail(sb);
+		String result = sb.toString();
+		result = result.replaceAll("/",
+				Matcher.quoteReplacement(File.separator));
+		// System.err.println(result);
+		return result;
 	}
 }

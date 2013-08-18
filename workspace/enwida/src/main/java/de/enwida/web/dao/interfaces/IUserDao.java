@@ -20,6 +20,8 @@ public interface IUserDao extends IDao<User> {
     void enableDisableUser(long userID, boolean enabled) throws Exception;
 
     boolean usernameAvailablility(String username) throws Exception;
+    
+    boolean emailAvailablility(String email) throws Exception;
 
     Long getNextSequence(String schema, String sequenceName);
 
