@@ -12,7 +12,7 @@ define ->
       classes = classes.replace new RegExp("\s*#{klass}\s*", "g"), ""
       element.attr "class", classes
 
-    @updateLines = (_, opts) ->
+    @updateLines = (e, opts) ->
       @$node.empty()
       ul = $("<ul>")
       @$node.append ul
@@ -25,8 +25,6 @@ define ->
                 .append($("<div>").addClass("linesquare")))
               .append($("<td>").text(line.title))))
         li.click =>
-          # _ holds the event...
-          _ = window._
           if _.contains @attr.disabledLines, i
             @attr.disabledLines = _.without @attr.disabledLines, i
           else
@@ -64,3 +62,4 @@ define ->
       @on "updateLines", @updateLines
       @on "disabledLines", (_, opts) ->
         @attr.disabledLines = opts.lines if opts.lines?
+

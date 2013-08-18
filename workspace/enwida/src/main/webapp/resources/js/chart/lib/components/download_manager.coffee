@@ -250,6 +250,7 @@ define [ "components/visual"
           @attr.treeHelper = ProductTree.init data
           @applyVisibility()
 
+          @trigger @select("lines"), "disabledLines", lines: _(data.defaults.disabledLines).values()
           @trigger @select("timeSelection"), "refresh", data: data
           @trigger @select("productSelection"), "refresh", data: data
 

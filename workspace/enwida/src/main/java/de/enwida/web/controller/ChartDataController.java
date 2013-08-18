@@ -30,10 +30,13 @@ import org.w3c.dom.bootstrap.DOMImplementationRegistry;
 import org.w3c.dom.ls.DOMImplementationLS;
 import org.w3c.dom.ls.LSSerializer;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import de.enwida.transport.Aspect;
 import de.enwida.transport.DataResolution;
 import de.enwida.transport.IDataLine;
 import de.enwida.transport.LineRequest;
+import de.enwida.web.db.model.CalendarRange;
 import de.enwida.web.db.model.NavigationDefaults;
 import de.enwida.web.db.model.NavigationSettings;
 import de.enwida.web.model.ChartNavigationData;
@@ -102,20 +105,38 @@ public class ChartDataController {
 	    @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Calendar startTime,
 	    @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Calendar endTime,
 	    @RequestParam DataResolution resolution,
+	    HttpServletRequest request,
 	    Locale locale) {
         
         final List<IDataLine> result = new ArrayList<IDataLine>();
         final List<Aspect> aspects = navigationService.getDefaultNavigationData(chartId).getAspects();
         
         for (final Aspect aspect : aspects) {
-        	final LineRequest request = new LineRequest(aspect, product, tso, startTime, endTime, resolution, locale);
+        	final LineRequest lineRequest = new LineRequest(aspect, product, tso, startTime, endTime, resolution, locale);
 
         	try {
-                final IDataLine line = lineService.getLine(request, userService.getCurrentUser());
+                final IDataLine line = lineService.getLine(lineRequest, userService.getCurrentUser());
                 result.add(line);
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        }
+
+		// Try to update the navigation settings data
+        try {
+			NavigationDefaults defaults = getNavigationDefaults(chartId, request);
+			if (defaults == null) {
+				defaults = new NavigationDefaults();
+			}
+			
+			defaults.setTsoId(tso);
+			defaults.setProduct(product);
+			defaults.setResolution(resolution);
+			defaults.setTimeRange(new CalendarRange(startTime, endTime));
+			
+			updateChartDefaults(chartId, defaults, request);
+        } catch (Exception ignored) { 
+            logger.info(ignored.getMessage());
         }
         return result;
     }
@@ -213,10 +234,8 @@ public class ChartDataController {
     	}
     }
     
-	private NavigationDefaults getNavigationDefaults(int chartId,
-			HttpServletRequest request)
-			throws IOException {
-		Map<Integer, NavigationDefaults> chartDefaults = getUserSettings(request);
+	private NavigationDefaults getNavigationDefaults(int chartId, HttpServletRequest request) throws IOException {
+		final Map<Integer, NavigationDefaults> chartDefaults = getUserSettings(request);
 	    return chartDefaults.get(chartId);
     }
 
@@ -248,8 +267,7 @@ public class ChartDataController {
 		}
 	}
 
-	public Map<Integer, NavigationDefaults> getUserSettings(
-			HttpServletRequest request) {
+	public Map<Integer, NavigationDefaults> getUserSettings( HttpServletRequest request) {
 
 		Map<Integer, NavigationDefaults> navigationSettings = null;
 		if (userSession.getUser() != null) {
