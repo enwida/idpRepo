@@ -481,7 +481,8 @@ public class BasicUserManagement {
 		final Role fetchedRole = userService.fetchRole("testrole");
 		Assert.assertEquals(1, freshRole.getRights().size());
 		Assert.assertTrue(fetchedRole.getRights().contains(right2));
-	}
+	}
+
 	
 	@Test
 	public void addRightsToRole() throws Exception {
@@ -625,8 +626,9 @@ public class BasicUserManagement {
 	/***
 	 ***** Helper methods
 	 ***/
-	    private User saveTestUser(String name) throws Exception {
-		final User user = new User(name, "secret", "test", "test", true);
+	
+    private User saveTestUser(String name) throws Exception {
+		final User user = new User("jsdfjsdg@gmail.com", name, "secret", "test", "test", true);
 		user.setCompanyName("enwida.de");
 		userService.saveUser(user);
 		return user;

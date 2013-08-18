@@ -81,7 +81,8 @@ public class ChartNavigationTest {
 		}
 
 		TestUtils.cleanupDatabase(connection);
-		connection.close();	}
+		connection.close();
+	}
 
 	@Test
 	public void serviceIsAvailable() {
@@ -918,7 +919,7 @@ public class ChartNavigationTest {
 	}
 	
 	private User saveUserWithGroup(String username) throws Exception {
-		final User user = new User(username, "secret", "test", "test", true);
+		final User user = new User("ab@tum.de", username, "secret", "test", "test", true);
 		user.setCompanyName("enwida.de");
 		userService.saveUser(user);
 		
@@ -943,5 +944,6 @@ public class ChartNavigationTest {
 	private Role saveRight(Role role, Right right) throws Exception {
 		userService.saveRight(right);
 		return userService.assignRightToRole(right, role);
-	}
+	}
+
 }

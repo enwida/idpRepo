@@ -1,8 +1,12 @@
 package de.enwida.web.dao.implementation;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
@@ -89,5 +93,19 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
 	@Override
 	public Long getNextSequence(String schema, String sequenceName) {
 		return super.getNextSequenceNumber(schema, sequenceName);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public boolean emailAvailablility(String email) throws Exception {
+		String sql = "SELECT * FROM users.users WHERE email=?";
+		List<User> users = this.jdbcTemplate.query(sql, new Object[] { email }, new RowMapper() {
+            @Override
+            public String mapRow(ResultSet rs, int arg1) throws SQLException {
+                return rs.getString("email");
+            }
+        });
+		
+		return (users.size() > 0 ) ? true : false ;
 	}
 }

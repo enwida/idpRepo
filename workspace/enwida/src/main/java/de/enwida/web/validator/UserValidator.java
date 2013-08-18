@@ -21,24 +21,29 @@ public class UserValidator implements Validator {
 	
 	public void validateUser(User user,Errors errors,boolean updated) throws Exception{
 	    if (!updated){
-    	    if(user.getUserName().isEmpty())
+    	    if(user.getEmail().isEmpty())
             {
-                errors.rejectValue("userName", "de.enwida.field.empty");
+                errors.rejectValue("email", "de.enwida.field.empty");
             }
-            else if (!user.getUserName().matches(Constants.EMAIL_REGULAR_EXPRESSION))
+            else if (!user.getEmail().matches(Constants.EMAIL_REGULAR_EXPRESSION))
             {
-                errors.rejectValue("userName", "de.enwida.email.invalid");
+                errors.rejectValue("email", "de.enwida.email.invalid");
             }
             
-            else if( userService.userNameAvailability(user.getUserName()))
+            else if( !user.getUserName().isEmpty() && userService.userNameAvailability(user.getUserName()))
             {
                 errors.rejectValue("userName", "de.enwida.email.inuse");
             }
             
-            // Checking password field
+            else if( userService.emailAvailability(user.getEmail()))
+            {
+                errors.rejectValue("email", "de.enwida.email.inuse");
+            }
+            
+            // Checking pasword field
             if(user.getPassword().isEmpty())
             {
-                errors.rejectValue("password", "de.enwida.field.empty");
+               // errors.rejectValue("password", "de.enwida.field.empty");
             }
             
             // Checking confirm password field
@@ -52,6 +57,10 @@ public class UserValidator implements Validator {
                 if(!user.getPassword().equals(user.getConfirmPassword()))
                 {
                     errors.rejectValue("password", "de.enwida.password.mismatch");
+                }                
+                else if(user.getPassword().length() < 6)
+                {
+                    errors.rejectValue("password", "de.enwida.password.length.short");
                 }
             }
 	    }else{
