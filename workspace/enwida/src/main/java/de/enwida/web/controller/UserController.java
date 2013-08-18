@@ -338,9 +338,9 @@ public class UserController {
 			List<UploadedFile> filetable = new ArrayList<UploadedFile>(
 					user.getUploadedFiles());
 			Collections.sort(filetable);
-			model.put("uploadedfiletable", filetable);
-			model.put("fileUpload", new FileUpload());
+			model.put("uploadedfiletable", filetable);			
 		}
+		model.put("fileUpload", new FileUpload());
 		return new ModelAndView("user/upload", model);
 	}
 	
