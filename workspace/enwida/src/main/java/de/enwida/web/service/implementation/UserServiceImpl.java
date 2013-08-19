@@ -199,7 +199,6 @@ public class UserServiceImpl implements IUserService {
 	 */
     @Override
 	public Group saveGroup(Group newGroup) throws Exception {
-        newGroup.setAutoPass(false);
 		return groupDao.addGroup(newGroup);
     }
 
@@ -611,7 +610,7 @@ public class UserServiceImpl implements IUserService {
     {
         for (Group group : groupDao.fetchAll()) {
             for (User user : group.getAssignedUsers()) {
-                if(user.getCompanyName()==companyName)
+                if(user.getCompanyName().equals(companyName))
                     return group;
             }
         }
