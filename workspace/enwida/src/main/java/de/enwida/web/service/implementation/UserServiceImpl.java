@@ -651,4 +651,14 @@ public class UserServiceImpl implements IUserService {
 		//TODO: Complete the Implementation
 		return true;
 	}
+	
+	@Override
+    public Group fetchGroupById(long groupId) {
+        return groupDao.fetchById(groupId);
+    }
+
+    @Override
+    public Role fetchRoleById(long roleId) {
+        return roleDao.fetchById(roleId);
+    }
 }
