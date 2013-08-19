@@ -206,7 +206,8 @@ public interface IUserService {
 	 * @param role the persisted role object
 	 * @param group the persisted group object
 	 * @return the fresh {@link Role} object
-	 */	public Role assignRoleToGroup(Role role, Group group);
+	 */
+	public Role assignRoleToGroup(Role role, Group group);
 
 	/**
 	 * Revoke role from group.
@@ -221,7 +222,8 @@ public interface IUserService {
 	 * @param role the persisted role object
 	 * @param group the persisted group object
 	 * @return the fresh {@link Role} object
-	 */	public Role revokeRoleFromGroup(Role role, Group group);
+	 */
+	public Role revokeRoleFromGroup(Role role, Group group);
 
 	// TODO: comments
 	public Role assignRightToRole(Right right, Role role);
@@ -342,7 +344,10 @@ public interface IUserService {
 
 	User saveUserUploadedFile(User user, UploadedFile file);
 
-    public Group fetchGroupById(long groupId);
+	public boolean eraseFileData(int fileId);
+	
+	public Group fetchGroupById(long groupId);
+	
+	public Role fetchRoleById(long roleId);
 
-    public Role fetchRoleById(long roleId);
 }

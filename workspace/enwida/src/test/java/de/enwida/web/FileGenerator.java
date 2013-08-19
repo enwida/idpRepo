@@ -60,7 +60,7 @@ public class FileGenerator {
 	public void generateFile() {
 		// TODO Auto-generated method stub
 		for (int i = 1; i <= 5; i++) {
-			String filePath = "C://Users//Jitin//Desktop//sample-" + i + ".csv";
+			String filePath = "C://Users//AtifKhan//Desktop//sample-" + i + ".csv";
 			int numberOfDataLines = 400;
 			try {
 				generateCsvFile(filePath, numberOfDataLines);

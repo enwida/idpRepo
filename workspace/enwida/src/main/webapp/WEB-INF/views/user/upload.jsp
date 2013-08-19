@@ -3,94 +3,281 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
-
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<meta charset="utf-8" />
 <title>Upload User Data</title>
-<style>
-.error {
-	color: #ff0000;
-}
-
-.errorblock {
-	color: #000;
-	background-color: #ffEEEE;
-	border: 3px solid #ff0000;
-	padding: 8px;
-	margin: 16px;
-}
-</style>
+<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+<!-- <link rel="stylesheet" href="/resources/demos/style.css" /> -->
+<script>
+$(function() {
+	var fileIdToDelete =  -1;
+	
+	<c:forEach var="file" items="${uploadedfiletable}">		
+		$( "#replace-file-${file.id}" )
+			.button()
+			.click(function() {
+				$("#fileIdToBeReplaced").val($(this).attr("id").split("-")[2]);				
+				$( "#replace-file-form-div" ).dialog( "open" );
+		});
+		
+		$( "#download-file-${file.id}" )
+			.button()
+			.click(function() {				
+		});
+		
+		$( "#delete-file-${file.id}" )
+			.button()
+			.click(function(event) {
+				fileIdToDelete = $(this).attr("id").split("-")[2];
+				$( "#delete-file-form-div" ).dialog( "open" );				
+		});
+		
+		$( "#show-revisions-file-${file.id}" )
+			.button()
+			.click(function(event) {
+				$( "#show-revisions-file-div" ).dialog( "open" );				
+		});	
+		
+	</c:forEach>
+	
+	$( "#upload-file" )
+		.button()
+		.click(function() {
+			$( "#upload-file-form-div" ).dialog( "open" );
+	});
+		
+	$( "#upload-file-form-div" ).dialog({
+		autoOpen: false,
+		height: 300,
+		width: 450,
+		modal: true,
+		buttons: {
+			"Upload File": function() {
+				$("#upload-file-form").submit();
+				$( this ).dialog( "close" );
+			},
+			Cancel: function() {
+				$( this ).dialog( "close" );
+			}
+		},
+		close: function() {
+			//TODO: Perform actions on closing of Dialog
+		}
+	});
+	
+	$( "#replace-file-form-div" ).dialog({
+		autoOpen: false,
+		height: 300,
+		width: 450,
+		modal: true,
+		buttons: {
+			"Replace File": function() {				
+				$("#replace-file-form").submit();
+				$( this ).dialog( "close" );
+			},
+			Cancel: function() {
+				$( this ).dialog( "close" );
+			}
+		},
+		close: function() {
+			$("#fileIdToBeReplaced").val("");
+		}
+	});
+	
+	$( "#delete-file-form-div" ).dialog({
+		autoOpen: false,
+		resizable: false,
+	    height:300,
+	    width: 450,
+	    modal: true,
+	    buttons: {
+	    	"Delete this file": function() {
+	    		
+	    		$.ajax({
+	    	         url: "<c:url value='/user/files/delete' />",
+	    	         type: 'GET',            
+	    	         data:  { 	
+	    	        	 	fileId : fileIdToDelete,
+	    	         },
+	    	         success: function(result) {
+	    	        	 $( "#delete-file-form-success-div" ).dialog( "open" );
+	    	         }, 
+	    	         error: function(xhr, ajaxOptions, thrownError) {
+	    	        	 $( "#delete-file-form-failure-div" ).dialog( "open" );
+	    	       	 }
+	    	     });
+	    		
+	    		$( this ).dialog( "close" );
+	    	},
+	    	Cancel: function() {
+	    		$( this ).dialog( "close" );
+	    	}
+		},
+		close: function() {
+			fileIdToDelete = -1;
+		}
+	});
+	
+	$( "#delete-file-form-failure-div" ).dialog({
+		autoOpen: false,
+		height: 200,
+		width: 350,
+		modal: true,
+		buttons: {
+			Ok: function() {
+				$( this ).dialog( "close" );
+			}
+		}
+	});
+	
+	$( "#delete-file-form-success-div" ).dialog({
+		autoOpen: false,
+		height: 200,
+		width: 350,
+		modal: true,
+		buttons: {
+			Ok: function() {
+				$( this ).dialog( "close" );
+			}
+		}
+	});
+	
+	$( "#show-revisions-file-div" ).dialog({
+		autoOpen: false,
+		height: 200,
+		width: 350,
+		modal: true,
+		buttons: {
+			Ok: function() {
+				$( this ).dialog( "close" );
+			}
+		}
+	});
+	
+});
+</script>
 </head>
 <body>
 
-	<div style="text-align: center;">
-		<h2>Import CSV File</h2>
-	</div>
+	<div style="text-align: center;"></div>
 
 	<div style="clear: both"></div>
 	<div style="width: 100%">
-		<div style="width: 30%; float: left;"></div>
-		<div style="text-align: center; width: 40%; margin-left: 35%">
-
-			<form:form method="POST" commandName="fileUpload"
-				enctype="multipart/form-data">
-				<form:errors path="*" cssClass="errorblock" element="div" />
- 				Please Select a file to upload: 
- 				<input type="file" name="file" />
-				<input type="submit" value="Upload" />
-
-				<span> <form:errors path="file" cssClass="error" /> <c:out
-						value="${invalidFileMessage}"></c:out>
-				</span>
-			</form:form>
-			
-			<form:form method="POST" commandName="fileReplace"
-				enctype="multipart/form-data">
-				<table border="1">
-					<tr>
-							<th>Id</th>
-							<th>File Name</th>
-							<th>Upload Date</th>
-							<th>Revision</th>
-							<th>Delete</th>
-							<th>Replace</th>
-							<th>Download</th>
-					</tr>
-					<c:choose>
-						<c:when test="${not empty uploadedfiletable}">
-							<c:forEach var="file" items="${uploadedfiletable}">
+		<div style="width: 15%; float: left;"></div>
+		<div style="text-align: center; width: 70%; margin-left: 15%">
+			<h2>Import CSV File</h2>
+			<button id="upload-file">Upload File</button>
+			<br/>
+			<br/>
+			<table border="1">
+				<tr>
+					<th>Id</th>
+					<th>File Name</th>
+					<th>Upload Date</th>
+					<th>Revision</th>
+					<th>Options</th>
+				</tr>
+				<c:choose>
+					<c:when test="${not empty uploadedfiletable}">
+						<c:forEach var="file" items="${uploadedfiletable}">
 							<tr>
-								<td><c:out value="${file.id}"/></td>
-								<td><c:out value="${file.displayFileName}"/></td>
-								<td><c:out value="${file.displayUploadDate}"/></td>
-								<td><c:out value="${file.revision}"/></td>
-								<td><input type="submit" value="Delete" /></td>
-								<td><input type="file" name="file" />
-								<input type="submit" value="Replace" /></td>
-								<td><a target="_blank" href="./files/<c:out value='${file.id}'/>">download</a></td>
+								<td><c:out value="${file.id}" /></td>
+								<td><c:out value="${file.displayFileName}" /></td>
+								<td><c:out value="${file.displayUploadDate}" /></td>
+								<td>
+									<c:choose>
+										<c:when test="${file.revision > 1}">
+											<button id="show-revisions-file-${file.id}">Show Revisions</button>
+										</c:when>
+										<c:otherwise>
+											<c:out value="${file.revision}" />
+										</c:otherwise>
+									</c:choose>
+								</td>
+								<td>
+									<button id="replace-file-${file.id}">Replace</button>
+									<a href="<c:url value='/user/files/${file.id}' />" id="download-file-${file.id}">Download</a>
+									<button id="delete-file-${file.id}">Delete</button>
+								</td>
 							</tr>
-							</c:forEach>
-					
-						</c:when>
-						<c:otherwise>
-							<tr>
-								<td colspan="7">No data found</td>
-							</tr>
-						</c:otherwise>
-					</c:choose>
-				</table>
-			</form:form>
+						</c:forEach>
+					</c:when>
+					<c:otherwise>
+						<tr>
+							<td colspan="5">No data found</td>
+						</tr>
+					</c:otherwise>
+				</c:choose>
+			</table>
+
 			<c:if test="${not empty errormsg}">
-			   <small><font color="red">
-			     <c:out value="${errormsg}"/>
-			   </font></small>
-			 </c:if>
-			<c:out value="${successmsg}"/>
+				<small><font color="red"> <c:out value="${errormsg}" />
+				</font></small>
+			</c:if>
+			<c:out value="${successmsg}" />
 		</div>
-		<div style="width: 30%;"></div>
+		<div style="width: 15%;"></div>
 	</div>
 	<div style="clear: both"></div>
+
+	<!-- FileUpload Div -->
+	<div id="upload-file-form-div" title="Upload new File">
+		<p class="validateTips">All form fields are required.</p>
+
+		<form:form method="POST" id="upload-file-form" modelAttribute="fileUpload" enctype="multipart/form-data" >
+			<form:errors path="*" cssClass="errorblock" element="div" />
+				Please Select a file to upload: 
+				<form:input path="file" type="file" name="file" />
+			<!-- <input type="submit" value="Upload" /> -->
+			<span> 
+				<form:errors path="file" cssClass="error" /> 
+				<c:out value="${invalidFileMessage}"></c:out>
+			</span>
+		</form:form>
+	</div>
+	<!-- /FileUpload Div -->
+	
+	<!-- FileReplace Div -->
+	<div id="replace-file-form-div" title="Replace File">
+		<p class="validateTips">All form fields are required.</p>
+
+		<form:form method="POST" id="replace-file-form" modelAttribute="fileReplace" enctype="multipart/form-data" action="upload/replace" >
+			<form:errors path="*" cssClass="errorblock" element="div" />
+				Please Select a file to upload: 
+				<form:input path="file" type="file" name="file" />
+				<form:input path="fileIdToBeReplaced" type="hidden" id ="fileIdToBeReplaced" name="fileIdToBeReplaced"  value="" />
+			<span> 
+				<form:errors path="file" cssClass="error" /> 
+				<c:out value="${invalidFileMessage}"></c:out>
+			</span>
+		</form:form>
+	</div>
+	<!-- /FileReplace Div -->
+	
+	<!-- FileDelete Div -->
+	<div id="delete-file-form-div" title="Delete File">
+		<p><span class="ui-icon ui-icon-alert" style="float: left; margin: 0 7px 20px 0;"></span>This file will be permanently deleted and cannot be recovered. Are you sure?</p>		
+	</div>
+	<!-- /FileDelete Div -->
+	
+	<!-- Show Revisions File Div -->
+	<div id="show-revisions-file-div" title="File Revisions">
+		<p><span class="ui-icon ui-icon-alert" style="float: left; margin: 0 7px 20px 0;"></span>Revisions here!</p>		
+	</div>
+	<!-- /Show Revisions File Div -->
+	
+	<!-- FileDelete Success Div -->
+	<div id="delete-file-form-success-div" title="File Deleted">
+		<p><span class="ui-icon ui-icon-alert" style="float: left; margin: 0 7px 20px 0;"></span>File has been deleted successfully.</p>		
+	</div>
+	<!-- /FileDelete Success Div -->
+	<!-- FileDelete Failure Div -->
+	<div id="delete-file-form-failure-div" title="File Not Deleted">
+		<p><span class="ui-icon ui-icon-alert" style="float: left; margin: 0 7px 20px 0;"></span>File was not deleted successfully.</p>		
+	</div>
+	<!-- /FileDelete Failure Div -->
 </body>
 </html>

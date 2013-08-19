@@ -4,22 +4,22 @@ import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 public class FileUpload {
 	
-	private String name;
 	private CommonsMultipartFile file;
+	private int fileIdToBeReplaced;
 	
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
 	public CommonsMultipartFile getFile() {
 		return file;
 	}
 
 	public void setFile(CommonsMultipartFile file) {
 		this.file = file;
+	}
+
+	public int getFileIdToBeReplaced() {
+		return fileIdToBeReplaced;
+	}
+
+	public void setFileIdToBeReplaced(int fileIdToBeReplaced) {
+		this.fileIdToBeReplaced = fileIdToBeReplaced;
 	}
 }

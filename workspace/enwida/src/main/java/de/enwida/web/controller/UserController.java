@@ -1,9 +1,7 @@
 package de.enwida.web.controller;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -20,11 +18,11 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -38,6 +36,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -357,9 +356,10 @@ public class UserController {
 			List<UploadedFile> filetable = new ArrayList<UploadedFile>(
 					user.getUploadedFiles());
 			Collections.sort(filetable);
-			model.put("uploadedfiletable", filetable);
-			model.put("fileUpload", new FileUpload());
+			model.put("uploadedfiletable", filetable);			
 		}
+		model.put("fileUpload", new FileUpload());
+		model.put("fileReplace", new FileUpload());
 		return new ModelAndView("user/upload", model);
 	}
 	
@@ -372,7 +372,6 @@ public class UserController {
 		boolean isMultipart = ServletFileUpload.isMultipartContent(request);
 		// fetch all files related to user
 		User user = userSession.getUser();
-
 
 		String displayfileName = null;
 		if (user != null && isMultipart) {
@@ -433,34 +432,75 @@ public class UserController {
 			model.put("uploadedfiletable", filetable);
         }
 		model.put("fileUpload", new FileUpload());
+		model.put("fileReplace", new FileUpload());
 		return new ModelAndView("user/upload", model);
 	}
 
-	@RequestMapping(value = "/replaceupload", method = RequestMethod.POST)
+	@RequestMapping(value = "/upload/replace", method = RequestMethod.POST)
 	public ModelAndView replaceUplaodUserData(ModelMap model,
-			@ModelAttribute(value = "fileReplace") FileUpload fileUpload,
+			@ModelAttribute(value = "fileReplace") FileUpload fileReplace,
 			BindingResult result, HttpServletRequest request) throws Exception {
 
 		boolean isMultipart = ServletFileUpload.isMultipartContent(request);
 		// fetch all files related to user
-		User user = userService.fetchUser("username1");
-		List<UploadedFile> filetable = new ArrayList<UploadedFile>(
-				user.getUploadedFiles());
+		User user = userSession.getUser();
 
 		String displayfileName = null;
-		if (isMultipart) {
-			try {
-				FileItem item = fileUpload.getFile().getFileItem();
-				if (!item.isFormField()) {
+		if (user != null && isMultipart) {
+            try {
+            	FileItem item = fileReplace.getFile().getFileItem();
+            	File filetobeuploaded = null;
+            	if (!item.isFormField()) {
+					// save file in temporary directory
+					filetobeuploaded = getTemporaryFile(item);
+					// do validation here
+					BindingResult results = validateFile(filetobeuploaded, fileValidator);
+					ObjectError status = results.getGlobalError();
 
-				}
-			} catch (Exception e) {
-				logger.error("Unable to upload file : " + displayfileName, e);
-			}
-		}
-		Collections.sort(filetable);
-		model.put("uploadedfiletable", filetable);
+					if (status.getCode().equalsIgnoreCase("file.upload.parse.success")) {
+
+						Map<String, Object> parsedData = (Map<String, Object>) status.getArguments()[0];
+						List<UserLines> userlines = (List<UserLines>) parsedData.get(Constants.UPLOAD_LINES_KEY);
+						UserLinesMetaData metaData = (UserLinesMetaData) parsedData.get(Constants.UPLOAD_LINES_METADATA_KEY);
+
+						UploadedFile oldFile = userService.getFile(fileReplace.getFileIdToBeReplaced());						
+						if (oldFile != null && oldFile.getUploader().equals(user)) {
+							boolean success = userService.eraseFileData(fileReplace.getFileIdToBeReplaced());
+							if (success) {
+								boolean recordsInserted = userLineService.createUserLines(userlines, metaData);
+								if (recordsInserted) {
+									// if atleast one record is written then upload file.
+									UploadedFile file = saveFile(filetobeuploaded, user, fileReplace.getFileIdToBeReplaced());
+									// update user in session as well
+									userSession.setUserInSession(user);
+									// update file Id (which already have owner details)
+									metaData.setFile(file);
+									userLineService.updateUserLineMetaData(metaData);
+
+									EnwidaUtils.removeTemporaryFile(filetobeuploaded);
+
+									model.put("successmsg", uploadsuccessmsg);
+								} else {
+									model.put("errormsg", "Duplicate file uploaded");
+								}
+							}
+						} else {
+							model.put("errormsg", status.getDefaultMessage());
+						}						
+					} else if (status.getCode().equalsIgnoreCase(
+							"file.upload.parse.error")) {
+						model.put("errormsg", status.getDefaultMessage());
+					}
+	            }
+            } catch (Exception e) {
+            	logger.error("Unable to upload file : " + displayfileName, e);
+            }
+			List<UploadedFile> filetable = new ArrayList<UploadedFile>(user.getUploadedFiles());
+            Collections.sort(filetable);
+            model.put("uploadedfiletable", filetable);
+		}		
 		model.put("fileUpload", new FileUpload());
+		model.put("fileReplace", new FileUpload());
 		return new ModelAndView("user/upload", model);
 	}
 
@@ -475,7 +515,6 @@ public class UserController {
 		return binder.getBindingResult();
 	}
 
-
 	private File getTemporaryFile(FileItem item) throws Exception {
 		String tempFile = fileUploadDirectory + File.separator + "temp"
 				+ File.separator + EnwidaUtils.extractFileName(item.getName());
@@ -486,7 +525,6 @@ public class UserController {
 		item.write(filetobeuploaded);
 		return filetobeuploaded;
 	}
-
 
 	private UploadedFile saveFile(File file, User user, int fileId)
 			throws Exception {
@@ -522,36 +560,27 @@ public class UserController {
 		// item.write(uploadedFile);
 
 		// update file manifest data
-		File manifestFile = new File(fileUploadDirectory + File.separator
-				+ fileName + ".mfst");
+		File manifestFile = new File(fileUploadDirectory + File.separator + fileName + ".mfst");
 		try {
 			EnwidaUtils.writeAllText(manifestFile, displayfileName);
 		} catch (Exception e) {
-			logger.error(
-					"Update Manifest data for uploaded File: " + file.getName(),
-					e);
+			logger.error("Update Manifest data for uploaded File: " + file.getName(), e);
 		}
 
 		// create entry in file upload table
-		// UploadedFile uploadedfile = fileId > 0 ? userService.getFile(fileId)
-		// : new UploadedFile();
-		UploadedFile uploadedfile = new UploadedFile();
+		UploadedFile uploadedfile = fileId > 0 ? userService.getFile(fileId) : new UploadedFile();
 		uploadedfile.setDisplayFileName(displayfileName);
 		uploadedfile.setFileName(fileName);
-		uploadedfile.setFilePath(fileUploadDirectory + File.separator
-				+ fileName);
+		uploadedfile.setFilePath(fileUploadDirectory + File.separator + fileName);
 		uploadedfile.setFormat(fileFormat);
 		uploadedfile.setUploadDate(new Date());
-
 		uploadedfile.setUploader(user);
-		// User user = userSession.getUser();
-		// update revision based on
-		// int revision = userService.getUploadedFileVersion(uploadedfile,
-		// user);
+		
 		if (fileId == 0) {
 			uploadedfile.setRevision(1);
 		} else {
 			// replace option means create new revision and insert new file
+			uploadedfile.setRevision(uploadedfile.getRevision() + 1);
 			// update modification date
 			uploadedfile.setModificationDate(new Date());
 		}
@@ -559,34 +588,43 @@ public class UserController {
 
 		return uploadedfile;
 	}
+	
+	@RequestMapping(value = "/files/delete", method = RequestMethod.GET)
+	public ModelAndView userProfileVideo(@RequestParam("fileId") String fileId, Locale locale) {
+
+		if (fileId != null && !fileId.isEmpty()) {
+			int fileid = Integer.parseInt(fileId);
+			UploadedFile downloadFile = userService.getFile(fileid);
+			
+			if (downloadFile != null) {
+				String filePath = downloadFile.getFilePath();
+				File file = new File(filePath);
+			}
+		}
+		return new ModelAndView("redirect:/user/upload");
+	}
 
 	@RequestMapping(value = "/files/{fileId}", method = RequestMethod.GET)
 	@ResponseBody
-	public String downloadFile(@PathVariable("fileId") String fileId,
-			HttpServletResponse reponse) {
-		if (fileId != null) {
+	public FileSystemResource downloadFile(@PathVariable("fileId") String fileId, HttpServletResponse response) {
+		
+		if (fileId != null && !fileId.isEmpty()) {
 			int fileid = Integer.parseInt(fileId);
-			// System.out.println("File Id : " + userService.getFile(fileid));
 			UploadedFile downloadFile = userService.getFile(fileid);
-			if (downloadFile == null)
-				return null;
-			String filePath = downloadFile.getFilePath();
-			File file = new File(filePath);
-			reponse.setHeader("Content-Disposition", "attachment; filename=\""
-					+ downloadFile.getDisplayFileName() + "\"");
-			OutputStream out = null;
-			try {
-				out = reponse.getOutputStream();
-				reponse.setContentType("text/plain; charset=utf-8");
-				FileInputStream fi = new FileInputStream(file);
-
-				IOUtils.copy(fi, out);
-				out.flush();
-				out.close();
-			} catch (IOException e) {
-				logger.error("Unable to download file : ", e);
-			} finally {
-				out = null;
+			
+			if (downloadFile != null) {
+				String filePath = downloadFile.getFilePath();
+				File file = new File(filePath);
+				response.setHeader("Content-Disposition", "attachment; filename=\""
+						+ downloadFile.getDisplayFileName() + "\"");
+				try {
+					response.setContentType("text/csv; charset=utf-8");
+					return new FileSystemResource(file);
+				} catch (Exception e) {
+					logger.error("Unable to download file : ", e);
+				}
+			} else {
+				//TODO: Complete the Implementation
 			}
 		}
 		return null;

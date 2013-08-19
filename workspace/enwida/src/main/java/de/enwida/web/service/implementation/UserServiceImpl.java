@@ -354,7 +354,8 @@ public class UserServiceImpl implements IUserService {
 		// Refresh the group in order to reflect the changes
 		group = groupDao.update(group);
 		groupDao.refresh(group);
-		return group;
+		return group;
+
 	}
 
     @Override
@@ -420,7 +421,8 @@ public class UserServiceImpl implements IUserService {
 		// Refresh the role in order to reflect the changes
 		role = roleDao.update(role);
 		roleDao.refresh(role);
-		return role;	}
+		return role;
+	}
     
     @Override
     public void revokeUserFromGroup(long userID, long groupID) {
@@ -643,7 +645,14 @@ public class UserServiceImpl implements IUserService {
 		return userDao.emailAvailablility(email);		
 	}
 
-    @Override
+	@Override
+	public boolean eraseFileData(int fileId) {
+		UploadedFile oldFile = fileDao.getFile(fileId);
+		//TODO: Complete the Implementation
+		return true;
+	}
+	
+	@Override
     public Group fetchGroupById(long groupId) {
         return groupDao.fetchById(groupId);
     }
