@@ -44,7 +44,30 @@
 		</c:forEach>
 	</tbody>
 </table>
+<script>
+$(function() {
+	$('#selectedRole option[value='+QueryString.roleID+']').attr('selected','selected');
+	$('#selectedGroup option[value='+QueryString.groupID+']').attr('selected','selected');
+	
+	//Save previosly selected values
+   if (localStorage.getItem('selectedRole')) {
+        $("#selectedRole option").eq(localStorage.getItem('selectedRole')).prop('selected', true);
+    }
 
+    $("#selectedRole").on('change', function() {
+        localStorage.setItem('selectedRole', $('option:selected', this).index());
+    });
+    
+    if (localStorage.getItem('selectedGroup')) {
+        $("#selectedGroup option").eq(localStorage.getItem('selectedGroup')).prop('selected', true);
+    }
+
+    $("#selectedGroup").on('change', function() {
+        localStorage.setItem('selectedGroup', $('option:selected', this).index());
+    });
+		    
+});
+</script>
 	<table  id="tblRoleMap">
 		<thead>
 			<tr>
@@ -55,14 +78,14 @@
 		<tbody>
 		<tr>
 			<td>
-				<select name="selectedGroup">
+				<select name="selectedGroup" id="selectedGroup">
 						<c:forEach var="group" items="${groups}">
 							<option value="${group.groupID}">${group.groupName}</option>
 						</c:forEach>
 				</select>
 			</td>
 			<td>
-					<select name="selectedRole">
+					<select name="selectedRole" id="selectedRole">
 						<c:forEach var="role" items="${roles}">
 							<option value="${role.roleID}">${role.roleName}</option>
 						</c:forEach>
