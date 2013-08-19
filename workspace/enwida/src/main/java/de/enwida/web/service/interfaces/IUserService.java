@@ -341,4 +341,8 @@ public interface IUserService {
 	Right findRight(Right right);
 
 	User saveUserUploadedFile(User user, UploadedFile file);
+
+    public Group fetchGroupById(long groupId);
+
+    public Role fetchRoleById(long roleId);
 }

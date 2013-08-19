@@ -642,4 +642,14 @@ public class UserServiceImpl implements IUserService {
 	public boolean emailAvailability(String email) throws Exception {
 		return userDao.emailAvailablility(email);		
 	}
+
+    @Override
+    public Group fetchGroupById(long groupId) {
+        return groupDao.fetchById(groupId);
+    }
+
+    @Override
+    public Role fetchRoleById(long roleId) {
+        return roleDao.fetchById(roleId);
+    }
 }
