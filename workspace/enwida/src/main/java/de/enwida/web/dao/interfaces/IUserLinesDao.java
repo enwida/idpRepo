@@ -18,4 +18,6 @@ public interface IUserLinesDao extends IDao<UserLines> {
 
 	boolean updateUserLineMetaData(UserLinesMetaData metaData);
 
+	boolean deleteUserLineMetaData(UserLinesMetaData metaData);
+
 }

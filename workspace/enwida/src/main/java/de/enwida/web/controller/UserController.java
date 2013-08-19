@@ -301,7 +301,8 @@ public class UserController {
         }
 		if(activated)
 		{
-			String name = "Test Test";
+			User user = userService.fetchUser(username);
+			String name = user.getFirstName() + " " + user.getLastName();
     		String userStatus="logout";
     		String userStatusURL="../j_spring_security_logout";
 
@@ -405,7 +406,7 @@ public class UserController {
 							// if atleast one record is written then upload
 							// file.
 							UploadedFile file = saveFile(filetobeuploaded,
-									user, 0);
+									user, null);
 							// update user in session as well
 							userSession.setUserInSession(user);
 							// update file Id (which already have owner details)
@@ -466,12 +467,15 @@ public class UserController {
 
 						UploadedFile oldFile = userService.getFile(fileReplace.getFileIdToBeReplaced());						
 						if (oldFile != null && oldFile.getUploader().equals(user)) {
-							boolean success = userService.eraseFileData(fileReplace.getFileIdToBeReplaced());
+							boolean success = userLineService
+									.eraseUserLines(fileReplace
+											.getFileIdToBeReplaced());
 							if (success) {
 								boolean recordsInserted = userLineService.createUserLines(userlines, metaData);
 								if (recordsInserted) {
 									// if atleast one record is written then upload file.
-									UploadedFile file = saveFile(filetobeuploaded, user, fileReplace.getFileIdToBeReplaced());
+									UploadedFile file = saveFile(
+											filetobeuploaded, user, oldFile);
 									// update user in session as well
 									userSession.setUserInSession(user);
 									// update file Id (which already have owner details)
@@ -527,7 +531,8 @@ public class UserController {
 		return filetobeuploaded;
 	}
 
-	private UploadedFile saveFile(File file, User user, int fileId)
+	private UploadedFile saveFile(File file, User user,
+			UploadedFile previousFile)
 			throws Exception {
 		String displayfileName = file.getName();
 
@@ -553,9 +558,8 @@ public class UserController {
 		EnwidaUtils.createDirectory(fileUploadDirectory);
 
 		// upload file
-		File uploadedFile = new File(fileUploadDirectory + File.separator
-				+ fileName);
-		FileUtils.copyFile(file, uploadedFile);
+		FileUtils.copyFile(file, new File(fileUploadDirectory + File.separator
+				+ fileName));
 		// IOUtils.copyLarge(new FileInputStream(file), new FileOutputStream(
 		// uploadedFile));
 		// item.write(uploadedFile);
@@ -569,7 +573,9 @@ public class UserController {
 		}
 
 		// create entry in file upload table
-		UploadedFile uploadedfile = fileId > 0 ? userService.getFile(fileId) : new UploadedFile();
+		// UploadedFile uploadedfile = fileId > 0 ? userService.getFile(fileId)
+		// : new UploadedFile();
+		UploadedFile uploadedfile = new UploadedFile();
 		uploadedfile.setDisplayFileName(displayfileName);
 		uploadedfile.setFileName(fileName);
 		uploadedfile.setFilePath(fileUploadDirectory + File.separator + fileName);
@@ -577,29 +583,65 @@ public class UserController {
 		uploadedfile.setUploadDate(new Date());
 		uploadedfile.setUploader(user);
 		
-		if (fileId == 0) {
-			uploadedfile.setRevision(1);
-		} else {
-			// replace option means create new revision and insert new file
-			uploadedfile.setRevision(uploadedfile.getRevision() + 1);
-			// update modification date
-			uploadedfile.setModificationDate(new Date());
+		if (previousFile != null) {
+			// replace option means previous file should be set as reference in
+			// new file. Revision will be automatically updated
+			// based on previous file revision
+			uploadedfile.setPreviousFile(previousFile);
 		}
+
 		user = userService.saveUserUploadedFile(user, uploadedfile);
 
 		return uploadedfile;
 	}
 	
 	@RequestMapping(value = "/files/delete", method = RequestMethod.GET)
-	public ModelAndView userProfileVideo(@RequestParam("fileId") String fileId, Locale locale) {
+	public ModelAndView deleteUploadedFile(
+			@RequestParam("fileId") String fileId, Locale locale) {
 
 		if (fileId != null && !fileId.isEmpty()) {
 			int fileid = Integer.parseInt(fileId);
 			UploadedFile downloadFile = userService.getFile(fileid);
 			
 			if (downloadFile != null) {
-				String filePath = downloadFile.getFilePath();
-				File file = new File(filePath);
+				boolean isFileToDeleteLatest = true;
+				UploadedFile fileToMakeActive = null;
+				// Before deleting file entry update previous file properly
+				// get uploaded file where the deleted file was used as previous
+				// file. update previous entry reference with deleted file
+				// previous reference
+				User user = userSession.getUser();
+				for (UploadedFile upfile : user.getUploadedFiles()) {
+					if (upfile.getPreviousFile() != null
+							&& upfile.getPreviousFile()
+									.equals(downloadFile)) {
+						// this means deleted file has been used as previous
+						// file in some other file
+						isFileToDeleteLatest = false;
+						logger.debug("Updating references");
+						upfile.setPreviousFile(downloadFile
+								.getPreviousFile());
+						userService.updateUserUploadedFile(user, upfile);
+						fileToMakeActive = upfile;
+					}
+				}
+				
+				// now delete file safely
+				try {
+					boolean success = userLineService
+							.eraseUserLines(downloadFile.getId());
+					EnwidaUtils.removeTemporaryFile(downloadFile
+							.getActualFile());
+				} catch (Exception e) {
+					logger.error(
+							"Unable to delete file :'"
+									+ downloadFile.getFilePath()
+									+ "' .Please delete file manually.", e);
+				}
+				if (isFileToDeleteLatest) {
+					// switch back to last revision
+					// fileToMakeActive should be made active here
+				}
 			}
 		}
 		return new ModelAndView("redirect:/user/upload");

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
+import de.enwida.web.dao.interfaces.IFileDao;
 import de.enwida.web.dao.interfaces.IUserLinesDao;
 import de.enwida.web.db.model.UploadedFile;
 import de.enwida.web.db.model.UserLines;
@@ -29,6 +30,8 @@ public class UserLinesServiceImpl implements IUserLinesService {
 	private Logger logger = Logger.getLogger(getClass());
 	@Autowired
 	private IUserLinesDao userLinesDao;
+	@Autowired
+	private IFileDao fileDao;
 
 	@Override
 	public boolean createUserLine(UserLines line) {
@@ -78,5 +81,14 @@ public class UserLinesServiceImpl implements IUserLinesService {
 		metaData.setFile(file);
 		createUserLineMetaData(metaData);
 
+	}
+
+	@Override
+	public boolean eraseUserLines(long fileId) {
+		UploadedFile oldFile = fileDao.getFile(fileId);
+		// delete metadata which is suppose to delete
+		// the corresponding user lines
+		userLinesDao.deleteUserLineMetaData(oldFile.getMetaData());
+		return true;
 	}
 }

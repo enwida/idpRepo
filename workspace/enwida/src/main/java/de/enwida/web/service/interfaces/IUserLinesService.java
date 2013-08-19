@@ -19,4 +19,6 @@ public interface IUserLinesService {
 
 	void updateUserLineMetaData(UserLinesMetaData metaData);
 
+	boolean eraseUserLines(long fileId);
+
 }

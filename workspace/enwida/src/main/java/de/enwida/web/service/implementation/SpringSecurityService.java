@@ -41,7 +41,7 @@ public class SpringSecurityService implements UserDetailsService {
 		try {
 	        //check if we can verify user with first and lastname or email
 	        if (matchingUser == null) {
-	            matchingUser=userService.fetchUserByFirstAndLastNameOrEmail(username);
+	            matchingUser=userService.fetchUserByUserNameOrEmail(username);
 	        }
 	        //check if we can verify user with username
 	        if (matchingUser == null){

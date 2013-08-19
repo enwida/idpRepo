@@ -24,7 +24,7 @@ public class FileDaoImpl extends AbstractBaseDao<UploadedFile> implements
 		IFileDao {
 
 	@Override
-	public UploadedFile getFile(int fileId) {
+	public UploadedFile getFile(long fileId) {
 		return fetchById(fileId);
 	}
 

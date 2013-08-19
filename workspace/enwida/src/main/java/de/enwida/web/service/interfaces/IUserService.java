@@ -334,7 +334,7 @@ public interface IUserService {
 
     Group fetchGroupByCompanyName(String companyName);
 
-    public User fetchUserByFirstAndLastNameOrEmail(String username);
+    public User fetchUserByUserNameOrEmail(String username);
 
 	Group findGroup(Group group);
 
@@ -344,10 +344,10 @@ public interface IUserService {
 
 	User saveUserUploadedFile(User user, UploadedFile file);
 
-	public boolean eraseFileData(int fileId);
-	
 	public Group fetchGroupById(long groupId);
 	
 	public Role fetchRoleById(long roleId);
+
+	User updateUserUploadedFile(User user, UploadedFile file);
 
 }

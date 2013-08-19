@@ -5,6 +5,7 @@ DROP SCHEMA IF EXISTS users CASCADE; CREATE SCHEMA users AUTHORIZATION enwida;
 --CREATE TABLE users.user
 --(
 --  user_id serial NOT NULL,
+--  email character varying NOT NULL,
 --  name character varying NOT NULL,
 --  user_password character varying(45) NOT NULL,
 --  first_name character varying(45) NOT NULL,

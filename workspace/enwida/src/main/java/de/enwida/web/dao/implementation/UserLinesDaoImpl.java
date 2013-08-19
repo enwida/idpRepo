@@ -61,4 +61,11 @@ public class UserLinesDaoImpl extends AbstractBaseDao<UserLines> implements
 		}
 		return line;
 	}
+
+	@Override
+	public boolean deleteUserLineMetaData(UserLinesMetaData metaData) {
+		em.remove(metaData);
+		em.flush();
+		return true;
+	}
 }
