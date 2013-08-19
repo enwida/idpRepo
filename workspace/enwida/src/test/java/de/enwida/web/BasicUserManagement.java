@@ -84,6 +84,13 @@ public class BasicUserManagement {
 		Assert.assertEquals(user.getActivationKey(), testee.getActivationKey());
 	}
 	
+	@Test
+	public void userIsAssignedToAnonymousGroup() throws Exception {
+		final User user = testUtils.saveTestUser("testuser");
+		Assert.assertEquals(1, user.getGroups().size());
+		Assert.assertEquals("Anonymous", user.getGroups().iterator().next().getGroupName());
+	}
+	
 	@Ignore
 	@Test
 	public void cannotAddUserWithSameUsername() throws Exception {
@@ -202,13 +209,13 @@ public class BasicUserManagement {
 		final Group group1 = testUtils.saveTestGroup("testgroup1");
 		final Group group2 = testUtils.saveTestGroup("testgroup2");
 		
-		Assert.assertTrue(user.getGroups().isEmpty());
+		Assert.assertEquals(1, user.getGroups().size());
 		
 		final Group freshGroup1 = userService.assignGroupToUser(user, group1);
 		final Group freshGroup2 = userService.assignGroupToUser(user, group2);
 		
 		// Groups got added to user object
-		Assert.assertEquals(2, user.getGroups().size());
+		Assert.assertEquals(3, user.getGroups().size());
 		Assert.assertTrue(user.getGroups().contains(group1));
 		Assert.assertTrue(user.getGroups().contains(group2));
 		
@@ -224,7 +231,7 @@ public class BasicUserManagement {
 		
 		// Groups got added to freshly fetched user object
 		final User fetchedUser = userService.fetchUser("testuser");
-		Assert.assertEquals(2, fetchedUser.getGroups().size());
+		Assert.assertEquals(3, fetchedUser.getGroups().size());
 		Assert.assertTrue(fetchedUser.getGroups().contains(group1));
 		Assert.assertTrue(fetchedUser.getGroups().contains(group2));
 		
@@ -243,13 +250,13 @@ public class BasicUserManagement {
 		final Group group1 = testUtils.saveTestGroup("testgroup1");
 		final Group group2 = testUtils.saveTestGroup("testgroup2");
 		
-		Assert.assertTrue(user.getGroups().isEmpty());
+		Assert.assertEquals(1, user.getGroups().size());
 		
 		userService.assignGroupToUser(user.getUserId(), group1.getGroupID());
 		userService.assignGroupToUser(user.getUserId(), group2.getGroupID());
 		
 		// Changes are NOT reflected in stale objects
-		Assert.assertTrue(user.getGroups().isEmpty());
+		Assert.assertEquals(1, user.getGroups().size());
 		Assert.assertTrue(group1.getAssignedUsers().isEmpty());
 		Assert.assertTrue(group2.getAssignedUsers().isEmpty());
 		
@@ -258,7 +265,7 @@ public class BasicUserManagement {
 		final Group fetchedGroup1 = userService.fetchGroup("testgroup1");
 		final Group fetchedGroup2 = userService.fetchGroup("testgroup1");
 		
-		Assert.assertEquals(2, fetchedUser.getGroups().size());
+		Assert.assertEquals(3, fetchedUser.getGroups().size());
 		Assert.assertEquals(1, fetchedGroup1.getAssignedUsers().size());
 		Assert.assertEquals(1, fetchedGroup2.getAssignedUsers().size());
 	}
@@ -267,13 +274,15 @@ public class BasicUserManagement {
 	public void addGroupTwice() throws Exception {
 		final User user = testUtils.saveTestUser("testuser");
 		final Group group1 = testUtils.saveTestGroup("testgroup1");
+
+		Assert.assertEquals(1, user.getGroups().size());
 		
 		userService.assignGroupToUser(user, group1);
 
 		// Second add succeeds due to set semantics
 		final Group freshGroup1 = userService.assignGroupToUser(user, group1);
 		
-		Assert.assertEquals(1, user.getGroups().size());
+		Assert.assertEquals(2, user.getGroups().size());
 		Assert.assertEquals(1, freshGroup1.getAssignedUsers().size());
 	}
 	
@@ -299,14 +308,18 @@ public class BasicUserManagement {
 		final User user = testUtils.saveTestUser("testuser");
 		final Group group1 = testUtils.saveTestGroup("testgroup1");
 		final Group group2 = testUtils.saveTestGroup("testgroup2");
+
+		Assert.assertEquals(1, user.getGroups().size());
 		
 		userService.assignGroupToUser(user, group1);
 		userService.assignGroupToUser(user, group2);
+
+		Assert.assertEquals(3, user.getGroups().size());
 		
 		final Group freshGroup1 = userService.revokeUserFromGroup(user, group1);
 		
 		// Group was removed from user object
-		Assert.assertEquals(1, user.getGroups().size());
+		Assert.assertEquals(2, user.getGroups().size());
 		Assert.assertTrue(user.getGroups().contains(group2));
 
 		// User is removed from fresh group object
@@ -314,7 +327,7 @@ public class BasicUserManagement {
 
 		// Group is removed from freshly fetched user object
 		final User fetchedUser = userService.fetchUser("testuser");
-		Assert.assertEquals(1, fetchedUser.getGroups().size());
+		Assert.assertEquals(2, fetchedUser.getGroups().size());
 		Assert.assertTrue(fetchedUser.getGroups().contains(group2));
 		
 		// User is removed from freshly fetched group object
@@ -636,7 +649,7 @@ public class BasicUserManagement {
 
 		// Check user 1
 		final User freshUser1 = userService.fetchUser("testuser1");
-		Assert.assertEquals(2, freshUser1.getGroups().size());
+		Assert.assertEquals(3, freshUser1.getGroups().size());
 		Assert.assertTrue(freshUser1.getGroups().contains(group1));
 		Assert.assertTrue(freshUser1.getGroups().contains(group2));
 				
@@ -656,7 +669,7 @@ public class BasicUserManagement {
 
 		// Check user 2
 		final User freshUser2 = userService.fetchUser("testuser2");
-		Assert.assertEquals(2, freshUser2.getGroups().size());
+		Assert.assertEquals(3, freshUser2.getGroups().size());
 		Assert.assertTrue(freshUser2.getGroups().contains(group2));
 		Assert.assertTrue(freshUser2.getGroups().contains(group3));
 				
