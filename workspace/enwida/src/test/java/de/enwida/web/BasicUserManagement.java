@@ -697,6 +697,31 @@ public class BasicUserManagement {
 		final Group freshGroup3 = userService.fetchGroup("testgroup3");
 		Assert.assertEquals(1, freshGroup3.getAllRights().size());
 	}
+	
+	@Test
+	public void testAutoPass() throws Exception {
+		Group group = new Group("enwida-test.de");
+		group.setAutoPass(true);
+		group = userService.saveGroup(group);
+		
+	    final User user = new User("test@enwida-test.de", "testuser", "secret", "Test", "User", true);
+		user.setCompanyName("enwida-test.de");
+		userService.saveUser(user);
+		
+		Assert.assertEquals(1, user.getGroups().size());
+		userService.assignGroupToUser(user, group);
+		Assert.assertEquals(2, user.getGroups().size());
 
+	    final User testee = new User("test2@enwida-test.de", "testuser2", "secret", "Test", "User", true);
+		testee.setCompanyName("enwida-test.de");
+		userService.saveUser(testee);
+		
+		Assert.assertEquals(2, testee.getGroups().size());
+		
+		for (final Group g : testee.getGroups()) {
+			Assert.assertTrue(g.getGroupName().equals("Anonymous") || g.getGroupName().equals("enwida-test.de"));
+		}
+	}
+ 
     
  }

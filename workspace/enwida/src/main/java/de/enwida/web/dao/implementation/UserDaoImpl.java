@@ -94,18 +94,4 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
 	public Long getNextSequence(String schema, String sequenceName) {
 		return super.getNextSequenceNumber(schema, sequenceName);
 	}
-	
-	@SuppressWarnings("unchecked")
-	@Override
-	public boolean emailAvailablility(String email) throws Exception {
-		String sql = "SELECT * FROM users.users WHERE email=?";
-		List<User> users = this.jdbcTemplate.query(sql, new Object[] { email }, new RowMapper() {
-            @Override
-            public String mapRow(ResultSet rs, int arg1) throws SQLException {
-                return rs.getString("email");
-            }
-        });
-		
-		return (users.size() > 0 ) ? true : false ;
-	}
 }

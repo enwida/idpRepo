@@ -300,7 +300,8 @@ public class UserController {
         }
 		if(activated)
 		{
-			String name = "Test Test";
+			User user = userService.fetchUser(username);
+			String name = user.getFirstName() + " " + user.getLastName();
     		String userStatus="logout";
     		String userStatusURL="../j_spring_security_logout";
 

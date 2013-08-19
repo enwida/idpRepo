@@ -334,7 +334,7 @@ public interface IUserService {
 
     Group fetchGroupByCompanyName(String companyName);
 
-    public User fetchUserByFirstAndLastNameOrEmail(String username);
+    public User fetchUserByUserNameOrEmail(String username);
 
 	Group findGroup(Group group);
 

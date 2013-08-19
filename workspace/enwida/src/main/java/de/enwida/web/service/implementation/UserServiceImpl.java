@@ -157,22 +157,20 @@ public class UserServiceImpl implements IUserService {
             {
                 Group newGroup = groupDao.fetchById(group.getGroupID());
                 this.assignGroupToUser(userId, newGroup.getGroupID());
-
             }
-            else
+        
+            // saving in default group (Anonymous)
+			Group anonymousGroup = groupDao
+					.fetchByName(Constants.ANONYMOUS_GROUP);
+            if(anonymousGroup == null)
             {
-                // saving in default group (Anonymous)
-				Group anonymousGroup = groupDao
-						.fetchByName(Constants.ANONYMOUS_GROUP);
-                if(anonymousGroup == null)
-                {
-                    anonymousGroup = new Group();
-					anonymousGroup.setGroupName(Constants.ANONYMOUS_GROUP);
-                    anonymousGroup.setAutoPass(true);                    
-                }
-                anonymousGroup = groupDao.addGroup(anonymousGroup);
-                this.assignGroupToUser(userId, anonymousGroup.getGroupID());
+                anonymousGroup = new Group();
+				anonymousGroup.setGroupName(Constants.ANONYMOUS_GROUP);
+                anonymousGroup.setAutoPass(true);                    
             }
+            anonymousGroup = groupDao.addGroup(anonymousGroup);
+            this.assignGroupToUser(userId, anonymousGroup.getGroupID());
+            
             
             return true;
         }
@@ -205,7 +203,6 @@ public class UserServiceImpl implements IUserService {
 	 */
     @Override
 	public Group saveGroup(Group newGroup) throws Exception {
-        newGroup.setAutoPass(false);
 		return groupDao.addGroup(newGroup);
     }
 
@@ -617,7 +614,7 @@ public class UserServiceImpl implements IUserService {
     {
         for (Group group : groupDao.fetchAll()) {
             for (User user : group.getAssignedUsers()) {
-                if(user.getCompanyName()==companyName)
+                if(user.getCompanyName().equals(companyName))
                     return group;
             }
         }
@@ -625,10 +622,10 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public User fetchUserByFirstAndLastNameOrEmail(String username) {
+    public User fetchUserByUserNameOrEmail(String username) {
         for (User user : userDao.fetchAll()) {
             //verify by firstname and lastname or email
-            if(username.equalsIgnoreCase(user.getFirstName()+" "+user.getLastName())){
+            if(username.equalsIgnoreCase(user.getUserName())){
                 return user;
             }else if(username.equalsIgnoreCase(user.getEmail())){
                 return user;
@@ -646,7 +643,12 @@ public class UserServiceImpl implements IUserService {
     
 	@Override
 	public boolean emailAvailability(String email) throws Exception {
-		return userDao.emailAvailablility(email);		
+        for (User user : userDao.fetchAll()) {
+            if(email.equalsIgnoreCase(user.getEmail())){
+                return true;
+            }
+        }
+		return false;		
 	}
 
 	@Override
