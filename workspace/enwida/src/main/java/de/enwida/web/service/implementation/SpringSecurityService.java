@@ -36,18 +36,25 @@ public class SpringSecurityService implements UserDetailsService {
 	@Override
 	public UserDetails loadUserByUsername(String username)
 			throws UsernameNotFoundException {
+	    //make sure User is null
 		User matchingUser = null;
-
 		try {
-			matchingUser = userService.fetchUser(username);
-		} catch (Exception e) {
-			logger.error("Unable to fetch user for name : " + username, e);
-		}
-		if (matchingUser == null) {
-		    matchingUser=userService.fetchUserByFirstAndLastName(username);
-		    if (matchingUser == null)
-		        throw new UsernameNotFoundException("Wrong username or password");
-		}
+	        //check if we can verify user with first and lastname or email
+	        if (matchingUser == null) {
+	            matchingUser=userService.fetchUserByFirstAndLastNameOrEmail(username);
+	        }
+	        //check if we can verify user with username
+	        if (matchingUser == null){
+	            matchingUser = userService.fetchUser(username);
+	        }
+        } catch (Exception e) {
+            logger.error("Unable to fetch user for name : " + username, e);
+        }
+
+		//we couldnt find the user
+        if (matchingUser == null)
+            throw new UsernameNotFoundException("Wrong username or password");
+        
 		return matchingUser;
 	}
 

@@ -332,7 +332,7 @@ public interface IUserService {
 
     Group fetchGroupByCompanyName(String companyName);
 
-    public User fetchUserByFirstAndLastName(String username);
+    public User fetchUserByFirstAndLastNameOrEmail(String username);
 
 	Group findGroup(Group group);
 
@@ -341,5 +341,4 @@ public interface IUserService {
 	Right findRight(Right right);
 
 	User saveUserUploadedFile(User user, UploadedFile file);
-
 }
