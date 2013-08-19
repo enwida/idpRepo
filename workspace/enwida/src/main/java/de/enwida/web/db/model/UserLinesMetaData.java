@@ -52,7 +52,7 @@ public class UserLinesMetaData implements Serializable{
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int metaDataId;
 
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "lineMetaData", fetch = FetchType.EAGER)
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "lineMetaData", fetch = FetchType.LAZY)
 	@ElementCollection(targetClass = UserLines.class)
 	private Set<UserLines> userLines;
 

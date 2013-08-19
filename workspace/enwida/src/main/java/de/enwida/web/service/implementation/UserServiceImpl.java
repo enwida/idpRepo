@@ -638,4 +638,11 @@ public class UserServiceImpl implements IUserService {
 	public boolean emailAvailability(String email) throws Exception {
 		return userDao.emailAvailablility(email);		
 	}
+
+	@Override
+	public boolean eraseFileData(int fileId) {
+		UploadedFile oldFile = fileDao.getFile(fileId);
+		//TODO: Complete the Implementation
+		return true;
+	}
 }

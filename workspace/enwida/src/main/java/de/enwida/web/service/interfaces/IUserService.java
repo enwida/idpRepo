@@ -342,4 +342,6 @@ public interface IUserService {
 
 	User saveUserUploadedFile(User user, UploadedFile file);
 
+	public boolean eraseFileData(int fileId);
+
 }
