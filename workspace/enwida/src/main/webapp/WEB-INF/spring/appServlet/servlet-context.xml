@@ -34,30 +34,6 @@
 	</beans:bean>
 	
 	<beans:bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver" />
-	
-	<!-- All service and DAO's are initialised at root application context level so as 
-	to use in testcases run and varioos other standalone parts of application. 
-	<beans:bean id="userDao" class="de.enwida.web.dao.implementation.UserDaoImpl">
-	</beans:bean>
-	
-	<beans:bean id="rightDao" class="de.enwida.web.dao.implementation.RightDaoImpl">
-	</beans:bean>
-
-	<beans:bean scope="singleton" id="navigationService" class="de.enwida.web.service.implementation.NavigationServiceImpl">
-		<beans:constructor-arg>
-			<beans:value>${ENWIDA_HOME}/conf/navigation</beans:value>
-		</beans:constructor-arg>
-	</beans:bean>
-
-	<beans:bean id="userService" class="de.enwida.web.service.implementation.UserServiceImpl">
-	</beans:bean>
-
-	<beans:bean scope="singleton" id="lineService" class="de.enwida.web.service.implementation.LineServiceImpl">
-	</beans:bean>
-
-	<beans:bean id="lineService" class="de.enwida.web.service.implementation.LineServiceImpl">
-	</beans:bean> -->
-
 	<interceptors>
     	<beans:bean id="localeChangeInterceptor" class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor">
         	<beans:property name="paramName" value="lang" />
@@ -73,11 +49,4 @@
 		<beans:property name="defaultLocale" value="en" />
 	</beans:bean>
 	
-<!-- 	<context:property-placeholder location="/WEB-INF/configProperties/enwida.jdbc.config" /> -->
-<!-- 	<context:property-placeholder location="/WEB-INF/configProperties/application.properties" /> -->
-	
-	
-	<!-- <beans:bean id="availability" class="de.enwida.rl.Availability" init-method="init">	
-	</beans:bean> -->
-
 </beans:beans>

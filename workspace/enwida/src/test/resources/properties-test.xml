@@ -7,8 +7,15 @@
             http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.0.xsd
             http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd">
             
-	<util:properties id="configProperties">
-    </util:properties>
-    <util:properties id="enwidaConfigProperties" location="classpath:/configProperties/enwida.jdbc.config" />
     <util:properties id="applicationProperties" location="classpath:/configProperties/application-test.properties" />
+
+	<bean id="propertyConfigurer"
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>classpath:/configProperties/enwida-test.jdbc.config</value>
+				<value>classpath:/configProperties/application-test.properties</value>
+			</list>
+		</property>
+	</bean>
 </beans>
