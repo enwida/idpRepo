@@ -42,6 +42,7 @@ public class UploadedFile implements Serializable, Comparable<UploadedFile> {
 	 */
 	private static final long serialVersionUID = -2646705236947755657L;
 	public static final String ID = "ID";
+	public static final String PREVIOUS_FILE_ID = "PREVIOUS_FILE_ID";
 	public static final String DISPLAY_FILE_NAME = "DISPLAY_FILE_NAME";
 	public static final String FILE_NAME = "FILE_NAME";
 	public static final String UPLOAD_DATE = "UPLOAD_DATE";
@@ -85,6 +86,10 @@ public class UploadedFile implements Serializable, Comparable<UploadedFile> {
 
 	@Column(name = REVISION)
 	private int revision;
+
+	@OneToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = PREVIOUS_FILE_ID)
+	private UploadedFile previousFile;
 
 	@Transient
 	private File actualFile;
@@ -171,6 +176,14 @@ public class UploadedFile implements Serializable, Comparable<UploadedFile> {
 
 	public void setRevision(int revision) {
 		this.revision = revision;
+	}
+
+	public UploadedFile getPreviousFile() {
+		return previousFile;
+	}
+
+	public void setPreviousFile(UploadedFile previousFile) {
+		this.previousFile = previousFile;
 	}
 
 	public File getActualFile() {

@@ -313,6 +313,13 @@ public class UserServiceImpl implements IUserService {
 		if (user.getUserId() == null) {
 			throw new IllegalArgumentException("user object is not persisted");
 		}
+		// check for revision
+		UploadedFile previousFile = file.getPreviousFile();
+		if (previousFile != null) {
+			int newrevision = previousFile.getRevision() + 1;
+			file.setRevision(newrevision);
+		}
+
 		if (file.getId() > 0) {
 			file = fileDao.update(file, true); // with flush
 		} else {
@@ -325,6 +332,30 @@ public class UserServiceImpl implements IUserService {
 		return user;
 	}
     
+	/**
+	 * Caution: user should be persisted and in clean state! Dirty attributes
+	 * might be applied (i.e. committed to database, eventually).
+	 * 
+	 * @return the updated and managed user and file object
+	 * @throws Exception
+	 */
+	@Override
+	public User updateUserUploadedFile(User user, UploadedFile file) {
+		if (user.getUserId() == null) {
+			throw new IllegalArgumentException("user object is not persisted");
+		}
+		if (file.getId() > 0) {
+			file = fileDao.update(file, true); // with flush
+		} else {
+			fileDao.create(file, true); // with flush
+		}
+
+		// Refresh the user in order to reflect the changes
+		user = userDao.update(user);
+		userDao.refresh(user);
+		return user;
+	}
+
 	@Override
 	public void assignGroupToUser(long userId, Long groupID) {
 		User user = userDao.fetchById(userId);
@@ -649,13 +680,6 @@ public class UserServiceImpl implements IUserService {
             }
         }
 		return false;		
-	}
-
-	@Override
-	public boolean eraseFileData(int fileId) {
-		UploadedFile oldFile = fileDao.getFile(fileId);
-		//TODO: Complete the Implementation
-		return true;
 	}
 	
 	@Override

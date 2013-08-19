@@ -344,10 +344,10 @@ public interface IUserService {
 
 	User saveUserUploadedFile(User user, UploadedFile file);
 
-	public boolean eraseFileData(int fileId);
-	
 	public Group fetchGroupById(long groupId);
 	
 	public Role fetchRoleById(long roleId);
+
+	User updateUserUploadedFile(User user, UploadedFile file);
 
 }
