@@ -147,8 +147,8 @@ public class UserServiceImpl implements IUserService {
                 
         if(userId != -1)
         {           
-            Group group = this.fetchGroupByCompanyName(user.getCompanyName());
-            
+        	// Fetching the same group and assigning that group to user
+            Group group = this.fetchGroupByCompanyName(user.getCompanyName());            
             if(group != null && group.isAutoPass())
             {
                 Group newGroup = groupDao.fetchById(group.getGroupID());
@@ -167,6 +167,7 @@ public class UserServiceImpl implements IUserService {
                     anonymousGroup.setAutoPass(true);                    
                 }
                 anonymousGroup = groupDao.addGroup(anonymousGroup);
+                this.assignGroupToUser(userId, anonymousGroup.getGroupID());
             }
             
             return true;
