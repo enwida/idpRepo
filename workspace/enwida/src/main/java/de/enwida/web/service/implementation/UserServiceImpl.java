@@ -10,6 +10,7 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.test.context.transaction.TransactionConfiguration;
@@ -59,7 +60,10 @@ public class UserServiceImpl implements IUserService {
 	 * File Data Access Object
 	 */
     @Autowired
-    private IFileDao fileDao;
+    private IFileDao fileDao;    
+    
+    @Autowired
+    private MessageSource messageSource;
     
     /**
      * Mailing Service to send activation link or password
@@ -251,11 +255,11 @@ public class UserServiceImpl implements IUserService {
     @Override
     public void resetPassword(long userID)throws Exception  {
         SecureRandom random = new SecureRandom();
-        String newPassword=new BigInteger(130, random).toString(32);
+        String newPassword=new BigInteger(30, random).toString(32);
         User user=userDao.fetchById(userID);
         userDao.updateUser(user);
         try {
-            mailService.SendEmail(user.getUserName(),"New Password","Your new Password:"+newPassword);
+            mailService.SendEmail(user.getEmail(),"New Password","Your new Password:"+newPassword);
         } catch (Exception e) {
             throw new Exception("Invalid Email.Please contact info@enwida.de");
         }       

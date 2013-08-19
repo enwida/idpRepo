@@ -27,7 +27,6 @@
 					<option value="30">30</option>
 					<option value="40">40</option>
 				</select>
-				<select class="pagenum input-mini" title="Select page number"></select>
 			</th>
 		</tr>
 		</tfoot>
