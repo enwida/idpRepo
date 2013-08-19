@@ -270,6 +270,15 @@ public interface IUserService {
     public boolean userNameAvailability(final String username) throws Exception;
 
     /**
+     * Checks email availability
+     * 
+     * @param email
+     * @return
+     * @throws Exception 
+     */
+    public boolean emailAvailability(final String email) throws Exception;
+    
+    /**
      * Enabled or disables the user
      * 
      * @param rightID

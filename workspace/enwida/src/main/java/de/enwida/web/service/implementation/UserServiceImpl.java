@@ -164,19 +164,9 @@ public class UserServiceImpl implements IUserService {
                 {
                     anonymousGroup = new Group();
 					anonymousGroup.setGroupName(Constants.ANONYMOUS_GROUP);
-                    anonymousGroup.setAutoPass(true);
-                    anonymousGroup = groupDao.addGroup(anonymousGroup);
+                    anonymousGroup.setAutoPass(true);                    
                 }
-                 //  userDao.assignUserToGroup(userId, anonymousGroup.getGroupID());
-            }
-            
-            try 
-            {
-                mailService.SendEmail(user.getUserName(), "Activation Link", activationHost + "activateuser.html?username=" + user.getUserName() + "&actId=" + user.getActivationKey());
-            }
-            catch (Exception e) {
-                logger.error(e.getMessage());
-                return false;
+                anonymousGroup = groupDao.addGroup(anonymousGroup);
             }
             
             return true;
@@ -643,4 +633,9 @@ public class UserServiceImpl implements IUserService {
     	userDao.refresh(user);
     	return user;
     }
+    
+	@Override
+	public boolean emailAvailability(String email) throws Exception {
+		return userDao.emailAvailablility(email);		
+	}
 }

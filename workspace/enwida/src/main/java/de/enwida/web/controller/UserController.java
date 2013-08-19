@@ -203,31 +203,44 @@ public class UserController {
 	        userValidator.validate(user, result);       
 
             if (!result.hasErrors())
-            {
-                if(userService.saveUser(user,"http://localhost:8080/enwida/user/"))
-                {                           
-                    String name = user.getFirstName() + " " + user.getLastName();
-                    String userStatus="logout";
-                    String userStatusURL="../j_spring_security_logout";
-    
-                    model.addAttribute("username", name);
-                    model.addAttribute("userStatus", userStatus);
-                    model.addAttribute("userStatusURL", userStatusURL);  
-                    model.addAttribute("content","user/index");    
-                    //We dont want prelogin
-                    //clear the session and security context and redirect user to main page
-                    SecurityContextHolder.clearContext();
-                    HttpSession session = request.getSession(false);
-                    if (session != null) {
-                        session.invalidate();
-                    }     
-                    response.sendRedirect("index");
-                }
+            {                        
+            	if(user.getUserName().isEmpty())
+            	{
+            		user.setUserName(user.getEmail());
+            	}
+
+            	if(userService.saveUser(user,"http://localhost:8080/enwida/user/"))
+            	{                           
+            		String activationLink = "http://localhost:8080/enwida/user/activateuser.html?username=" + user.getUserName() + "&actId=" + user.getActivationKey();
+            		String emailText = messageSource.getMessage("de.enwida.activation.email.message", null, request.getLocale()) + 
+            				activationLink + messageSource.getMessage("de.enwida.activation.email.signature", null, request.getLocale());	
+            		mail.SendEmail(user.getEmail(), 
+            				messageSource.getMessage("de.enwida.activation.email.subject", null, request.getLocale()), 
+            				emailText );
+
+            		String name = user.getFirstName() + " " + user.getLastName();
+            		String userStatus="logout";
+            		String userStatusURL="../j_spring_security_logout";
+
+            		model.addAttribute("username", name);
+            		model.addAttribute("userStatus", userStatus);
+            		model.addAttribute("userStatusURL", userStatusURL);  
+            		model.addAttribute("content","user/index");    
+            		//We dont want prelogin
+            		//clear the session and security context and redirect user to main page
+            		SecurityContextHolder.clearContext();
+            		HttpSession session = request.getSession(false);
+            		if (session != null) {
+            			session.invalidate();
+            		}     
+            		response.sendRedirect("index");
+            	}
             }else{
                 model.addAttribute("content","user/register");
             }
             model.addAllAttributes(result.getModel());
-	    }
+            }
+	    
 	}
 	
 	@RequestMapping(value="/register",method=RequestMethod.GET)

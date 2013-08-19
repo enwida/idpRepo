@@ -11,6 +11,7 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -53,8 +54,9 @@ public class NavigationDefaults implements Cloneable,Serializable {
 	@Embedded
 	private CalendarRange timeRange;
 
-	@ElementCollection
-	@CollectionTable(name = Constants.USER_NAVIGATION_DISABLED_LINES_TABLE_NAME, schema = Constants.USER_NAVIGATION_DISABLED_LINES_TABLE_SCHEMA_NAME, joinColumns = { @JoinColumn(name = NAVIGATION_DEFAULTS_ID, referencedColumnName = NAVIGATION_DEFAULTS_ID) })
+	@ElementCollection(fetch = FetchType.EAGER)
+	@CollectionTable(name = Constants.USER_NAVIGATION_DISABLED_LINES_TABLE_NAME, schema = Constants.USER_NAVIGATION_DISABLED_LINES_TABLE_SCHEMA_NAME,
+	joinColumns = { @JoinColumn(name = NAVIGATION_DEFAULTS_ID, referencedColumnName = NAVIGATION_DEFAULTS_ID) })
 	@Column(name = DISABLED_LINE_ID)
 	private Set<Integer> disabledLines;
     

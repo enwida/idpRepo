@@ -147,7 +147,7 @@ define [ "components/visual"
         urlQuery = (_(_(query).keys()).map (key) ->
           [key, query[key]].join "="
         ).join "&"
-        @select("downloadLink").attr "href", "download.csv?" + urlQuery
+        @select("downloadLink").attr "href", "csv?" + urlQuery
 
       @defaultAttrs
         navigation: ".navigation"
@@ -238,6 +238,8 @@ define [ "components/visual"
           .append(downloadLink
             .append(downloadButton)))
 
+        @getMsg().showText "Loading..."
+
         @getNavigationData (err, data) =>
           if err?
             @logError err
@@ -250,6 +252,7 @@ define [ "components/visual"
           @attr.treeHelper = ProductTree.init data
           @applyVisibility()
 
+          @trigger @select("lines"), "disabledLines", lines: _(data.defaults.disabledLines).values()
           @trigger @select("timeSelection"), "refresh", data: data
           @trigger @select("productSelection"), "refresh", data: data
 

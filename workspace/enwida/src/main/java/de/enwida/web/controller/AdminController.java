@@ -300,8 +300,9 @@ public class AdminController {
     public String assignUserToGroup(HttpServletRequest request,Model model,int selectedUser,int selectedGroup)
     {
         try {
-			userService.assignGroupToUser(new Long(selectedUser), new Long(
-					selectedGroup));
+        	//User user = userService.fetchUser(Long.getLong(Integer.toString(selectedUser)));
+            userService.assignGroupToUser(Long.getLong(Integer.toString(selectedUser)),
+            								Long.getLong(Integer.toString(selectedGroup)));
             model.addAttribute("info", "OK");       
         } catch (Exception e) {   
             logger.info(e.getMessage());

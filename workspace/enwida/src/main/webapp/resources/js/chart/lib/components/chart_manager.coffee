@@ -112,7 +112,7 @@ define [ "components/visual"
 
         @getLines selections, (err, data) =>
           if err?
-            console.log err
+            @logError err
             return @trigger "chartMessage", msg: "Sorry, something went wrong."
           if data.length is 0
             return @trigger "chartMessage", msg: "No data"
@@ -263,9 +263,11 @@ define [ "components/visual"
         controls.append dataSheet
         DataSheet.attachTo dataSheet, @attr
 
+        @getMsg().showText "Loading..."
+
         @getNavigationData (err, data) =>
           if err?
-            console.log err
+            @logError err
             return @trigger "errorMessage", msg: "Sorry, something went wrong."
           unless typeof data is "object" and data?.allResolutions?.length > 0
             return @trigger "errorMessage", msg: "Sorry, you do not have the permission to see this chart."
@@ -275,6 +277,7 @@ define [ "components/visual"
           @attr.treeHelper = ProductTree.init data
           @applyVisibility()
 
+          @trigger @select("lines"), "disabledLines", lines: _(data.defaults.disabledLines).values()
           @trigger @select("timeSelection"), "refresh", data: data
           @trigger @select("productSelection"), "refresh", data: data
 
