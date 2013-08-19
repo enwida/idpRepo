@@ -639,7 +639,12 @@ public class UserServiceImpl implements IUserService {
     
 	@Override
 	public boolean emailAvailability(String email) throws Exception {
-		return userDao.emailAvailablility(email);		
+        for (User user : userDao.fetchAll()) {
+            if(email.equalsIgnoreCase(user.getEmail())){
+                return true;
+            }
+        }
+		return false;		
 	}
 
 	@Override
