@@ -153,22 +153,20 @@ public class UserServiceImpl implements IUserService {
             {
                 Group newGroup = groupDao.fetchById(group.getGroupID());
                 this.assignGroupToUser(userId, newGroup.getGroupID());
-
             }
-            else
+        
+            // saving in default group (Anonymous)
+			Group anonymousGroup = groupDao
+					.fetchByName(Constants.ANONYMOUS_GROUP);
+            if(anonymousGroup == null)
             {
-                // saving in default group (Anonymous)
-				Group anonymousGroup = groupDao
-						.fetchByName(Constants.ANONYMOUS_GROUP);
-                if(anonymousGroup == null)
-                {
-                    anonymousGroup = new Group();
-					anonymousGroup.setGroupName(Constants.ANONYMOUS_GROUP);
-                    anonymousGroup.setAutoPass(true);                    
-                }
-                anonymousGroup = groupDao.addGroup(anonymousGroup);
-                this.assignGroupToUser(userId, anonymousGroup.getGroupID());
+                anonymousGroup = new Group();
+				anonymousGroup.setGroupName(Constants.ANONYMOUS_GROUP);
+                anonymousGroup.setAutoPass(true);                    
             }
+            anonymousGroup = groupDao.addGroup(anonymousGroup);
+            this.assignGroupToUser(userId, anonymousGroup.getGroupID());
+            
             
             return true;
         }

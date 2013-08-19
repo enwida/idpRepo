@@ -32,7 +32,7 @@ public class UserValidator implements Validator {
             
             else if( !user.getUserName().isEmpty() && userService.userNameAvailability(user.getUserName()))
             {
-                errors.rejectValue("userName", "de.enwida.email.inuse");
+                errors.rejectValue("userName", "de.enwida.userName.inuse");
             }
             
             else if( userService.emailAvailability(user.getEmail()))
@@ -43,7 +43,7 @@ public class UserValidator implements Validator {
             // Checking pasword field
             if(user.getPassword().isEmpty())
             {
-               // errors.rejectValue("password", "de.enwida.field.empty");
+               errors.rejectValue("password", "de.enwida.field.empty");
             }
             
             // Checking confirm password field
