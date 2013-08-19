@@ -212,7 +212,7 @@ public class UserController {
             	{                           
             		String activationLink = "http://localhost:8080/enwida/user/activateuser.html?username=" + user.getUserName() + "&actId=" + user.getActivationKey();
             		String emailText = messageSource.getMessage("de.enwida.activation.email.message", null, request.getLocale()) + 
-            				activationLink + messageSource.getMessage("de.enwida.activation.email.signature", null, request.getLocale());	
+            				activationLink +" \n"+ messageSource.getMessage("de.enwida.activation.email.signature", null, request.getLocale());	
             		mail.SendEmail(user.getEmail(), 
             				messageSource.getMessage("de.enwida.activation.email.subject", null, request.getLocale()), 
             				emailText );

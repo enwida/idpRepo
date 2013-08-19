@@ -29,10 +29,10 @@ import org.w3c.dom.NodeList;
 
 import de.enwida.web.service.interfaces.ISVGService;
 
-@Service("rasterizationService")
+@Service("svgService")
 public class SVGServiceImpl implements ISVGService {
 	
-	@Autowired
+	@Autowired(required = false)
 	private ServletContext servletContext;
 	
 	public SVGServiceImpl() {

@@ -297,12 +297,12 @@ public class AdminController {
     }
     
     @RequestMapping(value="/admin_editgroup",method=RequestMethod.POST, params = "assign")
-    public String assignUserToGroup(HttpServletRequest request,Model model,int selectedUser,int selectedGroup)
+    public String assignUserToGroup(HttpServletRequest request,Model model,long selectedUser,long selectedGroup)
     {
         try {
-        	//User user = userService.fetchUser(Long.getLong(Integer.toString(selectedUser)));
-            userService.assignGroupToUser(Long.getLong(Integer.toString(selectedUser)),
-            								Long.getLong(Integer.toString(selectedGroup)));
+        	User user=userService.fetchUser(selectedUser);
+        	Group group=userService.fetchGroupById(selectedGroup);
+            userService.assignGroupToUser(user,group);
             model.addAttribute("info", "OK");       
         } catch (Exception e) {   
             logger.info(e.getMessage());
@@ -312,10 +312,12 @@ public class AdminController {
     }
     
     @RequestMapping(value="/admin_editgroup",method=RequestMethod.POST, params = "deassign")
-    public String deassignUserToGroup(HttpServletRequest request,Model model,int selectedUser,int selectedGroup)
+    public String deassignUserToGroup(HttpServletRequest request,Model model,long selectedUser,long selectedGroup)
     {
         try {
-            userService.revokeUserFromGroup(selectedUser,selectedGroup); 
+            User user=userService.fetchUser(selectedUser);
+            Group group=userService.fetchGroupById(selectedGroup);
+            userService.revokeUserFromGroup(user,group); 
             model.addAttribute("info", "OK");       
         } catch (Exception e) {   
             logger.info(e.getMessage());
@@ -341,10 +343,12 @@ public class AdminController {
     }
     
     @RequestMapping(value="/admin_rolelist",method=RequestMethod.POST, params = "assign")
-    public String assignRoleToGroup(HttpServletRequest request,Model model,int selectedRole,int selectedGroup)
+    public String assignRoleToGroup(HttpServletRequest request,Model model,long selectedRole,long selectedGroup)
     {
         try {
-            userService.assignRoleToGroup(selectedRole,selectedGroup);     
+            Role role=userService.fetchRoleById(selectedRole);
+            Group group=userService.fetchGroupById(selectedGroup);
+            userService.assignRoleToGroup(role,group);     
             model.addAttribute("info", "OK");       
         } catch (Exception e) {   
             logger.info(e.getMessage());
@@ -354,10 +358,12 @@ public class AdminController {
     }
     
     @RequestMapping(value="/admin_rolelist",method=RequestMethod.POST, params = "deassign")
-    public String deassignRoleToGroup(HttpServletRequest request,Model model,int selectedRole,int selectedGroup)
+    public String deassignRoleToGroup(HttpServletRequest request,Model model,long selectedRole,long selectedGroup)
     {
         try {
-            userService.revokeRoleFromGroup(selectedRole,selectedGroup);  
+            Role role=userService.fetchRoleById(selectedRole);
+            Group group=userService.fetchGroupById(selectedGroup);
+            userService.revokeRoleFromGroup(role,group);  
             model.addAttribute("info", "OK");       
         } catch (Exception e) {   
             logger.info(e.getMessage());

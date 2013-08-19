@@ -56,17 +56,6 @@
 		<property name="dataSource" ref="dataSource" />
 	</bean>
 	
-	<bean id="propertyConfigurer"
-		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-		<property name="locations">
-			<list>
-				<value>file:${ENWIDA_HOME}/conf/enwida.config</value>
-				<value>classpath:/configProperties/enwida.jdbc.config</value>
-				<value>classpath:/configProperties/application.properties</value>
-			</list>
-		</property>
-	</bean>
-	
 	<!-- This class onApplicationEvent is triggered when root conetxt is loaded -->
 	<bean id="eventListenerBean" class="de.enwida.web.application.ApplicationContextInitializer" />
 	

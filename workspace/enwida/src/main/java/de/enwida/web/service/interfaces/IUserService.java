@@ -206,7 +206,8 @@ public interface IUserService {
 	 * @param role the persisted role object
 	 * @param group the persisted group object
 	 * @return the fresh {@link Role} object
-	 */	public Role assignRoleToGroup(Role role, Group group);
+	 */
+	public Role assignRoleToGroup(Role role, Group group);
 
 	/**
 	 * Revoke role from group.
@@ -221,7 +222,8 @@ public interface IUserService {
 	 * @param role the persisted role object
 	 * @param group the persisted group object
 	 * @return the fresh {@link Role} object
-	 */	public Role revokeRoleFromGroup(Role role, Group group);
+	 */
+	public Role revokeRoleFromGroup(Role role, Group group);
 
 	// TODO: comments
 	public Role assignRightToRole(Right right, Role role);
@@ -332,7 +334,7 @@ public interface IUserService {
 
     Group fetchGroupByCompanyName(String companyName);
 
-    public User fetchUserByFirstAndLastName(String username);
+    public User fetchUserByFirstAndLastNameOrEmail(String username);
 
 	Group findGroup(Group group);
 

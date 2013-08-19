@@ -147,8 +147,8 @@ public class UserServiceImpl implements IUserService {
                 
         if(userId != -1)
         {           
-            Group group = this.fetchGroupByCompanyName(user.getCompanyName());
-            
+        	// Fetching the same group and assigning that group to user
+            Group group = this.fetchGroupByCompanyName(user.getCompanyName());            
             if(group != null && group.isAutoPass())
             {
                 Group newGroup = groupDao.fetchById(group.getGroupID());
@@ -167,6 +167,7 @@ public class UserServiceImpl implements IUserService {
                     anonymousGroup.setAutoPass(true);                    
                 }
                 anonymousGroup = groupDao.addGroup(anonymousGroup);
+                this.assignGroupToUser(userId, anonymousGroup.getGroupID());
             }
             
             return true;
@@ -353,7 +354,8 @@ public class UserServiceImpl implements IUserService {
 		// Refresh the group in order to reflect the changes
 		group = groupDao.update(group);
 		groupDao.refresh(group);
-		return group;
+		return group;
+
 	}
 
     @Override
@@ -419,7 +421,8 @@ public class UserServiceImpl implements IUserService {
 		// Refresh the role in order to reflect the changes
 		role = roleDao.update(role);
 		roleDao.refresh(role);
-		return role;	}
+		return role;
+	}
     
     @Override
     public void revokeUserFromGroup(long userID, long groupID) {
@@ -618,9 +621,12 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public User fetchUserByFirstAndLastName(String username) {
+    public User fetchUserByFirstAndLastNameOrEmail(String username) {
         for (User user : userDao.fetchAll()) {
+            //verify by firstname and lastname or email
             if(username.equalsIgnoreCase(user.getFirstName()+" "+user.getLastName())){
+                return user;
+            }else if(username.equalsIgnoreCase(user.getEmail())){
                 return user;
             }
         }

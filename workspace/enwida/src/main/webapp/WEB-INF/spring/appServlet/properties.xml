@@ -9,6 +9,16 @@
             
 	<util:properties id="configProperties">
     </util:properties>
-    <util:properties id="enwidaConfigProperties" location="classpath:/configProperties/enwida.jdbc.config" />
+
     <util:properties id="applicationProperties" location="classpath:/configProperties/application.properties" />
+
+	<bean id="propertyConfigurer"
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>file:${ENWIDA_HOME}/conf/enwida.config</value>
+				<value>classpath:/configProperties/application.properties</value>
+			</list>
+		</property>
+	</bean>
 </beans>
