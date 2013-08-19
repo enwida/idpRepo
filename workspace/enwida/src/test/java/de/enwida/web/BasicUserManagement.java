@@ -1,7 +1,6 @@
 package de.enwida.web;
 
 import java.sql.Connection;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,12 +15,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import de.enwida.transport.Aspect;
-import de.enwida.transport.DataResolution;
 import de.enwida.web.dao.interfaces.IGroupDao;
 import de.enwida.web.dao.interfaces.IRightDao;
 import de.enwida.web.dao.interfaces.IRoleDao;
-import de.enwida.web.db.model.CalendarRange;
 import de.enwida.web.model.Group;
 import de.enwida.web.model.Right;
 import de.enwida.web.model.Role;
@@ -33,6 +29,9 @@ import de.enwida.web.service.interfaces.IUserService;
 public class BasicUserManagement {
     
 	private static boolean isDbSchemaRecreated = false;
+	
+	@Autowired
+	private TestUtils testUtils;
 	
     @Autowired
     private IUserService userService;
@@ -68,7 +67,7 @@ public class BasicUserManagement {
 	
 	@Test
 	public void userIsSaved() throws Exception {
-		final User user = saveTestUser("testuser");
+		final User user = testUtils.saveTestUser("testuser");
 		final User testee = userService.fetchUser("testuser");
 		
 		// Instance is fresh from database
@@ -121,7 +120,7 @@ public class BasicUserManagement {
 	
 	@Test
 	public void groupIsSaved() throws Exception {
-		final Group group = saveTestGroup("testgroup");
+		final Group group = testUtils.saveTestGroup("testgroup");
 		final Group testee = userService.fetchGroup("testgroup");
 		
 		// Instance is fresh from database
@@ -136,10 +135,10 @@ public class BasicUserManagement {
 	@Ignore
 	@Test
 	public void cannotAddGroupWithSameName() throws Exception {
-		saveTestGroup("testgroup");
+		testUtils.saveTestGroup("testgroup");
 		
 		try {
-			saveTestGroup("testgroup");
+			testUtils.saveTestGroup("testgroup");
 		} catch (Exception e) {
 			// Expected
 			return;
@@ -149,7 +148,7 @@ public class BasicUserManagement {
 	
 	@Test
 	public void roleIsSaved() throws Exception {
-		final Role role = saveTestRole("testrole");
+		final Role role = testUtils.saveTestRole("testrole");
 		final Role testee = userService.fetchRole("testrole");
 		
 		// Instance if fresh from database
@@ -164,10 +163,10 @@ public class BasicUserManagement {
 	@Ignore
 	@Test
 	public void cannotAddRoleWithSameName() throws Exception {
-		saveTestRole("testrole");
+		testUtils.saveTestRole("testrole");
 		
 		try {
-			saveTestRole("testrole");
+			testUtils.saveTestRole("testrole");
 		} catch (Exception e) {
 			// Expected
 			return;
@@ -177,7 +176,7 @@ public class BasicUserManagement {
 	
 	@Test
 	public void rightIsSaved() throws Exception {
-		final Right right = saveTestRight(211);
+		final Right right = testUtils.saveTestRight(211);
 		final Right testee = userService.fetchRight(right.getRightID());
 		
 		// Instance is fresh from database
@@ -199,9 +198,9 @@ public class BasicUserManagement {
 
 	@Test
 	public void addGroupsToUser() throws Exception {
-		final User user = saveTestUser("testuser");
-		final Group group1 = saveTestGroup("testgroup1");
-		final Group group2 = saveTestGroup("testgroup2");
+		final User user = testUtils.saveTestUser("testuser");
+		final Group group1 = testUtils.saveTestGroup("testgroup1");
+		final Group group2 = testUtils.saveTestGroup("testgroup2");
 		
 		Assert.assertTrue(user.getGroups().isEmpty());
 		
@@ -240,9 +239,9 @@ public class BasicUserManagement {
 	}
 	
 	@Test public void addGroupsToUserById() throws Exception {
-		final User user = saveTestUser("testuser");
-		final Group group1 = saveTestGroup("testgroup1");
-		final Group group2 = saveTestGroup("testgroup2");
+		final User user = testUtils.saveTestUser("testuser");
+		final Group group1 = testUtils.saveTestGroup("testgroup1");
+		final Group group2 = testUtils.saveTestGroup("testgroup2");
 		
 		Assert.assertTrue(user.getGroups().isEmpty());
 		
@@ -266,8 +265,8 @@ public class BasicUserManagement {
 	
 	@Test
 	public void addGroupTwice() throws Exception {
-		final User user = saveTestUser("testuser");
-		final Group group1 = saveTestGroup("testgroup1");
+		final User user = testUtils.saveTestUser("testuser");
+		final Group group1 = testUtils.saveTestGroup("testgroup1");
 		
 		userService.assignGroupToUser(user, group1);
 
@@ -280,7 +279,7 @@ public class BasicUserManagement {
 	
 	@Test
 	public void addNonPersistedGroup() throws Exception {
-		final User user = saveTestUser("testuser");
+		final User user = testUtils.saveTestUser("testuser");
 
 		// Group is not persisted 
 		final Group group = new Group("testgroup1");
@@ -297,9 +296,9 @@ public class BasicUserManagement {
 	
 	@Test
 	public void revokeGroupsFromUser() throws Exception {
-		final User user = saveTestUser("testuser");
-		final Group group1 = saveTestGroup("testgroup1");
-		final Group group2 = saveTestGroup("testgroup2");
+		final User user = testUtils.saveTestUser("testuser");
+		final Group group1 = testUtils.saveTestGroup("testgroup1");
+		final Group group2 = testUtils.saveTestGroup("testgroup2");
 		
 		userService.assignGroupToUser(user, group1);
 		userService.assignGroupToUser(user, group2);
@@ -325,8 +324,8 @@ public class BasicUserManagement {
 	
 	@Test
 	public void doNotAllowDirectModificationOfUserGroupsRelationship() throws Exception {
-		final User user = saveTestUser("testuser");
-		final Group group = saveTestGroup("testgroup");
+		final User user = testUtils.saveTestUser("testuser");
+		final Group group = testUtils.saveTestGroup("testgroup");
 		
 		try {
 			user.getGroups().add(group);
@@ -350,9 +349,9 @@ public class BasicUserManagement {
 
 	@Test
 	public void addRolesToGroup() throws Exception {
-		final Group group = saveTestGroup("testgroup");
-		final Role role1 = saveTestRole("testrole1");
-		final Role role2 = saveTestRole("testrole2");
+		final Group group = testUtils.saveTestGroup("testgroup");
+		final Role role1 = testUtils.saveTestRole("testrole1");
+		final Role role2 = testUtils.saveTestRole("testrole2");
 		
 		Assert.assertTrue(group.getAssignedRoles().isEmpty());
 		
@@ -391,9 +390,9 @@ public class BasicUserManagement {
 	}
 
 	@Test public void addRolesToGroupById() throws Exception {
-		final Group group = saveTestGroup("testgroup");
-		final Role role1 = saveTestRole("testrole1");
-		final Role role2 = saveTestRole("testrole2");
+		final Group group = testUtils.saveTestGroup("testgroup");
+		final Role role1 = testUtils.saveTestRole("testrole1");
+		final Role role2 = testUtils.saveTestRole("testrole2");
 		
 		Assert.assertTrue(group.getAssignedRoles().isEmpty());
 		
@@ -417,8 +416,8 @@ public class BasicUserManagement {
 	
 	@Test
 	public void addRoleTwice() throws Exception {
-		final Group group = saveTestGroup("testgroup");
-		final Role role = saveTestRole("testrole");
+		final Group group = testUtils.saveTestGroup("testgroup");
+		final Role role = testUtils.saveTestRole("testrole");
 		
 		userService.assignRoleToGroup(role, group);
 
@@ -448,9 +447,9 @@ public class BasicUserManagement {
 	
 	@Test
 	public void revokeRolesFromUser() throws Exception {
-		final Group group = saveTestGroup("testgroup");
-		final Role role1 = saveTestRole("testrole1");
-		final Role role2 = saveTestRole("testrole2");
+		final Group group = testUtils.saveTestGroup("testgroup");
+		final Role role1 = testUtils.saveTestRole("testrole1");
+		final Role role2 = testUtils.saveTestRole("testrole2");
 		
 		userService.assignRoleToGroup(role1, group);
 		userService.assignRoleToGroup(role2, group);
@@ -476,8 +475,8 @@ public class BasicUserManagement {
 	
 	@Test
 	public void doNotAllowDirectModificationOfGroupRoleRelationship() throws Exception {
-		final Group group = saveTestGroup("testgroup");
-		final Role role = saveTestRole("testrole");
+		final Group group = testUtils.saveTestGroup("testgroup");
+		final Role role = testUtils.saveTestRole("testrole");
 		
 		try {
 			group.getAssignedRoles().add(role);
@@ -500,7 +499,7 @@ public class BasicUserManagement {
 
 	@Test
 	public void addNonPersistedRight() throws Exception {
-		final Role role = saveTestRole("testrole");
+		final Role role = testUtils.saveTestRole("testrole");
 
 		// Right is not persisted 
 		final Right right = new Right();
@@ -517,9 +516,9 @@ public class BasicUserManagement {
 	
 	@Test
 	public void revokeRightFromRole() throws Exception {
-		final Role role = saveTestRole("testrole");
-		final Right right1 = saveTestRight(211);
-		final Right right2 = saveTestRight(221);
+		final Role role = testUtils.saveTestRole("testrole");
+		final Right right1 = testUtils.saveTestRight(211);
+		final Right right2 = testUtils.saveTestRight(221);
 		
 		userService.assignRightToRole(right1, role);
 		userService.assignRightToRole(right2, role);
@@ -549,9 +548,9 @@ public class BasicUserManagement {
 	
 	@Test
 	public void addRightsToRole() throws Exception {
-		final Role role = saveTestRole("testrole");
-		final Right right1 = saveTestRight(211);
-		final Right right2 = saveTestRight(221);
+		final Role role = testUtils.saveTestRole("testrole");
+		final Right right1 = testUtils.saveTestRight(211);
+		final Right right2 = testUtils.saveTestRight(221);
 		
 		Assert.assertTrue(role.getRights().isEmpty());
 		
@@ -586,8 +585,8 @@ public class BasicUserManagement {
 	
 	@Test
 	public void assignRightTwice() throws Exception {
-		final Role role = saveTestRole("testrole");
-		final Right right = saveTestRight(211);
+		final Role role = testUtils.saveTestRole("testrole");
+		final Right right = testUtils.saveTestRight(211);
 		
 		userService.assignRightToRole(right, role);
 
@@ -601,21 +600,21 @@ public class BasicUserManagement {
 	
 	@Test
 	public void transitiveClosure() throws Exception {
-		final User user1 = saveTestUser("testuser1");
-		final User user2 = saveTestUser("testuser2");
-		final Group group1 = saveTestGroup("testgroup1");
-		final Group group2 = saveTestGroup("testgroup2");
-		final Group group3 = saveTestGroup("testgroup3");
-		final Role role1 = saveTestRole("testrole1");
-		final Role role2 = saveTestRole("testrole2");
-		final Role role3 = saveTestRole("testrole3");
-		final Role role4 = saveTestRole("testrole4");
-		final Right right1 = saveTestRight(211);
-		final Right right2 = saveTestRight(221);
-		final Right right3 = saveTestRight(222);
-		final Right right4 = saveTestRight(322);
-		final Right right5 = saveTestRight(312);
-		final Right right6 = saveTestRight(313);
+		final User user1 = testUtils.saveTestUser("testuser1");
+		final User user2 = testUtils.saveTestUser("testuser2");
+		final Group group1 = testUtils.saveTestGroup("testgroup1");
+		final Group group2 = testUtils.saveTestGroup("testgroup2");
+		final Group group3 = testUtils.saveTestGroup("testgroup3");
+		final Role role1 = testUtils.saveTestRole("testrole1");
+		final Role role2 = testUtils.saveTestRole("testrole2");
+		final Role role3 = testUtils.saveTestRole("testrole3");
+		final Role role4 = testUtils.saveTestRole("testrole4");
+		final Right right1 = testUtils.saveTestRight(211);
+		final Right right2 = testUtils.saveTestRight(221);
+		final Right right3 = testUtils.saveTestRight(222);
+		final Right right4 = testUtils.saveTestRight(322);
+		final Right right5 = testUtils.saveTestRight(312);
+		final Right right6 = testUtils.saveTestRight(313);
 		
 		// Create the mappings
 		userService.assignGroupToUser(user1, group1);
@@ -685,37 +684,6 @@ public class BasicUserManagement {
 		final Group freshGroup3 = userService.fetchGroup("testgroup3");
 		Assert.assertEquals(1, freshGroup3.getAllRights().size());
 	}
-	
-	/***
-	 ***** Helper methods
-	 ***/
-	
-    private User saveTestUser(String name) throws Exception {
-		final User user = new User(name + "@pleasedontsendmailshere.com", name, "secret", "test", "test", true);
-		user.setCompanyName("enwida.de");
-		userService.saveUser(user);
-		return user;
-    }
-    
-    private Group saveTestGroup(String name) throws Exception {
-    	final Group group = new Group(name);
-    	userService.saveGroup(group);
-    	return group;
-    }
-    
-    private Role saveTestRole(String name) throws Exception {
-    	final Role role = new Role(name);
-    	userService.saveRole(role);
-    	return role;
-    }
-    
-    private Right saveTestRight(int product) throws Exception {
-    	final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-    	final CalendarRange timeRange = new CalendarRange(dateFormat.parse("2010-01-01"), dateFormat.parse("2012-01-01"));
 
-    	final Right right = new Right(99, product, DataResolution.MONTHLY.toString(), timeRange, Aspect.CR_VOL_ACTIVATION.toString(), true);
-    	userService.saveRight(right);
-    	return right;
-    }
     
  }
