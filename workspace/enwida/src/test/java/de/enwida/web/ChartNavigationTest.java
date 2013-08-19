@@ -30,7 +30,6 @@ import de.enwida.web.dao.interfaces.IRightDao;
 import de.enwida.web.db.model.CalendarRange;
 import de.enwida.web.db.model.NavigationDefaults;
 import de.enwida.web.model.ChartNavigationData;
-import de.enwida.web.model.Group;
 import de.enwida.web.model.ProductTree;
 import de.enwida.web.model.ProductTree.ProductAttributes;
 import de.enwida.web.model.Right;
@@ -51,6 +50,9 @@ import de.enwida.web.utils.ProductLeaf;
 public class ChartNavigationTest {
 
 	private static boolean isDbSchemaRecreated = false;
+
+	@Autowired
+	private TestUtils testUtils;
 	
 	@Autowired
 	protected INavigationService navigationService;
@@ -98,7 +100,7 @@ public class ChartNavigationTest {
 	
 	@Test
 	public void defaultRestrictionsArentExtended() throws Exception {
-		final User user = saveUserWithGroup(username);
+		final User user = testUtils.saveUserWithGroup(username);
 
 		for (final Integer key : navigationService.getAllDefaultNavigationData().keySet()) {
 			final ChartNavigationData defaultNavigation = navigationService.getDefaultNavigationData(key);
@@ -157,7 +159,7 @@ public class ChartNavigationTest {
 	
 	@Test
 	public void checkNoPermissions() throws Exception {
-		final User user = saveUserWithGroup(username);
+		final User user = testUtils.saveUserWithGroup(username);
 		final ChartNavigationData navigationData = navigationService.getNavigationDataWithoutAvailablityCheck(0, user, Locale.ENGLISH);
 		Assert.assertNotNull(navigationData);
 		Assert.assertTrue(navigationData.getAllResolutions().isEmpty());
@@ -177,9 +179,9 @@ public class ChartNavigationTest {
         right.setTimeRange(new CalendarRange(dateFormat.parse("2008-05-18"), dateFormat.parse("2012-09-02")));
 		right.setTso(99);
 		
-		User user = saveUserWithGroup(username);
-		saveRole(user, "testrole1");
-		saveRight(user, right);
+		User user = testUtils.saveUserWithGroup(username);
+		testUtils.saveRole(user, "testrole1");
+		testUtils.saveRight(user, right);
 		user = userService.syncUser(user);
 		
 		final ChartNavigationData navigationData = navigationService.getNavigationDataWithoutAvailablityCheck(0, user, Locale.GERMAN);
@@ -221,11 +223,11 @@ public class ChartNavigationTest {
         right2.setTimeRange(new CalendarRange(dateFormat.parse("2008-05-18"), dateFormat.parse("2012-09-02")));
 		right2.setTso(100);
 		
-		User user = saveUserWithGroup(username);
-		final Role role1 = saveRole(user, "testrole1");
-		final Role role2 = saveRole(user, "testrole2");
-		saveRight(role1, right1);
-		saveRight(role2, right2);
+		User user = testUtils.saveUserWithGroup(username);
+		final Role role1 = testUtils.saveRole(user, "testrole1");
+		final Role role2 = testUtils.saveRole(user, "testrole2");
+		testUtils.saveRight(role1, right1);
+		testUtils.saveRight(role2, right2);
 		user = userService.syncUser(user);
 		
 		final ChartNavigationData navigationData = navigationService.getNavigationDataWithoutAvailablityCheck(0, user, Locale.GERMAN);
@@ -273,11 +275,11 @@ public class ChartNavigationTest {
         right2.setTimeRange(new CalendarRange(dateFormat.parse("2009-05-18"), dateFormat.parse("2011-09-02")));
 		right2.setTso(99);
 		
-		User user = saveUserWithGroup(username);
-		final Role role1 = saveRole(user, "testrole1");
-		final Role role2 = saveRole(user, "testrole2");
-		saveRight(role1, right1);
-		saveRight(role2, right2);
+		User user = testUtils.saveUserWithGroup(username);
+		final Role role1 = testUtils.saveRole(user, "testrole1");
+		final Role role2 = testUtils.saveRole(user, "testrole2");
+		testUtils.saveRight(role1, right1);
+		testUtils.saveRight(role2, right2);
 		user = userService.syncUser(user);
 		
 		final ChartNavigationData navigationData = navigationService.getNavigationDataWithoutAvailablityCheck(0, user, Locale.GERMAN);
@@ -328,11 +330,11 @@ public class ChartNavigationTest {
         right2.setTimeRange(new CalendarRange(dateFormat.parse("2008-05-18"), dateFormat.parse("2012-09-02")));
 		right2.setTso(99);
 		
-		User user = saveUserWithGroup(username);
-		final Role role1 = saveRole(user, "testrole1");
-		final Role role2 = saveRole(user, "testrole2");
-		saveRight(role1, right1);
-		saveRight(role2, right2);
+		User user = testUtils.saveUserWithGroup(username);
+		final Role role1 = testUtils.saveRole(user, "testrole1");
+		final Role role2 = testUtils.saveRole(user, "testrole2");
+		testUtils.saveRight(role1, right1);
+		testUtils.saveRight(role2, right2);
 		user = userService.syncUser(user);
 		
 		final ChartNavigationData navigationData = navigationService.getNavigationDataWithoutAvailablityCheck(0, user, Locale.GERMAN);
@@ -379,11 +381,11 @@ public class ChartNavigationTest {
         right2.setTimeRange(new CalendarRange(dateFormat.parse("2008-05-18"), dateFormat.parse("2012-09-02")));
 		right2.setTso(99);
 		
-		User user = saveUserWithGroup(username);
-		final Role role1 = saveRole(user, "testrole1");
-		final Role role2 = saveRole(user, "testrole2");
-		saveRight(role1, right1);
-		saveRight(role2, right2);
+		User user = testUtils.saveUserWithGroup(username);
+		final Role role1 = testUtils.saveRole(user, "testrole1");
+		final Role role2 = testUtils.saveRole(user, "testrole2");
+		testUtils.saveRight(role1, right1);
+		testUtils.saveRight(role2, right2);
 		user = userService.syncUser(user);
 		
 		final ChartNavigationData navigationData = navigationService.getNavigationDataWithoutAvailablityCheck(0, user, Locale.GERMAN);
@@ -447,13 +449,13 @@ public class ChartNavigationTest {
         right4.setTimeRange(new CalendarRange(dateFormat.parse("2008-03-13"), dateFormat.parse("2012-09-02")));
 		right4.setTso(99);
 
-		User user = saveUserWithGroup(username);
-		final Role role1 = saveRole(user, "testrole1");
-		final Role role2 = saveRole(user, "testrole2");
-		saveRight(role1, right1);
-		saveRight(role2, right2);
-		saveRight(role1, right3);
-		saveRight(role2, right4);
+		User user = testUtils.saveUserWithGroup(username);
+		final Role role1 = testUtils.saveRole(user, "testrole1");
+		final Role role2 = testUtils.saveRole(user, "testrole2");
+		testUtils.saveRight(role1, right1);
+		testUtils.saveRight(role2, right2);
+		testUtils.saveRight(role1, right3);
+		testUtils.saveRight(role2, right4);
 		user = userService.syncUser(user);
 		
 		final ChartNavigationData navigationData = navigationService.getNavigationDataWithoutAvailablityCheck(0, user, Locale.GERMAN);
@@ -485,9 +487,9 @@ public class ChartNavigationTest {
 	
 	@Test
 	public void checkWithBasicRightsOnly() throws Exception {
-		User user = saveUserWithGroup(username);
-		final Role role1 = saveRole(user, "testrole1");
-		final Role role2 = saveRole(user, "testrole2");
+		User user = testUtils.saveUserWithGroup(username);
+		final Role role1 = testUtils.saveRole(user, "testrole1");
+		final Role role2 = testUtils.saveRole(user, "testrole2");
 		setupBasicRights(role1);
 		setupBasicRights(role2);
 		user = userService.syncUser(user);
@@ -521,9 +523,9 @@ public class ChartNavigationTest {
 
 	@Test
 	public void checkWithBasicRightsAndProductsRemoved() throws Exception {
-		User user = saveUserWithGroup(username);
-		final Role role1 = saveRole(user, "testrole1");
-		final Role role2 = saveRole(user, "testrole2");
+		User user = testUtils.saveUserWithGroup(username);
+		final Role role1 = testUtils.saveRole(user, "testrole1");
+		final Role role2 = testUtils.saveRole(user, "testrole2");
 		setupBasicRights(role1);
 		setupBasicRights(role2);
 
@@ -570,9 +572,9 @@ public class ChartNavigationTest {
 
 	@Test
 	public void checkWithBasicRightsAndResolutionsRemoved() throws Exception {
-		User user = saveUserWithGroup(username);
-		final Role role1 = saveRole(user, "testrole1");
-		final Role role2 = saveRole(user, "testrole2");
+		User user = testUtils.saveUserWithGroup(username);
+		final Role role1 = testUtils.saveRole(user, "testrole1");
+		final Role role2 = testUtils.saveRole(user, "testrole2");
 		setupBasicRights(role1);
 		setupBasicRights(role2);
 		
@@ -628,9 +630,9 @@ public class ChartNavigationTest {
 
 	@Test
 	public void checkWithBasicRightsAndTimeRangeRestricted() throws Exception {
-		User user = saveUserWithGroup(username);
-		final Role role1 = saveRole(user, "testrole1");
-		final Role role2 = saveRole(user, "testrole2");
+		User user = testUtils.saveUserWithGroup(username);
+		final Role role1 = testUtils.saveRole(user, "testrole1");
+		final Role role2 = testUtils.saveRole(user, "testrole2");
 		setupBasicRights(role1);
 		setupBasicRights(role2);
 
@@ -680,9 +682,9 @@ public class ChartNavigationTest {
 
 	@Test
 	public void checkWithBasicRightsAndSeveralRestrictions() throws Exception {
-		User user = saveUserWithGroup(username);
-		final Role role1 = saveRole(user, "testrole1");
-		final Role role2 = saveRole(user, "testrole2");
+		User user = testUtils.saveUserWithGroup(username);
+		final Role role1 = testUtils.saveRole(user, "testrole1");
+		final Role role2 = testUtils.saveRole(user, "testrole2");
 		setupBasicRights(role1);
 		setupBasicRights(role2);
 		
@@ -916,34 +918,6 @@ public class ChartNavigationTest {
 		}
 		connection.close();
 		return role;
-	}
-	
-	private User saveUserWithGroup(String username) throws Exception {
-		final User user = new User("ab@tum.de", username, "secret", "test", "test", true);
-		user.setCompanyName("enwida.de");
-		userService.saveUser(user);
-		
-		final Group group = new Group("testgroup");
-		userService.saveGroup(group);
-		
-		userService.assignGroupToUser(user, group);
-		return user;
-	}
-	
-	private Role saveRole(User user, String roleName) throws Exception {
-		final Role role = new Role(roleName);
-		userService.saveRole(role);
-		return userService.assignRoleToGroup(role, user.getGroups().iterator().next());
-	}
-	
-	private Role saveRight(User user, Right right) throws Exception {
-		userService.saveRight(right);
-		return userService.assignRightToRole(right, user.getAllRoles().get(0));
-	}
-	
-	private Role saveRight(Role role, Right right) throws Exception {
-		userService.saveRight(right);
-		return userService.assignRightToRole(right, role);
 	}
 
 }

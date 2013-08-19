@@ -36,11 +36,17 @@ public class CalendarRange implements Serializable, Cloneable, Comparable<Calend
 	}
 
 	public CalendarRange(Calendar from, Calendar to) {
+		if (from.compareTo(to) > 0) {
+			throw new IllegalArgumentException("Negative time range");
+		}
         this.from = from;
         this.to = to;
     }
     
     public CalendarRange(Date from, Date to) {
+		if (from.compareTo(to) > 0) {
+			throw new IllegalArgumentException("Negative time range");
+		}
         this.from = Calendar.getInstance();
         this.to = Calendar.getInstance();
         this.from.setTime(from);
@@ -126,6 +132,9 @@ public class CalendarRange implements Serializable, Cloneable, Comparable<Calend
     }
     
     public void setFrom(Calendar from) {
+		if (to != null && from.compareTo(to) > 0) {
+			throw new IllegalArgumentException("Negative time range");
+		}
         this.from = from;
     }
     
@@ -135,6 +144,9 @@ public class CalendarRange implements Serializable, Cloneable, Comparable<Calend
     }
     
     public void setTo(Calendar to) {
+		if (from != null && from.compareTo(to) > 0) {
+			throw new IllegalArgumentException("Negative time range");
+		}
         this.to = to;
     }
 

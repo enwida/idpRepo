@@ -32,6 +32,8 @@
         <property name="maxIdleTime" value="1800" />
 	</bean> -->
 	
+	<bean id="testUtils" scope="singleton" class="de.enwida.web.TestUtils" />
+
 	<bean id="objectMapperFactory" scope="singleton" class="de.enwida.web.utils.ObjectMapperFactory">
 		<constructor-arg ref="isoDateFormat" />
 	</bean>
