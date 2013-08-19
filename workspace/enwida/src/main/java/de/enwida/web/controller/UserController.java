@@ -45,6 +45,7 @@ import de.enwida.web.db.model.UserLines;
 import de.enwida.web.db.model.UserLinesMetaData;
 import de.enwida.web.model.FileUpload;
 import de.enwida.web.model.User;
+import de.enwida.web.model.UserUploadedFile;
 import de.enwida.web.service.implementation.MailServiceImpl;
 import de.enwida.web.service.interfaces.IUserLinesService;
 import de.enwida.web.service.interfaces.IUserService;
@@ -628,5 +629,21 @@ public class UserController {
 			}
 		}
 		return null;
+	}
+	
+	@RequestMapping(value = "/files/revisions", method = RequestMethod.GET)
+	public @ResponseBody List<UserUploadedFile> getFileRevisions(@RequestParam("fileId") String fileId, Locale locale) {
+		
+		List<UserUploadedFile> revisions = new ArrayList<UserUploadedFile>();
+		if (fileId != null && !fileId.isEmpty()) {
+			int fileid = Integer.parseInt(fileId);
+			UploadedFile file = userService.getFile(fileid);
+			
+			if (file != null) {
+				String filePath = file.getFilePath();
+				revisions.add(new UserUploadedFile(file));
+			}
+		}
+		return revisions;
 	}
 }
