@@ -197,10 +197,10 @@ public class UploadedFile implements Serializable, Comparable<UploadedFile> {
 	}
 
 	public File getManifestFile() {
-		if (actualFile == null) {
-			actualFile = new File(this.filePath + ".mfst");
+		if (manifestFile == null) {
+			manifestFile = new File(this.filePath + ".mfst");
 		}
-		return actualFile;
+		return manifestFile;
 	}
 
 	/*
