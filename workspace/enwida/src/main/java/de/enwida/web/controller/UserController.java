@@ -204,20 +204,9 @@ public class UserController {
 
             if (!result.hasErrors())
             {                        
-            	if(user.getUserName().isEmpty())
-            	{
-            		user.setUserName(user.getEmail());
-            	}
-
-            	if(userService.saveUser(user,"http://localhost:8080/enwida/user/"))
-            	{                           
-            		String activationLink = "http://localhost:8080/enwida/user/activateuser.html?username=" + user.getUserName() + "&actId=" + user.getActivationKey();
-            		String emailText = messageSource.getMessage("de.enwida.activation.email.message", null, request.getLocale()) + 
-            				activationLink +" \n"+ messageSource.getMessage("de.enwida.activation.email.signature", null, request.getLocale());	
-            		mail.SendEmail(user.getEmail(), 
-            				messageSource.getMessage("de.enwida.activation.email.subject", null, request.getLocale()), 
-            				emailText );
-
+        		user.setUserName(user.getEmail());
+            	if(userService.saveUser(user,"http://localhost:8080/enwida/user/", request.getLocale()))
+            	{                                       		
             		String name = user.getFirstName() + " " + user.getLastName();
             		String userStatus="logout";
             		String userStatusURL="../j_spring_security_logout";
