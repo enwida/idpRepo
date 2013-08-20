@@ -140,6 +140,9 @@ public class UserServiceImpl implements IUserService {
         EnwidaUtils activationIdGenerator = new EnwidaUtils();
         user.setActivationKey(activationIdGenerator.getActivationId());
         
+        // Password Encryption
+        user.setPassword(EnwidaUtils.md5(user.getPassword()));
+        
         // Saving user in the user table
         long userId;
         try {
