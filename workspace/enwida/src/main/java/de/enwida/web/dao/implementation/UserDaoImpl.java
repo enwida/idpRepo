@@ -1,12 +1,12 @@
 package de.enwida.web.dao.implementation;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
@@ -94,18 +94,28 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
 	public Long getNextSequence(String schema, String sequenceName) {
 		return super.getNextSequenceNumber(schema, sequenceName);
 	}
-	
-	@SuppressWarnings("unchecked")
+
 	@Override
-	public boolean emailAvailablility(String email) throws Exception {
-		String sql = "SELECT * FROM users.users WHERE email=?";
-		List<User> users = this.jdbcTemplate.query(sql, new Object[] { email }, new RowMapper() {
-            @Override
-            public String mapRow(ResultSet rs, int arg1) throws SQLException {
-                return rs.getString("email");
-            }
-        });
+	public List<UploadedFile> getUploadedFilesWithMaxRevision(User user) {
 		
-		return (users.size() > 0 ) ? true : false ;
+		List<UploadedFile> uploadedFilesWithMaxRevision = new ArrayList<UploadedFile>();
+		
+		List<UploadedFile> files = new ArrayList<UploadedFile>();
+		files.addAll(user.getUploadedFiles());
+		Collections.sort(files, new Comparator<UploadedFile>(){
+            public int compare(UploadedFile f1, UploadedFile f2){
+            	return f1.getRevision() < f2.getRevision() ? 1 : (f1.getRevision() > f2.getRevision() ? -1 : 0);
+            }});
+		
+		int elementsAdded = 0;
+		for (UploadedFile uploadedFile : files) {
+			uploadedFilesWithMaxRevision.add(uploadedFile);
+			elementsAdded += uploadedFile.getRevision();
+			if (elementsAdded == files.size()) {
+				break;
+			}
+		}
+		
+		return uploadedFilesWithMaxRevision;
 	}
 }

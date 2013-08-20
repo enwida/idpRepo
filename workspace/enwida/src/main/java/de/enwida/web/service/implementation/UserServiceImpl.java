@@ -10,6 +10,7 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.test.context.transaction.TransactionConfiguration;
@@ -59,7 +60,10 @@ public class UserServiceImpl implements IUserService {
 	 * File Data Access Object
 	 */
     @Autowired
-    private IFileDao fileDao;
+    private IFileDao fileDao;    
+    
+    @Autowired
+    private MessageSource messageSource;
     
     /**
      * Mailing Service to send activation link or password
@@ -248,11 +252,11 @@ public class UserServiceImpl implements IUserService {
     @Override
     public void resetPassword(long userID)throws Exception  {
         SecureRandom random = new SecureRandom();
-        String newPassword=new BigInteger(130, random).toString(32);
+        String newPassword=new BigInteger(30, random).toString(32);
         User user=userDao.fetchById(userID);
         userDao.updateUser(user);
         try {
-            mailService.SendEmail(user.getUserName(),"New Password","Your new Password:"+newPassword);
+            mailService.SendEmail(user.getEmail(),"New Password","Your new Password:"+newPassword);
         } catch (Exception e) {
             throw new Exception("Invalid Email.Please contact info@enwida.de");
         }       
@@ -309,6 +313,15 @@ public class UserServiceImpl implements IUserService {
 		if (user.getUserId() == null) {
 			throw new IllegalArgumentException("user object is not persisted");
 		}
+		// check for revision
+		UploadedFile previousFile = file.getPreviousFile();
+		if (previousFile != null) {
+			int newrevision = previousFile.getRevision() + 1;
+			file.setRevision(newrevision);
+		} else {
+			file.setRevision(1);
+		}
+
 		if (file.getId() > 0) {
 			file = fileDao.update(file, true); // with flush
 		} else {
@@ -321,6 +334,54 @@ public class UserServiceImpl implements IUserService {
 		return user;
 	}
     
+	/**
+	 * Caution: user should be persisted and in clean state! Dirty attributes
+	 * might be applied (i.e. committed to database, eventually).
+	 * 
+	 * @return the updated and managed user and file object
+	 * @throws Exception
+	 */
+	@Override
+	public User updateUserUploadedFile(User user, UploadedFile file) {
+		if (user.getUserId() == null) {
+			throw new IllegalArgumentException("user object is not persisted");
+		}
+		if (file.getId() > 0) {
+			file = fileDao.update(file, true); // with flush
+		} else {
+			fileDao.create(file, true); // with flush
+		}
+
+		// Refresh the user in order to reflect the changes
+		user = userDao.update(user);
+		userDao.refresh(user);
+		return user;
+	}
+
+	/**
+	 * deletes user uploaded file
+	 */
+	@Override
+	public void removeUserUploadedFile(User user, UploadedFile file)
+			throws Exception {
+		if (user.getUserId() == null) {
+			throw new IllegalArgumentException("user object is not persisted");
+		}
+		if (file.getId() == 0) {
+			throw new IllegalArgumentException("user object is not persisted");
+		}
+		if (file.getId() > 0) {
+			file.setUploader(null);
+			file.setMetaData(null);
+			file.setPreviousFile(null);
+			fileDao.delete(file); // with flush
+		}
+
+		// Refresh the user in order to reflect the changes
+		// user = userDao.update(user);
+		// userDao.refresh(user);
+	}
+
 	@Override
 	public void assignGroupToUser(long userId, Long groupID) {
 		User user = userDao.fetchById(userId);
@@ -618,10 +679,10 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public User fetchUserByFirstAndLastNameOrEmail(String username) {
+    public User fetchUserByUserNameOrEmail(String username) {
         for (User user : userDao.fetchAll()) {
             //verify by firstname and lastname or email
-            if(username.equalsIgnoreCase(user.getFirstName()+" "+user.getLastName())){
+            if(username.equalsIgnoreCase(user.getUserName())){
                 return user;
             }else if(username.equalsIgnoreCase(user.getEmail())){
                 return user;
@@ -639,14 +700,12 @@ public class UserServiceImpl implements IUserService {
     
 	@Override
 	public boolean emailAvailability(String email) throws Exception {
-		return userDao.emailAvailablility(email);		
-	}
-
-	@Override
-	public boolean eraseFileData(int fileId) {
-		UploadedFile oldFile = fileDao.getFile(fileId);
-		//TODO: Complete the Implementation
-		return true;
+        for (User user : userDao.fetchAll()) {
+            if(email.equalsIgnoreCase(user.getEmail())){
+                return true;
+            }
+        }
+		return false;		
 	}
 	
 	@Override
@@ -658,4 +717,9 @@ public class UserServiceImpl implements IUserService {
     public Role fetchRoleById(long roleId) {
         return roleDao.fetchById(roleId);
     }
+
+	@Override
+	public List<UploadedFile> getUploadedFiles(User user) {
+		return userDao.getUploadedFilesWithMaxRevision(user);
+	}
 }

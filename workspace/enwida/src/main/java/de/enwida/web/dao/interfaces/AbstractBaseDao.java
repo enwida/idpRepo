@@ -122,9 +122,22 @@ public abstract class AbstractBaseDao<T> implements IDao<T> {
 
 	public void delete(T entity) {
 		try {
-			em.remove(entity);
+			em.remove(em.merge(entity));
 		} catch (Exception e) {
 			logger.error("Unable to do remove "
+					+ entity.getClass().getSimpleName(), e);
+			throw e;
+		}
+	}
+
+	public void delete(T entity, boolean flushImmediate) {
+		try {
+			em.remove(entity);
+			if (flushImmediate) {
+				em.flush();
+			}
+		} catch (Exception e) {
+			logger.error("Unable to do immediate remove "
 					+ entity.getClass().getSimpleName(), e);
 			throw e;
 		}
@@ -133,7 +146,7 @@ public abstract class AbstractBaseDao<T> implements IDao<T> {
 	public void deleteById(long entityId) {
 		T entity = fetchById(entityId);
 		if (entity != null) {
-			delete(entity);
+			delete(entity, true);
 		}
 	}
 	
