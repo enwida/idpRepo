@@ -6,6 +6,7 @@ import java.sql.Date;
 import java.util.Calendar;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -260,12 +261,12 @@ public class UserServiceImpl implements IUserService {
      * Resets user Password and send an email link
      */
     @Override
-    public void resetPassword(long userID)throws Exception  {
+    public void resetPassword(long userID,Locale locale)throws Exception  {
         SecureRandom random = new SecureRandom();
         String newPassword=new BigInteger(30, random).toString(32);
         User user=userDao.fetchById(userID);
         try {
-            mailService.SendEmail(user.getEmail(),"New Password","Your new Password:"+newPassword);
+            mailService.SendEmail(user.getEmail(),messageSource.getMessage("de.enwida.userManagement.error.newPassword", null, locale),messageSource.getMessage("de.enwida.userManagement.error.newPassword", null, locale)+":"+newPassword);
             user.setPassword(newPassword);
             userDao.update(user);
         } catch (Exception e) {

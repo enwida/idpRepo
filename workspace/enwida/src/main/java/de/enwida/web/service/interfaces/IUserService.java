@@ -1,6 +1,7 @@
 package de.enwida.web.service.interfaces;
 
 import java.util.List;
+import java.util.Locale;
 
 import de.enwida.web.db.model.UploadedFile;
 import de.enwida.web.model.Group;
@@ -136,7 +137,7 @@ public interface IUserService {
      * 
      * @param userID
      */
-    public void resetPassword(long userID)throws Exception;
+    public void resetPassword(long userID,Locale locale)throws Exception;
 
     /**
      * Deletes the user from DB
