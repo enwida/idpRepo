@@ -355,8 +355,7 @@ public class UserController {
 	public ModelAndView getUplaodUserData(ModelMap model) throws Exception {
 		User user = userSession.getUser();
 		if (user != null) {
-			List<UploadedFile> filetable = new ArrayList<UploadedFile>(
-					user.getUploadedFiles());
+			List<UploadedFile> filetable = new ArrayList<UploadedFile>(userService.getUploadedFiles(user));
 			Collections.sort(filetable);
 			model.put("uploadedfiletable", filetable);			
 		}
@@ -500,13 +499,13 @@ public class UserController {
             } catch (Exception e) {
             	logger.error("Unable to upload file : " + displayfileName, e);
             }
-			List<UploadedFile> filetable = new ArrayList<UploadedFile>(user.getUploadedFiles());
+			/*List<UploadedFile> filetable = new ArrayList<UploadedFile>(user.getUploadedFiles());
             Collections.sort(filetable);
-            model.put("uploadedfiletable", filetable);
-		}		
-		model.put("fileUpload", new FileUpload());
-		model.put("fileReplace", new FileUpload());
-		return new ModelAndView("user/upload", model);
+            model.put("uploadedfiletable", filetable);*/
+		}	
+		/*model.put("fileUpload", new FileUpload());
+		model.put("fileReplace", new FileUpload());*/
+		return new ModelAndView("redirect:/user/upload");
 	}
 
 	public BindingResult validateFile(File file, Validator validator) {
@@ -679,11 +678,12 @@ public class UserController {
 		List<UserUploadedFile> revisions = new ArrayList<UserUploadedFile>();
 		if (fileId != null && !fileId.isEmpty()) {
 			int fileid = Integer.parseInt(fileId);
-			UploadedFile file = userService.getFile(fileid);
-			
+			UploadedFile file = userService.getFile(fileid);			
 			if (file != null) {
-				String filePath = file.getFilePath();
-				revisions.add(new UserUploadedFile(file));
+				while (file.getPreviousFile() != null) {
+					file = file.getPreviousFile();
+					revisions.add(new UserUploadedFile(file));					
+				}
 			}
 		}
 		return revisions;

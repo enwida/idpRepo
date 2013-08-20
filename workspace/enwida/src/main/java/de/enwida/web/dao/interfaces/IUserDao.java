@@ -1,5 +1,7 @@
 package de.enwida.web.dao.interfaces;
 
+import java.util.List;
+
 import de.enwida.web.db.model.UploadedFile;
 import de.enwida.web.model.User;
 
@@ -24,4 +26,6 @@ public interface IUserDao extends IDao<User> {
     Long getNextSequence(String schema, String sequenceName);
 
     int getUploadedFileVersion(UploadedFile uplaodedfile, User user);
+
+	List<UploadedFile> getUploadedFilesWithMaxRevision(User user);
 }

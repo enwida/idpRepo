@@ -162,6 +162,7 @@ $(function() {
    	        	 	fileId : fileIdToGetRevisions,
    	         },
    	         success: function(result) {
+   	        	$("#show-revisions-file-div-inner").html("");
    	        	$.each(result, function(i, item) {
    	        		$("#show-revisions-file-div-inner").append("<p><span style=\"float: left; margin: 0 7px 20px 0;\"></span><div style=\"display: table-row;\">" + 
    	        		"<div style=\"display: table-cell;padding: 5px;\"> " + item.id + "</div>" + 

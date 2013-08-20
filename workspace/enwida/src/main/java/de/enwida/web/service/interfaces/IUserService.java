@@ -1,5 +1,6 @@
 package de.enwida.web.service.interfaces;
 
+import java.util.Collection;
 import java.util.List;
 
 import de.enwida.web.db.model.UploadedFile;
@@ -349,5 +350,7 @@ public interface IUserService {
 	public Role fetchRoleById(long roleId);
 
 	User updateUserUploadedFile(User user, UploadedFile file);
+
+	public List<UploadedFile> getUploadedFiles(User user);
 
 }

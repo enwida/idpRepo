@@ -318,6 +318,8 @@ public class UserServiceImpl implements IUserService {
 		if (previousFile != null) {
 			int newrevision = previousFile.getRevision() + 1;
 			file.setRevision(newrevision);
+		} else {
+			file.setRevision(1);
 		}
 
 		if (file.getId() > 0) {
@@ -691,4 +693,9 @@ public class UserServiceImpl implements IUserService {
     public Role fetchRoleById(long roleId) {
         return roleDao.fetchById(roleId);
     }
+
+	@Override
+	public List<UploadedFile> getUploadedFiles(User user) {
+		return userDao.getUploadedFilesWithMaxRevision(user);
+	}
 }
