@@ -254,20 +254,20 @@ public class UserServiceImpl implements IUserService {
         SecureRandom random = new SecureRandom();
         String newPassword=new BigInteger(30, random).toString(32);
         User user=userDao.fetchById(userID);
-        userDao.updateUser(user);
         try {
             mailService.SendEmail(user.getEmail(),"New Password","Your new Password:"+newPassword);
+            user.setPassword(newPassword);
+            userDao.updateUser(user);
         } catch (Exception e) {
             throw new Exception("Invalid Email.Please contact info@enwida.de");
         }       
-        user.setPassword(newPassword);
     }
     /**
      * Deletes the user
      */
     @Override
     public void deleteUser(User user) throws Exception {
-        userDao.delete(user);
+        userDao.deleteById(user.getUserId());
     }
     
     @Override
@@ -373,6 +373,7 @@ public class UserServiceImpl implements IUserService {
 	 * @throws Exception 
 	 */
 	@Override
+	@Transactional
 	public Role assignRoleToGroup(Role role, Group group) {
 		if (group.getGroupID() == null) {
 			throw new IllegalArgumentException("group object is not persisted");
@@ -624,8 +625,10 @@ public class UserServiceImpl implements IUserService {
     @Override
     public User fetchUserByUserNameOrEmail(String username) {
         for (User user : userDao.fetchAll()) {
-            //verify by firstname and lastname or email
-            if(username.equalsIgnoreCase(user.getUserName())){
+            //verify by firstname and lastname or email or username
+            if(username.equalsIgnoreCase(user.getFirstName()+" "+user.getLastName())){
+                return user;
+            }else if(username.equalsIgnoreCase(user.getUserName())){
                 return user;
             }else if(username.equalsIgnoreCase(user.getEmail())){
                 return user;
