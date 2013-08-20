@@ -64,7 +64,7 @@ public class UploadedFile implements Serializable, Comparable<UploadedFile> {
 	private String fileName;
 
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = User.USER_ID, nullable = false)
+	@JoinColumn(name = User.USER_ID)
 	private User uploader;
 
 	@OneToOne(mappedBy = "file")
@@ -93,6 +93,9 @@ public class UploadedFile implements Serializable, Comparable<UploadedFile> {
 
 	@Transient
 	private File actualFile;
+
+	@Transient
+	private File manifestFile;
 
 	public long getId() {
 		return id;
@@ -189,6 +192,13 @@ public class UploadedFile implements Serializable, Comparable<UploadedFile> {
 	public File getActualFile() {
 		if (actualFile == null) {
 			actualFile = new File(this.filePath);
+		}
+		return actualFile;
+	}
+
+	public File getManifestFile() {
+		if (actualFile == null) {
+			actualFile = new File(this.filePath + ".mfst");
 		}
 		return actualFile;
 	}

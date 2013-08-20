@@ -350,4 +350,6 @@ public interface IUserService {
 
 	User updateUserUploadedFile(User user, UploadedFile file);
 
+	void removeUserUploadedFile(User user, UploadedFile file) throws Exception;
+
 }

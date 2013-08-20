@@ -318,6 +318,8 @@ public class UserServiceImpl implements IUserService {
 		if (previousFile != null) {
 			int newrevision = previousFile.getRevision() + 1;
 			file.setRevision(newrevision);
+		} else {
+			file.setRevision(1);
 		}
 
 		if (file.getId() > 0) {
@@ -354,6 +356,30 @@ public class UserServiceImpl implements IUserService {
 		user = userDao.update(user);
 		userDao.refresh(user);
 		return user;
+	}
+
+	/**
+	 * deletes user uploaded file
+	 */
+	@Override
+	public void removeUserUploadedFile(User user, UploadedFile file)
+			throws Exception {
+		if (user.getUserId() == null) {
+			throw new IllegalArgumentException("user object is not persisted");
+		}
+		if (file.getId() == 0) {
+			throw new IllegalArgumentException("user object is not persisted");
+		}
+		if (file.getId() > 0) {
+			file.setUploader(null);
+			file.setMetaData(null);
+			file.setPreviousFile(null);
+			fileDao.delete(file); // with flush
+		}
+
+		// Refresh the user in order to reflect the changes
+		// user = userDao.update(user);
+		// userDao.refresh(user);
 	}
 
 	@Override

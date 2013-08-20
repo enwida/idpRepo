@@ -629,8 +629,18 @@ public class UserController {
 				try {
 					boolean success = userLineService
 							.eraseUserLines(downloadFile.getId());
-					EnwidaUtils.removeTemporaryFile(downloadFile
-							.getActualFile());
+					// first remove all mapppings
+					userService.removeUserUploadedFile(user, downloadFile);
+					// actual row deleted
+					userService.removeUserUploadedFile(user, downloadFile);
+					userSession.setUserInSession(userService.fetchUser(user
+							.getUserId()));
+					if (success) {
+						EnwidaUtils.removeTemporaryFile(downloadFile
+								.getActualFile());
+						EnwidaUtils.removeTemporaryFile(downloadFile
+								.getManifestFile());
+					}
 				} catch (Exception e) {
 					logger.error(
 							"Unable to delete file :'"
