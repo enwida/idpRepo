@@ -130,6 +130,10 @@ define [ "components/visual"
           leaf.resolution, @attr.width, @attr.navigationData.aspects.length
 
       @setDownloadLink = ->
+        if @attr.disabledLines.length is @attr.navigationData.aspects.length
+          @select("downloadLink").attr "href", "#"
+          return
+
         selections = $.extend {},
           @attr.selections,
           resolution: @attr.downloadResolution
