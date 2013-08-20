@@ -352,4 +352,7 @@ public interface IUserService {
 
 	void removeUserUploadedFile(User user, UploadedFile file) throws Exception;
 
+	public List<UploadedFile> getUploadedFiles(User user);
+
+
 }

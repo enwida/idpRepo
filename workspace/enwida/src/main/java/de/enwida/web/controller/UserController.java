@@ -45,6 +45,7 @@ import de.enwida.web.db.model.UserLines;
 import de.enwida.web.db.model.UserLinesMetaData;
 import de.enwida.web.model.FileUpload;
 import de.enwida.web.model.User;
+import de.enwida.web.model.UserUploadedFile;
 import de.enwida.web.service.implementation.MailServiceImpl;
 import de.enwida.web.service.interfaces.IUserLinesService;
 import de.enwida.web.service.interfaces.IUserService;
@@ -354,8 +355,7 @@ public class UserController {
 	public ModelAndView getUplaodUserData(ModelMap model) throws Exception {
 		User user = userSession.getUser();
 		if (user != null) {
-			List<UploadedFile> filetable = new ArrayList<UploadedFile>(
-					user.getUploadedFiles());
+			List<UploadedFile> filetable = new ArrayList<UploadedFile>(userService.getUploadedFiles(user));
 			Collections.sort(filetable);
 			model.put("uploadedfiletable", filetable);			
 		}
@@ -499,13 +499,13 @@ public class UserController {
             } catch (Exception e) {
             	logger.error("Unable to upload file : " + displayfileName, e);
             }
-			List<UploadedFile> filetable = new ArrayList<UploadedFile>(user.getUploadedFiles());
+			/*List<UploadedFile> filetable = new ArrayList<UploadedFile>(user.getUploadedFiles());
             Collections.sort(filetable);
-            model.put("uploadedfiletable", filetable);
-		}		
-		model.put("fileUpload", new FileUpload());
-		model.put("fileReplace", new FileUpload());
-		return new ModelAndView("user/upload", model);
+            model.put("uploadedfiletable", filetable);*/
+		}	
+		/*model.put("fileUpload", new FileUpload());
+		model.put("fileReplace", new FileUpload());*/
+		return new ModelAndView("redirect:/user/upload");
 	}
 
 	public BindingResult validateFile(File file, Validator validator) {
@@ -680,5 +680,22 @@ public class UserController {
 			}
 		}
 		return null;
+	}
+	
+	@RequestMapping(value = "/files/revisions", method = RequestMethod.GET)
+	public @ResponseBody List<UserUploadedFile> getFileRevisions(@RequestParam("fileId") String fileId, Locale locale) {
+		
+		List<UserUploadedFile> revisions = new ArrayList<UserUploadedFile>();
+		if (fileId != null && !fileId.isEmpty()) {
+			int fileid = Integer.parseInt(fileId);
+			UploadedFile file = userService.getFile(fileid);			
+			if (file != null) {
+				while (file.getPreviousFile() != null) {
+					file = file.getPreviousFile();
+					revisions.add(new UserUploadedFile(file));					
+				}
+			}
+		}
+		return revisions;
 	}
 }

@@ -717,4 +717,9 @@ public class UserServiceImpl implements IUserService {
     public Role fetchRoleById(long roleId) {
         return roleDao.fetchById(roleId);
     }
+
+	@Override
+	public List<UploadedFile> getUploadedFiles(User user) {
+		return userDao.getUploadedFilesWithMaxRevision(user);
+	}
 }
