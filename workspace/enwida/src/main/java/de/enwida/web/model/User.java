@@ -165,11 +165,8 @@ public class User implements Serializable, UserDetails {
         this.firstName = firstName;
     }
 
-    public void setPassword(String password) {
-        if(password!=null){
-            //Always hash the password
-            this.password = EnwidaUtils.md5(password);
-        }
+    public void setPassword(String password) {        
+            this.password = password;
     }
 
 
@@ -260,9 +257,7 @@ public class User implements Serializable, UserDetails {
     }
 
     public void setConfirmPassword(String confirmPassword) {
-        if(confirmPassword!=null){
-            this.confirmPassword = EnwidaUtils.md5(confirmPassword);
-        }
+            this.confirmPassword = confirmPassword;
     }
 
     public String getActivationKey() {

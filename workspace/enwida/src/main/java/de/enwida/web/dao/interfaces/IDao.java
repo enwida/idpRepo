@@ -24,6 +24,8 @@ public interface IDao <T> {
 
 	public void delete(T entity);
 	
+	public void delete(T entity, boolean flushImmediate);
+
 	public void refresh(T entity);
 
 	public void deleteById(long entityId);

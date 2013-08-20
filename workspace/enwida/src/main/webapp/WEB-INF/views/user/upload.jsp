@@ -10,17 +10,19 @@
 <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
 <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
 <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+<script src="/enwida/resources/js/chart/date.format.js"></script>
 <!-- <link rel="stylesheet" href="/resources/demos/style.css" /> -->
 <script>
 $(function() {
 	var fileIdToDelete =  -1;
+	var fileIdToGetRevisions =  -1;
 	
 	<c:forEach var="file" items="${uploadedfiletable}">		
 		$( "#replace-file-${file.id}" )
 			.button()
 			.click(function() {
 				$("#fileIdToBeReplaced").val($(this).attr("id").split("-")[2]);				
-				$( "#replace-file-form-div" ).dialog( "open" );
+				$("#replace-file-form-div" ).dialog( "open" );
 		});
 		
 		$( "#download-file-${file.id}" )
@@ -38,6 +40,7 @@ $(function() {
 		$( "#show-revisions-file-${file.id}" )
 			.button()
 			.click(function(event) {
+				fileIdToGetRevisions = $(this).attr("id").split("-")[3];
 				$( "#show-revisions-file-div" ).dialog( "open" );				
 		});	
 		
@@ -147,13 +150,40 @@ $(function() {
 	
 	$( "#show-revisions-file-div" ).dialog({
 		autoOpen: false,
-		height: 200,
-		width: 350,
+		height: 400,
+		width: 650,
 		modal: true,
+		open: function() {
+			
+			$.ajax({
+   	         url: "<c:url value='/user/files/revisions' />",
+   	         type: 'GET',
+   	         data:  { 	
+   	        	 	fileId : fileIdToGetRevisions,
+   	         },
+   	         success: function(result) {
+   	        	$("#show-revisions-file-div-inner").html("");
+   	        	$.each(result, function(i, item) {
+   	        		$("#show-revisions-file-div-inner").append("<p><span style=\"float: left; margin: 0 7px 20px 0;\"></span><div style=\"display: table-row;\">" + 
+   	        		"<div style=\"display: table-cell;padding: 5px;\"> " + item.id + "</div>" + 
+   	        		"<div style=\"display: table-cell;padding: 5px;\"> " + item.displayFileName + "</div>" + 
+   	        		"<div style=\"display: table-cell;padding: 5px;\"> " + (new Date(item.uploadDate)).format() + "</div>" + 
+   	        		"<a class=\"ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only\" style=\"display: table-cell;padding: 5px;\" href=\"<c:url value='/user/files/" + item.id + "' />\" id=\"download-file-" + item.id + "\">Download</a>" + 
+   	        		"<button class=\"ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only\" style=\"display: table-cell;padding: 5px;\" id=\"delete-file-" + item.id + "\">Delete</button> </div></p>");
+   	        	});
+   	         }, 
+   	         error: function(xhr, ajaxOptions, thrownError) {
+   	        	alert(thrownError);
+   	       	 }
+   	     });
+	    },
 		buttons: {
 			Ok: function() {
 				$( this ).dialog( "close" );
 			}
+		},
+		close: function() {
+			fileIdToGetRevisions = -1;
 		}
 	});
 	
@@ -265,7 +295,8 @@ $(function() {
 	
 	<!-- Show Revisions File Div -->
 	<div id="show-revisions-file-div" title="File Revisions">
-		<p><span class="ui-icon ui-icon-alert" style="float: left; margin: 0 7px 20px 0;"></span>Revisions here!</p>		
+		<div id="show-revisions-file-div-inner" style="display: table;">
+		</div>
 	</div>
 	<!-- /Show Revisions File Div -->
 	
