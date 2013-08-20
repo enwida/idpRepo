@@ -14,6 +14,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.transaction.annotation.Transactional;
 
 import de.enwida.web.dao.interfaces.IGroupDao;
 import de.enwida.web.dao.interfaces.IRightDao;
@@ -268,6 +269,25 @@ public class BasicUserManagement {
 		Assert.assertEquals(3, fetchedUser.getGroups().size());
 		Assert.assertEquals(1, fetchedGroup1.getAssignedUsers().size());
 		Assert.assertEquals(1, fetchedGroup2.getAssignedUsers().size());
+	}
+	
+	@Test
+	public void addGroupToSeveralUsers() throws Exception {
+		final User user1 = testUtils.saveTestUser("testuser1");
+		final User user2 = testUtils.saveTestUser("testuser2");
+		Group group = testUtils.saveTestGroup("testgroup");
+		
+		Assert.assertEquals(1, user1.getGroups().size());
+		Assert.assertEquals(1, user2.getGroups().size());
+		Assert.assertEquals(0, group.getAssignedUsers().size());
+		
+		group = userService.assignGroupToUser(user1, group);
+		Assert.assertEquals(2, user1.getGroups().size());
+		Assert.assertEquals(1, group.getAssignedUsers().size());
+
+		group = userService.assignGroupToUser(user2, group);
+		Assert.assertEquals(2, user2.getGroups().size());
+		Assert.assertEquals(2, group.getAssignedUsers().size());
 	}
 	
 	@Test

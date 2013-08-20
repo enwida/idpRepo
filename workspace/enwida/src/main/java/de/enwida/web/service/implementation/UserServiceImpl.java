@@ -289,16 +289,25 @@ public class UserServiceImpl implements IUserService {
 		if (group.getGroupID() == null) {
 			throw new IllegalArgumentException("group object is not persisted");
 		}
+
+		// Temporarily remove assigned users
+		// This is necessary to avoid having stale user objects in the group's object tree
+		final Set<User> assignedUsers = group.getAssignedUsers();
+		group.setAssignedUsers(null);
+		
 		// Modify user's set of groups
  		final Set<Group> groups = new HashSet<>(user.getGroups());
 		groups.add(group);
 		user.setGroups(groups);
 		userDao.update(user, true); // with flush
+		
+		// Reassign users
+		group.setAssignedUsers(assignedUsers);
 
 		// Refresh the group in order to reflect the changes
-		group = groupDao.update(group);
-		groupDao.refresh(group);
-		return group;
+		final Group result = fetchGroupById(group.getGroupID());
+		groupDao.refresh(result);
+		return result;
 	}
 
 	/**
@@ -410,10 +419,9 @@ public class UserServiceImpl implements IUserService {
 		userDao.update(user, true); // with flush
 
 		// Refresh the group in order to reflect the changes
-		group = groupDao.update(group);
-		groupDao.refresh(group);
-		return group;
-
+		final Group result = fetchGroupById(group.getGroupID());
+		groupDao.refresh(result);
+		return result;
 	}
 
     @Override
@@ -444,9 +452,9 @@ public class UserServiceImpl implements IUserService {
 		groupDao.update(group, true); // with flush
 
 		// Refresh the role in order to reflect the changes
-		role = roleDao.update(role);
-		roleDao.refresh(role);
-		return role;
+		final Role result = fetchRoleById(role.getRoleID());
+		roleDao.refresh(result);
+		return result;
 	}
 
     @Override
@@ -477,9 +485,9 @@ public class UserServiceImpl implements IUserService {
 		groupDao.update(group, true); // with flush
 
 		// Refresh the role in order to reflect the changes
-		role = roleDao.update(role);
-		roleDao.refresh(role);
-		return role;
+		final Role result = fetchRoleById(role.getRoleID());
+		roleDao.refresh(result);
+		return result;
 	}
     
     @Override
@@ -516,9 +524,9 @@ public class UserServiceImpl implements IUserService {
 		rightDao.update(right, true); // with flush
  		
 		// Refresh the role in order to reflect the changes
-		role = roleDao.fetchById(role.getRoleID());
-		roleDao.refresh(role);
- 		return role;
+		final Role result = fetchRoleById(role.getRoleID());
+		roleDao.refresh(result);
+		return result;
 	}
 
 	/**
@@ -542,9 +550,9 @@ public class UserServiceImpl implements IUserService {
 		rightDao.flush();
  		
 		// Refresh the role in order to reflect the changes
-		role = roleDao.fetchById(role.getRoleID());
-		roleDao.refresh(role);
- 		return role;
+		final Role result = fetchRoleById(role.getRoleID());
+		roleDao.refresh(result);
+		return result;
 	}
 
     /**
