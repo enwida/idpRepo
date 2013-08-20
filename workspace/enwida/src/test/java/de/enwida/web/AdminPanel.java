@@ -47,6 +47,16 @@ public class AdminPanel {
         LogoFinder lf=new LogoFinder();
         lf.getImages("siemens.de");
     }
+    
+    @Test
+    public void TestRegisterPage() throws Exception{
+        registerUser("olcay@siemens.de", "secret");
+        registerUser("olcay@tum.de", "secret");
+        registerUser("olcay@in.tum.de", "secret");
+        registerUser("olcay@gmail.de", "secret");
+        registerUser("olcay@a.de", "secret");
+        registerUser("olcay@olcay.de", "secret");
+    }
 
     @Test
     public void loginWithInvalidMailAddress() throws Exception{
@@ -156,6 +166,7 @@ public class AdminPanel {
         // Now submit the form by clicking the button and get back the second page.
         final HtmlPage page2 = button.click();
         System.out.println(page2.asText());
+        Assert.assertTrue(page2.getTitleText().equalsIgnoreCase("Enwida Registration"));
         webClient.closeAllWindows();
     }
     
