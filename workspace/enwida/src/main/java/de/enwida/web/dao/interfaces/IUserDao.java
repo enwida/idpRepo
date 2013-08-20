@@ -11,13 +11,10 @@ import de.enwida.web.model.User;
  *
  */
 public interface IUserDao extends IDao<User> {
-	long save(User user);
 
     boolean checkUserActivationId(String username, String activationCode) throws Exception;
 
     void activateUser(String username) throws Exception;
-
-    void updateUser(User user) throws Exception;
 
     void enableDisableUser(long userID, boolean enabled) throws Exception;
 

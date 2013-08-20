@@ -24,27 +24,7 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
 	
     private static org.apache.log4j.Logger logger = Logger.getLogger(AdminController.class);
 
-    @Override
-	public long save(User user)
-	{
-        if(user==null) return 0;
-        
-		User exisinguser = fetchByName(user.getUserName());
-		try {
-			if (exisinguser == null) {
-				// create the user and refresh the user object
-				create(user);
-			} else {
-			    user.setUserID(exisinguser.getUserId());
-				user = update(user);
-			}
-		} catch (Exception e) {
-			logger.error("Error saving user : " + user.getUserName(), e);
-		}
-
-		return user.getUserId();
-	}
-  
+ 
     @Override
     public boolean checkUserActivationId(String username, String activationCode) {
         User user=this.fetchByName(username);
@@ -56,13 +36,8 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
 	public void activateUser(String username) {
         User user=fetchByName(username);
         user.setEnabled(true);
-        save(user);
+        update(user);
     }
-
-    @Override
-	public void updateUser(User user) {
-		save(user);
-	}
 
     @Override
 	public void enableDisableUser(long userID, boolean enabled) {
@@ -79,7 +54,7 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
     @Override
 	public int getUploadedFileVersion(UploadedFile uplaodedfile, User user) {
 		int revision = 1;
-		User latestuser = fetchByName(user.getUserName());
+		User latestuser = fetchByName(user.getUsername());
 		Set<UploadedFile> uploadedFiles = latestuser.getUploadedFiles();
 		for (UploadedFile file : uploadedFiles) {
 			if (file.getDisplayFileName().equals(

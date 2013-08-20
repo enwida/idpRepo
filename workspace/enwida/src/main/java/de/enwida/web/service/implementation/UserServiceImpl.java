@@ -146,7 +146,14 @@ public class UserServiceImpl implements IUserService {
         // Saving user in the user table
         long userId;
         try {
-            userId = userDao.save(user);
+            //check if we dont have this user
+            if(userDao.fetchByName(user.getUsername())==null)
+            {
+                userDao.create(user);
+                userId=user.getUserId();
+            }else{
+                throw new Exception("This use is already in database");
+            }
         } catch (Exception e) {
             logger.info(e.getMessage());
             return false;
@@ -260,7 +267,7 @@ public class UserServiceImpl implements IUserService {
         try {
             mailService.SendEmail(user.getEmail(),"New Password","Your new Password:"+newPassword);
             user.setPassword(newPassword);
-            userDao.updateUser(user);
+            userDao.update(user);
         } catch (Exception e) {
             throw new Exception("Invalid Email.Please contact info@enwida.de");
         }       
@@ -677,21 +684,6 @@ public class UserServiceImpl implements IUserService {
             for (User user : group.getAssignedUsers()) {
                 if(user.getCompanyName().equals(companyName))
                     return group;
-            }
-        }
-        return null;
-    }
-
-    @Override
-    public User fetchUserByUserNameOrEmail(String username) {
-        for (User user : userDao.fetchAll()) {
-            //verify by firstname and lastname or email or username
-            if(username.equalsIgnoreCase(user.getFirstName()+" "+user.getLastName())){
-                return user;
-            }else if(username.equalsIgnoreCase(user.getUserName())){
-                return user;
-            }else if(username.equalsIgnoreCase(user.getEmail())){
-                return user;
             }
         }
         return null;

@@ -1,5 +1,4 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
-<%@ taglib uri="http://www.springframework.org/tags" prefix="message"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html>
 <head>
@@ -12,8 +11,8 @@
 <span style="float: right">
     <a href="?lang=en">en</a> | <a href="?lang=de">de</a>
 </span>
-  <a href="user/">dashboard</a>
-  <a href="user/register">registration</a>
+  <a href="user/"><spring:message code="de.enwida.userManagement.dashboard" /></a>
+  <a href="user/register"><spring:message code="de.enwida.userManagement.registration" /></a>
 
 </body>
 </html>
