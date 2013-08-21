@@ -104,16 +104,17 @@ public class ChartDataController {
 	    @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Calendar endTime,
 	    @RequestParam DataResolution resolution,
 	    HttpServletRequest request,
-	    Locale locale) {
+	    Locale locale) throws Exception {
         
         final List<IDataLine> result = new ArrayList<IDataLine>();
+        final User user = userService.getCurrentUser();
         final List<Aspect> aspects = navigationService.getDefaultNavigationData(chartId).getAspects();
         
         for (final Aspect aspect : aspects) {
         	final LineRequest lineRequest = new LineRequest(aspect, product, tso, startTime, endTime, resolution, locale);
 
         	try {
-                final IDataLine line = lineService.getLine(lineRequest, userService.getCurrentUser());
+                final IDataLine line = lineService.getLine(lineRequest, user, locale);
                 result.add(line);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -152,7 +153,7 @@ public class ChartDataController {
         
         final Aspect aspect = Aspect.valueOf(strAspect);
     	final LineRequest request = new LineRequest(aspect, product, tso, startTime, endTime, resolution, locale);
-        return lineService.getLine(request, userService.getCurrentUser());
+        return lineService.getLine(request, userService.getCurrentUser(), locale);
     }
 
 

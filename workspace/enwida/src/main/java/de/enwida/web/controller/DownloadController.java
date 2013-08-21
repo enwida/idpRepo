@@ -75,7 +75,7 @@ public class DownloadController {
         for (final Aspect aspect : aspects) {
         	final LineRequest lineRequest = new LineRequest(aspect, product, tso, startTime, endTime, resolution, locale);
         	try {
-				final IDataLine line = lineService.getLine(lineRequest, user);
+				final IDataLine line = lineService.getLine(lineRequest, user, locale);
 				lines.add(line);
 			} catch (Exception e) {
 				e.printStackTrace();

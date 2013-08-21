@@ -24,7 +24,7 @@ define ["../util/time_utils"], (TimeUtils) ->
       tr = $("<tr>").addClass("header")
       tr.append $("<td>").text navigationData.xAxisLabel
       for line in lines
-        tr.append $("<td>").text line.title
+        tr.append $("<td>").text line.title + " [" + line.unit + "]"
       table.append tr
 
       # Data rows
