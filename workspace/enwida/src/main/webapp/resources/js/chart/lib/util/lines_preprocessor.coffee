@@ -4,6 +4,9 @@ define ->
 
   transformers:
     minmax: (lines) ->
+      # Clone lines
+      lines = $.extend true, {}, lines
+
       result = []
       # Add avg line
       result.push lines[1]
@@ -19,8 +22,10 @@ define ->
       result
 
     carpet: (lines) ->
+      # Clone lines
+      lines = $.extend true, {}, lines
+
       # Use only first line
-      line = lines[0]
       hourFormat = d3.time.format "%H"
       for dp in line.dataPoints
         date = new Date dp.x
@@ -35,6 +40,9 @@ define ->
       [line]
 
     posneg: (lines) ->
+      # Clone lines
+      lines = $.extend true, {}, lines
+
       # Calculate negative line
       for dp in lines[1].dataPoints
         dp.y *= -1

@@ -117,11 +117,12 @@ define [ "components/visual"
           if data.length is 0
             return @trigger "chartMessage", msg: "No data"
 
-          @attr.data = data = LinesPreprocessor.transform @attr.type, data
-          @triggerDraw data
-          @trigger @select("lines"), "updateLines", lines: data
+          @attr.lines = lines = data
+          @attr.chartLines = chartLines = LinesPreprocessor.transform @attr.type, data
+          @triggerDraw chartLines
+          @trigger @select("lines"), "updateLines", lines: chartLines
           @trigger @select("dataSheet"), "refresh",
-            lines: data
+            lines: lines
             navigationData: @attr.navigationData
 
       @triggerDraw = (data) ->

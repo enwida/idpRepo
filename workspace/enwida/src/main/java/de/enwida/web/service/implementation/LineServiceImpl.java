@@ -1,6 +1,9 @@
 package de.enwida.web.service.implementation;
 
+import java.util.Locale;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,15 +29,27 @@ public class LineServiceImpl implements ILineService {
     
     @Autowired
     private LineManager lineManager;
+    
+    @Autowired
+    private MessageSource messageSource;
 
-    public IDataLine getLine(LineRequest request, User user) throws Exception {
+    public IDataLine getLine(LineRequest request, User user, Locale locale) throws Exception {
         if (!securityService.isAllowed(request, user)) {
             throw new SecurityException("Access to line denied");
         }
         if (!availibilityService.isAvailable(request)) {
             throw new IllegalAccessError("Data not available");
         }
-        return lineManager.getLine(request);
+        final IDataLine result = lineManager.getLine(request);
+        applyLocalizations(result, locale);
+        return result;
+    }
+    
+    private void applyLocalizations(IDataLine line, Locale locale) {
+    	final String title = messageSource.getMessage("de.enwida.chart.aspect." + line.getAspect().name().toLowerCase() + ".title", null, "", locale);
+    	final String unit = messageSource.getMessage("de.enwida.chart.aspect." + line.getAspect().name().toLowerCase() + ".unit", null, "-", locale);
+    	line.setTitle(title);
+    	line.setUnit(unit);
     }
 
 }

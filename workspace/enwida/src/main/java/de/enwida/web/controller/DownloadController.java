@@ -75,7 +75,7 @@ public class DownloadController {
         for (final Aspect aspect : aspects) {
         	final LineRequest lineRequest = new LineRequest(aspect, product, tso, startTime, endTime, resolution, locale);
         	try {
-				final IDataLine line = lineService.getLine(lineRequest, user);
+				final IDataLine line = lineService.getLine(lineRequest, user, locale);
 				lines.add(line);
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -113,7 +113,7 @@ public class DownloadController {
     	// Heading
     	result.append(navigationData.getxAxisLabel());
     	for (final IDataLine line : lines) {
-    		result.append(",").append(line.getTitle());
+    		result.append(",").append(line.getTitle() + " [" + line.getUnit() + "]");
     	}
 
     	for (final Double x : csvDataLines.keySet()) {

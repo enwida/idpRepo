@@ -145,3 +145,17 @@ define ->
         result = new Date date
         result.setFullYear syncDate.getFullYear()
         result
+
+  timeRangeDateFormat:
+    Day: "yyyy-mm-dd"
+    Week: "yyyy-mm-dd"
+    Month: "yyyy-mm"
+    Year: "yyyy"
+
+  resolutionDateFormat:
+    QUATER_HOURLY : d3.time.format "%Y-%m-%d %H:%M"
+    HOURLY        : d3.time.format "%Y-%m-%d %H:%M"
+    DAILY         : d3.time.format "%Y-%m-%d"
+    WEEKLY        : d3.time.format "%Y-%m-%d"
+    MONTHLY       : d3.time.format "%Y-%m"
+    YEARLY        : d3.time.format "%Y"
