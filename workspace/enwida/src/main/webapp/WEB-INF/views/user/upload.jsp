@@ -107,6 +107,8 @@ $(function() {
 	    	         },
 	    	         success: function(result) {
 	    	        	 $( "#delete-file-form-success-div" ).dialog( "open" );
+	    	        	 var loc = window.location;
+	    	        	 window.location = loc.protocol + '//' + loc.host + loc.pathname + loc.search;
 	    	         }, 
 	    	         error: function(xhr, ajaxOptions, thrownError) {
 	    	        	 $( "#delete-file-form-failure-div" ).dialog( "open" );
