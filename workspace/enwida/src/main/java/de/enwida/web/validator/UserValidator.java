@@ -30,18 +30,10 @@ public class UserValidator implements Validator {
 			else if (!user.getEmail().matches(Constants.EMAIL_REGULAR_EXPRESSION)) {
 				errors.rejectValue("email", "de.enwida.email.invalid");
 			} 
-			// checking valid email addresses for Enwida
-			else if (!isValidEmailDomain(user.getEmail().toLowerCase())) {
-				errors.rejectValue("email", "de.enwida.email.notAllowed");
-			} 
 			// checking email availability
 			else if (userService.emailAvailability(user.getEmail())) {
 				errors.rejectValue("email", "de.enwida.email.inuse");
 			} 
-			// checking user name availability
-			else if (!user.getUserName().isEmpty() && userService.userNameAvailability(user.getUserName())) {
-				errors.rejectValue("userName", "de.enwida.userName.inuse");
-			}
 			// checking password field
 			if (user.getPassword().isEmpty()) {
 				errors.rejectValue("password", "de.enwida.field.empty");
@@ -96,25 +88,4 @@ public class UserValidator implements Validator {
 			e.printStackTrace();
 		}
 	}
-
-	private boolean isValidEmailDomain(String email) {
-		String domain = email.substring(email.lastIndexOf('@'));
-
-		if (domain.contains("gmail")) {
-			return false;
-		} else if (domain.contains("hotmail")) {
-			return false;
-		} else if (domain.contains("live")) {
-			return false;
-		} else if (domain.contains("ymail")) {
-			return false;
-		} else if (domain.contains("rocketmail")) {
-			return false;
-		} else if (domain.contains("facebook")) {
-			return false;
-		}
-
-		return true;
-	}
-
 }

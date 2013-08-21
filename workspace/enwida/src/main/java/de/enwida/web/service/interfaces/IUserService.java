@@ -49,10 +49,12 @@ public interface IUserService {
      *            to save into DB
      * @param activationHost
      *            hostname of website where activation will take place.
+     * @param locale
+     *            for internationalization.
      * @return the result of the action
      * @throws Exception 
      */
-    public boolean saveUser(User user, String activationHost) throws Exception;
+    public boolean saveUser(User user, String activationHost, Locale locale) throws Exception;
 
     /**
      * Saves user into database

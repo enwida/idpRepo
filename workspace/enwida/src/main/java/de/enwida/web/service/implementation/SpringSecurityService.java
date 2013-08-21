@@ -38,7 +38,7 @@ public class SpringSecurityService implements UserDetailsService {
 			throws UsernameNotFoundException {
 	    //make sure User is null
 		User matchingUser = null;
-		try {
+		try {	        
 	        //check if we can verify user with username
 	        if (matchingUser == null){
 	            matchingUser = userService.fetchUser(username);
