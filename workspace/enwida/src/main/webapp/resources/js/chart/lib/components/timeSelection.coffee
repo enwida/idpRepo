@@ -10,11 +10,6 @@ define ["../util/time_utils", "../util/resolution"], (TimeUtils, Resolution) ->
       Week: "days"
       Month: "months"
       Year: "years"
-    @datePickerFormats =
-      Day: "yyyy-mm-dd"
-      Week: "yyyy-mm-dd"
-      Month: "yyyy-mm"
-      Year: "yyyy"
 
     @refresh = (data) ->
       @attr.navigationData = data
@@ -30,7 +25,7 @@ define ["../util/time_utils", "../util/resolution"], (TimeUtils, Resolution) ->
 
       # Apply defaults
       defaultRange = data.defaults.timeRange
-      rangeLiteral = TimeUtils.timeRangeLiteral defaultRange 
+      rangeLiteral = TimeUtils.timeRangeLiteral defaultRange
 
       # Push default from date to all datepicker busses
       for s in _(@attr.streams).values()
@@ -74,7 +69,7 @@ define ["../util/time_utils", "../util/resolution"], (TimeUtils, Resolution) ->
             if tr is timeRange
               date = TimeUtils.mergeDate date, syncDate, tr, sender
               streams.in.push date
-          
+
         # Stream which emits valid dates (i.e. with restrictions applied)
         streams.valid = datepickerBoundariesStream.combine streams.in,
           ([from, to], date) ->
@@ -211,7 +206,7 @@ define ["../util/time_utils", "../util/resolution"], (TimeUtils, Resolution) ->
       @timeRanges.forEach (timeRange) =>
         element = @getDatepickerElement timeRange
         element.datepicker
-          format        : @datePickerFormats[timeRange]
+          format        : TimeUtils.timeRangeDateFormat[timeRange]
           weekStart     : 1
           calendarWeeks : timeRange is "Week"
           weekselect    : timeRange is "Week"

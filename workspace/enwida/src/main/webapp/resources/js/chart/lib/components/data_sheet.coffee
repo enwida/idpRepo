@@ -1,4 +1,4 @@
-define ->
+define ["../util/time_utils"], (TimeUtils) ->
 
   flight.component ->
 
@@ -9,6 +9,9 @@ define ->
     @refresh = (lines, navigationData) ->
       table = @select "table"
       table.empty()
+
+      resolution = lines[0].resolution
+      dateFormat = TimeUtils.resolutionDateFormat[resolution]
 
       # Merge lines
       data = {}
@@ -30,7 +33,7 @@ define ->
         tr = $("<tr>").addClass if oddRow then "odd" else "even"
         tr.append $("<td>").text \
           if navigationData.isDateScale
-            @attr.dateFormat new Date parseInt x
+            dateFormat new Date parseInt x
           else x
 
         for y in data[x]
