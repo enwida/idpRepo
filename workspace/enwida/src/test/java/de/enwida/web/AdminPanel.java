@@ -189,7 +189,7 @@ public class AdminPanel {
         //Check if we passed the registration page
         Assert.assertTrue(!page2.getTitleText().equalsIgnoreCase("Enwida Registration"));
         //Check the home page is retrieved
-        Assert.assertTrue(!page2.getTitleText().equalsIgnoreCase("Enwida Home Page"));
+        Assert.assertTrue(page2.getTitleText().equalsIgnoreCase("Enwida Home Page"));
         System.out.println("User registered");
         webClient.closeAllWindows();
     }

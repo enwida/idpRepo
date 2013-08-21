@@ -2,11 +2,11 @@
 <%@ page session="true" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="message"%>
-<a href="login">login</a>
 	<head>
 		<title>Enwida Registration</title>
 	</head>
 
+<a href="login">login</a>
 <h1><message:message code="de.enwida.userManagement.registrationForm" /></h1><br />
 <form:form commandName="USER" name="registrationForm">
 <label id="userErrorLabel" cssStyle="color : red;">${emailAvailabilityError}</label> 
