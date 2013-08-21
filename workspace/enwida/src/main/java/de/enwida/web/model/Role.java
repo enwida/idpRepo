@@ -47,7 +47,7 @@ public class Role implements Serializable, GrantedAuthority {
 	@ManyToMany(mappedBy = "assignedRoles", fetch = FetchType.EAGER)
 	private Set<Group> assignedGroups;
     
-	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "role")
+	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "role")
 	private Set<Right> rights;
     
 	/**

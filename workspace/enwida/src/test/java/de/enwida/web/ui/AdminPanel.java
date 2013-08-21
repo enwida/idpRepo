@@ -211,7 +211,6 @@ public class AdminPanel {
         final HtmlForm form = page1.getFormByName("registrationForm");
 
         final HtmlSubmitInput button = form.getInputByName("submit");
-        final HtmlTextInput textFieldUserName = form.getInputByName("userName");
         final HtmlTextInput textFieldUserEmail = form.getInputByName("email");
         final HtmlTextInput textFieldFirstName = form.getInputByName("firstName");
         final HtmlTextInput textFieldLastName = form.getInputByName("lastName");
@@ -219,7 +218,6 @@ public class AdminPanel {
         final HtmlPasswordInput textFieldConfirmPassword = form.getInputByName("confirmPassword");
 
         // Change the value of the text field
-        textFieldUserName.setValueAttribute(userName);
         textFieldUserEmail.setValueAttribute(userName);
         textFieldFirstName.setValueAttribute("test");
         textFieldLastName.setValueAttribute("test");

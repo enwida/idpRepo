@@ -7,7 +7,10 @@ TRUNCATE users.rights CASCADE;
 INSERT INTO users.users (name,email,user_password,first_name,last_name,company_name,login_count,joining_date,enabled) VALUES ('admin','admin@enwida.de','5ebe2294ecd0e0f08eab7690d2a6ee69','Admin','User','enwida.de',0,NOW(),true);
 
 INSERT INTO users.groups (name,auto_pass) VALUES ('admin',false);
+INSERT INTO users.groups (name,auto_pass) VALUES ('anonymous',false);
 INSERT INTO users.roles (name,description) VALUES ('admin','Admin role');
+INSERT INTO users.roles (name,description) VALUES ('chart','Chart role');
+INSERT INTO users.roles (name,description) VALUES ('anonymous','Anonymous role');
 
 INSERT INTO users.user_group (user_id,group_id) VALUES ((SELECT user_id FROM users.users WHERE name = 'admin'),(SELECT group_id FROM users.groups WHERE name = 'admin'));
 
