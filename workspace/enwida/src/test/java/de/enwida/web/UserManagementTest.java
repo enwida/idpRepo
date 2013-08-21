@@ -52,7 +52,7 @@ public class UserManagementTest {
         User user=userService.fetchUser("test");
         //if there is no test user create it
         if(user==null){
-              user = new User("jsdfjsdg@gmail.com", "test", "secret", "test", "test", true);
+              user = new User("test2@enwida-test.de", "test", "secret", "test", "test", true);
               user.setCompanyName("enwida.de");
               userService.saveUser(user);
         }

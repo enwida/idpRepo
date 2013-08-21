@@ -1,5 +1,7 @@
 package de.enwida.web.service.implementation;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.sql.Date;
@@ -9,9 +11,13 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
+import javax.mail.MessagingException;
+import javax.mail.internet.AddressException;
+
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.context.NoSuchMessageException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.test.context.transaction.TransactionConfiguration;
@@ -130,7 +136,7 @@ public class UserServiceImpl implements IUserService {
      * @throws Exception 
      */
     @Override
-    public boolean saveUser(User user, String activationHost) throws Exception 
+    public boolean saveUser(User user, String activationHost, Locale locale) throws Exception 
     {
     	// FIXME: what is the return value?
         Date date = new Date(Calendar.getInstance().getTimeInMillis());
@@ -181,7 +187,8 @@ public class UserServiceImpl implements IUserService {
             }
             anonymousGroup = groupDao.addGroup(anonymousGroup);
             this.assignGroupToUser(userId, anonymousGroup.getGroupID());
-            
+                        
+            sendUserActivationEmail(user, locale);
             
             return true;
         }
@@ -676,7 +683,7 @@ public class UserServiceImpl implements IUserService {
      */
     @Override
     public boolean saveUser(User user) throws Exception {
-        return saveUser(user,null);
+        return saveUser(user,null, null);
     }
     
     @Override
@@ -736,5 +743,25 @@ public class UserServiceImpl implements IUserService {
 	@Override
 	public List<UploadedFile> getUploadedFiles(User user) {
 		return userDao.getUploadedFilesWithMaxRevision(user);
+	}
+	
+	private void sendUserActivationEmail(User user, Locale locale){
+		String activationLink = "http://localhost:8080/enwida/user/activateuser.html?username=" + user.getUserName() + "&actId=" + user.getActivationKey();
+		String emailText = messageSource.getMessage("de.enwida.activation.email.message", null, locale) + 
+				activationLink +" \n"+ messageSource.getMessage("de.enwida.activation.email.signature", null, locale);	
+		try {
+			mailService.SendEmail(user.getEmail(), messageSource.getMessage("de.enwida.activation.email.subject", null, locale), emailText );
+		} catch (AddressException e) {
+			e.printStackTrace();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (NoSuchMessageException e) {
+			e.printStackTrace();
+		} catch (MessagingException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
 	}
 }
