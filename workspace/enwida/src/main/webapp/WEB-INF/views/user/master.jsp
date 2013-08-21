@@ -3,7 +3,6 @@
 <!doctype html>
 <html>
 <head>
-<title>Enwida Admin Page</title>
 <script src="../../resources/js/admin/assets/assets.js"></script>
 <link rel="stylesheet" href="../../resources/css/admin/assets/assets.css" />
 </head>
