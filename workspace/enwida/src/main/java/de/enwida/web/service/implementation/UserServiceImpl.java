@@ -457,11 +457,19 @@ public class UserServiceImpl implements IUserService {
 		if (role.getRoleID() == null) {
 			throw new IllegalArgumentException("role object is not persisted");
 		}
+		// Temporarily remove assigned groups
+		// This is necessary to avoid having stale group objects in the role's object tree
+		final Set<Group> assignedGroups = role.getAssignedGroups();
+		group.setAssignedUsers(null);
+		
 		// Modify group's set of roles
  		final Set<Role> roles = new HashSet<>(group.getAssignedRoles());
  		roles.add(role);
 		group.setAssignedRoles(roles);
 		groupDao.update(group, true); // with flush
+		
+		// Reassign groups
+		role.setAssignedGroups(assignedGroups);
 
 		// Refresh the role in order to reflect the changes
 		final Role result = fetchRoleById(role.getRoleID());
