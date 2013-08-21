@@ -1,12 +1,12 @@
-package de.enwida.web;
+package de.enwida.web.ui;
 
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.List;
 
 import junit.framework.Assert;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,10 +14,13 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.html.DomElement;
+import com.gargoylesoftware.htmlunit.html.DomNodeList;
 import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlPasswordInput;
+import com.gargoylesoftware.htmlunit.html.HtmlSelect;
 import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
 import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
 
@@ -97,6 +100,7 @@ public class AdminPanel {
     }
     
     @Test
+    @Ignore
     public void LoginWithFirstAndLastName() throws Exception{
         User user=userService.fetchAllUsers().get(0);
         //login with first and last name
@@ -106,6 +110,10 @@ public class AdminPanel {
     //Select user from list and check its details
     @Test
     public void CheckUserDetails() throws Exception{
+        
+        //Find user name, we will use it later ;)
+        String userId="";
+        
         //first log out
         webClient.getPage(webSiteLink+"j_spring_security_logout");
         //find an admin user
@@ -118,6 +126,8 @@ public class AdminPanel {
         for (HtmlAnchor htmlAnchor : list) {
             if (htmlAnchor.toString().contains("userID=")){
                 anchor=htmlAnchor;
+                String[] userInfo=htmlAnchor.getAttribute("href").toString().split("=");
+                userId=userInfo[1];
                 break;
             }
         }
@@ -126,7 +136,40 @@ public class AdminPanel {
         if(anchor!=null){
             page = anchor.click();
         }
+        //Check if we are in user details page
         Assert.assertEquals(true, page.getTitleText().equalsIgnoreCase("Enwida Admin User Page"));
+        
+        //Click Edit Group button
+        list = page.getAnchors();
+        for (HtmlAnchor htmlAnchor : list) {
+            if (htmlAnchor.toString().contains("editgroup")){
+                anchor=htmlAnchor;
+                break;
+            }
+        }
+        //check if we found the link or not
+        Assert.assertNotNull(anchor);
+        if(anchor!=null){
+            page = anchor.click();
+        }
+        //Check if we are in groups page
+        Assert.assertEquals(true, page.getTitleText().equalsIgnoreCase("Enwida Admin Group List Page"));
+        
+        //Check if user is preselected
+        HtmlSelect select =(HtmlSelect) page.getElementsByIdAndOrName("selectedUser").get(0);
+        System.out.println(select.getSelectedOptions());
+        if(!select.getDefaultValue().contains(userId)){
+            throw new Exception("user is not preselected");
+        }
+        final HtmlTextInput textFieldAddNewGroup = (HtmlTextInput) page.getElementsByIdAndOrName("newGroup").get(0);
+
+        textFieldAddNewGroup.setValueAttribute("Test");
+        
+        final HtmlSubmitInput button =  (HtmlSubmitInput) page.getElementsByIdAndOrName("addGroup").get(0);
+        page = button.click();
+
+        //Check if we are still in groups page
+        Assert.assertEquals(true, page.getTitleText().equalsIgnoreCase("Enwida Admin Group List Page"));
     }
 
     //Try to login to the page
@@ -153,7 +196,7 @@ public class AdminPanel {
         //Make sure we are in user list page
         link=webSiteLink+"user/admin/admin_userlist";
         page = webClient.getPage(link);
-        return page.getTitleText().equalsIgnoreCase("Enwida Admin Page");
+        return page.getTitleText().equalsIgnoreCase("Enwida Admin User List Page");
     }
 
     public void registerUser(String userName,String password) throws Exception {

@@ -3,7 +3,9 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ page session="false"%>
 
-<br>
+<head>
+	<title>Enwida Admin Group List Page</title>
+</head>
 <form name='f' method='POST'>
 	<table id="tblGroups" class="tablesorter">
 		<thead>
