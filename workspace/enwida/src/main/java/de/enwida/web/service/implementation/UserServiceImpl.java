@@ -6,6 +6,7 @@ import java.sql.Date;
 import java.util.Calendar;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
@@ -146,7 +147,14 @@ public class UserServiceImpl implements IUserService {
         // Saving user in the user table
         long userId;
         try {
-            userId = userDao.save(user);
+            //check if we dont have this user
+            if(userDao.fetchByName(user.getUsername())==null)
+            {
+                userDao.create(user);
+                userId=user.getUserId();
+            }else{
+                throw new Exception("This use is already in database");
+            }
         } catch (Exception e) {
             logger.info(e.getMessage());
             return false;
@@ -253,24 +261,24 @@ public class UserServiceImpl implements IUserService {
      * Resets user Password and send an email link
      */
     @Override
-    public void resetPassword(long userID)throws Exception  {
+    public void resetPassword(long userID,Locale locale)throws Exception  {
         SecureRandom random = new SecureRandom();
         String newPassword=new BigInteger(30, random).toString(32);
         User user=userDao.fetchById(userID);
-        userDao.updateUser(user);
         try {
-            mailService.SendEmail(user.getEmail(),"New Password","Your new Password:"+newPassword);
+            mailService.SendEmail(user.getEmail(),messageSource.getMessage("de.enwida.userManagement.error.newPassword", null, locale),messageSource.getMessage("de.enwida.userManagement.error.newPassword", null, locale)+":"+newPassword);
+            user.setPassword(newPassword);
+            userDao.update(user);
         } catch (Exception e) {
             throw new Exception("Invalid Email.Please contact info@enwida.de");
         }       
-        user.setPassword(newPassword);
     }
     /**
      * Deletes the user
      */
     @Override
     public void deleteUser(User user) throws Exception {
-        userDao.delete(user);
+        userDao.deleteById(user.getUserId());
     }
     
     @Override
@@ -441,6 +449,7 @@ public class UserServiceImpl implements IUserService {
 	 * @throws Exception 
 	 */
 	@Override
+	@Transactional
 	public Role assignRoleToGroup(Role role, Group group) {
 		if (group.getGroupID() == null) {
 			throw new IllegalArgumentException("group object is not persisted");
@@ -684,19 +693,6 @@ public class UserServiceImpl implements IUserService {
             for (User user : group.getAssignedUsers()) {
                 if(user.getCompanyName().equals(companyName))
                     return group;
-            }
-        }
-        return null;
-    }
-
-    @Override
-    public User fetchUserByUserNameOrEmail(String username) {
-        for (User user : userDao.fetchAll()) {
-            //verify by firstname and lastname or email
-            if(username.equalsIgnoreCase(user.getUserName())){
-                return user;
-            }else if(username.equalsIgnoreCase(user.getEmail())){
-                return user;
             }
         }
         return null;

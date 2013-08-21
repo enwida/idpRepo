@@ -29,8 +29,8 @@ public class MailServiceImpl {
         props.put("mail.smtp.host", host);
         props.put("mail.smtp.user", user);
         props.put("mail.smtp.password", password);
-        props.put("mail.smtp.port", "587");
-        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.port", port);
+        props.put("mail.smtp.auth", auth);
         Session session = Session.getDefaultInstance(props, null);
         MimeMessage message = new MimeMessage(session);
         message.setFrom(new InternetAddress(user));

@@ -270,7 +270,7 @@ public class AdminController {
     {
         System.out.println("ResetPassword");
         try {
-            userService.resetPassword(userID);
+            userService.resetPassword(userID,request.getLocale());
             model.addAttribute("info", "OK");
         } catch (Exception e) {
             model.addAttribute("error", "Error:"+e.getLocalizedMessage());
@@ -279,7 +279,7 @@ public class AdminController {
         return user(request,model,userID);
     }
     
-    
+    //deletes the user
     @RequestMapping(value="/admin_user",method=RequestMethod.POST, params = "delete")
     public String deleteUser(HttpServletRequest request,Model model,long userID)
     {
@@ -287,6 +287,11 @@ public class AdminController {
         try {
             User user=userService.fetchUser(userID);
             userService.deleteUser(user);
+            //Confirm
+            user=userService.fetchUser(userID);
+            if(user!=null){
+                throw new Exception("Not Allowed");
+            }
             
         } catch (Exception e) {
             model.addAttribute("Info", messageSource.getMessage("de.enwida.userManagement.error.notAllowed", null, request.getLocale()));

@@ -8,9 +8,9 @@
 <table id="tblRoles" class="tablesorter">
 	<thead>
 		<tr>
-			<th><message:message code="de.enwida.userManagement.roleName" /></th>
-			<th><message:message code="de.enwida.userManagement.description" /></th>
 			<th><message:message code="de.enwida.userManagement.groups" /></th>
+			<th><message:message code="de.enwida.userManagement.description" /></th>
+			<th><message:message code="de.enwida.userManagement.roleName" /></th>
 			<th><message:message code="de.enwida.userManagement.operation" /></th>
 		<tr>
 	<thead>
@@ -33,9 +33,10 @@
 	<tbody>
 		<c:forEach var="role" items="${rolesWithGroups}">
 			<tr>
-				<td>${role.roleName}</td>
-				<td>${role.description}</td>
 				<td><c:forEach var="group" items="${role.assignedGroups}"><a href="admin_editgroup.html?groupID=${group.groupID}">${group.groupName}</a>,</c:forEach></td>
+				<td>${role.description}</td>
+				
+				<td>${role.roleName}</td>
 				<td>
 					<a href='admin_editaspect?roleID=${role.roleID}&start=10&max=50'> <message:message code="de.enwida.userManagement.details" /></a>
 				</td>
@@ -48,23 +49,25 @@ $(function() {
 	$('#selectedRole option[value='+QueryString.roleID+']').attr('selected','selected');
 	$('#selectedGroup option[value='+QueryString.groupID+']').attr('selected','selected');
 	
-	//Save previosly selected values
-   if (localStorage.getItem('selectedRole')) {
-        $("#selectedRole option").eq(localStorage.getItem('selectedRole')).prop('selected', true);
-    }
-
-    $("#selectedRole").on('change', function() {
-        localStorage.setItem('selectedRole', $('option:selected', this).index());
-    });
-    
-    if (localStorage.getItem('selectedGroup')) {
-        $("#selectedGroup option").eq(localStorage.getItem('selectedGroup')).prop('selected', true);
-    }
-
-    $("#selectedGroup").on('change', function() {
-        localStorage.setItem('selectedGroup', $('option:selected', this).index());
-    });
-		    
+	if(QueryString.roleID==null){
+		//Save previosly selected values
+	   if (localStorage.getItem('selectedRole')) {
+	        $("#selectedRole option").eq(localStorage.getItem('selectedRole')).prop('selected', true);
+	    }
+	
+	    $("#selectedRole").on('change', function() {
+	        localStorage.setItem('selectedRole', $('option:selected', this).index());
+	    });
+	}
+	if(QueryString.groupID==null){
+	    if (localStorage.getItem('selectedGroup')) {
+	        $("#selectedGroup option").eq(localStorage.getItem('selectedGroup')).prop('selected', true);
+	    }
+	
+	    $("#selectedGroup").on('change', function() {
+	        localStorage.setItem('selectedGroup', $('option:selected', this).index());
+	    });
+	}    
 });
 </script>
 	<table  id="tblRoleMap">

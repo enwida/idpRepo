@@ -56,26 +56,29 @@
 	</table>
 <script>
 $(function() {
-	$('#selectedUser option[value='+QueryString.userId+']').attr('selected','selected');
+	$('#selectedUser option[value='+QueryString.userID+']').attr('selected','selected');
 	$('#selectedGroup option[value='+QueryString.groupID+']').attr('selected','selected');
+	//If userID presented in querystring dont get previous selected value
+	if(QueryString.userID==null){
+		//Save previosly selected values
+	   if (localStorage.getItem('selectedUser')) {
+	        $("#selectedUser option").eq(localStorage.getItem('selectedUser')).prop('selected', true);
+	    }
 	
-	//Save previosly selected values
-   if (localStorage.getItem('selectedUser')) {
-        $("#selectedUser option").eq(localStorage.getItem('selectedUser')).prop('selected', true);
-    }
-
-    $("#selectedUser").on('change', function() {
-        localStorage.setItem('selectedUser', $('option:selected', this).index());
-    });
-    
-    if (localStorage.getItem('selectedGroup')) {
-        $("#selectedGroup option").eq(localStorage.getItem('selectedGroup')).prop('selected', true);
-    }
-
-    $("#selectedGroup").on('change', function() {
-        localStorage.setItem('selectedGroup', $('option:selected', this).index());
-    });
-		    
+	    $("#selectedUser").on('change', function() {
+	        localStorage.setItem('selectedUser', $('option:selected', this).index());
+	    });
+	    
+	}
+	if(QueryString.groupID==null){
+	    if (localStorage.getItem('selectedGroup')) {
+	        $("#selectedGroup option").eq(localStorage.getItem('selectedGroup')).prop('selected', true);
+	    }
+	
+	    $("#selectedGroup").on('change', function() {
+	        localStorage.setItem('selectedGroup', $('option:selected', this).index());
+	    });
+	}
 });
 </script>
 	<table  id="tblGroupMap">
