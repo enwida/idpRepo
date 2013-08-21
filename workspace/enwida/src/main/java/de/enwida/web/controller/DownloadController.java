@@ -113,7 +113,7 @@ public class DownloadController {
     	// Heading
     	result.append(navigationData.getxAxisLabel());
     	for (final IDataLine line : lines) {
-    		result.append(",").append(line.getTitle());
+    		result.append(",").append(line.getTitle() + " [" + line.getUnit() + "]");
     	}
 
     	for (final Double x : csvDataLines.keySet()) {
