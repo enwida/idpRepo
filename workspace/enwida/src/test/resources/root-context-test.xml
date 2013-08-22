@@ -45,11 +45,11 @@
 	<bean scope="singleton" id="navigationLocalizer" class="de.enwida.web.utils.ChartNavigationLocalizer">
 	</bean>
 
+	<bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+		<property name="basename" value="classpath:/messages/messages" />
+	</bean>
 	<bean id="lineManager" class="de.enwida.chart.LineManager">	
 		<property name="messageSource" ref="messageSource" />
-	</bean>
-	<bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
-		<property name="basename" value="/resources/messages/messages" />
 	</bean>
 	<bean id="dbc" class="de.enwida.rl.controller.DatabaseController"/>	
 	<bean id="listOfProducts" class="de.enwida.rl.daos.ListOfProducts" init-method="init">	
