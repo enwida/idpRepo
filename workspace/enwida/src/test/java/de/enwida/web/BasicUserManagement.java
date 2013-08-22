@@ -226,9 +226,7 @@ public class BasicUserManagement {
 		Assert.assertEquals(1, freshGroup2.getAssignedUsers().size());
 		Assert.assertTrue(freshGroup2.getAssignedUsers().contains(user));
 		
-		// User is NOT added to stale groups objects
-		Assert.assertTrue(group1.getAssignedUsers().isEmpty());
-		Assert.assertTrue(group2.getAssignedUsers().isEmpty());
+		// Note: User might NOT be to stale groups objects
 		
 		// Groups got added to freshly fetched user object
 		final User fetchedUser = userService.fetchUser("testuser");
@@ -256,10 +254,7 @@ public class BasicUserManagement {
 		userService.assignGroupToUser(user.getUserId(), group1.getGroupID());
 		userService.assignGroupToUser(user.getUserId(), group2.getGroupID());
 		
-		// Changes are NOT reflected in stale objects
-		Assert.assertEquals(1, user.getGroups().size());
-		Assert.assertTrue(group1.getAssignedUsers().isEmpty());
-		Assert.assertTrue(group2.getAssignedUsers().isEmpty());
+		// Note: Changes might NOT be reflected in stale objects
 		
 		// Changes are visible as soon as you fetch new objects
 		final User fetchedUser = userService.fetchUser("testuser");
@@ -402,9 +397,7 @@ public class BasicUserManagement {
 		Assert.assertEquals(1, freshRole2.getAssignedGroups().size());
 		Assert.assertTrue(freshRole2.getAssignedGroups().contains(group));
 		
-		// Group was NOT added to stale role objects
-		Assert.assertTrue(role1.getAssignedGroups().isEmpty());
-		Assert.assertTrue(role2.getAssignedGroups().isEmpty());
+		// Note: Group might NOT have been added to stale role objects
 		
 		// Roles were added to freshly fetched group object
 		final Group fetchedGroup = userService.fetchGroup("testgroup");
@@ -432,10 +425,7 @@ public class BasicUserManagement {
 		userService.assignRoleToGroup(role1.getRoleID(), group.getGroupID());
 		userService.assignRoleToGroup(role2.getRoleID(), group.getGroupID());
 		
-		// Changes are NOT reflected in stale objects
-		Assert.assertTrue(group.getAssignedRoles().isEmpty());
-		Assert.assertTrue(role1.getAssignedGroups().isEmpty());
-		Assert.assertTrue(role2.getAssignedGroups().isEmpty());
+		// Note: Changes might NOT be reflected in stale objects
 		
 		// Changes are visible as soon as you fetch new objects
 		final Group fetchedGroup = userService.fetchGroup("testgroup");
@@ -601,9 +591,6 @@ public class BasicUserManagement {
 		Assert.assertTrue(freshRole.getRights().contains(right1));
 		Assert.assertTrue(freshRole.getRights().contains(right2));
 		
-		// Rights are NOT added to stale role object
-		Assert.assertTrue(role.getRights().isEmpty());
-		
 		// Role is assigned to freshly fetched right objects
 		final Right fetchedRight1 = userService.fetchRight(right1.getRightID());
 		final Right fetchedRight2 = userService.fetchRight(right2.getRightID());
@@ -634,6 +621,7 @@ public class BasicUserManagement {
 	}
 	
 	@Test
+	@Transactional
 	public void transitiveClosure() throws Exception {
 		final User user1 = testUtils.saveTestUser("testuser1");
 		final User user2 = testUtils.saveTestUser("testuser2");
