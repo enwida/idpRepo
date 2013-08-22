@@ -2,7 +2,9 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="message"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ page session="false"%>
-
+<head>
+	<title>Enwida Admin User Page</title>
+</head>
 <form:form commandName="USER" modelAttribute="user" onsubmit="return confirm('Are you sure?');">
 	<h1><message:message code="de.enwida.userManagement.user" /> :${user.userName}</h1>
 	<div>

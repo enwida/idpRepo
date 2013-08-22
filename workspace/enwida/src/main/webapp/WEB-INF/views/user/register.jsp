@@ -2,17 +2,16 @@
 <%@ page session="true" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="message"%>
-<a href="login">login</a>
 	<head>
 		<title>Enwida Registration</title>
 	</head>
 
+<a href="login">login</a>
 <h1><message:message code="de.enwida.userManagement.registrationForm" /></h1><br />
 <form:form commandName="USER" name="registrationForm">
 <label id="userErrorLabel" cssStyle="color : red;">${emailAvailabilityError}</label> 
 <table>
 	<tr><td><message:message code="de.enwida.userManagement.mailAddress" />(*) : </td><td><form:input path="email" onchange="getCompany(this.value)"/><form:errors id="userError" path="email" cssStyle="color : red;"/></td></tr>
-	<tr><td><message:message code="de.enwida.userManagement.userName" /> : </td><td><form:input path="userName" /><form:errors id="userError" path="userName" cssStyle="color : red;"/><label id="userErrorLabel" cssStyle="color : red;">${emailCheck}</label></td></tr>
 	<tr><td><message:message code="de.enwida.userManagement.firstName" />(*) : </td><td><form:input path="firstName" /><form:errors path="firstName" cssStyle="color : red;"/><label id="userErrorLabel" cssStyle="color : red;">${usernameCheck}</label></td></tr>
 	<tr><td><message:message code="de.enwida.userManagement.lastName" />(*) : </td><td><form:input path="lastName" /><form:errors path="lastName" cssStyle="color : red;"/></td></tr>
 	<tr><td><message:message code="de.enwida.userManagement.password" />(*) : </td><td><form:password path="password" /><form:errors path="password" cssStyle="color : red;"/></td></tr>

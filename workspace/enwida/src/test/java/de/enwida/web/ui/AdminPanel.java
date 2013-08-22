@@ -1,9 +1,12 @@
-package de.enwida.web;
+package de.enwida.web.ui;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import junit.framework.Assert;
 
+import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,10 +14,13 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.html.DomElement;
+import com.gargoylesoftware.htmlunit.html.DomNodeList;
 import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
 import com.gargoylesoftware.htmlunit.html.HtmlForm;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import com.gargoylesoftware.htmlunit.html.HtmlPasswordInput;
+import com.gargoylesoftware.htmlunit.html.HtmlSelect;
 import com.gargoylesoftware.htmlunit.html.HtmlSubmitInput;
 import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
 
@@ -41,6 +47,12 @@ public class AdminPanel {
     
     private HtmlAnchor anchor;
     
+    @Before
+    public void initBrowser(){
+        webClient.setCssEnabled(false);
+        webClient.setJavaScriptEnabled(false);
+    }
+    
     @Test
     public void LogoFinder() throws Exception{
        //check if logo finder works
@@ -50,56 +62,62 @@ public class AdminPanel {
     
     @Test
     public void TestRegisterPage() throws Exception{
-        registerUser("olcay@siemens.de", "secret");
-        registerUser("olcay@tum.de", "secret");
-        registerUser("olcay@in.tum.de", "secret");
-        registerUser("olcay@gmail.de", "secret");
-        registerUser("olcay@a.de", "secret");
-        registerUser("olcay@olcay.de", "secret");
+        ArrayList<String> testList = new ArrayList<String>();
+        testList.add("olcay@siemens.de");
+        testList.add("olcay@tum.de");
+        testList.add("olcay@in.tum.de");
+        testList.add("olcay@gmail.de");
+        testList.add("olcay@olcay.de");
+        testList.add("olcay@a.de");
+        for (String user : testList) {
+            //Make sure we dont have this user in the database
+            User persistedUser=userService.fetchUser(user);
+            System.out.println("Registering user:"+user);
+            if(persistedUser!=null){
+                //we have this user, delete it
+                System.out.println("This user in database");
+                userService.deleteUser(persistedUser.getUserId());
+            }
+            registerUser(user, "secret");
+            //check if we registered the user
+            User registedUser=userService.fetchUser(user);
+            Assert.assertNotNull(registedUser);
+            //Delete the user
+            userService.deleteUser(registedUser.getUserId());
+        }
     }
 
     @Test
     public void loginWithInvalidMailAddress() throws Exception{
       //Login with Invalid mail address
-        Assert.assertEquals(false, Login("test","secret2"));
+        Assert.assertEquals(false, Login("admins","secret2"));
     }
     
     @Test
     public void loginWithValidMailAddress() throws Exception{
         //Login with valid mail address
-        Assert.assertEquals(true, Login("test","secret"));
+        Assert.assertEquals(true, Login("admin","secret"));
     }
     
     @Test
+    @Ignore
     public void LoginWithFirstAndLastName() throws Exception{
-        
+        User user=userService.fetchAllUsers().get(0);
         //login with first and last name
-        Assert.assertEquals(true, Login("test test","secret"));
-    }
-    
-    @Test   
-    public void LoginWithNotEnabledUser() throws Exception{
-        //register new user
-        registerUser("test@enwida.de","secret");
-        Assert.assertEquals(false, Login("test@enwida.de","secret"));
-    }
-    
-    @Test   
-    public void LoginEnabledUser() throws Exception{
-        Assert.assertEquals(true, Login("test","secret"));
-    }
-    
-    private boolean link(String gotoLink,String pageTitle) throws Exception {
-        link=webSiteLink+gotoLink;
-        page = webClient.getPage(link);
-        return page.getTitleText().equalsIgnoreCase(pageTitle);
+        Assert.assertEquals(true, Login(user.getUsername(),user.getPassword()));
     }
     
     //Select user from list and check its details
     @Test
     public void CheckUserDetails() throws Exception{
         
-        Login("test", "secret");
+        //Find user name, we will use it later ;)
+        String userId="";
+        
+        //first log out
+        webClient.getPage(webSiteLink+"j_spring_security_logout");
+        //find an admin user
+        Login("admin", "secret");
         //Go to UserList page
         String link=webSiteLink+"user/admin/";
         //Get user lists
@@ -108,17 +126,57 @@ public class AdminPanel {
         for (HtmlAnchor htmlAnchor : list) {
             if (htmlAnchor.toString().contains("userID=")){
                 anchor=htmlAnchor;
+                String[] userInfo=htmlAnchor.getAttribute("href").toString().split("=");
+                userId=userInfo[1];
                 break;
             }
         }
         //we click on the user test@enwida.de
-        page = anchor.click();
+        Assert.assertNotNull(anchor);
+        if(anchor!=null){
+            page = anchor.click();
+        }
+        //Check if we are in user details page
+        Assert.assertEquals(true, page.getTitleText().equalsIgnoreCase("Enwida Admin User Page"));
+        
+        //Click Edit Group button
+        list = page.getAnchors();
+        for (HtmlAnchor htmlAnchor : list) {
+            if (htmlAnchor.toString().contains("editgroup")){
+                anchor=htmlAnchor;
+                break;
+            }
+        }
+        //check if we found the link or not
+        Assert.assertNotNull(anchor);
+        if(anchor!=null){
+            page = anchor.click();
+        }
+        //Check if we are in groups page
+        Assert.assertEquals(true, page.getTitleText().equalsIgnoreCase("Enwida Admin Group List Page"));
+        
+        //Check if user is preselected
+        HtmlSelect select =(HtmlSelect) page.getElementsByIdAndOrName("selectedUser").get(0);
+        System.out.println(select.getSelectedOptions());
+        if(!select.getDefaultValue().contains(userId)){
+            throw new Exception("user is not preselected");
+        }
+        final HtmlTextInput textFieldAddNewGroup = (HtmlTextInput) page.getElementsByIdAndOrName("newGroup").get(0);
 
-        Assert.assertEquals(false, page.getTitleText().equalsIgnoreCase("Enwida Admin Page"));
+        textFieldAddNewGroup.setValueAttribute("Test");
+        
+        final HtmlSubmitInput button =  (HtmlSubmitInput) page.getElementsByIdAndOrName("addGroup").get(0);
+        page = button.click();
+
+        //Check if we are still in groups page
+        Assert.assertEquals(true, page.getTitleText().equalsIgnoreCase("Enwida Admin Group List Page"));
     }
 
     //Try to login to the page
     public boolean Login(String userName,String password) throws Exception{
+        //first log out
+        webClient.getPage(webSiteLink+"j_spring_security_logout");
+        
         // Get the first page
         final HtmlPage page1 = webClient.getPage(webSiteLink+"user/login.html");
 
@@ -138,11 +196,14 @@ public class AdminPanel {
         //Make sure we are in user list page
         link=webSiteLink+"user/admin/admin_userlist";
         page = webClient.getPage(link);
-        return page.getTitleText().equalsIgnoreCase("Enwida Admin Page");
+        return page.getTitleText().equalsIgnoreCase("Enwida Admin User List Page");
     }
 
     public void registerUser(String userName,String password) throws Exception {
-        // Get the first page
+        //first log out
+        webClient.getPage(webSiteLink+"j_spring_security_logout");
+        
+        // Get the register page
         final HtmlPage page1 = webClient.getPage(webSiteLink+"user/register");
 
         // Get the form that we are dealing with and within that form, 
@@ -150,14 +211,14 @@ public class AdminPanel {
         final HtmlForm form = page1.getFormByName("registrationForm");
 
         final HtmlSubmitInput button = form.getInputByName("submit");
-        final HtmlTextInput textFieldUserName = form.getInputByName("userName");
+        final HtmlTextInput textFieldUserEmail = form.getInputByName("email");
         final HtmlTextInput textFieldFirstName = form.getInputByName("firstName");
         final HtmlTextInput textFieldLastName = form.getInputByName("lastName");
         final HtmlPasswordInput textFieldPassword = form.getInputByName("password");
         final HtmlPasswordInput textFieldConfirmPassword = form.getInputByName("confirmPassword");
 
         // Change the value of the text field
-        textFieldUserName.setValueAttribute(userName);
+        textFieldUserEmail.setValueAttribute(userName);
         textFieldFirstName.setValueAttribute("test");
         textFieldLastName.setValueAttribute("test");
         textFieldPassword.setValueAttribute(password);
@@ -166,7 +227,11 @@ public class AdminPanel {
         // Now submit the form by clicking the button and get back the second page.
         final HtmlPage page2 = button.click();
         System.out.println(page2.asText());
-        Assert.assertTrue(page2.getTitleText().equalsIgnoreCase("Enwida Registration"));
+        //Check if we passed the registration page
+        Assert.assertTrue(!page2.getTitleText().equalsIgnoreCase("Enwida Registration"));
+        //Check the home page is retrieved
+        Assert.assertTrue(page2.getTitleText().equalsIgnoreCase("Enwida Home Page"));
+        System.out.println("User registered");
         webClient.closeAllWindows();
     }
     
