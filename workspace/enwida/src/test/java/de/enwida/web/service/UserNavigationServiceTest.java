@@ -54,7 +54,7 @@ public class UserNavigationServiceTest {
 
 	private void test1() throws Exception {
 		User user1 = new User("ab@tum.de", "username1", "password1", "firstname", "lastname", false);
-		userService.saveUser(user1);
+		userService.saveUser(user1,false);
 		System.out.println(userService.fetchAllUsers());
 		User user = userService.fetchUser("username1");
 		NavigationSettings navSet = new NavigationSettings();

@@ -54,7 +54,7 @@ public class UserManagementTest {
         if(user==null){
               user = new User("test2@enwida-test.de", "test", "secret", "test", "test", true);
               user.setCompanyName("enwida.de");
-              userService.saveUser(user);
+              userService.saveUser(user,false);
         }
         //create admin group
         userService.saveGroup(new Group("admin"));

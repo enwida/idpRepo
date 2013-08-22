@@ -54,7 +54,7 @@ public interface IUserService {
      * @return the result of the action
      * @throws Exception 
      */
-    public boolean saveUser(User user, String activationHost, Locale locale) throws Exception;
+    public boolean saveUser(User user, String activationHost, Locale locale,boolean sendEmail) throws Exception;
 
     /**
      * Saves user into database
@@ -62,7 +62,7 @@ public interface IUserService {
      * @param user
      * @return the result of the action
      */
-    public boolean saveUser(User user)throws Exception;
+    public boolean saveUser(User user,boolean sendEmail)throws Exception;
 
     /**
      * Gets the user password

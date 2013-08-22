@@ -97,12 +97,12 @@ public class BasicUserManagement {
 	public void cannotAddUserWithSameUsername() throws Exception {
 		final User user1 = new User("testuser1@pleasedontsendmailshere.com", "test", "secret", "test", "test", true);
 		user1.setCompanyName("enwida.de");
-		userService.saveUser(user1);
+		userService.saveUser(user1,false);
 
 		final User user2 = new User("testuser2@pleasedontsendmailshere.com", "test", "secret", "test", "test", true);
 		user2.setCompanyName("enwida.de");
 		try {
-			userService.saveUser(user2);
+			userService.saveUser(user2,false);
 		} catch (Exception e) {
 			// Expected
 			return;
@@ -113,12 +113,12 @@ public class BasicUserManagement {
 	public void cannotAddUserWithSameEmail() throws Exception {
 		final User user1 = new User("testuser@pleasedontsendmailshere.com", "test1", "secret", "test", "test", true);
 		user1.setCompanyName("enwida.de");
-		userService.saveUser(user1);
+		userService.saveUser(user1,false);
 
 		final User user2 = new User("testuser@pleasedontsendmailshere.com", "test2", "secret", "test", "test", true);
 		user2.setCompanyName("enwida.de");
 		try {
-			userService.saveUser(user2);
+			userService.saveUser(user2,false);
 		} catch (Exception e) {
 			// Expected
 			return;
@@ -548,6 +548,7 @@ public class BasicUserManagement {
 	}
 	
 	@Test
+	@Transactional 
 	public void revokeRightFromRole() throws Exception {
 		final Role role = testUtils.saveTestRole("testrole");
 		final Right right1 = testUtils.saveTestRight(211);
@@ -580,6 +581,7 @@ public class BasicUserManagement {
 
 	
 	@Test
+	@Transactional 
 	public void addRightsToRole() throws Exception {
 		final Role role = testUtils.saveTestRole("testrole");
 		final Right right1 = testUtils.saveTestRight(211);
@@ -726,7 +728,7 @@ public class BasicUserManagement {
 		
 	    final User user = new User("test@enwida-test.de", "testuser", "secret", "Test", "User", true);
 		user.setCompanyName("enwida-test.de");
-		userService.saveUser(user);
+		userService.saveUser(user,false);
 		
 		Assert.assertEquals(1, user.getGroups().size());
 		userService.assignGroupToUser(user, group);
@@ -734,7 +736,7 @@ public class BasicUserManagement {
 
 	    final User testee = new User("test2@enwida-test.de", "testuser2", "secret", "Test", "User", true);
 		testee.setCompanyName("enwida-test.de");
-		userService.saveUser(testee);
+		userService.saveUser(testee,false);
 		
 		Assert.assertEquals(2, testee.getGroups().size());
 		

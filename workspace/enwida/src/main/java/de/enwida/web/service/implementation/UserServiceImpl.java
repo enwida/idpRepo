@@ -136,7 +136,7 @@ public class UserServiceImpl implements IUserService {
      * @throws Exception 
      */
     @Override
-    public boolean saveUser(User user, String activationHost, Locale locale) throws Exception 
+    public boolean saveUser(User user, String activationHost, Locale locale,boolean sendEmail) throws Exception 
     {
     	// FIXME: what is the return value?
         Date date = new Date(Calendar.getInstance().getTimeInMillis());
@@ -187,9 +187,9 @@ public class UserServiceImpl implements IUserService {
             }
             anonymousGroup = groupDao.addGroup(anonymousGroup);
             this.assignGroupToUser(userId, anonymousGroup.getGroupID());
-                        
-            sendUserActivationEmail(user, locale);
-            
+            if(sendEmail){          
+                sendUserActivationEmail(user, locale);
+            }
             return true;
         }
         else
@@ -682,8 +682,8 @@ public class UserServiceImpl implements IUserService {
      * @throws Exception 
      */
     @Override
-    public boolean saveUser(User user) throws Exception {
-        return saveUser(user,null, null);
+    public boolean saveUser(User user,boolean sendEmail) throws Exception {
+        return saveUser(user,null, null,sendEmail);
     }
     
     @Override
