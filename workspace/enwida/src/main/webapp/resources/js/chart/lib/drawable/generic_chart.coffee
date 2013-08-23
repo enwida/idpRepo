@@ -44,8 +44,9 @@ define ["util/scale"], (Scale) ->
       @svg = d3.selectAll(@options.parent).append("svg")
         .attr("width", width)
         .attr("height", height)
-        .append("g")
-          .attr("transform", "translate(#{@options.margin.left},#{@options.margin.top})")
+      @transferDataAttributes @options.parent.parent(), @svg
+      @svg = @svg.append("g")
+        .attr("transform", "translate(#{@options.margin.left},#{@options.margin.top})")
 
     drawXAxis: (xAxis, dx=0, dy=0) ->
       @svg.append("g")
@@ -119,6 +120,12 @@ define ["util/scale"], (Scale) ->
 
         lastOffset = xOffset
         lastWidth = width
+
+    transferDataAttributes: (source, target) ->
+      attributes = d3.selectAll(source)[0][0].attributes
+      for attribute in attributes
+        if attribute.name.match /^data-/
+          target.attr attribute.name, attribute.value
 
     getTooltip: (dp, id, fy) ->
       x = dp.x
