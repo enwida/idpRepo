@@ -8,9 +8,9 @@ define ["util/scale"], (Scale) ->
       default_options =
         margin:
           top: 20
-          left: 50
+          left: 80
           right: 20
-          bottom: 40
+          bottom: 60
         width: 960
         height: 500
         parent: "body"
@@ -53,9 +53,10 @@ define ["util/scale"], (Scale) ->
         .attr("transform", "translate(#{dx},#{dy + @options.height})")
         .call(xAxis)
         .append("text")
-          .attr("x", @options.width)
-          .attr("y", -5)
-          .attr("text-anchor", "end")
+          .attr("x", @options.width / 2)
+          .attr("y", 50)
+          .attr("text-anchor", "middle")
+          .attr("font-style", "italic")
           .text("#{@xLabel}")
 
       @makeDateScale() if @options.scale.x.type is "date"
@@ -66,9 +67,11 @@ define ["util/scale"], (Scale) ->
         .attr("class", "y axis")
         .call(yAxis)
         .append("text")
-          .attr("transform", "rotate(-90)")
-          .attr("y", 12)
-          .attr("text-anchor", "end")
+          .attr("transform", "rotate(-90),translate(-#{@options.height / 2},-60)")
+          .attr("x", 0)
+          .attr("y", 0)
+          .attr("text-anchor", "middle")
+          .attr("font-style", "italic")
           .text("#{@yLabel}")
 
     drawLegend: ->
