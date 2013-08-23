@@ -22,10 +22,10 @@
   stroke: green;
 }
 .dot0 {
-	fill: steelblue;
+  fill: steelblue;
 }
 .dot1 {
-	fill: red;
+  fill: red;
 }
 .dot2 {
   fill: green;
@@ -38,6 +38,15 @@
 }
 .bar2 {
   fill: green;
+}
+.tooltip0 {
+  color: steelblue;
+}
+.tooltip1 {
+  color: red;
+}
+.tooltip2 {
+  color: green;
 }
 
 .line.selected {
@@ -55,4 +64,7 @@
 [data-chart-type="minmax"] rect.line1 {
 	stroke: #FFA340;
 	fill: #FFA340;
+}
+[data-chart-type="minmax"] .tooltip1 {
+	color: #FFA340;
 }
