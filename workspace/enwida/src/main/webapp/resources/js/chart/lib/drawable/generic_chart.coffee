@@ -136,11 +136,14 @@ define ["util/scale"], (Scale) ->
       if typeof fy is "function"
         y = fy dp
 
-      @getTooltipHtml id, @lines[id].title, @xLabel, @yLabel, x, y
+      color = @svg.select(".line#{id}").style "stroke"
+      @getTooltipHtml id, @lines[id].title, color, @xLabel, @yLabel, x, y
 
-    getTooltipHtml: (id, title, xLabel, yLabel, x, y) ->
+    getTooltipHtml: (id, title, color, xLabel, yLabel, x, y) ->
       $("<div>")
-        .append($("<h6>").addClass("tooltip#{id}").text title)
+        .append($("<h6>")
+          .addClass("tooltip#{id}").text(title)
+          .css("color", color))
         .append($("<table cellpadding='2'>")
           .append($("<tr>")
             .append($("<td align='left'>").text xLabel)
