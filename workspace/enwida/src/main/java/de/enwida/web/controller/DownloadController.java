@@ -50,11 +50,13 @@ public class DownloadController {
 	    @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Calendar startTime,
 	    @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Calendar endTime,
 	    @RequestParam DataResolution resolution,
+	    @RequestParam String timeZone,
 	    @RequestParam String disabledLines,
 	    HttpServletResponse response,
 	    Locale locale) throws Exception {
     	
     	final User user = userService.getCurrentUser();
+    	final boolean utcTimeZone = timeZone.equalsIgnoreCase("UTC");
     	final ChartNavigationData navigationData = navigationService.getNavigationData(chartId, user, locale);
         final List<Aspect> originalAspects = navigationData.getAspects();
         final List<Aspect> aspects = new ArrayList<>(originalAspects);
@@ -81,7 +83,7 @@ public class DownloadController {
     	response.setHeader("Content-Disposition", "attachment;filename=data.csv");
     	response.setContentType("text/csv");
     	
-    	final String result = csvService.createCSV(navigationData, lines, locale);
+    	final String result = csvService.createCSV(navigationData, lines, utcTimeZone, locale);
 
     	final OutputStream out = response.getOutputStream();
     	out.write(result.getBytes("UTF-8"));

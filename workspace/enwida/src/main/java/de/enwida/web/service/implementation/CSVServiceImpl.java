@@ -2,13 +2,16 @@ package de.enwida.web.service.implementation;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.SortedMap;
+import java.util.TimeZone;
 import java.util.TreeMap;
 
 import org.apache.commons.lang.NotImplementedException;
+import org.apache.fop.fo.StringProperty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
@@ -24,13 +27,19 @@ import de.enwida.web.service.interfaces.ICSVService;
 import de.enwida.web.utils.ProductNode;
 
 @Service("csvService")
-public class CSVService implements ICSVService  {
+public class CSVServiceImpl implements ICSVService  {
+
+	private static final SimpleDateFormat localDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z");
+	private static final SimpleDateFormat utcDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	static {
+		utcDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+	}
 	
 	@Autowired
 	private MessageSource messageSource;
 
 	@Override
-	public String createCSV(ChartNavigationData navigationData, List<? extends IDataLine> lines, Locale locale) {
+	public String createCSV(ChartNavigationData navigationData, List<? extends IDataLine> lines, boolean utcTimestamps, Locale locale) {
 		if (lines.size() < 1) {
 			throw new IllegalArgumentException("Provide at least one line");
 		}
@@ -40,13 +49,12 @@ public class CSVService implements ICSVService  {
 
 		appendCSVInfo(result, navigationData, 99, firstLine.getProduct(), timeRange, firstLine.getResolution(), locale);
 		appendCSVHeader(result, navigationData, lines);
-		appendCSVData(result, lines, navigationData);
+		appendCSVData(result, lines, navigationData, utcTimestamps);
 		
 		return result.toString();
 	}
 	
-    private void appendCSVData(StringBuilder builder, List<? extends IDataLine> lines, ChartNavigationData navigationData) {
-    	final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+    private void appendCSVData(StringBuilder builder, List<? extends IDataLine> lines, ChartNavigationData navigationData, boolean utcTimestamps) {
     	final SortedMap<Double, List<Double>> csvDataLines = new TreeMap<>();
     	
     	for (final IDataLine line : lines) {
@@ -66,7 +74,12 @@ public class CSVService implements ICSVService  {
 
     	for (final Double x : csvDataLines.keySet()) {
     		if (navigationData.getIsDateScale()) {
-    			builder.append(dateFormat.format(new Date(x.longValue())));
+    			final Date date = new Date(x.longValue());
+    			if (utcTimestamps) {
+	    			builder.append(utcDateFormat.format(date));
+    			} else {
+	    			builder.append(localDateFormat.format(date));
+    			}
     		} else {
 	    		builder.append(x);
     		}
