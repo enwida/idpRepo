@@ -117,12 +117,11 @@ define [ "components/visual"
           if data.length is 0
             return @trigger "chartMessage", msg: "No data"
 
-          @attr.lines = lines = data
-          @attr.chartLines = chartLines = LinesPreprocessor.transform @attr.type, data
-          @triggerDraw chartLines
-          @trigger @select("lines"), "updateLines", lines: chartLines
+          @attr.chartLines = LinesPreprocessor.transform @attr.type, data
+          @triggerDraw @attr.chartLines
+          @trigger @select("lines"), "updateLines", lines: @attr.chartLines
           @trigger @select("dataSheet"), "refresh",
-            lines: lines
+            lines: data
             navigationData: @attr.navigationData
 
       @triggerDraw = (data) ->
@@ -139,7 +138,7 @@ define [ "components/visual"
       @toggleLine = (_, opts) ->
         @attr.disabledLines = opts.disabledLines
         @reportDisabledLines opts.disabledLines
-        @triggerDraw @attr.data
+        @triggerDraw @attr.chartLines
 
       @optimalResolution = (selections) ->
         leaf = @attr.treeHelper.traverse selections.tso, selections.product
