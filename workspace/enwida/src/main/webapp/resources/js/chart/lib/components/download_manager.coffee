@@ -4,6 +4,7 @@ define [ "components/visual"
          "components/lines"
          "components/infobox"
          "components/chart_download"
+         "components/time_zone_selection"
          "util/loading"
          "util/lines_preprocessor"
          "util/resolution"
@@ -17,6 +18,7 @@ define [ "components/visual"
    Lines
    Infobox
    ChartDownload
+   TimeZoneSelection
    Loading
    LinesPreprocessor
    Resolution
@@ -78,7 +80,7 @@ define [ "components/visual"
             callback err
 
       @onGetLines = (selections) ->
-        # Check for duplicate (resolution does not matter for preview chart)
+        # Check for duplicate (resolution and time zone does not matter for preview chart)
         return if @attr.lastSelections? and
           @attr.lastSelections.tso is selections.tso and
           @attr.lastSelections.product is selections.product and
@@ -103,7 +105,7 @@ define [ "components/visual"
           if data.length is 0
             return @trigger "chartMessage", msg: "No data"
 
-          @attr.data = data = LinesPreprocessor.transform @attr.type, data
+          @attr.data = data
           @triggerDraw data
           @trigger @select("lines"), "updateLines", lines: data
 
@@ -146,6 +148,7 @@ define [ "components/visual"
           startTime: @dateFormat selections.timeRange.from
           endTime: @dateFormat selections.timeRange.to
           resolution: selections.resolution
+          timeZone: selections.timeZone
           disabledLines: selections.disabledLines.join ","
 
         urlQuery = (_(_(query).keys()).map (key) ->
@@ -180,14 +183,16 @@ define [ "components/visual"
         # Setup streams
         productStream = @$node.asEventStream("productSelectionChanged", (_, v) -> v)
         timeStream = @$node.asEventStream("timeSelectionChanged", (_, v) -> v)
-        selectionStream = Bacon.combineWith $.extend, productStream, timeStream
+        timeZoneStream = @$node.asEventStream("timeZoneSelectionChanged", (_, v) -> v)
+        selectionStream = Bacon.combineWith $.extend, productStream, timeStream, timeZoneStream
 
         # Request lines and update button test
         selectionStream.onValue (selections) =>
           @attr.selections = $.extend {}, selections
           @attr.downloadResolution = selections.resolution
           dataSets = TimeUtils.dataSetCount selections.timeRange, selections.resolution
-          @select("download").text "Download approx. #{parseInt dataSets} data points"
+          dataSets /= Math.max 1, @$node.find(".timeslot option").length
+          @select("download").text "Download approx. #{parseInt dataSets} CSV lines"
           @setDownloadLink()
           @onGetLines selections
 
@@ -230,6 +235,11 @@ define [ "components/visual"
         timeSelection = $("<div>").addClass "timeSelection"
         selection.append timeSelection
         TimeSelection.attachTo timeSelection, @attr
+
+        # Add timezone selection
+        timeZoneSelection = $("<div>").addClass "timeZoneSelection"
+        selection.append timeZoneSelection
+        TimeZoneSelection.attachTo timeZoneSelection, @attr
 
         # Add download button
         downloadLink = $("<a>")

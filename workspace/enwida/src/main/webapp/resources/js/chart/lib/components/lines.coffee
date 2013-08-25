@@ -17,12 +17,15 @@ define ->
       ul = $("<ul>")
       @$node.append ul
       [0...opts.lines.length].forEach (i) =>
+        color = @$node.closest(".chart,.download").find("svg .line#{i}").css("stroke")
         line = opts.lines[i]
         li = $("<li>").addClass("line#{i}")
           .append($("<table>").attr("cellpadding", "3")
             .append($("<tr>")
               .append($("<td>")
-                .append($("<div>").addClass("linesquare")))
+                .append($("<div>")
+                  .addClass("linesquare")
+                  .css("background-color", color)))
               .append($("<td>").text(line.title))))
         li.click =>
           if _.contains @attr.disabledLines, i

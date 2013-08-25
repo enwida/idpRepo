@@ -205,7 +205,7 @@ public class UserController {
             if (!result.hasErrors())
             {                        
         		user.setUserName(user.getEmail());
-            	if(userService.saveUser(user,"http://localhost:8080/enwida/user/", request.getLocale()))
+            	if(userService.saveUser(user,"http://localhost:8080/enwida/user/", request.getLocale(),true))
             	{                                       		
             		String name = user.getFirstName() + " " + user.getLastName();
             		String userStatus="logout";

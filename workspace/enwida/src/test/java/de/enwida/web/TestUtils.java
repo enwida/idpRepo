@@ -65,7 +65,7 @@ public class TestUtils {
     public User saveTestUser(String name) throws Exception {
 		final User user = new User(name + "@pleasedontsendmailshere.com", name, "secret", "test", "test", true);
 		user.setCompanyName("enwida.de");
-		userService.saveUser(user);
+		userService.saveUser(user,false);
 		return user;
     }
     
@@ -93,7 +93,7 @@ public class TestUtils {
 	public User saveUserWithGroup(String username) throws Exception {
 		final User user = new User("ab@tum.de", username, "secret", "test", "test", true);
 		user.setCompanyName("enwida.de");
-		userService.saveUser(user);
+		userService.saveUser(user,false);
 		
 		final Group group = new Group("testgroup");
 		userService.saveGroup(group);

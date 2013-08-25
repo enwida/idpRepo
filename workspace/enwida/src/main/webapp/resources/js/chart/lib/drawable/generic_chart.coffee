@@ -8,9 +8,9 @@ define ["util/scale"], (Scale) ->
       default_options =
         margin:
           top: 20
-          left: 50
+          left: 80
           right: 20
-          bottom: 40
+          bottom: 60
         width: 960
         height: 500
         parent: "body"
@@ -44,8 +44,9 @@ define ["util/scale"], (Scale) ->
       @svg = d3.selectAll(@options.parent).append("svg")
         .attr("width", width)
         .attr("height", height)
-        .append("g")
-          .attr("transform", "translate(#{@options.margin.left},#{@options.margin.top})")
+      @transferDataAttributes @options.parent.parent(), @svg
+      @svg = @svg.append("g")
+        .attr("transform", "translate(#{@options.margin.left},#{@options.margin.top})")
 
     drawXAxis: (xAxis, dx=0, dy=0) ->
       @svg.append("g")
@@ -53,9 +54,10 @@ define ["util/scale"], (Scale) ->
         .attr("transform", "translate(#{dx},#{dy + @options.height})")
         .call(xAxis)
         .append("text")
-          .attr("x", @options.width)
-          .attr("y", -5)
-          .attr("text-anchor", "end")
+          .attr("x", @options.width / 2)
+          .attr("y", 50)
+          .attr("text-anchor", "middle")
+          .attr("font-style", "italic")
           .text("#{@xLabel}")
 
       @makeDateScale() if @options.scale.x.type is "date"
@@ -66,9 +68,11 @@ define ["util/scale"], (Scale) ->
         .attr("class", "y axis")
         .call(yAxis)
         .append("text")
-          .attr("transform", "rotate(-90)")
-          .attr("y", 12)
-          .attr("text-anchor", "end")
+          .attr("transform", "rotate(-90),translate(-#{@options.height / 2},-60)")
+          .attr("x", 0)
+          .attr("y", 0)
+          .attr("text-anchor", "middle")
+          .attr("font-style", "italic")
           .text("#{@yLabel}")
 
     drawLegend: ->
@@ -117,6 +121,12 @@ define ["util/scale"], (Scale) ->
         lastOffset = xOffset
         lastWidth = width
 
+    transferDataAttributes: (source, target) ->
+      attributes = d3.selectAll(source)[0][0].attributes
+      for attribute in attributes
+        if attribute.name.match /^data-/
+          target.attr attribute.name, attribute.value
+
     getTooltip: (dp, id, fy) ->
       x = dp.x
       if @options?.scale?.x?.type is "date"
@@ -126,11 +136,14 @@ define ["util/scale"], (Scale) ->
       if typeof fy is "function"
         y = fy dp
 
-      @getTooltipHtml id, @lines[id].title, @xLabel, @yLabel, x, y
+      color = @svg.select(".line#{id}").style "stroke"
+      @getTooltipHtml id, @lines[id].title, color, @xLabel, @yLabel, x, y
 
-    getTooltipHtml: (id, title, xLabel, yLabel, x, y) ->
+    getTooltipHtml: (id, title, color, xLabel, yLabel, x, y) ->
       $("<div>")
-        .append($("<h6>").addClass("tooltip#{id}").text title)
+        .append($("<h6>")
+          .addClass("tooltip#{id}").text(title)
+          .css("color", color))
         .append($("<table cellpadding='2'>")
           .append($("<tr>")
             .append($("<td align='left'>").text xLabel)

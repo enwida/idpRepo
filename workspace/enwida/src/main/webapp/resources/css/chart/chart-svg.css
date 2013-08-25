@@ -1,10 +1,3 @@
-.legend-box {
-	fill: none;
-	stroke: #222;
-}
-.legend-items {
-	font-size: 16px;
-}
 .axis path,
 .axis line {
   fill: none;
@@ -14,6 +7,7 @@
 .axis text {
   font-size: 12px;
 }
+
 .line {
   fill: none;
   stroke-width: 1.5px;
@@ -27,18 +21,11 @@
 .line2 {
   stroke: green;
 }
-.chart[data-chart-type="minmax"] .line1 {
-	fill: #FFA340;
-	stroke: none;
-}
-.dot.selected {
-	fill: #888888;
-}
 .dot0 {
-	fill: steelblue;
+  fill: steelblue;
 }
 .dot1 {
-	fill: red;
+  fill: red;
 }
 .dot2 {
   fill: green;
@@ -51,4 +38,30 @@
 }
 .bar2 {
   fill: green;
+}
+.tooltip0 {
+  color: steelblue;
+}
+.tooltip1 {
+  color: red;
+}
+.tooltip2 {
+  color: green;
+}
+
+.line.selected {
+	stroke: #888888;
+}
+.bar.line.selected {
+	stroke: #888888;
+	fill: #888888;
+}
+.dot.selected {
+	stroke: #888888;
+	fill: #888888;
+}
+
+[data-chart-type="minmax"] rect.line1 {
+	stroke: #FFA340;
+	fill: #FFA340;
 }
