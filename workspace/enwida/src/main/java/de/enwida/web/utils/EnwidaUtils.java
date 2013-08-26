@@ -213,6 +213,9 @@ public class EnwidaUtils {
  
             e.printStackTrace();
         }
+        while(md5.length() < 32 ){
+            md5 = "0"+md5;
+          }
         return md5;
     }
 	
