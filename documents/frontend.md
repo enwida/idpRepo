@@ -312,7 +312,7 @@ Important files/directories in `js/chart`:
 ### Layout
 The basic layout of the chart element is shown in the following structure.
 
-<div style="border: 1px solid #880000; font-size: 16px; padding: 10px; max-width: 600px">
+<div style="border: 1px solid #880000; font-size: 16px; padding: 10px; max-width: 600px; margin-bottom: 10px;">
   .chart
   <div style="border: 1px solid #bb0000; padding: 10px; margin: 10px;">
     .visual
@@ -537,8 +537,8 @@ in a full date format.
 This is achieved by setting the `original-title` attribute of the elements in question and calling
 the `tipsy` function on their corresponding jQuery wrapper object.
 
-### Navigation
-The navigation layer of the charts frontend can be divided into three components:
+### Selection
+The selection layer of the charts frontend can be divided into three components:
 
 - Line selection
 - Product selection
@@ -565,10 +565,9 @@ elements) for TSO and product number parts.
 Afterwards, the navigation data for the corresponding chart id are requested from the web server.
 This data is then used to fill the combo boxes with their corresponding options. The product trees
 play an important role in this process. As a next step, the default values are applied to the
-elements a `getLines` event is triggered to the `ChartManager`. This way, the user sees the
-chart representing his/her default selection.
+elements.
 
-When the users selects a new product configuration another `getLines` event is fired.
+When the users selects a new product configuration a `productSelectionChanged` event is fired.
 Moreover, the product selection elements adapt their values according to the product trees.
 
 #### Time Range Selection
@@ -584,7 +583,7 @@ version of the [improved bootstrap datepicker](http://eternicode.github.io/boots
 has been used.
 Depending on the selected time range it allows you to select a single day, a single week, a single
 month, or a single year. As soon as the time range or the beginning date are changed, a
-`getLines` event is fired.
+`timeSelectionChanged` event is fired.
 
 A separate timestamp is managed for each time range which is synchronized when a beginning date
 of another time range is changed.
