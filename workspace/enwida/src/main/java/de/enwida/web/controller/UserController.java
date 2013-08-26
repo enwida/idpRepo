@@ -4,14 +4,12 @@ import java.io.IOException;
 import java.security.Principal;
 import java.util.Locale;
 
-import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -26,11 +24,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import de.enwida.web.model.User;
 import de.enwida.web.service.implementation.MailServiceImpl;
-import de.enwida.web.service.interfaces.IUserLinesService;
 import de.enwida.web.service.interfaces.IUserService;
-import de.enwida.web.utils.EnwidaUtils;
 import de.enwida.web.utils.LogoFinder;
-import de.enwida.web.validator.FileValidator;
 import de.enwida.web.validator.UserValidator;
 
 /**
@@ -44,17 +39,8 @@ public class UserController {
 	private IUserService userService;
 
 	@Autowired
-	private IUserLinesService userLineService;
-
-	@Autowired
-	private UserSessionManager userSession;
-	
-	@Autowired
 	private UserValidator userValidator;
 
-	@Autowired
-	private FileValidator fileValidator;
-    
 	@Autowired
 	private MessageSource messageSource;
  
@@ -62,17 +48,6 @@ public class UserController {
 	private MailServiceImpl mail;	
 
     private static org.apache.log4j.Logger logger = Logger.getLogger(AdminController.class);
-
-    @Value("#{applicationProperties['fileUploadDirectory']}")
-	private String fileUploadDirectory;
-
-	@Value("#{applicationProperties['file.upload.parse.success']}")
-	private String uploadsuccessmsg;
-	
-	@PostConstruct
-	public void init() {
-		fileUploadDirectory = EnwidaUtils.resolveEnvVars(fileUploadDirectory);
-	}
 
 	@RequestMapping(value="/user", method = RequestMethod.GET)
 	public String displayDashboard(Model model, Locale locale) {

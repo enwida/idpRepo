@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -75,6 +76,11 @@ public class UploadController {
 	
 	private static org.apache.log4j.Logger logger = Logger.getLogger(UploadController.class);
     
+	@PostConstruct
+	public void init() {
+		fileUploadDirectory = EnwidaUtils.resolveEnvVars(fileUploadDirectory);
+	}
+
 	@RequestMapping(value="/files", method = RequestMethod.GET)
 	public ModelAndView getUplaodUserData(ModelMap model) throws Exception {
 		User user = userSession.getUser();
@@ -141,6 +147,7 @@ public class UploadController {
 		return new ModelAndView("redirect:/upload/files");
 	}
 
+	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/files/replace", method = RequestMethod.POST)
 	public ModelAndView replaceUplaodUserData(ModelMap model,
 			@ModelAttribute(value = "fileReplace") FileUpload fileReplace,
