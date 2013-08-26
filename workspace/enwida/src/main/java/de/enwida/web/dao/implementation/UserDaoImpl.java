@@ -71,26 +71,23 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
 	}
 
 	@Override
-	public List<UploadedFile> getUploadedFilesWithMaxRevision(User user) {
+	public List<UploadedFile> getActiveUploadedFiles(User user) {
 		
-		List<UploadedFile> uploadedFilesWithMaxRevision = new ArrayList<UploadedFile>();
+		List<UploadedFile> activeUploadedFiles = new ArrayList<UploadedFile>();
+			
+		List<UploadedFile> userFiles = new ArrayList<UploadedFile>();
+		userFiles.addAll(user.getUploadedFiles());
+		for (UploadedFile uploadedFile : userFiles) {
+			if (uploadedFile.isActive()) {
+				activeUploadedFiles.add(uploadedFile);
+			}
+		}		
 		
-		List<UploadedFile> files = new ArrayList<UploadedFile>();
-		files.addAll(user.getUploadedFiles());
-		Collections.sort(files, new Comparator<UploadedFile>(){
+		/*Collections.sort(userFiles, new Comparator<UploadedFile>(){
             public int compare(UploadedFile f1, UploadedFile f2){
             	return f1.getRevision() < f2.getRevision() ? 1 : (f1.getRevision() > f2.getRevision() ? -1 : 0);
-            }});
+            }});*/
 		
-		int elementsAdded = 0;
-		for (UploadedFile uploadedFile : files) {
-			uploadedFilesWithMaxRevision.add(uploadedFile);
-			elementsAdded += uploadedFile.getRevision();
-			if (elementsAdded == files.size()) {
-				break;
-			}
-		}
-		
-		return uploadedFilesWithMaxRevision;
+		return activeUploadedFiles;
 	}
 }

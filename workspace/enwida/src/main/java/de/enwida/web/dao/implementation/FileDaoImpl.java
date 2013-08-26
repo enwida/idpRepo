@@ -3,6 +3,8 @@
  */
 package de.enwida.web.dao.implementation;
 
+import java.util.List;
+
 import javax.persistence.TypedQuery;
 
 import org.springframework.stereotype.Repository;
@@ -34,5 +36,14 @@ public class FileDaoImpl extends AbstractBaseDao<UploadedFile> implements
 				+ UploadedFile.class.getName() + " where "
 				+ UploadedFile.FILE_PATH + " = :filePath", UploadedFile.class);
 		return query.setParameter("filePath", filePath).getSingleResult();
+	}
+
+	@Override
+	public List<UploadedFile> fetchByFileSetUniqueIdentifier(
+			String fileSetUniqueIdentifier) {
+		TypedQuery<UploadedFile> query = em.createQuery("from "
+				+ UploadedFile.class.getName() + " where "
+				+ UploadedFile.FILE_SET_UNIQUE_IDENTIFIER + " = :fileSetUniqueIdentifier", UploadedFile.class);
+		return query.setParameter("fileSetUniqueIdentifier", fileSetUniqueIdentifier).getResultList();
 	}
 }

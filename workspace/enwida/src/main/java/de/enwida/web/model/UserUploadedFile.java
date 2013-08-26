@@ -9,12 +9,14 @@ public class UserUploadedFile {
 	private String displayFileName;
 	private String fileName;
 	private Date uploadDate;
+	private boolean active;
 	
 	public UserUploadedFile(UploadedFile file) {
 		this.id = file.getId();
 		this.displayFileName = file.getDisplayFileName();
 		this.fileName = file.getFileName();
 		this.uploadDate = file.getUploadDate();
+		this.active = file.isActive();
 	}
 
 	public long getId() {
@@ -47,5 +49,13 @@ public class UserUploadedFile {
 	
 	public void setUploadDate(Date uploadDate) {
 		this.uploadDate = uploadDate;
+	}
+
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
 	}
 }

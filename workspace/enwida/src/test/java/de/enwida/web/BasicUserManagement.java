@@ -733,5 +733,15 @@ public class BasicUserManagement {
 		}
 	}
  
+
+    @Test
+    public void testRemoveOneUser() throws Exception {
+        testUtils.saveTestUser("testuser1");
+        User user=testUtils.saveTestUser("testuser2");
+        userService.deleteUser(user.getUserId());
+        //verify other user remains
+        User testee=userService.fetchUser("testuser1");
+        Assert.assertNotNull(testee);
+    }
     
  }
