@@ -34,8 +34,7 @@ ul.posts span {
 }
 
 .sidebar li.active {
-  /*background-color: #D46060;*/
-  /*border-radius: 10px;*/
+  background-color: #f8f0f0;
   font-weight: bold;
   border-right: 1px solid #aa0000;
 }
