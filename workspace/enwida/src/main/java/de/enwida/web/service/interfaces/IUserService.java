@@ -3,7 +3,6 @@ package de.enwida.web.service.interfaces;
 import java.util.List;
 import java.util.Locale;
 
-import de.enwida.web.db.model.UploadedFile;
 import de.enwida.web.model.Group;
 import de.enwida.web.model.Right;
 import de.enwida.web.model.Role;
@@ -327,13 +326,7 @@ public interface IUserService {
      */
     public User syncUser(User user);
     
-    public Long getNextSequence(String schema, String sequenceName);
-
-    public UploadedFile getFile(int fileId);
-
-    public UploadedFile getFileByFilePath(String filePath);
-
-    public int getUploadedFileVersion(UploadedFile file, User user);
+    public Long getNextSequence(String schema, String sequenceName);    
 
     Group fetchGroupByCompanyName(String companyName);
 
@@ -341,19 +334,9 @@ public interface IUserService {
 
 	Role findRole(Role role);
 
-	Right findRight(Right right);
-
-	User saveUserUploadedFile(User user, UploadedFile file);
+	Right findRight(Right right);	
 
 	public Group fetchGroupById(long groupId);
 	
 	public Role fetchRoleById(long roleId);
-
-	User updateUserUploadedFile(User user, UploadedFile file);
-
-	void removeUserUploadedFile(User user, UploadedFile file) throws Exception;
-
-	public List<UploadedFile> getUploadedFiles(User user);
-
-
 }

@@ -24,5 +24,5 @@ public interface IUserDao extends IDao<User> {
 
     int getUploadedFileVersion(UploadedFile uplaodedfile, User user);
 
-	List<UploadedFile> getUploadedFilesWithMaxRevision(User user);
+	List<UploadedFile> getActiveUploadedFiles(User user);
 }

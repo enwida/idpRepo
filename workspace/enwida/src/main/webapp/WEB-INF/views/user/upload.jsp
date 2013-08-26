@@ -14,7 +14,7 @@
 <!-- <link rel="stylesheet" href="/resources/demos/style.css" /> -->
 <script>
 $(function() {
-	var fileIdToDelete =  -1;
+	var fileSetIdToDelete =  -1;
 	var fileIdToGetRevisions =  -1;
 	
 	<c:forEach var="file" items="${uploadedfiletable}">		
@@ -30,11 +30,11 @@ $(function() {
 			.click(function() {				
 		});
 		
-		$( "#delete-file-${file.id}" )
+		$( "#delete-file-set-${file.id}" )
 			.button()
 			.click(function(event) {
-				fileIdToDelete = $(this).attr("id").split("-")[2];
-				$( "#delete-file-form-div" ).dialog( "open" );				
+				fileSetIdToDelete = $(this).attr("id").split("-")[3];
+				$( "#delete-file-set-form-div" ).dialog( "open" );				
 		});
 		
 		$( "#show-revisions-file-${file.id}" )
@@ -90,23 +90,27 @@ $(function() {
 		}
 	});
 	
-	$( "#delete-file-form-div" ).dialog({
+	$( "#delete-file-set-form-div" ).dialog({
 		autoOpen: false,
 		resizable: false,
 	    height:300,
 	    width: 450,
 	    modal: true,
 	    buttons: {
-	    	"Delete this file": function() {
+	    	"Delete this file set?": function() {
 	    		
 	    		$.ajax({
-	    	         url: "<c:url value='/user/files/delete' />",
+	    	         url: "<c:url value='/upload/files/set/delete' />",
 	    	         type: 'GET',            
 	    	         data:  { 	
-	    	        	 	fileId : fileIdToDelete,
+	    	        	 	fileId : fileSetIdToDelete,
 	    	         },
 	    	         success: function(result) {
-	    	        	 $( "#delete-file-form-success-div" ).dialog( "open" );
+	    	        	 if (result == "SUCCESS") {
+	    	        		 $( "#delete-file-form-success-div" ).dialog( "open" ); 
+	    	        	 } else {
+	    	        		 $( "#delete-file-form-failure-div" ).dialog( "open" );	    	        				 
+	    	        	 }	    	        	 	    	        	 
 	    	         }, 
 	    	         error: function(xhr, ajaxOptions, thrownError) {
 	    	        	 $( "#delete-file-form-failure-div" ).dialog( "open" );
@@ -132,6 +136,8 @@ $(function() {
 		buttons: {
 			Ok: function() {
 				$( this ).dialog( "close" );
+				window.location.assign("http://www.w3schools.com");
+				window.location.assign("<c:url value='/upload/files' />");
 			}
 		}
 	});
@@ -144,6 +150,7 @@ $(function() {
 		buttons: {
 			Ok: function() {
 				$( this ).dialog( "close" );
+				window.location.assign("<c:url value='/upload/files' />");
 			}
 		}
 	});
@@ -151,25 +158,47 @@ $(function() {
 	$( "#show-revisions-file-div" ).dialog({
 		autoOpen: false,
 		height: 400,
-		width: 650,
+		width: 800,
 		modal: true,
 		open: function() {
 			
 			$.ajax({
-   	         url: "<c:url value='/user/files/revisions' />",
+   	         url: "<c:url value='/upload/files/revisions' />",
    	         type: 'GET',
    	         data:  { 	
    	        	 	fileId : fileIdToGetRevisions,
    	         },
    	         success: function(result) {
    	        	$("#show-revisions-file-div-inner").html("");
+   	        	$("#show-revisions-file-div-inner").append("<div style=\"display: table-row;font-weight: bold;\">" +  
+   	     				"<div style=\"display: table-cell;padding: 5px;\"> Id </div>" +
+   	     				"<div style=\"display: table-cell;padding: 5px;\"> Filename </div>" +
+   	     				"<div style=\"display: table-cell;padding: 5px;\"> Date </div>" +
+   	     				"<div style=\"display: table-cell;padding: 5px;\"> IsActive </div>" +
+   	     				"<div style=\"display: table-cell;padding: 5px;\"> Options </div>" +
+   	     			"</div>");
    	        	$.each(result, function(i, item) {
-   	        		$("#show-revisions-file-div-inner").append("<p><span style=\"float: left; margin: 0 7px 20px 0;\"></span><div style=\"display: table-row;\">" + 
+   	        		var revisionsDialogHTML = "<div style=\"display: table-row;\">" + 
    	        		"<div style=\"display: table-cell;padding: 5px;\"> " + item.id + "</div>" + 
    	        		"<div style=\"display: table-cell;padding: 5px;\"> " + item.displayFileName + "</div>" + 
-   	        		"<div style=\"display: table-cell;padding: 5px;\"> " + (new Date(item.uploadDate)).format() + "</div>" + 
-   	        		"<a class=\"ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only\" style=\"display: table-cell;padding: 5px;\" href=\"<c:url value='/user/files/" + item.id + "' />\" id=\"download-file-" + item.id + "\">Download</a>" + 
-   	        		"<button class=\"ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only\" style=\"display: table-cell;padding: 5px;\" id=\"delete-file-" + item.id + "\">Delete</button> </div></p>");
+   	        		"<div style=\"display: table-cell;padding: 5px;\"> " + (new Date(item.uploadDate)).format() + "</div>";
+   	        		
+   	        		if (item.active == true) {
+   	        			revisionsDialogHTML += "<div style=\"display: table-cell;padding: 5px;\"> Active </div>" +
+   	        			"<div style=\"display: table-cell;padding: 5px;\">" +
+	        				"<a class=\"ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only\" style=\"display: table-cell;padding: 5px;\" href=\"<c:url value='/upload/files/" + item.id + "' />\" id=\"download-file-" + item.id + "\">Download</a>" +
+	        				/* "<button class=\"ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only\" style=\"display: table-cell;padding: 5px;\" id=\"delete-file-" + item.id + "\">Delete</button>" + */
+	        			"</div></div>";
+   	        		} else {
+   	        			revisionsDialogHTML += "<div style=\"display: table-cell;padding: 5px;\"> Not Active </div>" +
+   	        			"<div style=\"display: table-cell;padding: 5px;\">" +
+  	        				"<a class=\"ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only\" style=\"display: table-cell;padding: 5px;\" href=\"<c:url value='/upload/files/" + item.id + "?a=ma' />\" id=\"active-file-" + item.id + "\">Make Active</a>" +
+  	        				"<a class=\"ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only\" style=\"display: table-cell;padding: 5px;\" href=\"<c:url value='/upload/files/" + item.id + "' />\" id=\"download-file-" + item.id + "\">Download</a>" +
+   	        				"<button class=\"ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only\" style=\"display: table-cell;padding: 5px;\" id=\"delete-file-" + item.id + "\">Delete</button>" +
+   	        			"</div></div>";   	        				
+   	        		}
+   	        		
+					$("#show-revisions-file-div-inner").append(revisionsDialogHTML);
    	        	});
    	         }, 
    	         error: function(xhr, ajaxOptions, thrownError) {
@@ -218,19 +247,20 @@ $(function() {
 								<td><c:out value="${file.displayFileName}" /></td>
 								<td><c:out value="${file.displayUploadDate}" /></td>
 								<td>
-									<c:choose>
+									<button id="show-revisions-file-${file.id}">Show Revisions</button>
+									<%-- <c:choose>
 										<c:when test="${file.revision > 1}">
 											<button id="show-revisions-file-${file.id}">Show Revisions</button>
 										</c:when>
 										<c:otherwise>
 											<c:out value="${file.revision}" />
 										</c:otherwise>
-									</c:choose>
+									</c:choose> --%>
 								</td>
 								<td>
 									<button id="replace-file-${file.id}">Replace</button>
-									<a href="<c:url value='/user/files/${file.id}' />" id="download-file-${file.id}">Download</a>
-									<button id="delete-file-${file.id}">Delete</button>
+									<a href="<c:url value='/upload/files/${file.id}' />" id="download-file-${file.id}">Download</a>
+									<button id="delete-file-set-${file.id}">Delete</button>
 								</td>
 							</tr>
 						</c:forEach>
@@ -274,7 +304,7 @@ $(function() {
 	<div id="replace-file-form-div" title="Replace File">
 		<p class="validateTips">All form fields are required.</p>
 
-		<form:form method="POST" id="replace-file-form" modelAttribute="fileReplace" enctype="multipart/form-data" action="upload/replace" >
+		<form:form method="POST" id="replace-file-form" modelAttribute="fileReplace" enctype="multipart/form-data" action="files/replace" >
 			<form:errors path="*" cssClass="errorblock" element="div" />
 				Please Select a file to upload: 
 				<form:input path="file" type="file" name="file" />
@@ -288,14 +318,14 @@ $(function() {
 	<!-- /FileReplace Div -->
 	
 	<!-- FileDelete Div -->
-	<div id="delete-file-form-div" title="Delete File">
+	<div id="delete-file-set-form-div" title="Delete File">
 		<p><span class="ui-icon ui-icon-alert" style="float: left; margin: 0 7px 20px 0;"></span>This file will be permanently deleted and cannot be recovered. Are you sure?</p>		
 	</div>
 	<!-- /FileDelete Div -->
 	
 	<!-- Show Revisions File Div -->
 	<div id="show-revisions-file-div" title="File Revisions">
-		<div id="show-revisions-file-div-inner" style="display: table;">
+		<div id="show-revisions-file-div-inner" style="display: table;font-size: 15px;">
 		</div>
 	</div>
 	<!-- /Show Revisions File Div -->

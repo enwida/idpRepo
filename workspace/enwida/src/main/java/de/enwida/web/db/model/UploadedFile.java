@@ -45,11 +45,13 @@ public class UploadedFile implements Serializable, Comparable<UploadedFile> {
 	public static final String PREVIOUS_FILE_ID = "PREVIOUS_FILE_ID";
 	public static final String DISPLAY_FILE_NAME = "DISPLAY_FILE_NAME";
 	public static final String FILE_NAME = "FILE_NAME";
+	public static final String FILE_SET_UNIQUE_IDENTIFIER = "FILE_SET_UNIQUE_IDENTIFIER";
 	public static final String UPLOAD_DATE = "UPLOAD_DATE";
 	public static final String MODIFICATION_DATE = "MODIFICATION_DATE";
 	public static final String FORMAT = "FORMAT";
 	public static final String FILE_PATH = "FILE_PATH";
 	public static final String REVISION = "REVISION";
+	public static final String ACTIVE = "ACTIVE";
 	public static final SimpleDateFormat formatter = new SimpleDateFormat(
 			Constants.DISPLAY_DATE_FORMAT);
 	@Id
@@ -62,6 +64,9 @@ public class UploadedFile implements Serializable, Comparable<UploadedFile> {
 
 	@Column(name = FILE_NAME, unique = true, nullable = false, length = 255)
 	private String fileName;
+	
+	@Column(name = FILE_SET_UNIQUE_IDENTIFIER, nullable = false, length = 255)
+	private String fileSetUniqueIdentifier;
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = User.USER_ID)
@@ -86,6 +91,9 @@ public class UploadedFile implements Serializable, Comparable<UploadedFile> {
 
 	@Column(name = REVISION)
 	private int revision;
+	
+	@Column(name = ACTIVE)
+	private boolean active = false;
 
 	@OneToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = PREVIOUS_FILE_ID)
@@ -119,6 +127,14 @@ public class UploadedFile implements Serializable, Comparable<UploadedFile> {
 
 	public void setFileName(String fileName) {
 		this.fileName = fileName;
+	}
+
+	public String getFileSetUniqueIdentifier() {
+		return fileSetUniqueIdentifier;
+	}
+
+	public void setFileSetUniqueIdentifier(String fileSetUniqueIdentifier) {
+		this.fileSetUniqueIdentifier = fileSetUniqueIdentifier;
 	}
 
 	@Transient
@@ -179,6 +195,14 @@ public class UploadedFile implements Serializable, Comparable<UploadedFile> {
 
 	public void setRevision(int revision) {
 		this.revision = revision;
+	}
+
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
 	}
 
 	public UploadedFile getPreviousFile() {

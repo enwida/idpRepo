@@ -23,12 +23,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
-import de.enwida.web.dao.interfaces.IFileDao;
 import de.enwida.web.dao.interfaces.IGroupDao;
 import de.enwida.web.dao.interfaces.IRightDao;
 import de.enwida.web.dao.interfaces.IRoleDao;
 import de.enwida.web.dao.interfaces.IUserDao;
-import de.enwida.web.db.model.UploadedFile;
 import de.enwida.web.model.Group;
 import de.enwida.web.model.Right;
 import de.enwida.web.model.Role;
@@ -47,28 +45,25 @@ public class UserServiceImpl implements IUserService {
 	 */
     @Autowired
     private IUserDao userDao;
+    
     /**
      * Group Data Access Object
      */
     @Autowired
     private IGroupDao groupDao;
+    
     /**
      * Role Data Access Object
      */   
     @Autowired
     private IRoleDao roleDao;
+    
     /**
      * Rights Data Access Object
      */
     @Autowired
     private IRightDao rightDao;
-    
-	/**
-	 * File Data Access Object
-	 */
-    @Autowired
-    private IFileDao fileDao;    
-    
+       
     @Autowired
     private MessageSource messageSource;
     
@@ -77,6 +72,7 @@ public class UserServiceImpl implements IUserService {
      */
     @Autowired
     private MailServiceImpl mailService;
+    
     /**
      * Log4j static class
      */
@@ -326,88 +322,7 @@ public class UserServiceImpl implements IUserService {
 		final Group result = fetchGroupById(group.getGroupID());
 		groupDao.refresh(result);
 		return result;
-	}
-
-	/**
-	 * Caution: user should be persisted and in clean state! Dirty attributes
-	 * might be applied (i.e. committed to database, eventually).
-	 * 
-	 * @return the updated and managed user and file object
-	 * @throws Exception
-	 */
-	@Override
-	public User saveUserUploadedFile(User user, UploadedFile file) {
-		if (user.getUserId() == null) {
-			throw new IllegalArgumentException("user object is not persisted");
-		}
-		// check for revision
-		UploadedFile previousFile = file.getPreviousFile();
-		if (previousFile != null) {
-			int newrevision = previousFile.getRevision() + 1;
-			file.setRevision(newrevision);
-		} else {
-			file.setRevision(1);
-		}
-
-		if (file.getId() > 0) {
-			file = fileDao.update(file, true); // with flush
-		} else {
-			fileDao.create(file, true); // with flush
-		}
-
-		// Refresh the user in order to reflect the changes
-		user = userDao.update(user);
-		userDao.refresh(user);
-		return user;
-	}
-    
-	/**
-	 * Caution: user should be persisted and in clean state! Dirty attributes
-	 * might be applied (i.e. committed to database, eventually).
-	 * 
-	 * @return the updated and managed user and file object
-	 * @throws Exception
-	 */
-	@Override
-	public User updateUserUploadedFile(User user, UploadedFile file) {
-		if (user.getUserId() == null) {
-			throw new IllegalArgumentException("user object is not persisted");
-		}
-		if (file.getId() > 0) {
-			file = fileDao.update(file, true); // with flush
-		} else {
-			fileDao.create(file, true); // with flush
-		}
-
-		// Refresh the user in order to reflect the changes
-		user = userDao.update(user);
-		userDao.refresh(user);
-		return user;
-	}
-
-	/**
-	 * deletes user uploaded file
-	 */
-	@Override
-	public void removeUserUploadedFile(User user, UploadedFile file)
-			throws Exception {
-		if (user.getUserId() == null) {
-			throw new IllegalArgumentException("user object is not persisted");
-		}
-		if (file.getId() == 0) {
-			throw new IllegalArgumentException("user object is not persisted");
-		}
-		if (file.getId() > 0) {
-			file.setUploader(null);
-			file.setMetaData(null);
-			file.setPreviousFile(null);
-			fileDao.delete(file); // with flush
-		}
-
-		// Refresh the user in order to reflect the changes
-		// user = userDao.update(user);
-		// userDao.refresh(user);
-	}
+	}	
 
 	@Override
 	public void assignGroupToUser(long userId, Long groupID) {
@@ -644,23 +559,7 @@ public class UserServiceImpl implements IUserService {
             logger.error("Do nothing");
         }
         return value;
-    }
-
-    @Override
-    public UploadedFile getFile(int fileId) {
-        return fileDao.getFile(fileId);
-    }
-
-    @Override
-    public UploadedFile getFileByFilePath(String filePath) {
-        return fileDao.getFileByFilePath(filePath);
-    }
-
-    @Override
-    public int getUploadedFileVersion(UploadedFile file, User user) {
-        return userDao.getUploadedFileVersion(file, user);
-    }
-    
+    }    
     
     /**
      * Gets the current User
@@ -739,11 +638,6 @@ public class UserServiceImpl implements IUserService {
     public Role fetchRoleById(long roleId) {
         return roleDao.fetchById(roleId);
     }
-
-	@Override
-	public List<UploadedFile> getUploadedFiles(User user) {
-		return userDao.getUploadedFilesWithMaxRevision(user);
-	}
 	
 	private void sendUserActivationEmail(User user, Locale locale){
 		String activationLink = "http://localhost:8080/enwida/user/activateuser.html?username=" + user.getUserName() + "&actId=" + user.getActivationKey();
