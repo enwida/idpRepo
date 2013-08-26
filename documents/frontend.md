@@ -312,35 +312,100 @@ Important files/directories in `js/chart`:
 ### Layout
 The basic layout of the chart element is shown in the following structure.
 
-<div style="border: 1px solid black; padding: 10px;">
+<div style="border: 1px solid #880000; font-size: 16px; padding: 10px; max-width: 600px">
   .chart
-  <div style="border: 1px solid black; padding: 10px; margin: 10px;">
+  <div style="border: 1px solid #bb0000; padding: 10px; margin: 10px;">
     .visual
   </div>
-  <div style="border: 1px solid black; padding: 10px; margin: 10px;">
-    .lines
-  </div>
-  <div style="border: 1px solid black; padding: 10px; margin: 10px;">
-    .navigation
+  <div style="border: 1px solid #bb0000; padding: 10px; margin: 10px;">
+    .controls
+    <div style="border: 1px solid #006666; padding: 10px; margin: 10px;">
+      .infobox
+    </div>
+    <div style="border: 1px solid #006666; padding: 10px; margin: 10px;">
+      .lines
+    </div>
+    <div style="border: 1px solid #006666; padding: 10px; margin: 10px;">
+      .selection
+      <div style="border: 1px solid #008800; padding: 10px; margin: 10px;">
+        .productSelection
+      </div>
+      <div style="border: 1px solid #008800; padding: 10px; margin: 10px;">
+        .timeSelection
+      </div>
+    </div>
+    <div style="border: 1px solid #006666; padding: 10px; margin: 10px;">
+      .buttons
+    </div>
+    <div style="border: 1px solid #006666; padding: 10px; margin: 10px;">
+      .dataSheet
+    </div>
   </div>
 </div>
 
-The outer chart div element of class "chart" has another three div elements as its children.
-The child of class "visual" contains the actual chart (the SVG image). All elements for
-enabling/disabling single lines are included in the "lines" div element. The "navigation" div
-element contains all elements representing product and time range selection.
+The following table explains the meaning of these elements.
 
-Each of these elements has a Flight module attached to it:
+<table class="table table-striped table-bordered">
+  <tr>
+    <th>Element</th>
+    <th>Flight Component</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td>.chart</td>
+    <td>ChartManager</td>
+    <td>Contains and manages everything about this chart</td>
+  </tr>
+  <tr>
+    <td>.visual</td>
+    <td>Visual</td>
+    <td>Contains and manages the actual chart (the SVG image)</td>
+  </tr>
+  <tr>
+    <td>.controls</td>
+    <td></td>
+    <td>Contains all control elements</td>
+  </tr>
+  <tr>
+    <td>.infobox</td>
+    <td>InfoBox</td>
+    <td>Displays the current selections</td>
+  </tr>
+  <tr>
+    <td>.lines</td>
+    <td>Lines</td>
+    <td>Controls for enabling/disabling lines</td>
+  </tr>
+  <tr>
+    <td>.selection</td>
+    <td></td>
+    <td>Contains the product and time selection elements</td>
+  </tr>
+  <tr>
+    <td>.productSelection</td>
+    <td>ProductSelection</td>
+    <td>Controls for selecting the TSO/product</td>
+  </tr>
+  <tr>
+    <td>.timeSelection</td>
+    <td>TimeSelection</td>
+    <td>Controls for selecting the time range</td>
+  </tr>
+  <tr>
+    <td>.buttons</td>
+    <td>ChartManager / ChartDownload</td>
+    <td>Contains the buttons for downloads and data sheet</td>
+  </tr>
+  <tr>
+    <td>.dataSheet</td>
+    <td>DataSheet</td>
+    <td>Shows the current data in a table</td>
+  </tr>
+</table>
 
-- .chart: `ChartManager`
-- .visual: `Visual`
-- .lines: `Lines`
-- .navigation: `Navigation`
-
-When loaded, the main script will find all divs of class "chart" and attach a new instance
-of the `ChartManager` component to each of them. The `ChartManager` will then create the
-"visual", "lines", and "navigation" div elements and attach the corresponding Flight components
-to them.
+When loaded, the main script will find all `DIV`s of class "chart" and attach a new instance
+of the `ChartManager` component to each of them. The `ChartManager` will then create its children 
+`DIV` elements and attach the corresponding Flight components to them.
 
 ### Imaging
 The actual chart images are implemented using the [d3.js](http://d3js.org) library which is used
