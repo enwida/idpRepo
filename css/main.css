@@ -1,41 +1,5 @@
 /*****************************************************************************/
 /*
-/* Common
-/*
-/*****************************************************************************/
-
-/* Global Reset */
-* {
-  /*margin: 0;*/
-  /*padding: 0;*/
-}
-
-html, body { height: 100%; }
-
-body {
-  background-color: #FFF;
-  font: 13.34px Helvetica, Arial, sans-serif;
-  font-size: small;
-  text-align: center;
-}
-
-h1 { font-size: 150%; }
-h2 { font-size: 130%; }
-h3 { font-size: 110%; }
-h4 { font-size: 100%; }
-h5 { font-size: 100%; }
-h6 { font-size: 100%; }
-
-h1 { margin-bottom: 1em; }
-p { margin: 1em 0; }
-
-table {
-  font-size: inherit;
-  font: 100%;
-}
-
-/*****************************************************************************/
-/*
 /* Home
 /*
 /*****************************************************************************/
@@ -56,47 +20,63 @@ ul.posts span {
 
 /*****************************************************************************/
 /*
+/* Sidebar
+/*
+/*****************************************************************************/
+
+.sidebar {
+  /*margin-top: 100px;*/
+  width: 350px;
+  padding: 5px;
+  background-color: #faf8f8;
+  border-radius: 10px;
+  /*font-size: 14px;*/
+}
+
+.sidebar li.active {
+  /*background-color: #D46060;*/
+  /*border-radius: 10px;*/
+  font-weight: bold;
+  border-right: 1px solid #aa0000;
+}
+
+.sidebar a {
+  /*padding: 5px 8px !important;*/
+  border-bottom: none;
+  color: #880000;
+}
+
+/*****************************************************************************/
+/*
 /* Site
 /*
 /*****************************************************************************/
 
-.site {
-  font-size: 115%;
-  text-align: justify;
-  max-width: 100%;
-  margin: 50px;
-  line-height: 1.5em;
+.site .header {
+  background-color: #aa0000;
+  text-align: center;
+  height: 150px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  border-top: 1px solid #770000;
+  border-bottom: 1px solid #770000;
+}
+
+.site .header .title {
+  color: #FFFFFF;
+  font-weight: bold;
+  text-decoration: none;
+  padding-top: 34px;
 }
 
 .site .header a {
-  font-weight: bold;
+  border-bottom: none;
   text-decoration: none;
 }
 
-.site .header h1.title {
-  display: inline-block;
-  margin-bottom: 2em;
-}
-
-.site .header h1.title a {
-  color: #a00;
-}
-
-.site .header h1.title a:hover {
-  color: #000;
-}
-
-.site .header a.extra {
-  color: #aaa;
-  margin-left: 1em;
-}
-
-.site .header a.extra:hover {
-  color: #000;
-}
-
-.site .meta {
-  color: #aaa;
+.site .header a:hover {
+  border-bottom: none;
+  text-decoration: none;
 }
 
 .site .footer {
@@ -177,6 +157,12 @@ ul.posts span {
 #home li a {
   font-size: 22px;
   line-height: 50px;
+}
+
+span.link {
+  color: #550000;
+  margin-right: 10px;
+  font-size: 20px;
 }
 
 a {

@@ -5,12 +5,21 @@ layout: default
 <link rel="stylesheet" href="{{ site.baseurl }}/css/toc.css" />
 <script src="{{ site.baseurl }}/js/table_of_contents.js"></script>
 
-<h1>{{ page.title }}</h1>
-
-<div class="toc">
-  <h2>Table of Contents</h2>
-</div>
-
 <div class="content">
-{{ content }}
+  <div class="row">
+    <div class="col-xs-4">
+      <div class="sidebar" data-spy="affix">
+      </div>
+    </div>
+    <div class="col-xs-8">
+      <div class="page-header">
+        <h1>{{ page.title }}</h1>
+      </div>
+      <div class="content">
+        <div class="toc">
+        </div>
+        {{ content }}
+      </div>
+    </div>
+  </div>
 </div>

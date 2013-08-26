@@ -3,13 +3,23 @@
   var getAnchorName, getHeadlineNest, setupTableOfContents;
 
   $(document).ready(function() {
-    return setupTableOfContents();
+    setupTableOfContents(".toc", "h1,h2,h3,h4,h5,h6,h7,h8");
+    setupTableOfContents(".sidebar", "h1,h2,h3", ["nav", "nav-stacked"]);
+    return $('body').scrollspy({
+      target: '.sidebar'
+    });
   });
 
-  setupTableOfContents = function() {
+  setupTableOfContents = function(parent, selector, klasses) {
     var findParent, invalidateParents, roots;
-    roots = [$(".toc")];
+    if (klasses == null) {
+      klasses = [];
+    }
+    roots = [$(parent)];
     findParent = function(nest) {
+      if (nest <= 0) {
+        return roots[0];
+      }
       if (roots[nest - 1] != null) {
         return roots[nest - 1];
       }
@@ -23,8 +33,8 @@
       }
       return _results;
     };
-    return $(".content").find("h1,h2,h3,h4,h5,h6,h7,h8").each(function() {
-      var anchorName, element, nest, parent, ul;
+    return $(".content").find(selector).each(function() {
+      var anchorName, element, klass, nest, ul, _i, _len;
       element = $(this);
       anchorName = getAnchorName(element.text());
       element.attr("id", anchorName);
@@ -32,6 +42,10 @@
       ul = roots[nest];
       if (ul == null) {
         ul = $("<ul>");
+        for (_i = 0, _len = klasses.length; _i < _len; _i++) {
+          klass = klasses[_i];
+          ul.addClass(klass);
+        }
         roots[nest] = ul;
         parent = findParent(nest);
         parent.append(ul);

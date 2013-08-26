@@ -15,23 +15,25 @@
         <!-- Custom CSS -->
         <link rel="stylesheet" href="{{ site.baseurl }}/css/main.css" />
 
+        <!-- JS Assets -->
         <script src="{{ site.baseurl }}/js/jquery.min.js"></script>
+        <script src="{{ site.baseurl }}/js/bootstrap.min.js"></script>
 
     </head>
     <body>
 
-        <div class="container">
-          <div class="site">
-            <div class="header">
-              <h1 class="title"><a href="{{ site.baseurl }}/">{{ site.name }}</a></h1>
-            </div>
-
-                {{ content }}
-
-            <div class="footer">
-            </div>
+        <div class="site">
+          <div class="header">
+            <a href="{{ site.baseurl }}/"><h1 class="title">{{ site.name }}</h1></a>
           </div>
-        </div> <!-- /container -->
+          <div class="container">
+
+              {{ content }}
+
+          <div class="footer">
+          </div>
+          </div>
+        </div>
 
     </body>
 </html>
