@@ -40,7 +40,7 @@ public class Right implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long rightID;
     
-	@ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = Role.ROLE_ID)
 	private Role role;
     

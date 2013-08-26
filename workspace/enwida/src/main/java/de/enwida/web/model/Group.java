@@ -46,7 +46,7 @@ public class Group implements Serializable{
 	@Column(name = AUTO_PASS)
     private boolean autoPass;
 
-	@ManyToMany(mappedBy = "groups", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@ManyToMany(mappedBy = "groups", fetch = FetchType.EAGER)
 	private Set<User> assignedUsers;
 
 	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
