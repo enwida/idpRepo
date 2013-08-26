@@ -21,4 +21,6 @@ public interface IUserLinesService {
 
 	boolean eraseUserLines(long fileId);
 
+	boolean eraseUserLineMetaData(long fileId);
+
 }

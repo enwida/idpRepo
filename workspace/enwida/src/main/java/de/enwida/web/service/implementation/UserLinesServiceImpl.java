@@ -86,8 +86,21 @@ public class UserLinesServiceImpl implements IUserLinesService {
 	@Override
 	public boolean eraseUserLines(long fileId) {
 		UploadedFile oldFile = fileDao.getFile(fileId);
+		// delete only user lines corresponding to metadata
+		if (oldFile.getMetaData() != null) {
+			UserLinesMetaData metadata = oldFile.getMetaData();
+			for (UserLines line : metadata.getUserLines()) {
+				userLinesDao.delete(line, true);
+			}
+		}
+		return true;
+	}
+
+	@Override
+	public boolean eraseUserLineMetaData(long fileId) {
+		UploadedFile oldFile = fileDao.getFile(fileId);
 		// delete metadata which is suppose to delete
-		// the corresponding user lines
+		// the corresponding user lines also
 		if (oldFile.getMetaData() != null) {
 			userLinesDao.deleteUserLineMetaData(oldFile.getMetaData());
 		}
