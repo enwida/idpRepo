@@ -28,8 +28,6 @@ So any HTML document which contains charts has to include the following files:
 - resources/js/chart/assets.js
 - resources/js/chart/chart.js
 
-[TODO: Only one css/js file in production (complicates development, though)]
-
 ### CSS
 In order to minify the CSS assets (bootstrap, datepicker, etc.) we use the tool `cleancss`.
 When adding or removing CSS assets, please edit the `build.xml` in the `css/chart` directory to
@@ -69,8 +67,6 @@ these requirements can be installed.
 
 - Install [node.js](http://nodejs.org) and make sure the `node` and `npm` commands work
 - Install [Apache Ant](http://ant.apache.org) and make sure the `ant` command works
-
-[TODO: Test if these steps work for Windows ;)]
 
 ### Quick CoffeeScript / RequireJS / Flight Walkthrough
 This walkthrough will only contain very basic explanation to get you started. Please refer to the
