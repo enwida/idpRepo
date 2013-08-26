@@ -9,7 +9,7 @@
 		<tr>
 			<th><message:message code="de.enwida.userManagement.users" /></th>
 			<th><message:message code="de.enwida.userManagement.enabled" /></th>
-			<th><message:message code="de.enwida.userManagement.firstName" /></th>
+			<th><message:message code="de.enwida.userManagement.firstName" />-<message:message code="de.enwida.userManagement.lastName" /></th>
 			<th><message:message code="de.enwida.userManagement.lastLogin" /></th>
 			<th><message:message code="de.enwida.userManagement.telephone" /></th>
 			<th><message:message code="de.enwida.userManagement.company" /></th>
