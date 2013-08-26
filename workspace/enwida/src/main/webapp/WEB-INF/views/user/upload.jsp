@@ -136,7 +136,6 @@ $(function() {
 		buttons: {
 			Ok: function() {
 				$( this ).dialog( "close" );
-				window.location.assign("http://www.w3schools.com");
 				window.location.assign("<c:url value='/upload/files' />");
 			}
 		}
