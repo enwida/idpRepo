@@ -63,8 +63,7 @@ $("#myselect").val(get_url_parameter('roleID'));
 				<td>${right.resolution}</td>
 				<td>${right.tso}</td>
 				<td><input type="checkbox"
-					onclick="enableDisableAspect(${right.rightID},this.checked);"
-					${right.enabled == 'true' ? 'checked' : ''}></td>
+					onclick="enableDisableAspect(${right.rightID},this.checked);"  ${right.enabled == 'true' ? 'checked' : ''}></td>
 			<tr>
 		</c:forEach>
 	</tbody>

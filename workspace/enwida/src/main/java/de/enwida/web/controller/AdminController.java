@@ -218,6 +218,20 @@ public class AdminController {
         }
     }   
     
+    
+    
+    @RequestMapping(value = "/enableAutoPass", method = RequestMethod.GET)
+    @ResponseBody
+    public boolean enableAutoPass(Long groupID,boolean enabled) {
+        try {
+            userService.enableDisableAutoPass(groupID,enabled);
+            return true;       
+        } catch (Exception e) {   
+            logger.info(e.getMessage());
+            return false;      
+        }
+    }   
+    
     @RequestMapping(value="/admin_user", method = RequestMethod.GET)
     public String user(HttpServletRequest request,Model model,long userID,Locale locale) {
         

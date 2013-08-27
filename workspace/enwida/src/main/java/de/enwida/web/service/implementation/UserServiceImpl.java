@@ -667,4 +667,11 @@ public class UserServiceImpl implements IUserService {
 		}
 		
 	}
+
+    @Override
+    public void enableDisableAutoPass(Long groupID, boolean enabled) throws Exception {
+        Group group=groupDao.fetchById(groupID);
+        group.setAutoPass(enabled);
+        groupDao.save(group);
+    }
 }

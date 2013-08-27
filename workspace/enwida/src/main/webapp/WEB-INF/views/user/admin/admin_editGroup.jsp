@@ -40,7 +40,7 @@
 					<td>${group.groupName}</td>
 					<td><c:forEach var="user" items="${group.assignedUsers}"><a href='admin_user.html?userID=${user.userId}'>${user.userName}</a>,</c:forEach>
 					</td>
-					<td><input type="checkbox" checked="${group.autoPass}"/></td>
+					<td><input type="checkbox" onclick="enableAutoPass(${group.groupID},this.checked);" ${group.autoPass == 'true' ? 'checked' : ''}/></td>
 					<td>
 						<a href='admin_editgroup.html?groupID=${group.groupID}&action=delete'> <message:message code="de.enwida.userManagement.delete" /></a>
 					</td>
