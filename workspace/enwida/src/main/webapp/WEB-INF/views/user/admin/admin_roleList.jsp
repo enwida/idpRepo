@@ -12,13 +12,14 @@
 			<th><message:message code="de.enwida.userManagement.description" /></th>
 			<th><message:message code="de.enwida.userManagement.roleName" /></th>
 			<th><message:message code="de.enwida.userManagement.operation" /></th>
-		<tr>
-	<thead>
+		</tr>
+	</thead>
 	<tfoot>
 		<tr>
 			<th colspan="7" class="pager form-horizontal">
 				<button type="button" class="btn first"><i class="icon-step-backward"></i></button>
 				<button type="button" class="btn prev"><i class="icon-arrow-left"></i></button>
+				<span class="pagedisplay"></span> <!-- this can be any element, including an input -->
 				<button type="button" class="btn next"><i class="icon-arrow-right"></i></button>
 				<button type="button" class="btn last"><i class="icon-step-forward"></i></button>
 				<select class="pagesize input-mini" title="Select page size">
@@ -27,6 +28,7 @@
 					<option value="30">30</option>
 					<option value="40">40</option>
 				</select>
+				<select class="pagenum input-mini" title="Select page number"></select>
 			</th>
 		</tr>
 		</tfoot>
@@ -40,7 +42,7 @@
 				<td>
 					<a href='admin_editaspect?roleID=${role.roleID}&start=10&max=50'> <message:message code="de.enwida.userManagement.details" /></a>
 				</td>
-			<tr>
+			</tr>
 		</c:forEach>
 	</tbody>
 </table>

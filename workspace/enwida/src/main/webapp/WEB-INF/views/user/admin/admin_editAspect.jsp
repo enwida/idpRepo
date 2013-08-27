@@ -33,8 +33,8 @@ $("#myselect").val(get_url_parameter('roleID'));
 			<th><message:message code="de.enwida.userManagement.resolution" /></th>
 			<th><message:message code="de.enwida.userManagement.tso" /></th>
 			<th><message:message code="de.enwida.userManagement.enabled" /></th>
-		<tr>
-	<thead>
+		</tr>
+	</thead>
 	<tfoot>
 		<tr>
 			<th colspan="7" class="pager form-horizontal">
@@ -64,7 +64,7 @@ $("#myselect").val(get_url_parameter('roleID'));
 				<td>${right.tso}</td>
 				<td><input type="checkbox"
 					onclick="enableDisableAspect(${right.rightID},this.checked);"  ${right.enabled == 'true' ? 'checked' : ''}></td>
-			<tr>
+			</tr>
 		</c:forEach>
 	</tbody>
 </table>

@@ -14,9 +14,9 @@
 				<th><message:message code="de.enwida.userManagement.users" /></th>
 				<th><message:message code="de.enwida.userManagement.autoPass" /></th>
 				<th><message:message code="de.enwida.userManagement.operation" /></th>
-			<tr>
-		<thead>
-		<tfoot>
+		  </tr>
+	</thead>
+	<tfoot>
 		<tr>
 			<th colspan="7" class="pager form-horizontal">
 				<button type="button" class="btn first"><i class="icon-step-backward"></i></button>
@@ -34,7 +34,7 @@
 			</th>
 		</tr>
 	</tfoot>
-		<tbody>
+	<tbody>
 			<c:forEach var="group" items="${groupsWithUsers}">
 				<tr>
 					<td>${group.groupName}</td>
@@ -44,17 +44,17 @@
 					<td>
 						<a href='admin_editgroup.html?groupID=${group.groupID}&action=delete'> <message:message code="de.enwida.userManagement.delete" /></a>
 					</td>
-				<tr>
+				</tr>
 			</c:forEach>
-		</tbody>
-		<tfoot>
+	</tbody>
+	<tfoot>
 			<tr>
 				<td><input name="newGroup" type='text' placeholder=" <message:message code="de.enwida.userManagement.addGroup" />" /></td>
 				<td></td>
 				<td><input name="autoPass" type='checkbox' /></td>
 				<td><input type="submit" class="btn btn-primary"  name="addGroup" value=" <message:message code="de.enwida.userManagement.add" />"/></td>
-			<tr>
-		<tfoot>
+			</tr>
+	<tfoot>
 	</table>
 <script>
 $(function() {
