@@ -176,7 +176,7 @@ public class UploadController {
 						UploadedFile oldFile = uploadFileService.getFile(fileReplace.getFileIdToBeReplaced());						
 						if (oldFile != null && oldFile.getUploader().equals(user)) {
 							//Deleting the old lines from the database
-							boolean success = userLineService.eraseUserLines(fileReplace.getFileIdToBeReplaced());
+							boolean success = userLineService.eraseUserLineMetaData(fileReplace.getFileIdToBeReplaced());
 							
 							if (success) {
 								boolean recordsInserted = userLineService.createUserLines(userlines, metaData);
@@ -316,7 +316,7 @@ public class UploadController {
 				
 				// now delete file safely
 				try {
-					boolean success = userLineService.eraseUserLines(downloadFile.getId());
+					boolean success = userLineService.eraseUserLineMetaData(downloadFile.getId());
 					// first remove all mappings
 					uploadFileService.removeUserUploadedFile(user, downloadFile);
 					// actual row deleted
@@ -382,10 +382,15 @@ public class UploadController {
 	public ModelAndView makeFileActive(@PathVariable("fileId") String fileId, @PathVariable("action") String action, HttpServletResponse response) {
 		
 		if (fileId != null && !fileId.isEmpty() && action!= null && !action.isEmpty()) {
-			if (action.equals("ma")) {
-				int fileid = Integer.parseInt(fileId);
-				User user = userSession.getUser();
-				uploadFileService.makeFileActive(fileid, user, fileValidator);
+			if (action.equals("ma")) {				
+				try {
+					int fileid = Integer.parseInt(fileId);
+					User user = userSession.getUser();
+					uploadFileService.makeFileActive(fileid, user, fileValidator);
+					userSession.setUserInSession(user);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
 		}
 		return new ModelAndView("redirect:/upload/files");
@@ -397,14 +402,17 @@ public class UploadController {
 		List<UserUploadedFile> revisions = new ArrayList<UserUploadedFile>();
 		if (fileId != null && !fileId.isEmpty()) {
 			int fileid = Integer.parseInt(fileId);
-			UploadedFile file = uploadFileService.getFile(fileid);			
-			if (file != null) {
+			List<UploadedFile> file = uploadFileService.getFileSetByUniqueIdentifier(fileid);	
+			for (UploadedFile uploadedFile : file) {
+				revisions.add(new UserUploadedFile(uploadedFile));
+			}
+			/*if (file != null) {
 				revisions.add(new UserUploadedFile(file));
 				while (file.getPreviousFile() != null) {
 					file = file.getPreviousFile();
 					revisions.add(new UserUploadedFile(file));
 				}
-			}
+			}*/
 		}
 		return revisions;
 	}
