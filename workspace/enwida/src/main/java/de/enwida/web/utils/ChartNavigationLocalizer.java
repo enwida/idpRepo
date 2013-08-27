@@ -47,6 +47,7 @@ public class ChartNavigationLocalizer {
 		}
 		
 		public ChartNavigationData applyLocalizations() {
+			setLocale();
 			setTitles();
 			setInfoKeys();
 			setTimestamps();
@@ -56,6 +57,10 @@ public class ChartNavigationLocalizer {
 			setProductParts();
 	
 			return navigationData;
+		}
+		
+		private void setLocale() {
+			navigationData.getDictionary().setLocale(locale.toLanguageTag());
 		}
 		
 		private void setTitles() {

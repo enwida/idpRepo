@@ -214,6 +214,7 @@ define ["../util/time_utils", "../util/resolution"], (TimeUtils, Resolution) ->
           minViewMode   : @viewModes[timeRange]
           startDate     : limits.from ? "1900-01-01"
           endDate       : limits.to ? new Date()
+          language      : @attr.navigationData.localizations.locale ? "de"
 
     @getDatepickerElement = (timeRange) ->
       @$node.find ".datepicker-#{timeRange} .from"
@@ -227,4 +228,13 @@ define ["../util/time_utils", "../util/resolution"], (TimeUtils, Resolution) ->
       @attr.fromDateBus = new Bacon.Bus()
       @on "refresh", (_, opts) => @refresh opts.data
 
+      # Add datepicker localizations
+      $.fn.datepicker.dates['de'] =
+        days: ["Sonntag", "Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag", "Sonntag"],
+        daysShort: ["Son", "Mon", "Die", "Mit", "Don", "Fre", "Sam", "Son"],
+        daysMin: ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"],
+        months: ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"],
+        monthsShort: ["Jan", "Feb", "Mär", "Apr", "Mai", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dez"],
+        today: "Heute",
+        weekStart: 1,
 

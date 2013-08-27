@@ -7,6 +7,7 @@ import de.enwida.transport.DataResolution;
 
 public class NavigationDictionary implements Cloneable {
 
+	private String locale;
 	private String title;
 	private String xAxisLabel;
 	private String yAxisLabel;
@@ -16,6 +17,7 @@ public class NavigationDictionary implements Cloneable {
 	private Map<String, String> infoKeys;
 	
 	public NavigationDictionary() {
+		locale = "de";
 		title = "";
 		xAxisLabel = "";
 		yAxisLabel = "";
@@ -73,6 +75,14 @@ public class NavigationDictionary implements Cloneable {
 
 	public void setyAxisLabel(String yAxisLabel) {
 		this.yAxisLabel = yAxisLabel;
+	}
+
+	public String getLocale() {
+		return locale;
+	}
+
+	public void setLocale(String locale) {
+		this.locale = locale;
 	}	
 	
 }
