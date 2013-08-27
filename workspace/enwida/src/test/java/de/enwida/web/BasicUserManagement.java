@@ -732,7 +732,7 @@ public class BasicUserManagement {
 			Assert.assertTrue(g.getGroupName().equals("Anonymous") || g.getGroupName().equals("enwida-test.de"));
 		}
 	}
- 
+
 
     @Test
     public void testRemoveOneUser() throws Exception {
@@ -742,6 +742,17 @@ public class BasicUserManagement {
         //verify other user remains
         User testee=userService.fetchUser("testuser1");
         Assert.assertNotNull(testee);
+    }
+
+
+    @Test
+    public void testEnableDisableAutoPass() throws Exception {
+        final Group group = testUtils.saveTestGroup("testgroup");
+        final Group testee=userService.findGroup(new Group("testgroup"));
+        Assert.assertTrue(!testee.isAutoPass());
+        userService.enableDisableAutoPass(group.getGroupID(),true);
+        final Group testee2=userService.findGroup(new Group("testgroup"));
+        Assert.assertTrue(testee2.isAutoPass());
     }
     
  }

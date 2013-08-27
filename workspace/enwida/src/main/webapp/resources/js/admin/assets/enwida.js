@@ -138,3 +138,9 @@ function enableDisableAspect(userID,checked){
      	  url: "enableDisableAspect?rightID="+userID+"&enabled="+checked
     });
 };
+
+function enableAutoPass(groupID,checked){
+	$.ajax({
+     	  url: "enableAutoPass?groupID="+groupID+"&enabled="+checked
+    });
+};

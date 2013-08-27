@@ -325,18 +325,36 @@ public interface IUserService {
      * @return up-to-date user object with all mappings
      */
     public User syncUser(User user);
-    
+    /**
+     * Gets nextSequence from the database
+     */
     public Long getNextSequence(String schema, String sequenceName);    
-
+    /**
+     * Gets the group name from the company name
+     */
     Group fetchGroupByCompanyName(String companyName);
-
+    /**
+     * Finds the group
+     */
 	Group findGroup(Group group);
-
+    /**
+     * Finds the role
+     */
 	Role findRole(Role role);
-
+    /**
+     * Finds the right
+     */
 	Right findRight(Right right);	
-
+    /**
+     * Finds the group by id
+     */
 	public Group fetchGroupById(long groupId);
-	
+    /**
+     * Finds the role by id
+     */
 	public Role fetchRoleById(long roleId);
+    /**
+     * Enables/Disables the autopass
+     */
+    public void enableDisableAutoPass(Long groupID, boolean enabled) throws Exception;
 }

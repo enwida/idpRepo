@@ -3,7 +3,12 @@
 <!doctype html>
 <html>
 <head>
-<script src="../../resources/js/admin/assets/assets.js"></script>
+<script src="../../resources/js/admin/assets/admin.js"></script>
+<script src="../../resources/js/admin/assets/jquery.js"></script>
+<script src="../../resources/js/admin/assets/jquery.tablesorter.js"></script>
+<script src="../../resources/js/admin/assets/jquery.tablesorter.widgets.js"></script>
+<script src="../../resources/js/admin/assets/jquery.tablesorter.pager.js"></script>
+<script src="../../resources/js/admin/assets/enwida.js"></script>
 <link rel="stylesheet" href="../../resources/css/admin/assets/assets.css" />
 </head>
 <body>

@@ -1,6 +1,8 @@
 package de.enwida.web.controller;
 
 import java.io.IOException;
+import java.sql.Date;
+import java.sql.Time;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
@@ -16,7 +18,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 
+import de.enwida.web.model.User;
 import de.enwida.web.service.interfaces.ICookieSecurityService;
+import de.enwida.web.service.interfaces.IUserService;
 import de.enwida.web.utils.Constants;
 
 public class LoginSuccessHandler extends
@@ -27,8 +31,10 @@ public class LoginSuccessHandler extends
 
 	@Autowired
     private ICookieSecurityService cookieSecurityService;
-	@Autowired
-	private UserSessionManager userSession;
+    @Autowired
+    private UserSessionManager userSession;
+    @Autowired
+    private IUserService userService;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request,
@@ -70,6 +76,17 @@ public class LoginSuccessHandler extends
 						e);
             }
         }
+
+        try {     
+            User user=userService.getCurrentUser();
+            java.util.Date utilDate = new java.util.Date(); 
+            user.setLastLogin(new java.sql.Timestamp(utilDate.getTime()));
+            userService.updateUser(user);
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
     }
 
 	/**
