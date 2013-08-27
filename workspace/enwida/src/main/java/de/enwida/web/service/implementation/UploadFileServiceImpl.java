@@ -170,11 +170,9 @@ public class UploadFileServiceImpl implements IUploadFileService {
 			
 			//2. Erase the Data of the Active File from Database
 			UserLinesMetaData metadata = fileAlreadyActive.getMetaData();
-			for (UserLines line : metadata.getUserLines()) {
-				userLinesDao.delete(line, true);
+			if (fileAlreadyActive.getMetaData() != null) {
+				userLinesDao.deleteUserLineMetaData(fileAlreadyActive.getMetaData());
 			}
-			metadata.setUserLines(null);
-			userLineService.updateUserLineMetaData(metadata);
 			
 			//3. Insert the data of the Required Active File
 			BindingResult results = EnwidaUtils.validateFile(new File(fileToMakeActive.getFilePath()), fileValidator);
@@ -182,7 +180,7 @@ public class UploadFileServiceImpl implements IUploadFileService {
 			if (status.getCode().equalsIgnoreCase("file.upload.parse.success")) {
 				Map<String, Object> parsedData = (Map<String, Object>) status.getArguments()[0];
 				List<UserLines> userlines = (List<UserLines>) parsedData.get(Constants.UPLOAD_LINES_KEY);
-				UserLinesMetaData metaData = fileToMakeActive.getMetaData();
+				UserLinesMetaData metaData = (UserLinesMetaData) parsedData.get(Constants.UPLOAD_LINES_METADATA_KEY);
 				userLineService.createUserLines(userlines, metaData);			
 			} else if (status.getCode().equalsIgnoreCase("file.upload.parse.error")) {
 				//TODO: FileUpload Fail: Parsing Error
@@ -194,5 +192,10 @@ public class UploadFileServiceImpl implements IUploadFileService {
 			fileToMakeActive.setActive(true);
 			fileDao.update(fileToMakeActive, true);
 		}	
+	}
+
+	@Override
+	public List<UploadedFile> getFileSetByUniqueIdentifier(int fileId) {
+		return fileDao.fetchByFileSetUniqueIdentifier(fileDao.getFile(fileId).getFileSetUniqueIdentifier());
 	}
 }

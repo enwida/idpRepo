@@ -215,7 +215,7 @@ $(function() {
    	         success: function(result) {
    	        	$("#show-revisions-file-div-inner").html("");
    	        	$("#show-revisions-file-div-inner").append("<div style=\"display: table-row;font-weight: bold;\">" +  
-   	     				"<div style=\"display: table-cell;padding: 5px;\"> Id </div>" +
+   	     				/* "<div style=\"display: table-cell;padding: 5px;\"> Id </div>" + */
    	     				"<div style=\"display: table-cell;padding: 5px;\"> Filename </div>" +
    	     				"<div style=\"display: table-cell;padding: 5px;\"> Date </div>" +
    	     				"<div style=\"display: table-cell;padding: 5px;\"> IsActive </div>" +
@@ -223,7 +223,7 @@ $(function() {
    	     			"</div>");
    	        	$.each(result, function(i, item) {
    	        		var revisionsDialogHTML = "<div style=\"display: table-row;\">" + 
-   	        		"<div style=\"display: table-cell;padding: 5px;\"> " + item.id + "</div>" + 
+   	        		/* "<div style=\"display: table-cell;padding: 5px;\"> " + item.id + "</div>" + */ 
    	        		"<div style=\"display: table-cell;padding: 5px;\"> " + item.displayFileName + "</div>" + 
    	        		"<div style=\"display: table-cell;padding: 5px;\"> " + (new Date(item.uploadDate)).format() + "</div>";
    	        		
@@ -236,9 +236,9 @@ $(function() {
    	        		} else {
    	        			revisionsDialogHTML += "<div style=\"display: table-cell;padding: 5px;\"> Not Active </div>" +
    	        			"<div style=\"display: table-cell;padding: 5px;\">" +
-  	        				"<a class=\"ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only\" style=\"display: table-cell;padding: 5px;\" href=\"<c:url value='/upload/files/" + item.id + "?a=ma' />\" id=\"active-file-" + item.id + "\">Make Active</a>" +
+  	        				"<a class=\"ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only\" style=\"display: table-cell;padding: 5px;\" href=\"<c:url value='/upload/files/" + item.id + "/action/ma' />\" id=\"active-file-" + item.id + "\">Make Active</a>" +
   	        				"<a class=\"ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only\" style=\"display: table-cell;padding: 5px;\" href=\"<c:url value='/upload/files/" + item.id + "' />\" id=\"download-file-" + item.id + "\">Download</a>" +
-   	        				"<button class=\"ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only\" style=\"display: table-cell;padding: 5px;\" onclick=\"openDeleteConfirmationDialog(\"delete-file-" + item.id + "\")\" id=\"delete-file-" + item.id + "\">Delete</button>" +
+   	        				"<button class=\"ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only\" style=\"display: table-cell;padding: 5px;\" onclick=\"openDeleteConfirmationDialog('delete-file-" + item.id + "\')\" id=\"delete-file-" + item.id + "\">Delete</button>" +
    	        			"</div></div>";   	        				
    	        		}
    	        		
@@ -277,7 +277,7 @@ $(function() {
 			<br/>
 			<table border="1">
 				<tr>
-					<th>Id</th>
+					<!-- <th>Id</th> -->
 					<th>File Name</th>
 					<th>Upload Date</th>
 					<th>Revision</th>
@@ -287,7 +287,7 @@ $(function() {
 					<c:when test="${not empty uploadedfiletable}">
 						<c:forEach var="file" items="${uploadedfiletable}">
 							<tr>
-								<td><c:out value="${file.id}" /></td>
+								<%-- <td><c:out value="${file.id}" /></td> --%>
 								<td><c:out value="${file.displayFileName}" /></td>
 								<td><c:out value="${file.displayUploadDate}" /></td>
 								<td>

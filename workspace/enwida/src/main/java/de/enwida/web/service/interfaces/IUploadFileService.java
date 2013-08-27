@@ -17,5 +17,6 @@ public interface IUploadFileService {
     User updateUserUploadedFile(User user, UploadedFile file);
 	void removeUserUploadedFile(User user, UploadedFile file) throws Exception;
 	
-	public void makeFileActive(int fileId, User user, FileValidator fileValidator);	
+	public void makeFileActive(int fileId, User user, FileValidator fileValidator);
+	public List<UploadedFile> getFileSetByUniqueIdentifier(int fileid);	
 }
