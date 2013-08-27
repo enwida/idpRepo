@@ -46,10 +46,17 @@ define [ "drawable/line_chart"
       chart.draw()
       @hideDisabledLines opts.disabledLines
       @setupTooltips()
+      @applyLocalizations opts.navigation.localizations.infoKeys
 
     @setupTooltips = ->
       @$node.find("circle").tipsy(gravity: "sw", html: true, opacity: 0.95)
       @$node.find("rect").tipsy(gravity: "sw", html: true, opacity: 0.95)
+
+    @applyLocalizations = (infokeys) ->
+      @$node.find(".axis text").each ->
+        info = $(@).text()
+        localInfo = infokeys[info]
+        $(@).text localInfo ? info
 
     @after "initialize", ->
       @on "draw", @draw

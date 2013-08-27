@@ -50,6 +50,7 @@ public class ChartNavigationLocalizer {
 			setLocale();
 			setTitles();
 			setInfoKeys();
+			setMonths();
 			setTimestamps();
 			setTsos();
 			setTimeRanges();
@@ -86,6 +87,12 @@ public class ChartNavigationLocalizer {
 	    	    final String tsoName = getChartMessage("tso." + tso, "TSO " + tso);
 	    	    navigationData.getDictionary().getTsos().put(tso, tsoName);
 		    }
+		}
+		
+		private void setMonths() {
+			for (final String month : new String[] { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" }) {
+				navigationData.getDictionary().getInfoKeys().put(month, getChartMessage("infokey.month." + month, month));
+			}
 		}
 		
 		private void setTimeRanges() {
