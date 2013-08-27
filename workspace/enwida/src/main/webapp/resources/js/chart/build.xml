@@ -19,6 +19,7 @@
     <file name="underscore-min.js" />
     <file name="bootstrap.min.js" />
     <file name="bootstrap-datepicker.js" />
+    <file name="datepicker-de.js" />
     <file name="Bacon.js" />
     <file name="require.js" />
   </filelist>
