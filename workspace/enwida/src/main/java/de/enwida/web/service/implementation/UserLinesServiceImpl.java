@@ -28,8 +28,10 @@ import de.enwida.web.service.interfaces.IUserLinesService;
 public class UserLinesServiceImpl implements IUserLinesService {
 
 	private Logger logger = Logger.getLogger(getClass());
+	
 	@Autowired
 	private IUserLinesDao userLinesDao;
+	
 	@Autowired
 	private IFileDao fileDao;
 

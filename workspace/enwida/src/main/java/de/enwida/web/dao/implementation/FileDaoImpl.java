@@ -46,4 +46,15 @@ public class FileDaoImpl extends AbstractBaseDao<UploadedFile> implements
 				+ UploadedFile.FILE_SET_UNIQUE_IDENTIFIER + " = :fileSetUniqueIdentifier", UploadedFile.class);
 		return query.setParameter("fileSetUniqueIdentifier", fileSetUniqueIdentifier).getResultList();
 	}
+
+	@Override
+	public UploadedFile fetchActiveFileByFileSetUniqueIdentifier(
+			String fileSetUniqueIdentifier) {
+		TypedQuery<UploadedFile> query = em.createQuery("from "
+				+ UploadedFile.class.getName() + " where "
+				+ UploadedFile.FILE_SET_UNIQUE_IDENTIFIER + " = :fileSetUniqueIdentifier" + " AND "
+				+ UploadedFile.ACTIVE + " = :active", UploadedFile.class);
+		return query.setParameter("fileSetUniqueIdentifier", fileSetUniqueIdentifier)
+				.setParameter("active", true).getSingleResult();
+	}
 }

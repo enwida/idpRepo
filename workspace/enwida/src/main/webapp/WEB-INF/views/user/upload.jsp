@@ -1,5 +1,4 @@
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-	pageEncoding="ISO-8859-1"%>
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
@@ -13,6 +12,14 @@
 <script src="/enwida/resources/js/chart/date.format.js"></script>
 <!-- <link rel="stylesheet" href="/resources/demos/style.css" /> -->
 <script>
+
+var fileIdToDelete = -1;
+function openDeleteConfirmationDialog(controlId)
+{
+	fileIdToDelete = controlId.split("-")[2];
+	$( "#delete-file-form-div" ).dialog( "open" );
+}
+
 $(function() {
 	var fileSetIdToDelete =  -1;
 	var fileIdToGetRevisions =  -1;
@@ -35,7 +42,7 @@ $(function() {
 			.click(function(event) {
 				fileSetIdToDelete = $(this).attr("id").split("-")[3];
 				$( "#delete-file-set-form-div" ).dialog( "open" );				
-		});
+		});	
 		
 		$( "#show-revisions-file-${file.id}" )
 			.button()
@@ -104,6 +111,44 @@ $(function() {
 	    	         type: 'GET',            
 	    	         data:  { 	
 	    	        	 	fileId : fileSetIdToDelete,
+	    	         },
+	    	         success: function(result) {
+	    	        	 if (result == "SUCCESS") {
+	    	        		 $( "#delete-file-form-success-div" ).dialog( "open" ); 
+	    	        	 } else {
+	    	        		 $( "#delete-file-form-failure-div" ).dialog( "open" );	    	        				 
+	    	        	 }	    	        	 	    	        	 
+	    	         }, 
+	    	         error: function(xhr, ajaxOptions, thrownError) {
+	    	        	 $( "#delete-file-form-failure-div" ).dialog( "open" );
+	    	       	 }
+	    	     });
+	    		
+	    		$( this ).dialog( "close" );
+	    	},
+	    	Cancel: function() {
+	    		$( this ).dialog( "close" );
+	    	}
+		},
+		close: function() {
+			fileSetIdToDelete = -1;
+		}
+	});
+	
+	$( "#delete-file-form-div" ).dialog({
+		autoOpen: false,
+		resizable: false,
+	    height:300,
+	    width: 450,
+	    modal: true,
+	    buttons: {
+	    	"Delete this file?": function() {
+	    		
+	    		$.ajax({
+	    	         url: "<c:url value='/upload/files/delete' />",
+	    	         type: 'GET',            
+	    	         data:  { 	
+	    	        	 	fileId : fileIdToDelete,
 	    	         },
 	    	         success: function(result) {
 	    	        	 if (result == "SUCCESS") {
@@ -193,7 +238,7 @@ $(function() {
    	        			"<div style=\"display: table-cell;padding: 5px;\">" +
   	        				"<a class=\"ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only\" style=\"display: table-cell;padding: 5px;\" href=\"<c:url value='/upload/files/" + item.id + "?a=ma' />\" id=\"active-file-" + item.id + "\">Make Active</a>" +
   	        				"<a class=\"ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only\" style=\"display: table-cell;padding: 5px;\" href=\"<c:url value='/upload/files/" + item.id + "' />\" id=\"download-file-" + item.id + "\">Download</a>" +
-   	        				"<button class=\"ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only\" style=\"display: table-cell;padding: 5px;\" id=\"delete-file-" + item.id + "\">Delete</button>" +
+   	        				"<button class=\"ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only\" style=\"display: table-cell;padding: 5px;\" onclick=\"openDeleteConfirmationDialog(\"delete-file-" + item.id + "\")\" id=\"delete-file-" + item.id + "\">Delete</button>" +
    	        			"</div></div>";   	        				
    	        		}
    	        		
@@ -316,8 +361,14 @@ $(function() {
 	</div>
 	<!-- /FileReplace Div -->
 	
-	<!-- FileDelete Div -->
+	<!-- FileSetDelete Div -->
 	<div id="delete-file-set-form-div" title="Delete File">
+		<p><span class="ui-icon ui-icon-alert" style="float: left; margin: 0 7px 20px 0;"></span>This file set will be permanently deleted and cannot be recovered. Are you sure?</p>		
+	</div>
+	<!-- /FileSetDelete Div -->
+	
+	<!-- FileDelete Div -->
+	<div id="delete-file-form-div" title="Delete File">
 		<p><span class="ui-icon ui-icon-alert" style="float: left; margin: 0 7px 20px 0;"></span>This file will be permanently deleted and cannot be recovered. Are you sure?</p>		
 	</div>
 	<!-- /FileDelete Div -->
@@ -331,12 +382,12 @@ $(function() {
 	
 	<!-- FileDelete Success Div -->
 	<div id="delete-file-form-success-div" title="File Deleted">
-		<p><span class="ui-icon ui-icon-alert" style="float: left; margin: 0 7px 20px 0;"></span>File has been deleted successfully.</p>		
+		<p><span class="ui-icon ui-icon-alert" style="float: left; margin: 0 7px 20px 0;"></span>Deleted successfully.</p>		
 	</div>
 	<!-- /FileDelete Success Div -->
 	<!-- FileDelete Failure Div -->
 	<div id="delete-file-form-failure-div" title="File Not Deleted">
-		<p><span class="ui-icon ui-icon-alert" style="float: left; margin: 0 7px 20px 0;"></span>File was not deleted successfully.</p>		
+		<p><span class="ui-icon ui-icon-alert" style="float: left; margin: 0 7px 20px 0;"></span>Deletion was not successful.</p>		
 	</div>
 	<!-- /FileDelete Failure Div -->
 </body>

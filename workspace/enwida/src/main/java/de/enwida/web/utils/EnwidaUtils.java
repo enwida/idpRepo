@@ -14,6 +14,10 @@ import java.security.SecureRandom;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.DataBinder;
+import org.springframework.validation.Validator;
+
 import de.enwida.transport.Aspect;
 import de.enwida.transport.DataResolution;
 
@@ -247,5 +251,16 @@ public class EnwidaUtils {
 				Matcher.quoteReplacement(File.separator));
 		// System.err.println(result);
 		return result;
+	}
+	
+	public static BindingResult validateFile(File file, Validator validator) {
+		// Map<String, Object> objectMap = new LinkedHashMap<String, Object>();
+		// objectMap.put("file", file);
+		DataBinder binder = new DataBinder(file);
+		binder.setValidator(validator);
+		// validate the target object
+		binder.validate();
+		// get BindingResult that includes any validation errors
+		return binder.getBindingResult();
 	}
 }

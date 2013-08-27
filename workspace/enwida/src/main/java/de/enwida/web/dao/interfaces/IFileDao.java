@@ -11,4 +11,7 @@ public interface IFileDao extends IDao<UploadedFile> {
 
 	List<UploadedFile> fetchByFileSetUniqueIdentifier(
 			String fileSetUniqueIdentifier);
+
+	UploadedFile fetchActiveFileByFileSetUniqueIdentifier(
+			String fileSetUniqueIdentifier);
 }

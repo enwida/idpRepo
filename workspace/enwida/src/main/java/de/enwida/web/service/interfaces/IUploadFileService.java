@@ -4,6 +4,7 @@ import java.util.List;
 
 import de.enwida.web.db.model.UploadedFile;
 import de.enwida.web.model.User;
+import de.enwida.web.validator.FileValidator;
 
 public interface IUploadFileService {
 	
@@ -16,5 +17,5 @@ public interface IUploadFileService {
     User updateUserUploadedFile(User user, UploadedFile file);
 	void removeUserUploadedFile(User user, UploadedFile file) throws Exception;
 	
-	public void makeFileActive(int fileId, User user);	
+	public void makeFileActive(int fileId, User user, FileValidator fileValidator);	
 }

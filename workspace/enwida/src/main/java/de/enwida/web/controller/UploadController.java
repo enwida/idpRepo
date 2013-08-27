@@ -22,9 +22,7 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.DataBinder;
 import org.springframework.validation.ObjectError;
-import org.springframework.validation.Validator;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -112,7 +110,7 @@ public class UploadController {
 					// save file in temporary directory
 					filetobeuploaded = getTemporaryFile(item);
 					// do validation here
-					BindingResult results = validateFile(filetobeuploaded, fileValidator);
+					BindingResult results = EnwidaUtils.validateFile(filetobeuploaded, fileValidator);
 					ObjectError status = results.getGlobalError();
 
 					if (status.getCode().equalsIgnoreCase("file.upload.parse.success")) {
@@ -166,7 +164,7 @@ public class UploadController {
 					// save file in temporary directory
 					filetobeuploaded = getTemporaryFile(item);
 					// do validation here
-					BindingResult results = validateFile(filetobeuploaded, fileValidator);
+					BindingResult results = EnwidaUtils.validateFile(filetobeuploaded, fileValidator);
 					ObjectError status = results.getGlobalError();
 
 					if (status.getCode().equalsIgnoreCase("file.upload.parse.success")) {
@@ -211,17 +209,6 @@ public class UploadController {
             }			
 		}
 		return new ModelAndView("redirect:/upload/files");
-	}
-
-	private BindingResult validateFile(File file, Validator validator) {
-		// Map<String, Object> objectMap = new LinkedHashMap<String, Object>();
-		// objectMap.put("file", file);
-		DataBinder binder = new DataBinder(file);
-		binder.setValidator(validator);
-		// validate the target object
-		binder.validate();
-		// get BindingResult that includes any validation errors
-		return binder.getBindingResult();
 	}
 
 	private File getTemporaryFile(FileItem item) throws Exception {
@@ -398,7 +385,7 @@ public class UploadController {
 			if (action.equals("ma")) {
 				int fileid = Integer.parseInt(fileId);
 				User user = userSession.getUser();
-				uploadFileService.makeFileActive(fileid, user);
+				uploadFileService.makeFileActive(fileid, user, fileValidator);
 			}
 		}
 		return new ModelAndView("redirect:/upload/files");
