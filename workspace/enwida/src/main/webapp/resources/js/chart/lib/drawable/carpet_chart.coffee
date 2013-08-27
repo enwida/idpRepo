@@ -12,12 +12,12 @@ define ["./generic_chart", "util/scale"], (GenericChart, Scale) ->
       @chart.yScale.domain [yDomain[0], yDomain[yDomain.length - 1]]
 
       # Calculate bar width/height
-      @rectWidth = Scale.getBarWidth @chart.data[0], @chart.xScale, "x"
-      @rectHeight = @chart.options.height / (yDomain.length - 1)
+      @rectWidth = Scale.getBarWidth(@chart.data[0], @chart.xScale, "x") + 1
+      @rectHeight = (@chart.options.height / (yDomain.length - 1)) + 1
 
     drawCarpet: (data, id=0) ->
       @color = d3.scale.linear()
-        .range(["#00f", "#f00"])
+        .range(["#BF3030", "#1D7373"])
         .domain(d3.extent data.map (dp) -> dp.v)
       @chart.svg.selectAll(".carpet")
         .data(data)

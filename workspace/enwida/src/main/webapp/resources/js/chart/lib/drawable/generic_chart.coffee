@@ -94,14 +94,49 @@ define ["util/scale"], (Scale) ->
         ["%d", "%d"]
         ["%H:%M", "%H:%M"]
       ]
-      tickFormat = Scale.getTickFormater(formats)()
+      ticks = []
       for tick in $(@options.parent).find("g.tick text")
         $tick = $(tick)
         date = new Date parseInt $(tick).text().replace(/,/g, "")
-        tickText = tickFormat date
-        $tick.text tickText
-        $tick.attr "original-title", d3.time.format("%Y-%m-%d %H:%M") date
-        $tick.tipsy()
+        ticks.push element: $tick, date: date
+
+      setupTick = (tick, dateFormat) ->
+        tick.element.text dateFormat tick.date
+        tick.element.attr "original-title", d3.time.format("%Y-%m-%d %H:%M") tick.date
+        tick.element.tipsy()
+
+      firstDateFormat = d3.time.format formats[0][1]
+      dateFormat = @mostUsedDateFormat ticks, formats
+      setupTick ticks[0], firstDateFormat
+      setupTick ticks[i], dateFormat for i in [1...ticks.length]
+
+    mostUsedDateFormat: (ticks, formats) ->
+      return formats[0] if ticks.length == 0
+
+      counts = {}
+      counts[i] = 0 for i in [0...formats.length]
+      formatCache = formats.map (format) -> d3.time.format format[0]
+
+      lastTick = ticks[0]
+      for i in [1...ticks.length]
+        tick = ticks[i]
+        for j in [0...formats.length]
+          format = formatCache[j]
+          lastValue = format lastTick.date
+          currentValue = format tick.date
+          if lastValue isnt currentValue
+            counts[j] += 1
+            lastTick = tick
+            break
+
+      max = -Infinity
+      result = null
+      for key in _(counts).keys()
+        if counts[key] > max
+          max = counts[key]
+          result = formats[key][1]
+
+      d3.time.format result
 
     avoidOverlaps: ->
       lastOffset = 0
