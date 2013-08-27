@@ -2,6 +2,7 @@ package de.enwida.web.model;
 
 import java.io.Serializable;
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -33,7 +34,6 @@ import de.enwida.web.db.model.NavigationDefaults;
 import de.enwida.web.db.model.NavigationSettings;
 import de.enwida.web.db.model.UploadedFile;
 import de.enwida.web.utils.Constants;
-import de.enwida.web.utils.EnwidaUtils;
 
 @Entity
 @Table(name = Constants.USER_TABLE_NAME, schema = Constants.USER_TABLE_SCHEMA_NAME)
@@ -99,7 +99,7 @@ public class User implements Serializable, UserDetails {
 	private int loginCount;
 
 	@Column(name = LAST_LOGIN)
-	private Date lastLogin;
+	private Timestamp lastLogin;
 
 	@Column(name = TELEPHONE)
 	private String telephone;
@@ -218,11 +218,11 @@ public class User implements Serializable, UserDetails {
     }
 
     @Transient
-	public Date getLastLogin() {
+	public Timestamp getLastLogin() {
         return lastLogin;
     }
 
-	public void setLastLogin(Date lastLogin) {
+	public void setLastLogin(Timestamp lastLogin) {
         this.lastLogin = lastLogin;
     }
 
