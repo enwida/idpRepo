@@ -58,7 +58,7 @@ a:hover {
 	margin-top: 10px;
 }
 .selection select {
-	width: 0;
+	width: auto;
 	min-width: 150px;
 	margin-right: 10px;
 }
