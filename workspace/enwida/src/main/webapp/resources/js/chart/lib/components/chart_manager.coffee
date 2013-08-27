@@ -254,7 +254,7 @@ define [ "components/visual"
 
         # Data sheet toggle
         buttons.append($("<button>")
-          .addClass("btn")
+          .addClass("btn").addClass("datasheet")
           .text("Data sheet")
           .click => @select("dataSheet").toggle())
 
@@ -276,6 +276,9 @@ define [ "components/visual"
           @attr.navigationData = data
           @attr.treeHelper = ProductTree.init data
           @applyVisibility()
+
+          # Apply internationalization
+          @$node.find(".datasheet").text data.localizations.infoKeys.datasheet
 
           @trigger @select("lines"), "disabledLines", lines: _(data.defaults.disabledLines).values()
           @trigger @select("timeSelection"), "refresh", data: data
