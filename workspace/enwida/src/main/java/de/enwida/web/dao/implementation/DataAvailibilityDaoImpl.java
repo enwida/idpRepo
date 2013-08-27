@@ -19,10 +19,11 @@ import de.enwida.web.model.DataAvailibility;
 public class DataAvailibilityDaoImpl extends AbstractBaseDao<DataAvailibility> implements IDataAvailibilityDao, RowMapper<DataAvailibility> {
 
 	public boolean isAvailableByExample(DataAvailibility dataAvailibility) {
-		final String selectQuery = "SELECT COUNT(*) FROM availability WHERE product = ? AND timefrom <= ? AND timeto >= ? AND tablename SIMILAR TO ?;";
+		final String selectQuery = "SELECT COUNT(*) FROM availability WHERE product > ? AND product <= ? AND timefrom <= ? AND timeto >= ? AND tablename SIMILAR TO ?;";
 		
 		final Object[] params = new Object[] {
 			dataAvailibility.getProduct(),
+			Integer.parseInt(Integer.toString(dataAvailibility.getProduct()).replace('0', '9')),
 			new java.sql.Timestamp(dataAvailibility.getTimeFrom().getTime()),
 			new java.sql.Timestamp(dataAvailibility.getTimeTo().getTime()),
 			"%" + dataAvailibility.getTableName() + "%"
@@ -33,10 +34,11 @@ public class DataAvailibilityDaoImpl extends AbstractBaseDao<DataAvailibility> i
 	}
 
 	public List<DataAvailibility> getListByExample(DataAvailibility dataAvailibility) {
-        final String selectQuery = "SELECT * FROM availability WHERE product = ? AND tso = ? AND tablename SIMILAR TO ?;";
+        final String selectQuery = "SELECT * FROM availability WHERE product > ? AND product <= ? AND tso = ? AND tablename SIMILAR TO ?;";
         
         final Object[] params = new Object[] {
         		dataAvailibility.getProduct(),
+        		Integer.parseInt(Integer.toString(dataAvailibility.getProduct()).replace('0', '9')),
         		dataAvailibility.getTso(),
         		"%" + dataAvailibility.getTableName() + "%"
         };

@@ -163,6 +163,7 @@ define [ "components/visual"
         infobox: ".infobox"
         productSelection: ".productSelection"
         timeSelection: ".timeSelection"
+        timeZoneSelection: ".timeZoneSelection"
         download: ".download"
         downloadLink: ".downloadLink"
         disabledLines: []
@@ -269,4 +270,5 @@ define [ "components/visual"
           @trigger @select("lines"), "disabledLines", lines: _(data.defaults.disabledLines).values()
           @trigger @select("timeSelection"), "refresh", data: data
           @trigger @select("productSelection"), "refresh", data: data
+          @trigger @select("timeZoneSelection"), "refresh", data: data
 

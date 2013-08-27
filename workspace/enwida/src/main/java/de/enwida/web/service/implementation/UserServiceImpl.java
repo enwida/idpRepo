@@ -6,6 +6,7 @@ import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.sql.Date;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -570,8 +571,16 @@ public class UserServiceImpl implements IUserService {
         User user=this.fetchUser(userName);
         //If user is not found return anonymous user;
         if (user==null){
-            user=new User();
-            user.setUserName("anonymous");
+        	user = fetchUser("anonymous");
+        	
+        	if (user == null) {
+				user = new User("anonymous" + "anon@enwida.de", "anonymous", "secret", "Anonymous", "User", true);
+				user.setCompanyName("enwida.de");
+				saveUser(user,false);
+				
+				final Group anonymousGroup = fetchGroup("anonymous");
+				assignGroupToUser(user, anonymousGroup);
+        	}
         }
         return user;
     }

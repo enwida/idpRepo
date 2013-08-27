@@ -8,10 +8,10 @@ define ->
           .addClass("timezoneSelect")
           .append($("<option>")
             .attr("value", "local")
-            .text("Local timestamps"))
+            .text(@attr.navigationData.localizations.infoKeys.localTimestamps))
           .append($("<option>")
             .attr("value", "utc")
-            .text("UTC timestamps")))
+            .text(@attr.navigationData.localizations.infoKeys.utcTimestamps)))
 
     @setupEvents = ->
       @select("timezoneSelect").change =>
@@ -21,8 +21,11 @@ define ->
       timezoneSelect: ".timezoneSelect"
 
     @after "initialize", ->
-      @createElements()
-      @setupEvents()
+      @on "refresh", (_, opts) =>
+        console.log opts.data
+        @attr.navigationData = opts.data
+        @createElements()
+        @setupEvents()
 
-      # Trigger first selection
-      @select("timezoneSelect").change()
+        # Trigger first selection
+        @select("timezoneSelect").change()

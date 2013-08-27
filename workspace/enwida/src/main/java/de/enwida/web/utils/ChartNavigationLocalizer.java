@@ -23,7 +23,8 @@ public class ChartNavigationLocalizer {
 			"product",
 			"timerange",
 			"resolution",
-			"tso"
+			"tso",
+			"datasheet"
 		});
 	}
 	
@@ -48,6 +49,7 @@ public class ChartNavigationLocalizer {
 		public ChartNavigationData applyLocalizations() {
 			setTitles();
 			setInfoKeys();
+			setTimestamps();
 			setTsos();
 			setTimeRanges();
 			setResolutions();
@@ -114,6 +116,13 @@ public class ChartNavigationLocalizer {
 			}
 		}
 		
+		private void setTimestamps() {
+			final String utcTimestamps = getDownloadMessage("timestamp.utc", "UTC timestamps");
+			final String localTimestamps = getDownloadMessage("timestamp.local", "Local timestamps");
+			navigationData.getDictionary().getInfoKeys().put("utcTimestamps", utcTimestamps);
+			navigationData.getDictionary().getInfoKeys().put("localTimestamps", localTimestamps);
+		}
+		
 	    private String getChartSpecificMessage(String property, String defaultMessage) {
 		    return messageSource.getMessage("de.enwida.chart." + chartId + "." + property, null, defaultMessage, locale);
 	    }
@@ -124,6 +133,10 @@ public class ChartNavigationLocalizer {
 	    
 	    private String getChartMessage(String property, String defaultMessage) {
 		    return messageSource.getMessage("de.enwida.chart." + property, null, defaultMessage, locale);
+	    }
+	    
+	    private String getDownloadMessage(String property, String defaultMessage) {
+		    return messageSource.getMessage("de.enwida.download." + property, null, defaultMessage, locale);
 	    }
 	    
 	}
