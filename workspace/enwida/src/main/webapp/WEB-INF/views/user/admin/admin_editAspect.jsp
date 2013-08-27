@@ -13,9 +13,9 @@
 						</c:forEach>
 					</select>
 			</td>
-			<td><message:message code="de.enwida.userManagement.start" />:<input type='text' name='start' id='start'  value="10" /></td>
 			<td><message:message code="de.enwida.userManagement.max" />:<input type='text' name='max' id='max'   value="10" /></td>
-			<td><input name="submit" type="submit" value='ok' class="btn btn-primary" /></td>
+			<td><input name="submit" type="submit" value='ok' class="btn btn-primary" />
+			<td><input name="all" type="submit" value='<message:message code="de.enwida.userManagement.allAspects" />' class="btn btn-primary" /></td>
 		</tr>
 	</table>			
 	</form>

@@ -61,7 +61,11 @@ public class AdminController {
             start=max=10;
         }
         try {
+            if (request.getParameterValues("all")==null){
             aspectRights = aspectService.getAllAspects(roleID,start,max);
+            }else{
+                aspectRights = aspectService.getAllAspects(roleID);
+            }
             roles = userService.fetchAllRoles();
             //Get all roles
             model.addAttribute("roles", roles);
