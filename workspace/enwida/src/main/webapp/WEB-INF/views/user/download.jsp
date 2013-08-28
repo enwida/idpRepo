@@ -3,11 +3,13 @@
 <html>
 <head>
 	<title>Download page</title>
+	
+    <script src="/enwida/resources/js/admin/assets/require.js"></script>
+    <script src="/enwida/resources/js/admin/assets/download.js"></script>
 	<link rel="stylesheet" href="/enwida/resources/css/chart/assets.css" >
 	<link rel="stylesheet" href="/enwida/resources/css/chart/chart.css" >
     <script src="/enwida/resources/js/chart/assets.js"></script>
     <script src="/enwida/resources/js/chart/charts.js"></script>
-    <script src="/enwida/resources/js/admin/assets/download.js"></script>
 </head>
 <body>
 

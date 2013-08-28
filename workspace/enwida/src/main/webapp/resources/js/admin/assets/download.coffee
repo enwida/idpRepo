@@ -1,4 +1,4 @@
 
-require ["/enwida/resources/js/admin/assets/enwida.js"], (enwida) ->
+require ["/enwida/resources/js/admin/assets/enwida.tools.js"], (enwida) ->
 
- $(document).ready ->$(".chart").attr "data-chart-id",enwida.QueryString.chartID 
+ $(document).ready ->$(".chart").attr "data-chart-id",QueryString.chartID 
