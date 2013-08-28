@@ -181,11 +181,11 @@ define ["util/scale"], (Scale) ->
           .css("color", color))
         .append($("<table cellpadding='2'>")
           .append($("<tr>")
-            .append($("<td align='left' style='padding: 5px; border: 1px solid #d0d0d0'>").text xLabel)
-            .append($("<td align='left' style='padding: 5px; border: 1px solid #d0d0d0'>").append($("<b>").text x)))
+            .append($("<td align='left' style='padding: 5px; border-bottom: 1px solid #d8d8d8'>").text xLabel)
+            .append($("<td align='left' style='padding: 5px; border-bottom: 1px solid #d8d8d8'>").append($("<b>").text x)))
           .append($("<tr>")
-            .append($("<td align='left' style='padding: 5px; border: 1px solid #d0d0d0'>").text yLabel)
-            .append($("<td align='left' style='padding: 5px; border: 1px solid #d0d0d0'>").append($("<b>").text y)))
+            .append($("<td align='left' style='padding: 5px'>").text yLabel)
+            .append($("<td align='left' style='padding: 5px'>").append($("<b>").text y)))
       ).html()
 
   init: (options) ->
