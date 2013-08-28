@@ -2,6 +2,8 @@ package de.enwida.web.controller;
 
 import java.io.IOException;
 import java.security.Principal;
+import java.util.Calendar;
+import java.util.List;
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
@@ -11,6 +13,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,8 +23,12 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import de.enwida.transport.DataResolution;
+import de.enwida.transport.IDataLine;
+import de.enwida.web.model.ChartNavigationData;
 import de.enwida.web.model.User;
 import de.enwida.web.service.implementation.MailServiceImpl;
 import de.enwida.web.service.interfaces.IUserService;
@@ -292,4 +299,70 @@ public class UserController {
 		}
 		return "user/forgotPassword";
 	}	
+
+    @RequestMapping(value = "/navigation", method = RequestMethod.GET)
+    @ResponseBody
+    public ChartNavigationData getNavigationData(@RequestParam int chartId,
+        HttpServletRequest request, Principal principal, Locale locale) throws Exception {
+
+        return chartDataController.getNavigationData(chartId, request, principal, locale);
+    }
+    
+
+    @RequestMapping(value = "/lines", method = RequestMethod.GET)
+    @ResponseBody
+    public List<IDataLine> getLines(
+        @RequestParam int chartId,
+        @RequestParam int product,
+        @RequestParam int tso,
+        @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Calendar startTime,
+        @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Calendar endTime,
+        @RequestParam DataResolution resolution,
+        HttpServletRequest request,
+        Locale locale) throws Exception {
+        
+       return chartDataController.getLines(chartId, product, tso, startTime, endTime, resolution, request, locale);
+    }
+ 
+    @RequestMapping(value = "/line", method = RequestMethod.GET)
+    @ResponseBody
+    public IDataLine getLine(
+        @RequestParam String strAspect,
+        @RequestParam int product,
+        @RequestParam int tso,
+        @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Calendar startTime,
+        @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Calendar endTime,
+        @RequestParam DataResolution resolution,
+        Locale locale) throws Exception {
+        
+        return chartDataController.getLine(strAspect, product, tso, startTime, endTime, resolution, locale);
+    }
+
+
+    @RequestMapping(value = "/disabledLines", method = RequestMethod.POST)
+    @ResponseBody
+    public void setDisabledLines(
+        @RequestParam int chartId,
+        @RequestParam String lines,
+        HttpServletRequest request,
+        HttpServletResponse response,
+        Principal principal) {
+        
+        chartDataController.setDisabledLines(chartId, lines, request, response, principal);
+    }
+    
+    @Autowired
+    private ChartDataController chartDataController;
+    
+    @RequestMapping(value = "/svg", method = RequestMethod.POST)
+    @ResponseBody
+    public String downloadSvg(@RequestParam String svgData, HttpServletResponse response) {
+        return chartDataController.downloadSvg(svgData, response);
+    }
+    
+    @RequestMapping(value = "/png", method = RequestMethod.POST)
+    public void rasterize(@RequestParam String svgData, HttpServletResponse response) {
+
+            chartDataController.rasterize(svgData, response);
+    }
 }
