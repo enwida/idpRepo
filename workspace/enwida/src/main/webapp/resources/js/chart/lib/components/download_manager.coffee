@@ -1,5 +1,5 @@
 define [ "components/visual"
-         "components/productSelection"
+         "components/product_selection"
          "components/extended_time_selection"
          "components/lines"
          "components/infobox"
