@@ -56,7 +56,8 @@ define ["./generic_chart"], (GenericChart) ->
           .attr("y", (d) => @chart.yScale(d.max))
           .attr("width", @barWidth)
           .attr("height", (d) => Math.max 0, @chart.yScale(d.min) - @chart.yScale(d.max))
-          .attr("original-title", (d) => @chart.getTooltip d, id, (d) -> "#{d.min} - #{d.max}")
+          .attr("original-title", (d) => @chart.getTooltip d, id, (d) =>
+            "#{@chart.formatNumber d.min} - #{@chart.formatNumber d.max}")
 
     getAllYs: ->
       allValues = []

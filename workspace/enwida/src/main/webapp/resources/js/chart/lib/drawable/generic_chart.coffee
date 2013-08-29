@@ -1,4 +1,4 @@
-define ["util/scale"], (Scale) ->
+define ["util/scale", "util/number_utils"], (Scale, NumberUtils) ->
 
   class Chart
 
@@ -15,6 +15,8 @@ define ["util/scale"], (Scale) ->
         height: 500
         parent: "body"
         disabledLines: []
+        decimals: 2
+        locale: "de"
 
       @options = $.extend default_options, options
       @lines = options.lines
@@ -29,9 +31,12 @@ define ["util/scale"], (Scale) ->
 
     generateXAxis: ->
       @xAxis = d3.svg.axis().scale(@xScale).orient("bottom")
+      unless @options.scale.x.type is "date"
+        @xAxis.tickFormat (n) => @formatNumber n
 
     generateYAxis: ->
       @yAxis = d3.svg.axis().scale(@yScale).orient("left")
+        .tickFormat (n) => @formatNumber n
 
     generateAxes: (xScale, yScale) ->
       @generateXAxis()
@@ -163,11 +168,14 @@ define ["util/scale"], (Scale) ->
           target.attr attribute.name, attribute.value
 
     getTooltip: (dp, id, fy) ->
-      x = dp.x
-      if @options?.scale?.x?.type is "date"
-        x = d3.time.format("%Y-%m-%d %H:%M") new Date x
+      x =
+        if @options?.scale?.x?.type is "date"
+          d3.time.format("%Y-%m-%d %H:%M") new Date dp.x
+        else
+          @formatNumber dp.x
 
-      y = dp.y
+      y = @formatNumber dp.y
+
       if typeof fy is "function"
         y = fy dp
 
@@ -187,6 +195,9 @@ define ["util/scale"], (Scale) ->
             .append($("<td align='left' style='padding: 5px'>").text yLabel)
             .append($("<td align='left' style='padding: 5px'>").append($("<b>").text y)))
       ).html()
+
+    formatNumber: (n) ->
+      NumberUtils.format n, @options.decimals, @options.locale
 
   init: (options) ->
     new Chart options

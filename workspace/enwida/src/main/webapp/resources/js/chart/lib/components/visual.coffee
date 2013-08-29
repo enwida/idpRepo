@@ -22,6 +22,8 @@ define [ "drawable/line_chart"
       carpet : CarpetChart
 
     @applyNavigation = (data) ->
+      @attr.chartOptions.locale = data.localizations.locale
+      @attr.chartOptions.decimals = data.decimals
       @attr.chartOptions.xLabel = data.xAxisLabel
       @attr.chartOptions.yLabel = data.yAxisLabel
       @attr.chartOptions.scale =
