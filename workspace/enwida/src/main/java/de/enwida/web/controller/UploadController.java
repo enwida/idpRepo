@@ -108,7 +108,7 @@ public class UploadController {
 				File filetobeuploaded = null;
             	if (!item.isFormField()) {
 					// save file in temporary directory
-					filetobeuploaded = getTemporaryFile(item);
+					filetobeuploaded = EnwidaUtils.getTemporaryFile(item, fileUploadDirectory);
 					// do validation here
 					BindingResult results = EnwidaUtils.validateFile(filetobeuploaded, fileValidator);
 					ObjectError status = results.getGlobalError();
@@ -162,7 +162,7 @@ public class UploadController {
             	File filetobeuploaded = null;
             	if (!item.isFormField()) {
 					// save file in temporary directory
-					filetobeuploaded = getTemporaryFile(item);
+					filetobeuploaded = EnwidaUtils.getTemporaryFile(item, fileUploadDirectory);
 					// do validation here
 					BindingResult results = EnwidaUtils.validateFile(filetobeuploaded, fileValidator);
 					ObjectError status = results.getGlobalError();
@@ -210,18 +210,7 @@ public class UploadController {
 		}
 		return new ModelAndView("redirect:/upload/files");
 	}
-
-	private File getTemporaryFile(FileItem item) throws Exception {
-		String tempFile = fileUploadDirectory + File.separator + "temp"
-				+ File.separator + EnwidaUtils.extractFileName(item.getName());
-		EnwidaUtils.createDirectory(fileUploadDirectory + File.separator
-				+ "temp");
-		// do validation here
-		File filetobeuploaded = new File(tempFile);
-		item.write(filetobeuploaded);
-		return filetobeuploaded;
-	}
-
+	
 	private UploadedFile saveFile(File file, User user,
 			UploadedFile previousFile)
 			throws Exception {
