@@ -61,7 +61,11 @@ public class AdminController {
             start=max=10;
         }
         try {
+            if (request.getParameterValues("all")==null){
             aspectRights = aspectService.getAllAspects(roleID,start,max);
+            }else{
+                aspectRights = aspectService.getAllAspects(roleID);
+            }
             roles = userService.fetchAllRoles();
             //Get all roles
             model.addAttribute("roles", roles);
@@ -211,6 +215,20 @@ public class AdminController {
     public boolean enableDisableAspect(int rightID,boolean enabled) {
         try {
             userService.enableDisableAspect(rightID,enabled);
+            return true;       
+        } catch (Exception e) {   
+            logger.info(e.getMessage());
+            return false;      
+        }
+    }   
+    
+    
+    
+    @RequestMapping(value = "/enableAutoPass", method = RequestMethod.GET)
+    @ResponseBody
+    public boolean enableAutoPass(Long groupID,boolean enabled) {
+        try {
+            userService.enableDisableAutoPass(groupID,enabled);
             return true;       
         } catch (Exception e) {   
             logger.info(e.getMessage());

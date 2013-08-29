@@ -22,6 +22,8 @@ define [ "drawable/line_chart"
       carpet : CarpetChart
 
     @applyNavigation = (data) ->
+      @attr.chartOptions.locale = data.localizations.locale
+      @attr.chartOptions.decimals = data.decimals
       @attr.chartOptions.xLabel = data.xAxisLabel
       @attr.chartOptions.yLabel = data.yAxisLabel
       @attr.chartOptions.scale =
@@ -46,10 +48,17 @@ define [ "drawable/line_chart"
       chart.draw()
       @hideDisabledLines opts.disabledLines
       @setupTooltips()
+      @applyLocalizations opts.navigation.localizations
 
     @setupTooltips = ->
       @$node.find("circle").tipsy(gravity: "sw", html: true, opacity: 0.95)
       @$node.find("rect").tipsy(gravity: "sw", html: true, opacity: 0.95)
+
+    @applyLocalizations = (localizations) ->
+      @$node.find(".axis text").each ->
+        info = $(@).text()
+        localInfo = localizations.infoKeys[info]
+        $(@).text localInfo ? info
 
     @after "initialize", ->
       @on "draw", @draw

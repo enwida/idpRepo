@@ -119,6 +119,7 @@ define ["../util/time_utils"], (TimeUtils) ->
         viewMode      : "days"
         startDate     : limits.from ? "1900-01-01"
         endDate       : limits.to ? new Date()
+        language      : @attr.navigationData.localizations.locale ? "de"
 
     @defaultAttrs
       timeRange: ".timerange"
@@ -129,5 +130,4 @@ define ["../util/time_utils"], (TimeUtils) ->
 
     @after "initialize", ->
       @on "refresh", (_, opts) => @refresh opts.data
-
 

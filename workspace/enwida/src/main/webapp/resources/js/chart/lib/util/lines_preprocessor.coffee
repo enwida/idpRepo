@@ -26,6 +26,7 @@ define ->
       lines = $.extend true, {}, lines
 
       # Use only first line
+      line = lines[0]
       hourFormat = d3.time.format "%H"
       for dp in line.dataPoints
         date = new Date dp.x

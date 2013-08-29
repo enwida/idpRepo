@@ -19,7 +19,7 @@ import de.enwida.web.model.DataAvailibility;
 public class DataAvailibilityDaoImpl extends AbstractBaseDao<DataAvailibility> implements IDataAvailibilityDao, RowMapper<DataAvailibility> {
 
 	public boolean isAvailableByExample(DataAvailibility dataAvailibility) {
-		final String selectQuery = "SELECT COUNT(*) FROM availability WHERE product > ? AND product <= ? AND timefrom <= ? AND timeto >= ? AND tablename SIMILAR TO ?;";
+		final String selectQuery = "SELECT COUNT(*) FROM availability WHERE product >= ? AND product <= ? AND timefrom <= ? AND timeto >= ? AND tablename SIMILAR TO ?;";
 		
 		final Object[] params = new Object[] {
 			dataAvailibility.getProduct(),
@@ -34,7 +34,7 @@ public class DataAvailibilityDaoImpl extends AbstractBaseDao<DataAvailibility> i
 	}
 
 	public List<DataAvailibility> getListByExample(DataAvailibility dataAvailibility) {
-        final String selectQuery = "SELECT * FROM availability WHERE product > ? AND product <= ? AND tso = ? AND tablename SIMILAR TO ?;";
+        final String selectQuery = "SELECT * FROM availability WHERE product >= ? AND product <= ? AND tso = ? AND tablename SIMILAR TO ?;";
         
         final Object[] params = new Object[] {
         		dataAvailibility.getProduct(),

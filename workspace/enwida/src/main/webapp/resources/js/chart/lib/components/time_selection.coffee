@@ -214,6 +214,7 @@ define ["../util/time_utils", "../util/resolution"], (TimeUtils, Resolution) ->
           minViewMode   : @viewModes[timeRange]
           startDate     : limits.from ? "1900-01-01"
           endDate       : limits.to ? new Date()
+          language      : @attr.navigationData.localizations.locale ? "de"
 
     @getDatepickerElement = (timeRange) ->
       @$node.find ".datepicker-#{timeRange} .from"
@@ -226,5 +227,4 @@ define ["../util/time_utils", "../util/resolution"], (TimeUtils, Resolution) ->
     @after "initialize", ->
       @attr.fromDateBus = new Bacon.Bus()
       @on "refresh", (_, opts) => @refresh opts.data
-
 

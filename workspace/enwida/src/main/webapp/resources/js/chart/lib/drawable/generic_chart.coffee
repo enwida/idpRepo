@@ -1,4 +1,4 @@
-define ["util/scale"], (Scale) ->
+define ["util/scale", "util/number_utils"], (Scale, NumberUtils) ->
 
   class Chart
 
@@ -15,6 +15,8 @@ define ["util/scale"], (Scale) ->
         height: 500
         parent: "body"
         disabledLines: []
+        decimals: 2
+        locale: "de"
 
       @options = $.extend default_options, options
       @lines = options.lines
@@ -29,9 +31,12 @@ define ["util/scale"], (Scale) ->
 
     generateXAxis: ->
       @xAxis = d3.svg.axis().scale(@xScale).orient("bottom")
+      unless @options.scale.x.type is "date"
+        @xAxis.tickFormat (n) => @formatNumber n
 
     generateYAxis: ->
       @yAxis = d3.svg.axis().scale(@yScale).orient("left")
+        .tickFormat (n) => @formatNumber n
 
     generateAxes: (xScale, yScale) ->
       @generateXAxis()
@@ -94,14 +99,49 @@ define ["util/scale"], (Scale) ->
         ["%d", "%d"]
         ["%H:%M", "%H:%M"]
       ]
-      tickFormat = Scale.getTickFormater(formats)()
+      ticks = []
       for tick in $(@options.parent).find("g.tick text")
         $tick = $(tick)
         date = new Date parseInt $(tick).text().replace(/,/g, "")
-        tickText = tickFormat date
-        $tick.text tickText
-        $tick.attr "original-title", d3.time.format("%Y-%m-%d %H:%M") date
-        $tick.tipsy()
+        ticks.push element: $tick, date: date
+
+      setupTick = (tick, dateFormat) ->
+        tick.element.text dateFormat tick.date
+        tick.element.attr "original-title", d3.time.format("%Y-%m-%d %H:%M") tick.date
+        tick.element.tipsy()
+
+      firstDateFormat = d3.time.format formats[0][1]
+      dateFormat = @mostUsedDateFormat ticks, formats
+      setupTick ticks[0], firstDateFormat
+      setupTick ticks[i], dateFormat for i in [1...ticks.length]
+
+    mostUsedDateFormat: (ticks, formats) ->
+      return formats[0] if ticks.length == 0
+
+      counts = {}
+      counts[i] = 0 for i in [0...formats.length]
+      formatCache = formats.map (format) -> d3.time.format format[0]
+
+      lastTick = ticks[0]
+      for i in [1...ticks.length]
+        tick = ticks[i]
+        for j in [0...formats.length]
+          format = formatCache[j]
+          lastValue = format lastTick.date
+          currentValue = format tick.date
+          if lastValue isnt currentValue
+            counts[j] += 1
+            lastTick = tick
+            break
+
+      max = -Infinity
+      result = null
+      for key in _(counts).keys()
+        if counts[key] > max
+          max = counts[key]
+          result = formats[key][1]
+
+      d3.time.format result
 
     avoidOverlaps: ->
       lastOffset = 0
@@ -128,11 +168,14 @@ define ["util/scale"], (Scale) ->
           target.attr attribute.name, attribute.value
 
     getTooltip: (dp, id, fy) ->
-      x = dp.x
-      if @options?.scale?.x?.type is "date"
-        x = d3.time.format("%Y-%m-%d %H:%M") new Date x
+      x =
+        if @options?.scale?.x?.type is "date"
+          d3.time.format("%Y-%m-%d %H:%M") new Date dp.x
+        else
+          @formatNumber dp.x
 
-      y = dp.y
+      y = @formatNumber dp.y
+
       if typeof fy is "function"
         y = fy dp
 
@@ -146,12 +189,15 @@ define ["util/scale"], (Scale) ->
           .css("color", color))
         .append($("<table cellpadding='2'>")
           .append($("<tr>")
-            .append($("<td align='left'>").text xLabel)
-            .append($("<td align='left'>").append($("<b>").text x)))
+            .append($("<td align='left' style='padding: 5px; border-bottom: 1px solid #d8d8d8'>").text xLabel)
+            .append($("<td align='left' style='padding: 5px; border-bottom: 1px solid #d8d8d8'>").append($("<b>").text x)))
           .append($("<tr>")
-            .append($("<td align='left'>").text yLabel)
-            .append($("<td align='left'>").append($("<b>").text y)))
+            .append($("<td align='left' style='padding: 5px'>").text yLabel)
+            .append($("<td align='left' style='padding: 5px'>").append($("<b>").text y)))
       ).html()
+
+    formatNumber: (n) ->
+      NumberUtils.format n, @options.decimals, @options.locale
 
   init: (options) ->
     new Chart options

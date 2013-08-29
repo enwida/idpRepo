@@ -1,6 +1,6 @@
 define [ "components/visual"
-         "components/productSelection"
-         "components/timeSelection"
+         "components/product_selection"
+         "components/time_selection"
          "components/lines"
          "components/infobox"
          "components/chart_download"
