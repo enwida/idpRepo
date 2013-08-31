@@ -25,6 +25,12 @@ import de.enwida.web.service.interfaces.ICSVService;
 import de.enwida.web.service.interfaces.ILineService;
 import de.enwida.web.service.interfaces.INavigationService;
 import de.enwida.web.service.interfaces.IUserService;
+import de.enwida.web.utils.numbers.DefaultNumberFormatter;
+import de.enwida.web.utils.numbers.GermanNumberFormatter;
+import de.enwida.web.utils.numbers.INumberFormatter;
+import de.enwida.web.utils.timestamp.ITimestampFormatter;
+import de.enwida.web.utils.timestamp.LocalTimestampFormatter;
+import de.enwida.web.utils.timestamp.UTCTimestampFormatter;
 
 @Controller
 @RequestMapping("/data")
@@ -51,12 +57,12 @@ public class DownloadController {
 	    @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Calendar endTime,
 	    @RequestParam DataResolution resolution,
 	    @RequestParam String timeZone,
+	    @RequestParam String numberFormat,
 	    @RequestParam String disabledLines,
 	    HttpServletResponse response,
 	    Locale locale) throws Exception {
     	
     	final User user = userService.getCurrentUser();
-    	final boolean utcTimeZone = timeZone.equalsIgnoreCase("UTC");
     	final ChartNavigationData navigationData = navigationService.getNavigationData(chartId, user, locale);
         final List<Aspect> originalAspects = navigationData.getAspects();
         final List<Aspect> aspects = new ArrayList<>(originalAspects);
@@ -80,10 +86,25 @@ public class DownloadController {
 				e.printStackTrace();
 			}
         }
+        
+        ITimestampFormatter timestampFormatter;
+        if (timeZone.equalsIgnoreCase("UTC")) {
+        	timestampFormatter = new UTCTimestampFormatter();
+        } else {
+        	timestampFormatter = new LocalTimestampFormatter();
+        }
+        
+        INumberFormatter numberFormatter;
+        if (numberFormat.equalsIgnoreCase("de")) {
+        	numberFormatter = new GermanNumberFormatter();
+        } else {
+        	numberFormatter = new DefaultNumberFormatter();
+        }
+        
     	response.setHeader("Content-Disposition", "attachment;filename=data.csv");
     	response.setContentType("text/csv");
     	
-    	final String result = csvService.createCSV(navigationData, lines, utcTimeZone, locale);
+    	final String result = csvService.createCSV(navigationData, lines, locale, timestampFormatter, numberFormatter);
 
     	final OutputStream out = response.getOutputStream();
     	out.write(result.getBytes("UTF-8"));
