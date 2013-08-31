@@ -24,6 +24,7 @@ public class ChartNavigationData implements Cloneable {
 	private List<String> timeRanges;
 	private List<Aspect> aspects;
 
+	private List<String> colors;
 	private int decimals = 2;
 	private boolean isDateScale;
 	private boolean hasTimeSelection;
@@ -37,6 +38,7 @@ public class ChartNavigationData implements Cloneable {
 		this.productTrees = new ArrayList<ProductTree>();
 		this.timeRanges = new ArrayList<String>();
 		this.aspects = new ArrayList<Aspect>();
+		this.colors = new ArrayList<>();
 		this.dictionary = new NavigationDictionary();
 	}
 	
@@ -47,6 +49,7 @@ public class ChartNavigationData implements Cloneable {
 	    result.timeRanges = new ArrayList<String>(timeRanges);
 	    result.dictionary = dictionary.clone();
 
+	    result.setColors(new ArrayList<>(colors));
 	    result.setDecimals(decimals);
 	    result.setIsDateScale(isDateScale);
 	    result.setHasLineSelection(hasLineSelection);
@@ -190,6 +193,14 @@ public class ChartNavigationData implements Cloneable {
 
 	public void setDecimals(int decimals) {
 		this.decimals = decimals;
+	}
+	
+	public List<String> getColors() {
+		return colors;
+	}
+
+	public void setColors(List<String> colors) {
+		this.colors = colors;
 	}
 	
 }
