@@ -13,5 +13,7 @@ public interface IDataLine {
 	public void setTitle(String title);
 	public String getUnit();
 	public void setUnit(String unit);
+	public int getTso();
+	public void setTso(int tso);
 
 }
