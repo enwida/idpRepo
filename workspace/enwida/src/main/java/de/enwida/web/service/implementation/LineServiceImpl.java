@@ -46,8 +46,8 @@ public class LineServiceImpl implements ILineService {
     }
     
     private void applyLocalizations(IDataLine line, Locale locale) {
-    	final String title = messageSource.getMessage("de.enwida.chart.aspect." + line.getAspect().name().toLowerCase() + ".title", null, "", locale);
-    	final String unit = messageSource.getMessage("de.enwida.chart.aspect." + line.getAspect().name().toLowerCase() + ".unit", null, "-", locale);
+    	final String title = messageSource.getMessage("de.enwida.chart.aspect." + line.getLineRequest().getAspect().name().toLowerCase() + ".title", null, "", locale);
+    	final String unit = messageSource.getMessage("de.enwida.chart.aspect." + line.getLineRequest().getAspect().name().toLowerCase() + ".unit", null, "-", locale);
     	line.setTitle(title);
     	line.setUnit(unit);
     }

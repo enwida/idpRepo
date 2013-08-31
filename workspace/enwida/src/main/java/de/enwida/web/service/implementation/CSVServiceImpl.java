@@ -79,7 +79,9 @@ public class CSVServiceImpl implements ICSVService  {
 	    	
 	    	try {
 	    		final IDataLine line = lines.get(0);
-		    	appendCSVInfo(line.getTso(), line.getProduct(), new CalendarRange(line.getStartTime(), line.getEndTime()), line.getResolution());
+		    	appendCSVInfo(line.getLineRequest().getTso(), line.getLineRequest().getProduct(),
+	    			new CalendarRange(line.getLineRequest().getStartTime(), line.getLineRequest().getEndTime()),
+	    			line.getLineRequest().getResolution());
 	    	} catch (Exception ignored) {}
 	    	
 	    	appendCSVHeader();
