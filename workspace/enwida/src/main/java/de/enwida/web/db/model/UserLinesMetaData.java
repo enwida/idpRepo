@@ -4,18 +4,13 @@
 package de.enwida.web.db.model;
 
 import java.io.Serializable;
-import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -52,9 +47,10 @@ public class UserLinesMetaData implements Serializable{
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int metaDataId;
 
-	@OneToMany(cascade = CascadeType.ALL, mappedBy = "lineMetaData", fetch = FetchType.LAZY)
-	@ElementCollection(targetClass = UserLines.class)
-	private Set<UserLines> userLines;
+	// @OneToMany(cascade = CascadeType.ALL, mappedBy = "lineMetaData", fetch =
+	// FetchType.LAZY)
+	// @ElementCollection(targetClass = UserLines.class)
+	// private Set<UserLines> userLines;
 
 	@OneToOne
 	@JoinColumn(name = FILE_ID, referencedColumnName = UploadedFile.ID)
@@ -98,13 +94,13 @@ public class UserLinesMetaData implements Serializable{
 		this.metaDataId = metaDataId;
 	}
 
-	public Set<UserLines> getUserLines() {
-		return userLines;
-	}
-
-	public void setUserLines(Set<UserLines> userLines) {
-		this.userLines = userLines;
-	}
+	// public Set<UserLines> getUserLines() {
+	// return userLines;
+	// }
+	//
+	// public void setUserLines(Set<UserLines> userLines) {
+	// this.userLines = userLines;
+	// }
 
 	public UploadedFile getFile() {
 		return file;
@@ -199,7 +195,7 @@ public class UserLinesMetaData implements Serializable{
 		return "UserLinesMetaData [metaDataId="
 				+ metaDataId
 				+ ", "
-				+ (userLines != null ? "userLines=" + userLines + ", " : "")
+				// + (userLines != null ? "userLines=" + userLines + ", " : "")
 				+ (file != null ? "file=" + file + ", " : "")
 				+ (type != null ? "type=" + type + ", " : "")
 				+ (name != null ? "name=" + name + ", " : "")

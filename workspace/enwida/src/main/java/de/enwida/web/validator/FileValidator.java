@@ -23,7 +23,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
-import de.enwida.web.db.model.UserLines;
+import de.enwida.rl.dtos.DOUserLines;
 import de.enwida.web.db.model.UserLinesMetaData;
 import de.enwida.web.utils.Constants;
 
@@ -88,7 +88,7 @@ public class FileValidator implements Validator {
 
 	private Map<String, Object> readAndValidateFile(File file) {
 		Map<String, Object> dataMap = new HashMap<String, Object>();
-		List<UserLines> dataLines = new ArrayList<UserLines>();
+		List<DOUserLines> dataLines = new ArrayList<DOUserLines>();
 		UserLinesMetaData metadata =  new UserLinesMetaData();
 		boolean processheaders = true;
 		boolean processbody = false;
@@ -100,12 +100,20 @@ public class FileValidator implements Validator {
 			while ((line = br.readLine()) != null) {
 				// logger.debug("Reading line : " + linenumber);
 				// process the line.
-				if (!processbody && !line.contains("#")) {
+				if (!processbody
+						&& !line.contains(Constants.COMMENT_START_SYMBOL)) {
 					// either data or header
-					metadata.setHeader1(line);
-					metadata.setHeader2(br.readLine());
-					processbody = true;
-					processheaders = false;
+					String[] headers = line.split(Constants.DATA_SEPARATOR);
+					if (headers != null && headers.length == 2) {
+						metadata.setHeader1(headers[0].trim());
+						metadata.setHeader2(headers[1].trim());
+						processbody = true;
+						processheaders = false;
+					} else {
+						logger.debug("Invalid Record Found at : " + linenumber);
+						dataMap.put(ERROR_LINE_NUMBER, linenumber);
+						break;
+					}
 					continue;
 				}
 				// if (line.contains("}")) {
@@ -122,16 +130,17 @@ public class FileValidator implements Validator {
 
 				} else if (processbody) {
 					logger.debug("processing body : " + linenumber);
-					UserLines userline = processBody(line, linenumber, dataMap);
+					DOUserLines userline = processBody(line, linenumber,
+							dataMap);
 					if (userline != null) {
 						// this case for blank data lines but format is correct
 						// continue processing data
-						if (userline.getTimestamp() == null
+						if (userline.getTimestamp() == 0
 								&& userline.getValue() == -1) {
 							logger.debug("No record found at line number : "
 									+ linenumber);
 						} else {
-							userline.setLineMetaData(metadata);
+							userline.setMetaDataId(metadata.getMetaDataId());
 							// check for unique lines
 							if (!dataLines.contains(userline)) {
 								dataLines.add(userline);
@@ -173,28 +182,33 @@ public class FileValidator implements Validator {
 			for (PropertyDescriptor pd : getBeanProps()) {
 				String name = pd.getName();
 				if (newline.contains(name)) {
-					int startpos = line.indexOf(":") + 1;
-					int endpos = line.indexOf("#", startpos);
-					String value = line.substring(startpos, endpos).trim();
-					Method setter = pd.getWriteMethod();
-					setter.invoke(metadata, value);
+					// int startpos = line.indexOf(":") + 1;
+					// int endpos = line.indexOf("#", startpos);
+					String[] result = line
+							.split(Constants.COMMENT_VALUE_SEPARATOR);
+					if (result != null && result.length >= 2) {
+						String value = result[1].trim();
+						Method setter = pd.getWriteMethod();
+						setter.invoke(metadata, value);
+					}
 				}
 			}
 		} catch (Exception e) {
-			dataMap.put(ERROR_COLUMN_NUMBER, (line.indexOf(":") + 1));
+			dataMap.put(ERROR_COLUMN_NUMBER,
+					(line.indexOf(Constants.COMMENT_VALUE_SEPARATOR) + 1));
 			dataMap.put(ERROR_LINE_NUMBER, linenumber);
 			return null;
 		}
 		return metadata;
 	}
 
-	private UserLines processBody(String line, int linenumber,
+	private DOUserLines processBody(String line, int linenumber,
 			Map<String, Object> dataMap) {
-		UserLines userline = null;
+		DOUserLines userline = null;
 		Calendar timestamp = null;
 		double value = -1;
 		if (line != null && !line.trim().isEmpty()) {
-			String[] content = line.split(";");
+			String[] content = line.split(Constants.DATA_SEPARATOR);
 			if (content != null && content.length == 2) {
 				try {
 					timestamp = Calendar.getInstance();
@@ -218,14 +232,17 @@ public class FileValidator implements Validator {
 					return null;
 				}
 
-				userline = new UserLines(timestamp, value, null);
+				userline = new DOUserLines(timestamp.getTimeInMillis(), value,
+						0);
 			} else if (content != null && content.length == 1) {
 				dataMap.put(ERROR_LINE_NUMBER, linenumber);
-				dataMap.put(ERROR_COLUMN_NUMBER, (line.indexOf(";") + 1));
+				dataMap.put(ERROR_COLUMN_NUMBER,
+						(line.indexOf(Constants.DATA_SEPARATOR) + 1));
 
-			} else if (line.trim().equalsIgnoreCase(";;")) {
+			} else if (line.trim().equalsIgnoreCase(
+					Constants.DATA_SEPARATOR + Constants.DATA_SEPARATOR)) {
 				// handling black record
-				userline = new UserLines(null, -1, null);
+				userline = new DOUserLines(0, -1, 0);
 			} else {
 				// incorrect data encountered at line number
 				dataMap.put(ERROR_LINE_NUMBER, linenumber);
@@ -233,7 +250,7 @@ public class FileValidator implements Validator {
 			}
 		} else {
 			// Hnadling blank lines
-			userline = new UserLines(null, -1, null);
+			userline = new DOUserLines(0, -1, 0);
 		}
 		return userline;
 	}

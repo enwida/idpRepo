@@ -3,6 +3,7 @@
  */
 package de.enwida.web.service.implementation;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -11,10 +12,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
+import de.enwida.rl.dtos.DOUserLines;
 import de.enwida.web.dao.interfaces.IFileDao;
 import de.enwida.web.dao.interfaces.IUserLinesDao;
 import de.enwida.web.db.model.UploadedFile;
-import de.enwida.web.db.model.UserLines;
 import de.enwida.web.db.model.UserLinesMetaData;
 import de.enwida.web.service.interfaces.IUserLinesService;
 
@@ -36,45 +37,33 @@ public class UserLinesServiceImpl implements IUserLinesService {
 	private IFileDao fileDao;
 
 	@Override
-	public boolean createUserLine(UserLines line) {
-		// if (userLinesDao.getUserLine(line) == null) {
-		// userLinesDao.create(line);
-		// return true;
-		// } else {
-		// // User line already present donot write
-		// return false;
-		// }
-		userLinesDao.create(line);
-		return true;
+	public boolean createUserLine(DOUserLines line) {
+		List<DOUserLines> userlines = new ArrayList<DOUserLines>();
+		userlines.add(line);
+		return createUserLines(userlines);
 	}
 
 	@Override
 	public void createUserLineMetaData(UserLinesMetaData metaData) {
-		userLinesDao.createUserLineMetaData(metaData);
+		userLinesDao.create(metaData, true);
 	}
 
 	@Override
 	public void updateUserLineMetaData(UserLinesMetaData metaData) {
-		userLinesDao.updateUserLineMetaData(metaData);
+		userLinesDao.update(metaData, true);
 	}
 
 	@Override
-	public boolean createUserLines(List<UserLines> lines,
+	public boolean createUserLines(List<DOUserLines> lines,
 			UserLinesMetaData metaData) {
-		boolean singleRecordCreate = false;
-		int numberOfRecordsWritten = 0;
-		for (UserLines line : lines) {
-			line.setLineMetaData(metaData);
-			boolean createstatus = createUserLine(line);
-			if (createstatus) {
-				singleRecordCreate = true;
-				// get updated metadata with id
-				metaData = line.getLineMetaData();
-				numberOfRecordsWritten += 1;
-			}
+
+		if (metaData.getMetaDataId() == 0) {
+			createUserLineMetaData(metaData);
 		}
-		logger.debug("Number of records written : " + numberOfRecordsWritten);
-		return singleRecordCreate;
+		for (DOUserLines line : lines) {
+			line.setMetaDataId(metaData.getMetaDataId());
+		}
+		return userLinesDao.createUserLines(lines);
 	}
 
 	@Override
@@ -86,26 +75,32 @@ public class UserLinesServiceImpl implements IUserLinesService {
 	}
 
 	@Override
-	public boolean eraseUserLines(long fileId) {
+	public boolean eraseUserLines(int metaDataId) {
+		return userLinesDao.deleteUserLines(metaDataId);
+	}
+
+	@Override
+	public boolean eraseUserLineMetaData(long fileId) {
 		UploadedFile oldFile = fileDao.getFile(fileId);
-		// delete only user lines corresponding to metadata
 		if (oldFile.getMetaData() != null) {
-			UserLinesMetaData metadata = oldFile.getMetaData();
-			for (UserLines line : metadata.getUserLines()) {
-				userLinesDao.delete(line, true);
+			// First delete all user lines
+			boolean linesremoved = eraseUserLines(oldFile.getMetaData()
+					.getMetaDataId());
+			if (linesremoved) {
+				// delete user lines
+				userLinesDao.delete(oldFile.getMetaData());
 			}
 		}
 		return true;
 	}
 
 	@Override
-	public boolean eraseUserLineMetaData(long fileId) {
-		UploadedFile oldFile = fileDao.getFile(fileId);
-		// delete metadata which is suppose to delete
-		// the corresponding user lines also
-		if (oldFile.getMetaData() != null) {
-			userLinesDao.deleteUserLineMetaData(oldFile.getMetaData());
-		}
-		return true;
+	public boolean createUserLines(List<DOUserLines> userlines) {
+		return userLinesDao.createUserLines(userlines);
+	}
+
+	@Override
+	public List<DOUserLines> getUserLines(int metaDataId) {
+		return userLinesDao.getUserLines(metaDataId);
 	}
 }
