@@ -16,16 +16,30 @@ define ["./generic_chart", "util/scale"], (GenericChart, Scale) ->
       @rectHeight = (@chart.options.height / (yDomain.length - 1)) + 1
 
     drawCarpet: (data, id=0) ->
-      @color = d3.scale.linear()
-        .range(["#BF3030", "#1D7373"])
-        .domain(d3.extent data.map (dp) -> dp.v)
+      extent = d3.extent data.map (dp) -> dp.v
+      limit  = Math.max Math.abs(extent[0]), Math.abs(extent[1])
+      color1 = @chart.options.colors?[0] ? "#0000FF"
+      color2 = @chart.options.colors?[1] ? "#FFFFFF"
+      color3 = @chart.options.colors?[2] ? "#FF0000"
+
+      @colorPos = d3.scale.linear()
+        .range([color2, color1])
+        .domain([0, limit])
+
+      @colorNeg = d3.scale.linear()
+        .range([color3, color2])
+        .domain([-1 * limit, 0])
+
       @chart.svg.selectAll(".carpet")
         .data(data)
         .enter().append("rect")
         .attr("class", "carpet")
         .attr("x", (d) => @chart.xScale(d.x))
         .attr("y", (d) => @chart.yScale(d.y) - @rectHeight)
-        .attr("fill", (d) => @color(d.v))
+        .attr("fill", (d) =>
+          color = if d.v < 0 then @colorNeg else @colorPos
+          color d.v
+        )
         .attr("width", @rectWidth)
         .attr("height", @rectHeight)
         .attr("original-title", (d) =>
@@ -50,22 +64,32 @@ define ["./generic_chart", "util/scale"], (GenericChart, Scale) ->
         .append("g")
           .attr("transform", "translate(0,#{margin.top + 30})")
 
-      base = @color.domain()[0]
-      step = (@color.domain()[1] - base) / 10
+      baseNeg = @colorNeg.domain()[0]
+      stepNeg = (@colorNeg.domain()[1] - baseNeg) / 5
+      basePos = @colorPos.domain()[0]
+      stepPos = (@colorPos.domain()[1] - basePos) / 5
       barHeight = @chart.options.height / 10
 
-      for i in [0...10]
+      for i in [0...5]
         svg.append("rect")
           .attr("x", 0)
           .attr("y", i * barHeight)
           .attr("width", 20)
           .attr("height", barHeight)
-          .attr("fill", @color base + (10-i+1) * step)
+          .attr("fill", @colorPos basePos + (5-i) * stepPos)
 
-      for i in [0..10]
+      for i in [0...5]
+        svg.append("rect")
+          .attr("x", 0)
+          .attr("y", (i + 5) * barHeight)
+          .attr("width", 20)
+          .attr("height", barHeight)
+          .attr("fill", @colorNeg baseNeg + (4-i) * stepNeg)
+
+      for i in [0..5]
         y = i * barHeight
         y += 1 if i is 0
-        y -= 1 if i is 10
+        y -= 1 if i is 5
 
         svg.append("line")
           .attr("x1", 20)
@@ -77,7 +101,24 @@ define ["./generic_chart", "util/scale"], (GenericChart, Scale) ->
         svg.append("text")
           .attr("x", 30)
           .attr("y", i * barHeight + 3)
-          .text(Math.round((base + (10-i) * step) * 1000) / 1000)
+          .text(Math.round((basePos + (5-i) * stepPos) * 1000) / 1000)
+
+      for i in [1..5]
+        y = (i + 5) * barHeight
+        y += 1 if i is 0
+        y -= 1 if i is 5
+
+        svg.append("line")
+          .attr("x1", 20)
+          .attr("x2", 26)
+          .attr("y1", y)
+          .attr("y2", y)
+          .attr("fill", "#000000")
+          .attr("stroke", "#000000")
+        svg.append("text")
+          .attr("x", 30)
+          .attr("y", (i + 5) * barHeight + 3)
+          .text(Math.round((baseNeg + (5-i) * stepNeg) * 1000) / 1000)
 
       svg.append("text")
         .attr("x", 0)

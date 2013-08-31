@@ -5,6 +5,7 @@ define [ "components/visual"
          "components/infobox"
          "components/chart_download"
          "components/time_zone_selection"
+         "components/number_format_selection"
          "util/loading"
          "util/lines_preprocessor"
          "util/resolution"
@@ -19,6 +20,7 @@ define [ "components/visual"
    Infobox
    ChartDownload
    TimeZoneSelection
+   NumberFormatSelection
    Loading
    LinesPreprocessor
    Resolution
@@ -149,6 +151,7 @@ define [ "components/visual"
           endTime: @dateFormat selections.timeRange.to
           resolution: selections.resolution
           timeZone: selections.timeZone
+          numberFormat: selections.numberFormat
           disabledLines: selections.disabledLines.join ","
 
         urlQuery = (_(_(query).keys()).map (key) ->
@@ -164,6 +167,7 @@ define [ "components/visual"
         productSelection: ".productSelection"
         timeSelection: ".timeSelection"
         timeZoneSelection: ".timeZoneSelection"
+        numberFormatSelection: ".numberFormatSelection"
         download: ".download"
         downloadLink: ".downloadLink"
         disabledLines: []
@@ -185,7 +189,8 @@ define [ "components/visual"
         productStream = @$node.asEventStream("productSelectionChanged", (_, v) -> v)
         timeStream = @$node.asEventStream("timeSelectionChanged", (_, v) -> v)
         timeZoneStream = @$node.asEventStream("timeZoneSelectionChanged", (_, v) -> v)
-        selectionStream = Bacon.combineWith $.extend, productStream, timeStream, timeZoneStream
+        numberFormatStream = @$node.asEventStream("numberFormatSelectionChanged", (_, v) -> v)
+        selectionStream = Bacon.combineWith $.extend, productStream, timeStream, timeZoneStream, numberFormatStream
 
         # Request lines and update button test
         selectionStream.onValue (selections) =>
@@ -242,6 +247,11 @@ define [ "components/visual"
         selection.append timeZoneSelection
         TimeZoneSelection.attachTo timeZoneSelection, @attr
 
+        # Add number format selection
+        numberFormatSelection = $("<div>").addClass "numberFormatSelection"
+        selection.append numberFormatSelection
+        NumberFormatSelection.attachTo numberFormatSelection, @attr
+
         # Add download button
         downloadLink = $("<a>")
           .addClass("downloadLink")
@@ -271,4 +281,5 @@ define [ "components/visual"
           @trigger @select("timeSelection"), "refresh", data: data
           @trigger @select("productSelection"), "refresh", data: data
           @trigger @select("timeZoneSelection"), "refresh", data: data
+          @trigger @select("numberFormatSelection"), "refresh", data: data
 

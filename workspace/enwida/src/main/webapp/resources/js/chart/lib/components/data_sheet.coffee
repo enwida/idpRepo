@@ -10,7 +10,7 @@ define ["../util/time_utils"], (TimeUtils) ->
       table = @select "table"
       table.empty()
 
-      resolution = lines[0].resolution
+      resolution = lines[0].lineRequest.resolution
       dateFormat = TimeUtils.resolutionDateFormat[resolution]
 
       # Merge lines

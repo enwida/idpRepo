@@ -52,6 +52,7 @@ public class ChartNavigationLocalizer {
 			setInfoKeys();
 			setMonths();
 			setTimestamps();
+			setNumberFormats();
 			setTsos();
 			setTimeRanges();
 			setResolutions();
@@ -133,6 +134,13 @@ public class ChartNavigationLocalizer {
 			final String localTimestamps = getDownloadMessage("timestamp.local", "Local timestamps");
 			navigationData.getDictionary().getInfoKeys().put("utcTimestamps", utcTimestamps);
 			navigationData.getDictionary().getInfoKeys().put("localTimestamps", localTimestamps);
+		}
+		
+		private void setNumberFormats() {
+			final String defaultNumberFormat = getDownloadMessage("numberformat.default", ".");
+			final String germanNumberFormat = getDownloadMessage("numberformat.german", ",");
+			navigationData.getDictionary().getInfoKeys().put("defaultNumberFormat", defaultNumberFormat);
+			navigationData.getDictionary().getInfoKeys().put("germanNumberFormat", germanNumberFormat);
 		}
 		
 	    private String getChartSpecificMessage(String property, String defaultMessage) {
