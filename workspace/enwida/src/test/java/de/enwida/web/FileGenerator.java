@@ -60,7 +60,9 @@ public class FileGenerator {
 	public void generateFile() {
 		// TODO Auto-generated method stub
 		for (int i = 1; i <= 5; i++) {
-			String filePath = "C://Users//AtifKhan//Desktop//sample-" + i + ".csv";
+			// String filePath = "C://Users//AtifKhan//Desktop//sample-" + i +
+			// ".csv";
+			String filePath = "C://Users//Jitin//Desktop//sample-" + i + ".csv";
 			int numberOfDataLines = 400;
 			try {
 				generateCsvFile(filePath, numberOfDataLines);
@@ -78,13 +80,10 @@ public class FileGenerator {
 			generateInfo(writer);
 			// first header
 			writer.append("Time");
+			writer.append("[" + dateformat + "]");
 			writer.append(';');
 			writer.append("Data");
-			writer.append(";\n");
-			// second header
-			writer.append(dateformat);
-			writer.append(';');
-			writer.append(valueformat);
+			writer.append("[" + valueformat + "]");
 			writer.append(";\n");
 
 			for (int i = 0; i < lines; i++) {
@@ -116,14 +115,13 @@ public class FileGenerator {
 	}
 
 	public void generateInfo(FileWriter writer) throws IOException {
-		writer.append("######################################\n");
-		writer.append("#####Name : something#################\n");
-		writer.append("#####Comments : something##############\n");
-		writer.append("#####Units : KWh#######################\n");
-		writer.append("#####Country : DE#####################\n");
-		writer.append("#####Resolution : something###########\n");
-		writer.append("#####Interpolation style : left#######\n");
-		writer.append("#####Aspect : PowerConsumption########\n");
-		writer.append("######################################\n");
+		writer.append("# Name : something\n");
+		writer.append("# Comments : something\n");
+		writer.append("# Units : KWh\n");
+		writer.append("# Country : DE\n");
+		writer.append("# Resolution : something\n");
+		writer.append("# Interpolation style : left\n");
+		writer.append("# Aspect : PowerConsumption\n");
+		writer.append("# Type : sometype\n");
 	}
 }
