@@ -3,21 +3,21 @@
  */
 package de.enwida.web.dao.interfaces;
 
-import de.enwida.web.db.model.UserLines;
+import java.util.List;
+
+import de.enwida.rl.dtos.DOUserLines;
 import de.enwida.web.db.model.UserLinesMetaData;
 
 /**
  * @author Jitin
  *
  */
-public interface IUserLinesDao extends IDao<UserLines> {
+public interface IUserLinesDao extends IDao<UserLinesMetaData> {
 
-	boolean createUserLineMetaData(UserLinesMetaData metaData);
+	boolean createUserLines(List<DOUserLines> userlines);
 
-	UserLines getUserLine(UserLines userline);
+	List<DOUserLines> getUserLines(int metaDataId);
 
-	boolean updateUserLineMetaData(UserLinesMetaData metaData);
-
-	boolean deleteUserLineMetaData(UserLinesMetaData metaData);
+	boolean deleteUserLines(int metaDataId);
 
 }

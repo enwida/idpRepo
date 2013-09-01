@@ -51,6 +51,7 @@ public class ChartNavigationLocalizer {
 			setTitles();
 			setInfoKeys();
 			setMonths();
+			setDownloadMessages();
 			setTimestamps();
 			setNumberFormats();
 			setTsos();
@@ -141,6 +142,11 @@ public class ChartNavigationLocalizer {
 			final String germanNumberFormat = getDownloadMessage("numberformat.german", ",");
 			navigationData.getDictionary().getInfoKeys().put("defaultNumberFormat", defaultNumberFormat);
 			navigationData.getDictionary().getInfoKeys().put("germanNumberFormat", germanNumberFormat);
+		}
+		
+		private void setDownloadMessages() {
+			final String buttonText = getDownloadMessage("button_text", "Download CSV");
+			navigationData.getDictionary().getInfoKeys().put("buttonText", buttonText);
 		}
 		
 	    private String getChartSpecificMessage(String property, String defaultMessage) {

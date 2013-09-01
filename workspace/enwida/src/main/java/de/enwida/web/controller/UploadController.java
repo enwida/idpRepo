@@ -31,8 +31,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import de.enwida.rl.dtos.DOUserLines;
 import de.enwida.web.db.model.UploadedFile;
-import de.enwida.web.db.model.UserLines;
 import de.enwida.web.db.model.UserLinesMetaData;
 import de.enwida.web.model.FileUpload;
 import de.enwida.web.model.User;
@@ -116,7 +116,8 @@ public class UploadController {
 					if (status.getCode().equalsIgnoreCase("file.upload.parse.success")) {
 
 						Map<String, Object> parsedData = (Map<String, Object>) status.getArguments()[0];
-						List<UserLines> userlines = (List<UserLines>) parsedData.get(Constants.UPLOAD_LINES_KEY);
+						List<DOUserLines> userlines = (List<DOUserLines>) parsedData
+								.get(Constants.UPLOAD_LINES_KEY);
 						UserLinesMetaData metaData = (UserLinesMetaData) parsedData.get(Constants.UPLOAD_LINES_METADATA_KEY);
 
 						boolean recordsInserted = userLineService.createUserLines(userlines, metaData);
@@ -170,7 +171,8 @@ public class UploadController {
 					if (status.getCode().equalsIgnoreCase("file.upload.parse.success")) {
 
 						Map<String, Object> parsedData = (Map<String, Object>) status.getArguments()[0];
-						List<UserLines> userlines = (List<UserLines>) parsedData.get(Constants.UPLOAD_LINES_KEY);
+						List<DOUserLines> userlines = (List<DOUserLines>) parsedData
+								.get(Constants.UPLOAD_LINES_KEY);
 						UserLinesMetaData metaData = (UserLinesMetaData) parsedData.get(Constants.UPLOAD_LINES_METADATA_KEY);
 
 						UploadedFile oldFile = uploadFileService.getFile(fileReplace.getFileIdToBeReplaced());						

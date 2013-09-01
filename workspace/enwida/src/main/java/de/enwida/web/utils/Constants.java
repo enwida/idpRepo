@@ -60,5 +60,8 @@ public class Constants {
 	public static final String UPLOAD_LINES_KEY = "uploadedlines";
 	public static final String UPLOAD_LINES_METADATA_KEY = "uploadedlinesmetadata";
 	public static final String GENERAL_ERROR_MESSAGE = "errormesessage";
+	public static final String COMMENT_VALUE_SEPARATOR = ":";
+	public static final String COMMENT_START_SYMBOL = "#";
+	public static final String DATA_SEPARATOR = ";";
 
 }

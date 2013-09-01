@@ -12,11 +12,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 
+import de.enwida.rl.dtos.DOUserLines;
 import de.enwida.web.dao.interfaces.IFileDao;
 import de.enwida.web.dao.interfaces.IUserDao;
 import de.enwida.web.dao.interfaces.IUserLinesDao;
 import de.enwida.web.db.model.UploadedFile;
-import de.enwida.web.db.model.UserLines;
 import de.enwida.web.db.model.UserLinesMetaData;
 import de.enwida.web.model.User;
 import de.enwida.web.service.interfaces.IUploadFileService;
@@ -171,7 +171,7 @@ public class UploadFileServiceImpl implements IUploadFileService {
 			//2. Erase the Data of the Active File from Database
 			UserLinesMetaData metadata = fileAlreadyActive.getMetaData();
 			if (fileAlreadyActive.getMetaData() != null) {
-				userLinesDao.deleteUserLineMetaData(fileAlreadyActive.getMetaData());
+				userLinesDao.delete(fileAlreadyActive.getMetaData(), true);
 			}
 			
 			//3. Insert the data of the Required Active File
@@ -179,7 +179,8 @@ public class UploadFileServiceImpl implements IUploadFileService {
 			ObjectError status = results.getGlobalError();			
 			if (status.getCode().equalsIgnoreCase("file.upload.parse.success")) {
 				Map<String, Object> parsedData = (Map<String, Object>) status.getArguments()[0];
-				List<UserLines> userlines = (List<UserLines>) parsedData.get(Constants.UPLOAD_LINES_KEY);
+				List<DOUserLines> userlines = (List<DOUserLines>) parsedData
+						.get(Constants.UPLOAD_LINES_KEY);
 				UserLinesMetaData metaData = (UserLinesMetaData) parsedData.get(Constants.UPLOAD_LINES_METADATA_KEY);
 				userLineService.createUserLines(userlines, metaData);			
 			} else if (status.getCode().equalsIgnoreCase("file.upload.parse.error")) {
