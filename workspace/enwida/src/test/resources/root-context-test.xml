@@ -58,7 +58,10 @@
 	<bean id="dch" class="de.enwida.common.DateCalendarHelper" init-method="init">	
 		<property name="dataSource" ref="dataSource" />
 	</bean>
-
+	<bean id="ulc" class="de.enwida.rl.controller.UserLinesController" init-method="init">	
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+	
 	
 	<!-- This class onApplicationEvent is triggered when root conetxt is loaded -->
 	<bean id="eventListenerBean" class="de.enwida.web.application.ApplicationContextInitializer" />
