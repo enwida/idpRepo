@@ -4,8 +4,10 @@
         <wb-resource deploy-path="/" source-path="/src/main/webapp" tag="defaultRootSource"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/java"/>
         <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/main/resources"/>
-        <wb-resource deploy-path="/WEB-INF/classes" source-path="/src/test/resources"/>
         <dependent-module archiveName="datamanager-1.6.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/datamanager/datamanager">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
+        <dependent-module archiveName="transport-1.2.4.jar" deploy-path="/WEB-INF/lib" handle="module:/resource/transport/transport">
             <dependency-type>uses</dependency-type>
         </dependent-module>
         <property name="context-root" value="enwida"/>
