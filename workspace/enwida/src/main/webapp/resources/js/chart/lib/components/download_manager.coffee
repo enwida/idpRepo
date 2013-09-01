@@ -200,7 +200,8 @@ define [ "components/visual"
             selections.resolution,
             @$node.find(".timeslot option").length
 
-          @select("download").text "Download approx. #{parseInt dataSets} CSV lines"
+          text = @attr.navigationData.localizations.infoKeys.buttonText
+          @select("download").text text.replace "$1", dataSets
           @setDownloadLink()
           @onGetLines selections
 
