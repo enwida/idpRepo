@@ -196,8 +196,10 @@ define [ "components/visual"
         selectionStream.onValue (selections) =>
           @attr.selections = $.extend {}, selections
           @attr.downloadResolution = selections.resolution
-          dataSets = TimeUtils.dataSetCount selections.timeRange, selections.resolution
-          dataSets /= Math.max 1, @$node.find(".timeslot option").length
+          dataSets = TimeUtils.dataSetCount selections.timeRange,
+            selections.resolution,
+            @$node.find(".timeslot option").length
+
           @select("download").text "Download approx. #{parseInt dataSets} CSV lines"
           @setDownloadLink()
           @onGetLines selections
