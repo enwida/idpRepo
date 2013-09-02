@@ -159,7 +159,7 @@ hello         # not what you want (returns the function)
 hello "world" # prints hello (function ignores parameters)
 ```
 
-The functions are translated to (an equivilant of) the following:
+The functions are translated to (an equivalent of) the following:
 
 ```js
 function add(a, b) { return a + b; }
@@ -259,7 +259,7 @@ define ->
 
 This component listens to two events: `sayHello` and `sayBye`. It also trigger a `refresh` event
 after it received the latter. An event travel up the DOM elements until a component handles it.
-Futhermore, you can send an event to a specific element by using something
+Furthermore, you can send an event to a specific element by using something
 like: `@trigger "#content", "refresh", greeting: "hello"`.
 The responsible component for `#content` will receive the `refresh` event with the object `{"greeting": "hello"}` as an argument.
 
@@ -273,7 +273,7 @@ require ["components/content"], (ContentComponent) ->
 
 This causes the function passed to `@after "initialize"` to be executed and sets the component's `@$node` and `@attr` attributes.
 The component is then initialized and ready to handle incoming events.
-The components's `@attr` attribute is assigned to a merged object of the one defined in the component's `@defaultAttrs` and the one given as an argument to `attachTo`.
+The component's `@attr` attribute is assigned to a merged object of the one defined in the component's `@defaultAttrs` and the one given as an argument to `attachTo`.
 
 Note: The symbol `@` is an abbreviation for the keyword `this` in CoffeeScript. Moreover you will
 see something like `(param) => ...` in component code. 
@@ -299,7 +299,7 @@ define ->
 ```
 
 The last line in the above code will fail with a TypeError because `this` will refer to the global object (instead of the component's) at this point - which has no `echo` method.
-One rather cumberstone solution would be to set the correct `this` reference explicitly in the call to the `callback` function:
+One rather cumbersome solution would be to set the correct `this` reference explicitly in the call to the `callback` function:
 
 ```coffeescript
 # [...]
@@ -328,6 +328,9 @@ That is exactly what CoffeeScript does if you use `=>` for function definition. 
       @getSomethingFromServer "foo", (data) =>
         @updateElements data
 ```
+
+#### Bacon.js
+TODO
 
 ## Usage
 In order to use the charts frontend, all you have to do is including the required CSS and JavaScript
@@ -481,7 +484,7 @@ of the `ChartManager` component to each of them. The `ChartManager` will then cr
 
 ### Imaging
 The actual chart images are implemented using the [d3.js](http://d3js.org) library which is used
-to create inline SVG images. Sincle SVG uses an XML format, the images can be created by adding
+to create inline SVG images. Since SVG uses an XML format, the images can be created by adding
 new elements to the DOM (just like any other HTML elements as div, h1, etc.).
 
 #### Chart Types
@@ -500,9 +503,9 @@ by differently colored bars located next to each other for each data point.
 
 ##### Min-Max Chart
 This chart type works for exactly three lines of data. The first and the last line represent the
-minimun and the maximum values respectively whereas the second line contains the average values.
+minimum and the maximum values respectively whereas the second line contains the average values.
 The second line is drawn as in an ordinary line chart.
-Additionally, a bar ranging from the minimun to the maximum value is drawn for each data point.
+Additionally, a bar ranging from the minimum to the maximum value is drawn for each data point.
 
 <img width="800" src="../img/minmax_chart.png" />
 
@@ -517,14 +520,14 @@ value and from 0 to the negative value, respectively.
 ##### Carpet Plot
 This chart works with exactly one line of three-dimensional data (x, y, v). For every (x, y)-pair
 one bar is drawn at the corresponding coordinate. The color of the bars is governed by the v value.
-Futhermore, a scale is drawn on the right side which maps colors to v values.
+Furthermore, a scale is drawn on the right side which maps colors to v values.
 
 <img width="800" src="../img/carpet_plot.png" />
 
 #### Implementation
 Each of these charts are implemented as a RequireJS module in the `drawable` subdirectory.
 There is also a module called `GenericChart` which encapsulates common functionality like scale
-setup and drawing of the SVG skeletion including the axes.
+setup and drawing of the SVG skeleton including the axes.
 
 #### Interface
 Every chart module exports an `init` method which takes an options object as its only argument and
@@ -661,7 +664,7 @@ A separate timestamp is managed for each time range which is synchronized when a
 of another time range is changed.
 
 Example: the user selects a daily time range and 2010-12-15 as the beginning timestamp. Then he/she
-switches to a monthly time range. Now data of the whole december of 2010 is shown. Afterwards the
+switches to a monthly time range. Now data of the whole December of 2010 is shown. Afterwards the
 user selects March of 2011 whereupon the corresponding data is displayed. When he/she now switches
 back to a daily time range, date for 2011-03-15 is shown.
 
