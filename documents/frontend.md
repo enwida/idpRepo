@@ -68,10 +68,14 @@ these requirements can be installed.
 - Install [node.js](http://nodejs.org) and make sure the `node` and `npm` commands work
 - Install [Apache Ant](http://ant.apache.org) and make sure the `ant` command works
 
-### Quick CoffeeScript / RequireJS / Flight Walkthrough
+### Introduction to used libraries
 This walkthrough will only contain very basic explanation to get you started. Please refer to the
-corresponding websites ([coffeescript.org](http://coffeescript.org),
-[requirejs.org](http://requirejs.org), [twitter.github.io/flight](http://twitter.github.io/flight)) for more detailed introductions, tutorials and documentation.
+corresponding library websites for more detailed introductions, tutorials and documentation:
+
+- [CoffeeScript](http://coffeescript.org)
+- [Require.js](http://requirejs.org)
+- [Twitter Flight](http://twitter.github.io/flight)
+- [Bacon.js](https://github.com/baconjs/bacon.js)
 
 #### CoffeeScript
 The CoffeeScript syntax is very similar to the JavaScript syntax but I will try to point our the
@@ -221,6 +225,7 @@ it is also possible to minify all modules into a single .js file using the `r.js
 which lets you define so-called components whose job it is to "take care" of a specific DOM element.
 The only way these components can communicate is by triggering events.
 
+##### Defining a component
 Using RequireJS and Flight, a component is defined like this:
 
 ```coffeescript
@@ -230,28 +235,99 @@ define ->
 
     @hello = -> console.log "hello"
 
-    @after "initialize", ->
+    @defaultAttrs
+      foo: ".foo"
+      bar: ".bar"
+
+    @after "initialize", =>
       console.log "I'm assigned to the following element:"
       console.log @node  # DOM element
       console.log @$node # jQuery-wrapped element
+      console.log "I have the following attributes:"
+      console.log @attr
+      console.log "I can select DOM elements like this:"
+      console.log @select "foo" # === @$node.find(@attr["foo"]) === @$node.find(".foo")
+                                # => defining element selectors in @defaultAttrs is a good idea
 
-      @on "sayHello", ->
+      @on "sayHello", =>
         @hello()
         @$node.text "hello"
-      @on "sayBye", ->
+      @on "sayBye", =>
         @$node.fadeOut()
         @trigger "refresh"
 ```
 
-This component listens to two events: "sayHello" and "sayBye". It also trigger a "refresh" event
+This component listens to two events: `sayHello` and `sayBye`. It also trigger a `refresh` event
 after it received the latter. An event travel up the DOM elements until a component handles it.
-Futhermore, you can send an event to a specific element which also carries data by using something
+Futhermore, you can send an event to a specific element by using something
 like: `@trigger "#content", "refresh", greeting: "hello"`.
+The responsible component for `#content` will receive the `refresh` event with the object `{"greeting": "hello"}` as an argument.
+
+##### Attaching a component
+In order to attach a component to a specific DOM element we use the (implicit) `attachTo` method of the component:
+
+```coffeescript
+require ["components/content"], (ContentComponent) ->
+  ContentComponent.attachTo $('#content'), foo: ".bar"
+```
+
+This causes the function passed to `@after "initialize"` to be executed and sets the component's `@$node` and `@attr` attributes.
+The component is then initialized and ready to handle incoming events.
+The components's `@attr` attribute is assigned to a merged object of the one defined in the component's `@defaultAttrs` and the one given as an argument to `attachTo`.
 
 Note: The symbol `@` is an abbreviation for the keyword `this` in CoffeeScript. Moreover you will
-see something like `(param) => ...` in component code. This works just like an ordinary function
-definition but keeps the `this` reference stable in the body. This is often used to call
-component functions inside a callback.
+see something like `(param) => ...` in component code. 
+This so-called _bound_ functions work just like an ordinary function but have the `this` reference lexically bound (like in Java).
+This is often used to call a component's functions from inside a callback.
+
+#### Excursion: `this` reference
+The following example tries to make the difference between dynamic and lexical binding of the `this` reference clearer:
+
+```coffeescript
+define ->
+  flight.component ->
+    @getSomethingFromServer = (params, callback) ->
+      # Make an AJAX request and invoke callback
+      $.ajax "/data?params=#{params}", success: (data) -> callback data
+
+    @updateElements = (data) ->
+      # Update DOM elements according to data
+
+    @doSomeThing = ->
+      @getSomethingFromServer "foo", (data) ->
+        @updateElements data
+```
+
+The last line in the above code will fail with a TypeError because `this` will refer to the global object (instead of the component's) at this point - which has no `echo` method.
+One rather cumberstone solution would be to set the correct `this` reference explicitly in the call to the `callback` function:
+
+```coffeescript
+# [...]
+    @getSomethingFromServer = (params, callback) ->
+      self = this
+      # Make an AJAX request and invoke callback
+      $.ajax "/data?params=#{params}", success: (data) -> callback.apply self, [data]
+# [...]
+```
+
+The easier solution is to use the right `this` reference in the callback itself:
+
+```coffeescript
+# [...]
+    @doSomeThing = ->
+      self = this
+      @getSomethingFromServer "foo", (data) ->
+        self.updateElements data
+```
+
+That is exactly what CoffeeScript does if you use `=>` for function definition. So the nicest solution is the following:
+
+```coffeescript
+# [...]
+    @doSomeThing = ->
+      @getSomethingFromServer "foo", (data) =>
+        @updateElements data
+```
 
 ## Usage
 In order to use the charts frontend, all you have to do is including the required CSS and JavaScript
