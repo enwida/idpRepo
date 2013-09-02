@@ -330,7 +330,80 @@ That is exactly what CoffeeScript does if you use `=>` for function definition. 
 ```
 
 #### Bacon.js
-TODO
+[Bacon.js](https://github.com/baconjs/bacon.js) is a small [functional reactive programming](http://en.wikipedia.org/wiki/Functional_reactive_programming) library.
+In an application where many events are fired, maintaining a clean code base is often very difficult.
+The main source of problems in this scenario are separate event handlers for each event.
+So if two or more events are logically related to each other, this relationship has to be expressed somewhere in the event handler, which typically leads to rather unreadable code.
+The more natural approach (pursued by Bacon.js) is to express this relationship on the "event level" (i.e. before event handler code).
+Therefore, Bacon.js provides a toolkit to combine several events in many forms.  
+
+##### Creating Event Streams
+The basic objects in Bacon.js are so-called _event streams_.
+As the name suggests, they represent a stream of events to which an arbitrary number of _observers_ can bind.
+Creating an event stream is typically done as in the following example:
+
+```coffeescript
+timeRangeStream = $("select.timeRangeSelection").asEventStream "change"
+```
+
+That gives us a stream of `change` events fired by the time range select box.
+We can observe this event stream using the `onValue` function:
+
+```coffeescript
+timeRangeStream.onValue (event) ->
+  console.log "Time range changed to: #{$(event.target).val()}"
+```
+
+Having to peel out the new time range value this way is not so nice, though.
+Instead, we could use the `map` function on the event stream in order to get called back with the new time range value we are actually interested in:
+
+```coffeescript
+timeRangeStream = timeRangeStream.map (event) -> $(event.target).val()
+timeRangeStream.onValue (timeRange) ->
+  console.log "Time range changed to: #{timeRange}"
+```
+
+We could have defined that transformation when creating the event stream, too:
+
+```coffeescript
+timeRangeStream = $("select.timeRangeSelection").asEventStream "change", (event) ->
+  $(event.target).val()
+timeRangeStream.onValue (timeRange) ->
+  console.log "Time range changed to: #{timeRange}"
+```
+
+##### Combining Streams
+The real power of Bacon.js is the possibility to combine event streams. 
+Let's assume we have the `timeRangeStream` as defined above and another event stream of dates (e.g. coming from a datepicker) `dateStream`.
+From these two streams, we can now create a combined one which gives us a time range in the format `{"from": Date, "to": Date}`:
+
+```coffeescript
+fromToStream = dateStream.combine timeRangeStream, (date, timeRange) ->
+  toDate = new Date date + getTimeRangeInMillis(timeRange) # helper function
+  from: date, to: toDate
+
+# We could have also written it that way:
+fromToStream = Bacon.combineWith ((date, timeRange) ->
+  toDate = new Date date + getTimeRangeInMillis(timeRange) # helper function
+  from: date, to: toDate
+), dateStream, timeRangeStream
+```
+
+Whenever one of the two events (date changes or time range changes) occurs, there will be a new value on the `fromToStream`:
+
+```coffeescript
+fromToStream.onValue (range) ->
+  console.log "From: #{range.from}"
+  console.log "To: #{range.to}"
+```
+
+This way, we are guaranteed to execute our action whenever a corresponding event occurs and - even more important - to have the actually needed data (fromDate and toDate) right at hand.
+
+TODO:
+
+- sampled by (example with click)
+- property
+- bus
 
 ## Usage
 In order to use the charts frontend, all you have to do is including the required CSS and JavaScript
