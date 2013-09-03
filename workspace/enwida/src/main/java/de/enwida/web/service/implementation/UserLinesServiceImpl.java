@@ -61,7 +61,7 @@ public class UserLinesServiceImpl implements IUserLinesService {
 			createUserLineMetaData(metaData);
 		}
 		for (DOUserLines line : lines) {
-			line.setMetaDataId(metaData.getMetaDataId());
+			line.setUserLineId(metaData.getMetaDataId());
 		}
 		return userLinesDao.createUserLines(lines);
 	}

@@ -140,7 +140,7 @@ public class FileValidator implements Validator {
 							logger.debug("No record found at line number : "
 									+ linenumber);
 						} else {
-							userline.setMetaDataId(metadata.getMetaDataId());
+							userline.setUserLineId(metadata.getMetaDataId());
 							// check for unique lines
 							if (!dataLines.contains(userline)) {
 								dataLines.add(userline);
@@ -233,7 +233,7 @@ public class FileValidator implements Validator {
 				}
 
 				userline = new DOUserLines(timestamp.getTimeInMillis(), value,
-						0);
+						null);
 			} else if (content != null && content.length == 1) {
 				dataMap.put(ERROR_LINE_NUMBER, linenumber);
 				dataMap.put(ERROR_COLUMN_NUMBER,
@@ -242,7 +242,7 @@ public class FileValidator implements Validator {
 			} else if (line.trim().equalsIgnoreCase(
 					Constants.DATA_SEPARATOR + Constants.DATA_SEPARATOR)) {
 				// handling black record
-				userline = new DOUserLines(0, -1, 0);
+				userline = new DOUserLines(0, -1, null);
 			} else {
 				// incorrect data encountered at line number
 				dataMap.put(ERROR_LINE_NUMBER, linenumber);
@@ -250,7 +250,7 @@ public class FileValidator implements Validator {
 			}
 		} else {
 			// Hnadling blank lines
-			userline = new DOUserLines(0, -1, 0);
+			userline = new DOUserLines(0, -1, null);
 		}
 		return userline;
 	}

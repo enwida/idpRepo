@@ -45,12 +45,12 @@ public class UserLinesDaoImpl extends AbstractBaseDao<UserLinesMetaData>
 
 	@Override
 	public List<DOUserLines> getUserLines(int metaDataId) {
-		return ulc.readUserLines(metaDataId);
+		return ulc.readUserLines("" + metaDataId);
 	}
 
 	@Override
 	public boolean deleteUserLines(int metaDataId) {
-		int deletedRecords = ulc.deleteUserLines(metaDataId);
+		int deletedRecords = ulc.deleteUserLines("" + metaDataId);
 		logger.debug("Number of records deleted : " + deletedRecords);
 		return true;
 	}
