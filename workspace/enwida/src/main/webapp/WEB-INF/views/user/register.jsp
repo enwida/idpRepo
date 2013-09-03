@@ -21,6 +21,7 @@
 	<tr><td><message:message code="de.enwida.userManagement.logo" /> : </td><td><form:input path="companyLogo" id="companyLogo"/><form:errors path="companyLogo" cssStyle="color : red;"/></td></tr>
 	<tr><td><input type="reset" value="Reset" /></td><td><input type="submit" name="submit" value="Register" /></td></tr>
 </table>
+
 <div id="companyImages">
 
 </div>

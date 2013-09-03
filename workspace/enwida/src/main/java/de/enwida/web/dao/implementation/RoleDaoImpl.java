@@ -17,12 +17,12 @@ import de.enwida.web.model.Role;
 public class RoleDaoImpl extends AbstractBaseDao<Role> implements IRoleDao {
 
     @Override
-    public Role addRole(Role role){
+    public Role addRole(Role role) throws Exception{
         return save(role);
     }
     
     @Override
-    public Role save(Role role)
+    public Role save(Role role) throws Exception
     {
         if(role==null) return null;
         

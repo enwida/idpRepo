@@ -663,14 +663,14 @@ public class BasicUserManagement {
 		Assert.assertTrue(freshUser1.getGroups().contains(group1));
 		Assert.assertTrue(freshUser1.getGroups().contains(group2));
 				
-		final List<Role> allRoles1 = new ArrayList<>();
+		final List<Role> allRoles1 = new ArrayList<Role>();
 		for (final Group group : freshUser1.getGroups()) {
 			allRoles1.addAll(group.getAssignedRoles());
 		}
 		Assert.assertEquals(3, allRoles1.size());
 		Assert.assertEquals(3, freshUser1.getAllRoles().size());
 		
-		final List<Right> allRights1 = new ArrayList<>();
+		final List<Right> allRights1 = new ArrayList<Right>();
 		for (final Role role : allRoles1) {
 			allRights1.addAll(role.getRights());
 		}
@@ -683,14 +683,14 @@ public class BasicUserManagement {
 		Assert.assertTrue(freshUser2.getGroups().contains(group2));
 		Assert.assertTrue(freshUser2.getGroups().contains(group3));
 				
-		final List<Role> allRoles2 = new ArrayList<>();
+		final List<Role> allRoles2 = new ArrayList<Role>();
 		for (final Group group : freshUser2.getGroups()) {
 			allRoles2.addAll(group.getAssignedRoles());
 		}
 		Assert.assertEquals(2, allRoles2.size());
 		Assert.assertEquals(2, freshUser2.getAllRoles().size());
 		
-		final List<Right> allRights2 = new ArrayList<>();
+		final List<Right> allRights2 = new ArrayList<Right>();
 		for (final Role role : allRoles2) {
 			allRights2.addAll(role.getRights());
 		}

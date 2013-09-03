@@ -65,7 +65,7 @@ public class DownloadController {
     	final User user = userService.getCurrentUser();
     	final ChartNavigationData navigationData = navigationService.getNavigationData(chartId, user, locale);
         final List<Aspect> originalAspects = navigationData.getAspects();
-        final List<Aspect> aspects = new ArrayList<>(originalAspects);
+        final List<Aspect> aspects = new ArrayList<Aspect>(originalAspects);
         final String[] lineStrings = disabledLines.split(",");
         
         for (final String lineString : lineStrings) {
@@ -76,7 +76,7 @@ public class DownloadController {
         	aspects.remove(line);
         }
         
-        final List<IDataLine> lines = new ArrayList<>();
+        final List<IDataLine> lines = new ArrayList<IDataLine>();
         for (final Aspect aspect : aspects) {
         	final LineRequest lineRequest = new LineRequest(aspect, product, tso, startTime, endTime, resolution, locale);
         	try {

@@ -1,6 +1,5 @@
 package de.enwida.web.db.model;
 
-import java.beans.Transient;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -12,6 +11,7 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 @Embeddable
 public class CalendarRange implements Serializable, Cloneable, Comparable<CalendarRange> {
@@ -104,7 +104,7 @@ public class CalendarRange implements Serializable, Cloneable, Comparable<Calend
 	}
 	
 	public static List<CalendarRange> getConnectedRanges(List<CalendarRange> ranges) {
-		final List<CalendarRange> result = new ArrayList<>(ranges.size());
+		final List<CalendarRange> result = new ArrayList<CalendarRange>(ranges.size());
 		if (ranges.isEmpty()) {
 			return result;
 		}

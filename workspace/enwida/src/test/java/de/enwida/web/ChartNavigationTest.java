@@ -239,7 +239,7 @@ public class ChartNavigationTest {
 		// One tso
 		Assert.assertTrue(navigationData.getProductTrees().size() == 1);
 		
-		final Map<Integer, ProductTree> treeMap = new Hashtable<>();
+		final Map<Integer, ProductTree> treeMap = new Hashtable<Integer, ProductTree>();
 		for (final ProductTree tree : navigationData.getProductTrees()) {
 			treeMap.put(tree.getTso(), tree);
 		}

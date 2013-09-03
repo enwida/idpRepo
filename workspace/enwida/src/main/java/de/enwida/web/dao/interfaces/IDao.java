@@ -14,23 +14,23 @@ public interface IDao <T> {
 
     public T fetchByName(String name);
 	
-	public void create(T entity);
+	public void create(T entity) throws Exception;
 	
-	public void create(T entity,boolean flushImmediate);
+	public void create(T entity,boolean flushImmediate) throws Exception;
 
-	public T update(T entity);
+	public T update(T entity) throws Exception;
 	
-	public T update(T entity, boolean flushImmediate);
+	public T update(T entity, boolean flushImmediate) throws Exception;
 
-	public void delete(T entity);
+	public void delete(T entity) throws Exception;
 	
-	public void delete(T entity, boolean flushImmediate);
+	public void delete(T entity, boolean flushImmediate) throws Exception;
 
-	public void refresh(T entity);
+	public void refresh(T entity) throws Exception;
 
-	public void deleteById(long entityId);
+	public void deleteById(long entityId) throws Exception;
 
-	public Long getNextSequenceNumber(String schema, String sequenceName);
+	public Long getNextSequenceNumber(String schema, String sequenceName) throws Exception;
 
 	public List<T> fetchAll();
 	

@@ -162,8 +162,9 @@ public interface IUserService {
 	 * @param user the persisted user object
 	 * @param group the persisted group object
 	 * @return the fresh group object
+     * @throws Exception 
 	 */
-	public Group assignGroupToUser(User user, Group group);
+	public Group assignGroupToUser(User user, Group group) throws Exception;
 
     /**
 	 * Assigns group to user.
@@ -171,8 +172,9 @@ public interface IUserService {
 	 * @param user ID
 	 * @param group ID
 	 * @return the fresh group object
+     * @throws Exception 
 	 */
-	public void assignGroupToUser(long userId, Long groupID);
+	public void assignGroupToUser(long userId, Long groupID) throws Exception;
 
     /**
 	 * Revokes group from user. {@link User} object will be updated in place; updated {@link Group} will be returned.
@@ -180,8 +182,9 @@ public interface IUserService {
 	 * @param user the persisted user object
 	 * @param group the persisted group object
 	 * @return the fresh group object
+     * @throws Exception 
 	 */
-    public Group revokeUserFromGroup(User user, Group group);
+    public Group revokeUserFromGroup(User user, Group group) throws Exception;
 
     /**
      * Revokes User from Group
@@ -200,7 +203,7 @@ public interface IUserService {
      * @return
      * @throws Exception
      */
-    public void assignRoleToGroup(long selectedRole, long selectedGroup);
+    public void assignRoleToGroup(long selectedRole, long selectedGroup) throws Exception;
 
     /**
 	 * Assigns role to group. {@link Group} object will be updated in place; updated {@link Role} will be returned.
@@ -208,15 +211,17 @@ public interface IUserService {
 	 * @param role the persisted role object
 	 * @param group the persisted group object
 	 * @return the fresh {@link Role} object
+     * @throws Exception 
 	 */
-	public Role assignRoleToGroup(Role role, Group group);
+	public Role assignRoleToGroup(Role role, Group group) throws Exception;
 
 	/**
 	 * Revoke role from group.
 	 * @param role ID
 	 * @param group ID
+	 * @throws Exception 
 	 */
-	public void revokeRoleFromGroup(long roleId, long groupId);
+	public void revokeRoleFromGroup(long roleId, long groupId) throws Exception;
 
     /**
 	 * Revoke role from group. {@link Group} object will be updated in place; updated {@link Role} will be returned.
@@ -224,13 +229,14 @@ public interface IUserService {
 	 * @param role the persisted role object
 	 * @param group the persisted group object
 	 * @return the fresh {@link Role} object
+     * @throws Exception 
 	 */
-	public Role revokeRoleFromGroup(Role role, Group group);
+	public Role revokeRoleFromGroup(Role role, Group group) throws Exception;
 
 	// TODO: comments
-	public Role assignRightToRole(Right right, Role role);
+	public Role assignRightToRole(Right right, Role role) throws Exception;
 
-	public Role revokeRightFromRole(Right right, Role role);
+	public Role revokeRightFromRole(Right right, Role role) throws Exception;
 
     /**
      * Enables or disables the user
@@ -323,8 +329,9 @@ public interface IUserService {
      * Synchronize user object with database content. Use this if you need to have all current mappings.
      * @param user prototype object
      * @return up-to-date user object with all mappings
+     * @throws Exception 
      */
-    public User syncUser(User user);
+    public User syncUser(User user) throws Exception;
     /**
      * Gets nextSequence from the database
      */

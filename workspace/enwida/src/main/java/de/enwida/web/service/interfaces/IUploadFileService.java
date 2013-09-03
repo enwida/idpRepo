@@ -13,10 +13,10 @@ public interface IUploadFileService {
     public int getUploadedFileVersion(UploadedFile file, User user);
     public List<UploadedFile> getUploadedFiles(User user);
     
-    User saveUserUploadedFile(User user, UploadedFile file);
-    User updateUserUploadedFile(User user, UploadedFile file);
+    User saveUserUploadedFile(User user, UploadedFile file) throws Exception;
+    User updateUserUploadedFile(User user, UploadedFile file) throws Exception;
 	void removeUserUploadedFile(User user, UploadedFile file) throws Exception;
 	
-	public void makeFileActive(int fileId, User user, FileValidator fileValidator);
+	public void makeFileActive(int fileId, User user, FileValidator fileValidator) throws Exception;
 	public List<UploadedFile> getFileSetByUniqueIdentifier(int fileid);	
 }

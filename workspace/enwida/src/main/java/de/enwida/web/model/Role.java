@@ -89,7 +89,7 @@ public class Role implements Serializable, GrantedAuthority {
 
 	public Set<Group> getAssignedGroups() {
 		if (assignedGroups == null) {
-			assignedGroups = new HashSet<>();
+			assignedGroups = new HashSet<Group>();
 		}
         return Collections.unmodifiableSet(assignedGroups);
     }

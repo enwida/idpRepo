@@ -60,7 +60,7 @@ public class UploadFileServiceImpl implements IUploadFileService {
 	 * @throws Exception
 	 */
 	@Override
-	public User saveUserUploadedFile(User user, UploadedFile file) {
+	public User saveUserUploadedFile(User user, UploadedFile file) throws Exception {
 		if (user.getUserId() == null) {
 			throw new IllegalArgumentException("user object is not persisted");
 		}
@@ -99,7 +99,7 @@ public class UploadFileServiceImpl implements IUploadFileService {
 	 * @throws Exception
 	 */
 	@Override
-	public User updateUserUploadedFile(User user, UploadedFile file) {
+	public User updateUserUploadedFile(User user, UploadedFile file) throws Exception {
 		if (user.getUserId() == null) {
 			throw new IllegalArgumentException("user object is not persisted");
 		}
@@ -160,7 +160,7 @@ public class UploadFileServiceImpl implements IUploadFileService {
 	}
 
 	@Override
-	public void makeFileActive(int fileId, User user, FileValidator fileValidator) {
+	public void makeFileActive(int fileId, User user, FileValidator fileValidator) throws Exception {
 		
 		UploadedFile fileToMakeActive = fileDao.getFile(fileId);		
 		if (fileToMakeActive.getUploader().equals(user)) {
