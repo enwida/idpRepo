@@ -3,6 +3,39 @@ layout: docu
 title: Enwida Charts Frontend Documentation
 ---
 
+## Usage
+In order to use the charts frontend, all you have to do is including the required CSS and JavaScript
+files, and having one div element for each chart in the HTML document.
+The div elements must be of class "chart", and have an attribute called `data-chart-id` set to
+the desired chart ID. Other (optional) attributes are:
+
+- `data-chart-type`: "linear", "bar", "minmax", "posneg", or "carpet" (defaults to "linear")
+- `data-width`: width of the SVG in pixels (defaults to 800)
+
+Example:
+
+```html
+<!doctype html>
+<html>
+  <head>
+    <title>Charts</title>
+    <link rel="stylesheet" href="/enwida/resources/css/chart/assets.css" >
+    <link rel="stylesheet" href="/enwida/resources/css/chart/chart.css" >
+    <script src="/enwida/resources/js/chart/assets.js"></script>
+    <script src="/enwida/resources/js/chart/charts.js"></script>
+  </head>
+  <body>
+    <div class="chart" data-chart-id="0"></div>
+    <div class="chart" data-chart-id="0" data-chart-type="bar"></div>
+    <div class="chart"
+         data-chart-id="1"
+         data-chart-type="carpet"
+         data-width="1200">
+    </div>
+  </body>
+</html>
+```
+
 ## Location
 The charts frontend code is located within the web resources of the Spring web project:
 
@@ -405,39 +438,6 @@ TODO:
 - property
 - bus
 
-## Usage
-In order to use the charts frontend, all you have to do is including the required CSS and JavaScript
-files and having one div element for each chart in the HTML document.
-The div elements must be of class "chart" and have an attribute called `data-chart-id` set to
-the desired chart ID. Other (optional) attributes are:
-
-- `data-chart-type`: "linear", "bar", "minmax", "posneg", or "carpet" (defaults to "linear")
-- `data-width`: width of the SVG in pixels (defaults to 800)
-
-Example:
-
-```html
-<!doctype html>
-<html>
-  <head>
-    <title>Charts</title>
-    <link rel="stylesheet" href="/enwida/resources/css/chart/assets.css" >
-    <link rel="stylesheet" href="/enwida/resources/css/chart/chart.css" >
-    <script src="/enwida/resources/js/chart/assets.js"></script>
-    <script src="/enwida/resources/js/chart/charts.js"></script>
-  </head>
-  <body>
-    <div class="chart" data-chart-id="0"></div>
-    <div class="chart" data-chart-id="0" data-chart-type="bar"></div>
-    <div class="chart"
-         data-chart-id="1"
-         data-chart-type="carpet"
-         data-width="1200">
-    </div>
-  </body>
-</html>
-```
-    
 ## The Charts Frontend Implementation
 
 ### Architecture
