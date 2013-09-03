@@ -6,7 +6,7 @@ define ->
       separator: ","
     de:
       decimalPoint: ","
-      separator: "'"
+      separator: "."
 
   getSymbols: (locale) ->
     @symbols[locale] ? @symbols["de"]

@@ -76,8 +76,8 @@ public class CalendarRange implements Serializable, Cloneable, Comparable<Calend
 	            to = range.getTo();
 	        }
 	    }
-	    if (from == null || to == null) {
-	        return null;
+	    if (from == null || to == null || from.compareTo(to) > 0) {
+	        return empty();
 	    }
 	    return new CalendarRange(from, to);
 	}
@@ -97,8 +97,8 @@ public class CalendarRange implements Serializable, Cloneable, Comparable<Calend
 	            to = range.getTo();
 	        }
 	    }
-	    if (from == null || to == null) {
-	        return null;
+	    if (from == null || to == null || from.compareTo(to) > 0) {
+	        return empty();
 	    }
 	    return new CalendarRange(from, to);
 	}
@@ -155,6 +155,10 @@ public class CalendarRange implements Serializable, Cloneable, Comparable<Calend
 		return from.compareTo(o.from);
 	}
 	
+	public boolean isEmpty() {
+		return from.equals(to);
+	}
+	
 	@Override
 	protected CalendarRange clone() {
 		final Calendar fromClone = (Calendar) from.clone();
@@ -191,6 +195,10 @@ public class CalendarRange implements Serializable, Cloneable, Comparable<Calend
 		} else if (!to.equals(other.to))
 			return false;
 		return true;
+	}
+	
+	public static CalendarRange empty() {
+		return new CalendarRange(new Date(0), new Date(0));
 	}
 	
 }
