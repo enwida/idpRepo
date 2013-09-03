@@ -349,7 +349,7 @@ public class User implements Serializable, UserDetails {
 				this.uploadedFiles = new HashSet<UploadedFile>();
 			} else {
 				// prepare new set for mappings
-				this.uploadedFiles = new HashSet<>(this.uploadedFiles);
+				this.uploadedFiles = new HashSet<UploadedFile>(this.uploadedFiles);
 			}
 			this.uploadedFiles.add(uploadedFile);
 		}
@@ -406,7 +406,7 @@ public class User implements Serializable, UserDetails {
 	}
 
     public List<Role> getAllRoles() {
-    	final List<Role> result = new ArrayList<>();
+    	final List<Role> result = new ArrayList<Role>();
     	for (final Group group : getGroups()) {
     		result.addAll(group.getAssignedRoles());
     	}
@@ -414,7 +414,7 @@ public class User implements Serializable, UserDetails {
     }
     
     public List<Right> getAllRights() {
-    	final List<Right> result = new ArrayList<>();
+    	final List<Right> result = new ArrayList<Right>();
     	for (final Role role : getAllRoles()) {
     		result.addAll(role.getRights());
     	}

@@ -3,7 +3,7 @@ package de.enwida.transport;
 public enum Aspect {
 	
 	CR_VOL_ACTIVATION,                    // 0  | rl_ab1
-	CR_VOL_ACTIVATION2,                   // 1  | rl_ab2
+	CR_VOL_ACTIVATION_CP,                 // 1  | Showing the activation of reserve control as a carpet plot (summing up pos and neg values)
 	CR_DEGREE_OF_ACTIVATION,              // 2  | rl_abg1
 	CR_ACTIVATION_FREQUENCY,              // 3  | rl_abh1
 	CR_VOL_ACCEPTED,                      // 4  | rl_vol1

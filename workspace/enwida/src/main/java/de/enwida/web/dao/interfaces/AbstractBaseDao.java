@@ -67,7 +67,7 @@ public abstract class AbstractBaseDao<T> implements IDao<T> {
 		return em.createQuery("from " + modelClass.getName()).getResultList();
 	}
 
-	public void create(T entity) {
+	public void create(T entity) throws Exception {
 		try {
 			em.persist(entity);
 		} catch (Exception e) {
@@ -77,11 +77,11 @@ public abstract class AbstractBaseDao<T> implements IDao<T> {
 		}
 	}
 
-	public T update(T entity) {
+	public T update(T entity) throws Exception {
 		return update(entity, false);
 	}
 	
-	public void create(T entity, boolean flushImmediate) {
+	public void create(T entity, boolean flushImmediate) throws Exception {
 		try {
 			em.persist(entity);
 			if (flushImmediate) {
@@ -95,7 +95,7 @@ public abstract class AbstractBaseDao<T> implements IDao<T> {
 		}
     }
 
-    public T update(T entity,boolean flushImmediate) {
+    public T update(T entity,boolean flushImmediate) throws Exception {
 		try {
 			entity = em.merge(entity);
 			if (flushImmediate) {
@@ -110,7 +110,7 @@ public abstract class AbstractBaseDao<T> implements IDao<T> {
         return entity;
     }
 	
-	public void refresh(T entity) {
+	public void refresh(T entity) throws Exception {
 		try {
 			em.refresh(entity);
 		} catch (Exception e) {
@@ -120,7 +120,7 @@ public abstract class AbstractBaseDao<T> implements IDao<T> {
 		}
 	}
 
-	public void delete(T entity) {
+	public void delete(T entity) throws Exception {
 		try {
 			em.remove(em.merge(entity));
 		} catch (Exception e) {
@@ -130,7 +130,7 @@ public abstract class AbstractBaseDao<T> implements IDao<T> {
 		}
 	}
 
-	public void delete(T entity, boolean flushImmediate) {
+	public void delete(T entity, boolean flushImmediate) throws Exception {
 		try {
 			em.remove(entity);
 			if (flushImmediate) {
@@ -143,7 +143,7 @@ public abstract class AbstractBaseDao<T> implements IDao<T> {
 		}
 	}
 
-	public void deleteById(long entityId) {
+	public void deleteById(long entityId) throws Exception {
 		T entity = fetchById(entityId);
 		if (entity != null) {
 			delete(entity, true);
@@ -179,8 +179,9 @@ public abstract class AbstractBaseDao<T> implements IDao<T> {
 	 * @param schema
 	 * @param sequenceName
 	 * @return
+	 * @throws Exception 
 	 */
-	public Long getNextSequenceNumber(String schema, String sequenceName) {
+	public Long getNextSequenceNumber(String schema, String sequenceName) throws Exception {
 		BigInteger nextCounter = null;
 		try {
 			Query q = em.createNativeQuery("select nextval('" + schema + "."

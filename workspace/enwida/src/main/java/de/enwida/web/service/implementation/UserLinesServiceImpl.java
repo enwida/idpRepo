@@ -44,18 +44,18 @@ public class UserLinesServiceImpl implements IUserLinesService {
 	}
 
 	@Override
-	public void createUserLineMetaData(UserLinesMetaData metaData) {
+	public void createUserLineMetaData(UserLinesMetaData metaData) throws Exception {
 		userLinesDao.create(metaData, true);
 	}
 
 	@Override
-	public void updateUserLineMetaData(UserLinesMetaData metaData) {
+	public void updateUserLineMetaData(UserLinesMetaData metaData) throws Exception {
 		userLinesDao.update(metaData, true);
 	}
 
 	@Override
 	public boolean createUserLines(List<DOUserLines> lines,
-			UserLinesMetaData metaData) {
+			UserLinesMetaData metaData) throws Exception {
 
 		if (metaData.getMetaDataId() == 0) {
 			createUserLineMetaData(metaData);
@@ -68,7 +68,7 @@ public class UserLinesServiceImpl implements IUserLinesService {
 
 	@Override
 	public void createUserLineMetaData(UserLinesMetaData metaData,
-			UploadedFile file) {
+			UploadedFile file) throws Exception {
 		metaData.setFile(file);
 		createUserLineMetaData(metaData);
 
@@ -80,7 +80,7 @@ public class UserLinesServiceImpl implements IUserLinesService {
 	}
 
 	@Override
-	public boolean eraseUserLineMetaData(long fileId) {
+	public boolean eraseUserLineMetaData(long fileId) throws Exception {
 		UploadedFile oldFile = fileDao.getFile(fileId);
 		if (oldFile.getMetaData() != null) {
 			// First delete all user lines

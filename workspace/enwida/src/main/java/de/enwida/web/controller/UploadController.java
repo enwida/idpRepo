@@ -290,7 +290,7 @@ public class UploadController {
 	}
 	
 	@RequestMapping(value = "/files/delete", method = RequestMethod.GET)
-	public @ResponseBody String deleteUploadedFile(@RequestParam("fileId") String fileId, Locale locale) {
+	public @ResponseBody String deleteUploadedFile(@RequestParam("fileId") String fileId, Locale locale) throws Exception {
 
 		if (fileId != null && !fileId.isEmpty()) {
 			UploadedFile downloadFile = uploadFileService.getFile(Integer.parseInt(fileId));

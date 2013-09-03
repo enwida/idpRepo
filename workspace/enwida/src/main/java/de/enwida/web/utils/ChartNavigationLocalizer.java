@@ -63,7 +63,7 @@ public class ChartNavigationLocalizer {
 		}
 		
 		private void setLocale() {
-			navigationData.getDictionary().setLocale(locale.toLanguageTag());
+			navigationData.getDictionary().setLocale(locale.toString());
 		}
 		
 		private void setTitles() {

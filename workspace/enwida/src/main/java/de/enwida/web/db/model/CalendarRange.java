@@ -1,6 +1,5 @@
 package de.enwida.web.db.model;
 
-import java.beans.Transient;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -12,6 +11,7 @@ import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 @Embeddable
 public class CalendarRange implements Serializable, Cloneable, Comparable<CalendarRange> {
@@ -76,8 +76,8 @@ public class CalendarRange implements Serializable, Cloneable, Comparable<Calend
 	            to = range.getTo();
 	        }
 	    }
-	    if (from == null || to == null) {
-	        return null;
+	    if (from == null || to == null || from.compareTo(to) > 0) {
+	        return empty();
 	    }
 	    return new CalendarRange(from, to);
 	}
@@ -97,14 +97,14 @@ public class CalendarRange implements Serializable, Cloneable, Comparable<Calend
 	            to = range.getTo();
 	        }
 	    }
-	    if (from == null || to == null) {
-	        return null;
+	    if (from == null || to == null || from.compareTo(to) > 0) {
+	        return empty();
 	    }
 	    return new CalendarRange(from, to);
 	}
 	
 	public static List<CalendarRange> getConnectedRanges(List<CalendarRange> ranges) {
-		final List<CalendarRange> result = new ArrayList<>(ranges.size());
+		final List<CalendarRange> result = new ArrayList<CalendarRange>(ranges.size());
 		if (ranges.isEmpty()) {
 			return result;
 		}
@@ -155,6 +155,10 @@ public class CalendarRange implements Serializable, Cloneable, Comparable<Calend
 		return from.compareTo(o.from);
 	}
 	
+	public boolean isEmpty() {
+		return from.equals(to);
+	}
+	
 	@Override
 	protected CalendarRange clone() {
 		final Calendar fromClone = (Calendar) from.clone();
@@ -191,6 +195,10 @@ public class CalendarRange implements Serializable, Cloneable, Comparable<Calend
 		} else if (!to.equals(other.to))
 			return false;
 		return true;
+	}
+	
+	public static CalendarRange empty() {
+		return new CalendarRange(new Date(0), new Date(0));
 	}
 	
 }

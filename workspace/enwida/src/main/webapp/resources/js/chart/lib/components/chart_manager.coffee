@@ -114,7 +114,7 @@ define [ "components/visual"
           if err?
             @logError err
             return @trigger "chartMessage", msg: "Sorry, something went wrong."
-          if data.length is 0
+          if data.length is 0 or _.max(data.map (line) -> line.dataPoints.length) < 2
             return @trigger "chartMessage", msg: "No data"
 
           @attr.chartLines = LinesPreprocessor.transform @attr.type, data

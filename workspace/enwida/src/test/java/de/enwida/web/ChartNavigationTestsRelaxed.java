@@ -30,13 +30,13 @@ public class ChartNavigationTestsRelaxed extends ChartNavigationTest {
 		
 		final Integer[] allProducts = new Integer[] { 200, 300, 211, 212, 221, 222, 311, 321, 312, 322, 313, 323, 314, 324, 315, 325, 316, 326 };
 		
-		final List<Integer> shuffledProuducts = new ArrayList<>(Arrays.asList(allProducts));
+		final List<Integer> shuffledProuducts = new ArrayList<Integer>(Arrays.asList(allProducts));
 		Collections.shuffle(shuffledProuducts, random);
 		
-		final List<DataResolution> shuffledResolutions = new ArrayList<>(Arrays.asList(DataResolution.values()));
+		final List<DataResolution> shuffledResolutions = new ArrayList<DataResolution>(Arrays.asList(DataResolution.values()));
 		Collections.shuffle(shuffledResolutions, random);
 
-		final List<Aspect> shuffledAspects = new ArrayList<>(Arrays.asList(Aspect.values()));
+		final List<Aspect> shuffledAspects = new ArrayList<Aspect>(Arrays.asList(Aspect.values()));
 		Collections.shuffle(shuffledAspects, random);
 		
 		final int numProductChecks = shuffledProuducts.size() * coveredProductSharePercent / 100;

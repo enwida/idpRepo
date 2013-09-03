@@ -10,12 +10,12 @@ public interface IRoleDao extends IDao<Role> {
 
     Role fetchById(long id);
 
-    Role addRole(Role role);
+    Role addRole(Role role) throws Exception;
 
     List<Role> fetchAll();
 
 	Set<Right> getAllAspects(long roleID);
 
-    Role save(Role role);
+    Role save(Role role) throws Exception;
 
 }

@@ -104,7 +104,7 @@ define [ "components/visual"
           if err?
             @logError err
             return @trigger "chartMessage", msg: "Sorry, something went wrong."
-          if data.length is 0
+          if data.length is 0 or _.max(data.map (line) -> line.dataPoints.length) < 2
             return @trigger "chartMessage", msg: "No data"
 
           @attr.data = data
@@ -201,7 +201,7 @@ define [ "components/visual"
             @$node.find(".timeslot option").length
 
           text = @attr.navigationData.localizations.infoKeys.buttonText
-          @select("download").text text.replace "$1", dataSets
+          @select("download").text text.replace "$1", parseInt dataSets
           @setDownloadLink()
           @onGetLines selections
 
