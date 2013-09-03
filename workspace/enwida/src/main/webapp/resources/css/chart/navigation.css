@@ -63,12 +63,16 @@ a:hover {
 	margin-right: 10px;
 }
 .selection input {
-	width: 0;
+	width: 110px;
 	min-width: 110px;
+	cursor: default;
 }
 input.from,
 input.to {
 	cursor: pointer;
+}
+input.preview {
+	width: 200px;
 }
 .calendar {
 	margin-right: 10px;
@@ -124,4 +128,10 @@ svg.legend {
 }
 .dataSheet tr.even td {
 	background: #efefef;
+}
+.timezoneSelection {
+  padding: 5px 0;
+}
+.numberFormatSelection {
+  padding: 5px 0;
 }

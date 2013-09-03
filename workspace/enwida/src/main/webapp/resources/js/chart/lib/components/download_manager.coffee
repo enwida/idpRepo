@@ -150,7 +150,8 @@ define [ "components/visual"
           startTime: @dateFormat selections.timeRange.from
           endTime: @dateFormat selections.timeRange.to
           resolution: selections.resolution
-          timeZone: selections.timeZone
+          timezone: selections.timezone
+          timezoneInformation: selections.timezoneInfo
           numberFormat: selections.numberFormat
           disabledLines: selections.disabledLines.join ","
 
@@ -166,7 +167,7 @@ define [ "components/visual"
         infobox: ".infobox"
         productSelection: ".productSelection"
         timeSelection: ".timeSelection"
-        timeZoneSelection: ".timeZoneSelection"
+        timezoneSelection: ".timezoneSelection"
         numberFormatSelection: ".numberFormatSelection"
         download: ".download"
         downloadLink: ".downloadLink"
@@ -188,9 +189,9 @@ define [ "components/visual"
         # Setup streams
         productStream = @$node.asEventStream("productSelectionChanged", (_, v) -> v)
         timeStream = @$node.asEventStream("timeSelectionChanged", (_, v) -> v)
-        timeZoneStream = @$node.asEventStream("timeZoneSelectionChanged", (_, v) -> v)
+        timezoneStream = @$node.asEventStream("timezoneSelectionChanged", (_, v) -> v)
         numberFormatStream = @$node.asEventStream("numberFormatSelectionChanged", (_, v) -> v)
-        selectionStream = Bacon.combineWith $.extend, productStream, timeStream, timeZoneStream, numberFormatStream
+        selectionStream = Bacon.combineWith $.extend, productStream, timeStream, timezoneStream, numberFormatStream
 
         # Request lines and update button test
         selectionStream.onValue (selections) =>
@@ -246,9 +247,9 @@ define [ "components/visual"
         TimeSelection.attachTo timeSelection, @attr
 
         # Add timezone selection
-        timeZoneSelection = $("<div>").addClass "timeZoneSelection"
-        selection.append timeZoneSelection
-        TimeZoneSelection.attachTo timeZoneSelection, @attr
+        timezoneSelection = $("<div>").addClass "timezoneSelection"
+        selection.append timezoneSelection
+        TimeZoneSelection.attachTo timezoneSelection, @attr
 
         # Add number format selection
         numberFormatSelection = $("<div>").addClass "numberFormatSelection"
@@ -283,6 +284,6 @@ define [ "components/visual"
           @trigger @select("lines"), "disabledLines", lines: _(data.defaults.disabledLines).values()
           @trigger @select("timeSelection"), "refresh", data: data
           @trigger @select("productSelection"), "refresh", data: data
-          @trigger @select("timeZoneSelection"), "refresh", data: data
+          @trigger @select("timezoneSelection"), "refresh", data: data
           @trigger @select("numberFormatSelection"), "refresh", data: data
 
