@@ -61,7 +61,7 @@ public class EnwidaUtils {
 		case CR_DEGREE_OF_ACTIVATION:
 		case CR_VOL_ACCEPTED:
 		case CR_VOL_ACTIVATION:
-		case CR_VOL_ACTIVATION2:	
+		case CR_VOL_ACTIVATION_CP:	
 		case CR_VOL_OFFERED:
 		case CR_WORKPRICE_ACC_MIN:
 		case CR_WORKPRICE_ACC_MAX:
