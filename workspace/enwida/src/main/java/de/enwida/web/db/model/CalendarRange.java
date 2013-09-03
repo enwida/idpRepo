@@ -155,6 +155,10 @@ public class CalendarRange implements Serializable, Cloneable, Comparable<Calend
 		return from.compareTo(o.from);
 	}
 	
+	public boolean isEmpty() {
+		return from.equals(to);
+	}
+	
 	@Override
 	protected CalendarRange clone() {
 		final Calendar fromClone = (Calendar) from.clone();

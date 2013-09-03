@@ -24,6 +24,7 @@ import de.enwida.web.model.Right;
 import de.enwida.web.model.Role;
 import de.enwida.web.model.User;
 import de.enwida.web.service.interfaces.IUserService;
+import de.enwida.web.utils.Constants;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:/root-context-test.xml")
@@ -89,7 +90,7 @@ public class BasicUserManagement {
 	public void userIsAssignedToAnonymousGroup() throws Exception {
 		final User user = testUtils.saveTestUser("testuser");
 		Assert.assertEquals(1, user.getGroups().size());
-		Assert.assertEquals("Anonymous", user.getGroups().iterator().next().getGroupName());
+		Assert.assertEquals(Constants.ANONYMOUS_GROUP, user.getGroups().iterator().next().getGroupName());
 	}
 	
 	@Ignore
@@ -729,7 +730,7 @@ public class BasicUserManagement {
 		Assert.assertEquals(2, testee.getGroups().size());
 		
 		for (final Group g : testee.getGroups()) {
-			Assert.assertTrue(g.getGroupName().equals("Anonymous") || g.getGroupName().equals("enwida-test.de"));
+			Assert.assertTrue(g.getGroupName().equals(Constants.ANONYMOUS_GROUP) || g.getGroupName().equals("enwida-test.de"));
 		}
 	}
 
