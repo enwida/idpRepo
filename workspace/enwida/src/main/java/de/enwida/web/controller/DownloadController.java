@@ -1,6 +1,7 @@
 package de.enwida.web.controller;
 
 import java.io.OutputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -56,7 +57,8 @@ public class DownloadController {
 	    @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Calendar startTime,
 	    @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Calendar endTime,
 	    @RequestParam DataResolution resolution,
-	    @RequestParam String timeZone,
+	    @RequestParam String timezone,
+	    @RequestParam String timezoneInformation,
 	    @RequestParam String numberFormat,
 	    @RequestParam String disabledLines,
 	    HttpServletResponse response,
@@ -65,7 +67,7 @@ public class DownloadController {
     	final User user = userService.getCurrentUser();
     	final ChartNavigationData navigationData = navigationService.getNavigationData(chartId, user, locale);
         final List<Aspect> originalAspects = navigationData.getAspects();
-        final List<Aspect> aspects = new ArrayList<>(originalAspects);
+        final List<Aspect> aspects = new ArrayList<Aspect>(originalAspects);
         final String[] lineStrings = disabledLines.split(",");
         
         for (final String lineString : lineStrings) {
@@ -76,7 +78,7 @@ public class DownloadController {
         	aspects.remove(line);
         }
         
-        final List<IDataLine> lines = new ArrayList<>();
+        final List<IDataLine> lines = new ArrayList<IDataLine>();
         for (final Aspect aspect : aspects) {
         	final LineRequest lineRequest = new LineRequest(aspect, product, tso, startTime, endTime, resolution, locale);
         	try {
@@ -88,10 +90,15 @@ public class DownloadController {
         }
         
         ITimestampFormatter timestampFormatter;
-        if (timeZone.equalsIgnoreCase("UTC")) {
+        if (timezone.equalsIgnoreCase("UTC")) {
         	timestampFormatter = new UTCTimestampFormatter();
         } else {
         	timestampFormatter = new LocalTimestampFormatter();
+        }
+        if (timezoneInformation.equalsIgnoreCase("with")) {
+        	timestampFormatter.setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z"));
+        } else {
+        	timestampFormatter.setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
         }
         
         INumberFormatter numberFormatter;

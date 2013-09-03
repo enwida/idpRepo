@@ -24,6 +24,7 @@ import de.enwida.web.model.Right;
 import de.enwida.web.model.Role;
 import de.enwida.web.model.User;
 import de.enwida.web.service.interfaces.IUserService;
+import de.enwida.web.utils.Constants;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:/root-context-test.xml")
@@ -89,7 +90,7 @@ public class BasicUserManagement {
 	public void userIsAssignedToAnonymousGroup() throws Exception {
 		final User user = testUtils.saveTestUser("testuser");
 		Assert.assertEquals(1, user.getGroups().size());
-		Assert.assertEquals("Anonymous", user.getGroups().iterator().next().getGroupName());
+		Assert.assertEquals(Constants.ANONYMOUS_GROUP, user.getGroups().iterator().next().getGroupName());
 	}
 	
 	@Ignore
@@ -663,14 +664,14 @@ public class BasicUserManagement {
 		Assert.assertTrue(freshUser1.getGroups().contains(group1));
 		Assert.assertTrue(freshUser1.getGroups().contains(group2));
 				
-		final List<Role> allRoles1 = new ArrayList<>();
+		final List<Role> allRoles1 = new ArrayList<Role>();
 		for (final Group group : freshUser1.getGroups()) {
 			allRoles1.addAll(group.getAssignedRoles());
 		}
 		Assert.assertEquals(3, allRoles1.size());
 		Assert.assertEquals(3, freshUser1.getAllRoles().size());
 		
-		final List<Right> allRights1 = new ArrayList<>();
+		final List<Right> allRights1 = new ArrayList<Right>();
 		for (final Role role : allRoles1) {
 			allRights1.addAll(role.getRights());
 		}
@@ -683,14 +684,14 @@ public class BasicUserManagement {
 		Assert.assertTrue(freshUser2.getGroups().contains(group2));
 		Assert.assertTrue(freshUser2.getGroups().contains(group3));
 				
-		final List<Role> allRoles2 = new ArrayList<>();
+		final List<Role> allRoles2 = new ArrayList<Role>();
 		for (final Group group : freshUser2.getGroups()) {
 			allRoles2.addAll(group.getAssignedRoles());
 		}
 		Assert.assertEquals(2, allRoles2.size());
 		Assert.assertEquals(2, freshUser2.getAllRoles().size());
 		
-		final List<Right> allRights2 = new ArrayList<>();
+		final List<Right> allRights2 = new ArrayList<Right>();
 		for (final Role role : allRoles2) {
 			allRights2.addAll(role.getRights());
 		}
@@ -729,7 +730,7 @@ public class BasicUserManagement {
 		Assert.assertEquals(2, testee.getGroups().size());
 		
 		for (final Group g : testee.getGroups()) {
-			Assert.assertTrue(g.getGroupName().equals("Anonymous") || g.getGroupName().equals("enwida-test.de"));
+			Assert.assertTrue(g.getGroupName().equals(Constants.ANONYMOUS_GROUP) || g.getGroupName().equals("enwida-test.de"));
 		}
 	}
 

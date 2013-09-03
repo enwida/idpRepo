@@ -63,7 +63,7 @@ public class ChartNavigationLocalizer {
 		}
 		
 		private void setLocale() {
-			navigationData.getDictionary().setLocale(locale.toLanguageTag());
+			navigationData.getDictionary().setLocale(locale.toString());
 		}
 		
 		private void setTitles() {
@@ -131,10 +131,15 @@ public class ChartNavigationLocalizer {
 		}
 		
 		private void setTimestamps() {
-			final String utcTimestamps = getDownloadMessage("timestamp.utc", "UTC timestamps");
-			final String localTimestamps = getDownloadMessage("timestamp.local", "Local timestamps");
+			final String utcTimestamps = getDownloadMessage("timestamp.utc");
+			final String localTimestamps = getDownloadMessage("timestamp.local");
+			final String withTimezoneInformation = getDownloadMessage("timestamp.with_time_zone");
+			final String withoutTimezoneInformation = getDownloadMessage("timestamp.without_time_zone");
+
 			navigationData.getDictionary().getInfoKeys().put("utcTimestamps", utcTimestamps);
 			navigationData.getDictionary().getInfoKeys().put("localTimestamps", localTimestamps);
+			navigationData.getDictionary().getInfoKeys().put("withTimezone", withTimezoneInformation);
+			navigationData.getDictionary().getInfoKeys().put("withoutTimezone", withoutTimezoneInformation);
 		}
 		
 		private void setNumberFormats() {
@@ -163,6 +168,10 @@ public class ChartNavigationLocalizer {
 	    
 	    private String getDownloadMessage(String property, String defaultMessage) {
 		    return messageSource.getMessage("de.enwida.download." + property, null, defaultMessage, locale);
+	    }
+	    
+	    private String getDownloadMessage(String property) {
+		    return messageSource.getMessage("de.enwida.download." + property, null, locale);
 	    }
 	    
 	}

@@ -33,14 +33,14 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
     
 
     @Override
-	public void activateUser(String username) {
+	public void activateUser(String username) throws Exception {
         User user=fetchByName(username);
         user.setEnabled(true);
         update(user);
     }
 
     @Override
-	public void enableDisableUser(long userID, boolean enabled) {
+	public void enableDisableUser(long userID, boolean enabled) throws Exception{
         User user=fetchById(userID);
 		user.setEnabled(enabled);
         update(user);
@@ -66,7 +66,7 @@ public class UserDaoImpl extends AbstractBaseDao<User> implements IUserDao {
 	}
 
 	@Override
-	public Long getNextSequence(String schema, String sequenceName) {
+	public Long getNextSequence(String schema, String sequenceName) throws Exception {
 		return super.getNextSequenceNumber(schema, sequenceName);
 	}
 

@@ -57,8 +57,11 @@ public class AdminController {
 	    List<Right> aspectRights;
         List<Role> roles = null;
         //Dont load all data
-        if(start==null || max==null){
-            start=max=10;
+        if(start==null){
+            start=10;
+        }
+        if( max==null){
+            max=10;
         }
         try {
             if (request.getParameterValues("all")==null){

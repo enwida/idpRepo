@@ -38,7 +38,7 @@ public class ChartNavigationData implements Cloneable {
 		this.productTrees = new ArrayList<ProductTree>();
 		this.timeRanges = new ArrayList<String>();
 		this.aspects = new ArrayList<Aspect>();
-		this.colors = new ArrayList<>();
+		this.colors = new ArrayList<String>();
 		this.dictionary = new NavigationDictionary();
 	}
 	
@@ -49,7 +49,7 @@ public class ChartNavigationData implements Cloneable {
 	    result.timeRanges = new ArrayList<String>(timeRanges);
 	    result.dictionary = dictionary.clone();
 
-	    result.setColors(new ArrayList<>(colors));
+	    result.setColors(new ArrayList<String>(colors));
 	    result.setDecimals(decimals);
 	    result.setIsDateScale(isDateScale);
 	    result.setHasLineSelection(hasLineSelection);

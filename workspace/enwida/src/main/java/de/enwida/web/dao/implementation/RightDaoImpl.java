@@ -55,7 +55,7 @@ public class RightDaoImpl extends AbstractBaseDao<Right> implements IRightDao {
     
     @Override    public List<CalendarRange> getAllowedTimeRanges(AuthorizationRequest request) throws Exception {
 
-    	final List<Long> allRoleIDs = new ArrayList<>();
+    	final List<Long> allRoleIDs = new ArrayList<Long>();
     	for (final Role role : request.getUser().getAllRoles()) {
     		allRoleIDs.add(role.getRoleID());
     	}
@@ -69,7 +69,7 @@ public class RightDaoImpl extends AbstractBaseDao<Right> implements IRightDao {
         typedQuery.setParameter("aspect", request.getAspect().name());
         typedQuery.setParameter("resolution", request.getResolution().name());
 
-        final List<CalendarRange> ranges = new ArrayList<>();
+        final List<CalendarRange> ranges = new ArrayList<CalendarRange>();
         for (Right right : typedQuery.getResultList()) {
             ranges.add(right.getTimeRange());
         }
@@ -78,7 +78,7 @@ public class RightDaoImpl extends AbstractBaseDao<Right> implements IRightDao {
     }
     
 	@Override
-	public Right addRight(Right right) {
+	public Right addRight(Right right) throws Exception {
 		Right exist = null;
 		
 		if (right.getRightID() != null) {

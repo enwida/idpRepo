@@ -108,19 +108,14 @@ public class CalendarRangeTest {
 				getRange("1988-05-28", "2011-05-01"),
 				getRange("2016-05-28", "2018-12-01")
 		);
-		try {
-			// Should construct a negative time range
-			CalendarRange.getMinimum(ranges);
-		} catch (IllegalArgumentException e) {
-			// Expected
-			return;
-		}
-		throw new Exception("Should not be reachable; IllegalArgumentException expected.");
+		// Should construct an empty time range
+		final CalendarRange minRange = CalendarRange.getMinimum(ranges);
+	    Assert.assertTrue(minRange.isEmpty());
 	}
 	
 	@Test
 	public void testConnectedTimeRanges() throws ParseException {
-		final List<CalendarRange> ranges = new ArrayList<>(Arrays.asList(
+		final List<CalendarRange> ranges = new ArrayList<CalendarRange>(Arrays.asList(
 				getRange("2010-01-01", "2012-01-01"),
 				getRange("1988-05-28", "2011-05-01"),
 				getRange("2010-05-28", "2018-12-01")

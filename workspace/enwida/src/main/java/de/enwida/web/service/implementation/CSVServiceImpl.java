@@ -91,7 +91,7 @@ public class CSVServiceImpl implements ICSVService  {
 	    }
 
 		private void appendCSVData() {
-	    	final SortedMap<Double, List<Double>> csvDataLines = new TreeMap<>();
+	    	final SortedMap<Double, List<Double>> csvDataLines = new TreeMap<Double, List<Double>>();
 	    	
 	    	for (final IDataLine line : lines) {
 	    		if (!(line instanceof XYDataLine)) {
@@ -101,7 +101,7 @@ public class CSVServiceImpl implements ICSVService  {
 	    		for (final XYDataPoint dp : xyLine.getDataPoints()) {
 	    			List<Double> ys = csvDataLines.get(dp.x);
 	    			if (ys == null) {
-	    				ys = new ArrayList<>();
+	    				ys = new ArrayList<Double>();
 	    				csvDataLines.put(dp.x, ys);
 	    			}
 	    			ys.add(dp.y);

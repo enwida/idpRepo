@@ -20,7 +20,7 @@ public interface IUserDao extends IDao<User> {
 
     boolean usernameAvailablility(String username) throws Exception;
 
-    Long getNextSequence(String schema, String sequenceName);
+    Long getNextSequence(String schema, String sequenceName) throws Exception;
 
     int getUploadedFileVersion(UploadedFile uplaodedfile, User user);
 

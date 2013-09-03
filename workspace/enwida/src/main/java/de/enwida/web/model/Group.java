@@ -109,7 +109,7 @@ public class Group implements Serializable{
     }
     
     public List<Right> getAllRights() {
-    	final List<Right> result = new ArrayList<>();
+    	final List<Right> result = new ArrayList<Right>();
     	for (final Role role : getAssignedRoles()) {
     		result.addAll(role.getRights());
     	}
