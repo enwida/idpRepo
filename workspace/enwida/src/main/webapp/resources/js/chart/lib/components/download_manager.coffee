@@ -201,7 +201,7 @@ define [ "components/visual"
             @$node.find(".timeslot option").length
 
           text = @attr.navigationData.localizations.infoKeys.buttonText
-          @select("download").text text.replace "$1", dataSets
+          @select("download").text text.replace "$1", parseInt dataSets
           @setDownloadLink()
           @onGetLines selections
 
