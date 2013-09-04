@@ -59,7 +59,7 @@ define ["./generic_chart", "util/scale"], (GenericChart, Scale) ->
       margin = @chart.options.margin
       svg = d3.selectAll(@chart.options.parent).append("svg")
         .attr("class", "legend")
-        .attr("width", 150)
+        .attr("width", 200)
         .attr("height", @chart.options.height + margin.bottom + margin.top + 30)
         .append("g")
           .attr("transform", "translate(0,#{margin.top + 30})")
@@ -101,7 +101,7 @@ define ["./generic_chart", "util/scale"], (GenericChart, Scale) ->
         svg.append("text")
           .attr("x", 30)
           .attr("y", i * barHeight + 3)
-          .text(Math.round((basePos + (5-i) * stepPos) * 1000) / 1000)
+          .text(@chart.formatNumber basePos + (5-i) * stepPos)
 
       for i in [1..5]
         y = (i + 5) * barHeight
@@ -118,12 +118,12 @@ define ["./generic_chart", "util/scale"], (GenericChart, Scale) ->
         svg.append("text")
           .attr("x", 30)
           .attr("y", (i + 5) * barHeight + 3)
-          .text(Math.round((baseNeg + (5-i) * stepNeg) * 1000) / 1000)
+          .text(@chart.formatNumber baseNeg + (5-i) * stepNeg)
 
       svg.append("text")
         .attr("x", 0)
         .attr("y", -25)
-        .text(@chart.options.yLabel)
+        .text(@chart.options.legendLabel)
         .attr("font-weight", "bold")
 
     draw: ->
