@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
+import de.enwida.web.controller.AdminController;
 import de.enwida.web.dao.interfaces.IGroupDao;
 import de.enwida.web.dao.interfaces.IRightDao;
 import de.enwida.web.dao.interfaces.IRoleDao;
@@ -651,24 +652,18 @@ public class UserServiceImpl implements IUserService {
         return roleDao.fetchById(roleId);
     }
 	
-	private void sendUserActivationEmail(User user, Locale locale){
+	private void sendUserActivationEmail(User user, Locale locale) throws Exception {
+	    try{
 		String activationLink = Constants.ACTIVATION_URL+"username=" + user.getUserName() + "&actId=" + user.getActivationKey();
 		String emailText = messageSource.getMessage("de.enwida.activation.email.message", null, locale) + 
 				activationLink +" \n"+ messageSource.getMessage("de.enwida.activation.email.signature", null, locale);	
-		try {
-			mailService.SendEmail(user.getEmail(), messageSource.getMessage("de.enwida.activation.email.subject", null, locale), emailText );
-		} catch (AddressException e) {
-			e.printStackTrace();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (NoSuchMessageException e) {
-			e.printStackTrace();
-		} catch (MessagingException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+
+		mailService.SendEmail(user.getEmail(), messageSource.getMessage("de.enwida.activation.email.subject", null, locale), emailText );
 		lastActivationLink=activationLink;
+	    }catch(Exception ex){
+	        logger.error(ex);
+	        throw new Exception("Mailing Error occured");
+	    }
 	}
 
     @Override
