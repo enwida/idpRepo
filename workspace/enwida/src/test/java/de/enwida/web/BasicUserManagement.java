@@ -710,28 +710,49 @@ public class BasicUserManagement {
 	}
 	
 	@Test
-	public void testAutoPass() throws Exception {
+	public void testAutoPass() throws Exception {      
+        //Group 1 with autopass
 		Group group = new Group("enwida-test.de");
 		group.setAutoPass(true);
 		group = userService.saveGroup(group);
+        
+        //Group 2 with autopass
+        Group group2 = new Group("enwida-test.de2");
+        group2.setAutoPass(true);
+        group2 = userService.saveGroup(group2);   
+        
+        //Group 3 without autopass
+        Group group3 = new Group("enwida-test.de2");
+        group3.setAutoPass(false);
+        group3 = userService.saveGroup(group3);
 		
 	    final User user = new User("test@enwida-test.de", "testuser", "secret", "Test", "User", true);
 		user.setCompanyName("enwida-test.de");
 		userService.saveUser(user,false);
 		
 		Assert.assertEquals(1, user.getGroups().size());
-		userService.assignGroupToUser(user, group);
-		Assert.assertEquals(2, user.getGroups().size());
+        userService.assignGroupToUser(user, group);
+        Assert.assertEquals(2, user.getGroups().size());
+        userService.assignGroupToUser(user, group2);
+        Assert.assertEquals(3, user.getGroups().size());
+        userService.assignGroupToUser(user, group3);
+        Assert.assertEquals(4, user.getGroups().size());
 
 	    final User testee = new User("test2@enwida-test.de", "testuser2", "secret", "Test", "User", true);
 		testee.setCompanyName("enwida-test.de");
 		userService.saveUser(testee,false);
 		
-		Assert.assertEquals(2, testee.getGroups().size());
-		
-		for (final Group g : testee.getGroups()) {
-			Assert.assertTrue(g.getGroupName().equals(Constants.ANONYMOUS_GROUP) || g.getGroupName().equals("enwida-test.de"));
-		}
+		Assert.assertEquals(3, testee.getGroups().size());
+		//Check first group is assigned
+        Assert.assertTrue(testee.getGroups().contains(group));
+        //Check second group is assigned
+        Assert.assertTrue(testee.getGroups().contains(group2));
+        //Check anonymous is assigned
+        for (final Group g : testee.getGroups()) {
+            Assert.assertTrue(g.getGroupName().equals(Constants.ANONYMOUS_GROUP));
+        }
+        //Check 3rd group is NOT assigned
+        Assert.assertTrue(!testee.getGroups().contains(group));
 	}
 
 
@@ -755,4 +776,5 @@ public class BasicUserManagement {
         final Group testee2=userService.findGroup(new Group("testgroup"));
         Assert.assertTrue(testee2.isAutoPass());
     }
+
  }
