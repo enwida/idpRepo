@@ -21,6 +21,7 @@ import de.enwida.web.db.model.CalendarRange;
 import de.enwida.web.db.model.NavigationDefaults;
 import de.enwida.web.model.ChartNavigationData;
 import de.enwida.web.model.ProductTree;
+import de.enwida.web.utils.NavigationOptions;
 import de.enwida.web.utils.ObjectMapperFactory;
 import de.enwida.web.utils.ProductLeaf;
 import de.enwida.web.utils.ProductNode;
@@ -56,11 +57,11 @@ public class NavigationJsonGenerator {
     private static ChartNavigationData getNavigationFromTemplate(Template template) {
     	final ChartNavigationData result = new ChartNavigationData();
 
-    	// Set flags
-    	result.setIsDateScale(template.isDateScale != null ? template.isDateScale : true);
-    	result.setHasLineSelection(template.hasLineSelection != null ? template.hasLineSelection : true);
-    	result.setHasProductSelection(template.hasProductSelection != null ? template.hasProductSelection : true);
-    	result.setHasTimeSelection(template.hasTimeSelection != null ? template.hasTimeSelection : true);
+    	// Set options
+    	if (template.options == null) {
+    		template.options = new NavigationOptions();
+    	}
+    	result.setOptions(template.options);
     	
     	// Set defaults
     	if (template.timeRanges == null) {
@@ -210,11 +211,7 @@ public class NavigationJsonGenerator {
     	public List<String> products;
     	public Calendar dateFrom;
     	public Calendar dateTo;
-    	
-    	public Boolean isDateScale;
-    	public Boolean hasLineSelection;
-    	public Boolean hasProductSelection;
-    	public Boolean hasTimeSelection;
+    	public NavigationOptions options;
     }
 
 }

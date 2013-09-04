@@ -24,7 +24,8 @@ public class ChartNavigationLocalizer {
 			"timerange",
 			"resolution",
 			"tso",
-			"datasheet"
+			"datasheet",
+			"hour"
 		});
 	}
 	

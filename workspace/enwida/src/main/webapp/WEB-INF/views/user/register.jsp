@@ -6,7 +6,7 @@
 		<title>Enwida Registration</title>
 	</head>
 
-<a href="login">login</a>
+<a href="login"><message:message code="de.enwida.userManagement.login" /></a>
 <h1><message:message code="de.enwida.userManagement.registrationForm" /></h1><br />
 <form:form commandName="USER" name="registrationForm">
 <label id="userErrorLabel" cssStyle="color : red;">${emailAvailabilityError}</label> 
@@ -14,7 +14,7 @@
 	<tr><td><message:message code="de.enwida.userManagement.mailAddress" />(*) : </td><td><form:input path="email" onchange="getCompany(this.value)"/><form:errors id="userError" path="email" cssStyle="color : red;"/></td></tr>
 	<tr><td><message:message code="de.enwida.userManagement.firstName" />(*) : </td><td><form:input path="firstName" /><form:errors path="firstName" cssStyle="color : red;"/><label id="userErrorLabel" cssStyle="color : red;">${usernameCheck}</label></td></tr>
 	<tr><td><message:message code="de.enwida.userManagement.lastName" />(*) : </td><td><form:input path="lastName" /><form:errors path="lastName" cssStyle="color : red;"/></td></tr>
-	<tr><td><message:message code="de.enwida.userManagement.password" />(*) : </td><td><form:password path="password" /><form:errors path="password" cssStyle="color : red;"/></td></tr>
+	<tr><td><message:message code="de.enwida.userManagement.password" />(*)<message:message code="de.enwida.userManagement.passwordSize" /> : </td><td><form:password path="password" /><form:errors path="password" cssStyle="color : red;"/></td></tr>
 	<tr><td><message:message code="de.enwida.userManagement.passwordRepeat" />(*): </td><td><form:password path="confirmPassword" /><form:errors path="confirmPassword" cssStyle="color : red;"/></td></tr>
 	<tr><td><message:message code="de.enwida.userManagement.telephone" /> : </td><td><form:input path="telephone" /><form:errors path="telephone" cssStyle="color : red;"/></td></tr>
 	<tr><td><message:message code="de.enwida.userManagement.company" /> : </td><td><form:input path="companyName" id="companyName"/><form:errors path="companyName" cssStyle="color : red;"/></td></tr>

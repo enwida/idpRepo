@@ -420,6 +420,10 @@ public class User implements Serializable, UserDetails {
     	}
     	return result;
     }
+    
+    public boolean isAnonymous() {
+    	return userName.equals(Constants.ANONYMOUS_USER);
+    }
 
 	@Override
 	public int hashCode() {

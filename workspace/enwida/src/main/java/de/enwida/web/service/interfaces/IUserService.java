@@ -15,6 +15,8 @@ import de.enwida.web.model.User;
  * 
  */
 public interface IUserService {
+    
+    public String getLastActivationLink();
 
     /**
      * Get users by userID
@@ -371,4 +373,8 @@ public interface IUserService {
      * Enables/Disables the autopass
      */
     public void enableDisableAutoPass(Long groupID, boolean enabled) throws Exception;
+    /**
+     * Get group by group domain
+     */
+	public Group fetchGroupByDomainName(String domainName);
 }
