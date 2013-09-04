@@ -16,8 +16,8 @@ public interface IUserLinesDao extends IDao<UserLinesMetaData> {
 
 	boolean createUserLines(List<DOUserLines> userlines);
 
-	List<DOUserLines> getUserLines(int metaDataId);
+	List<DOUserLines> getUserLines(String userLineId);
 
-	boolean deleteUserLines(int metaDataId);
+	boolean deleteUserLines(String userLineId);
 
 }

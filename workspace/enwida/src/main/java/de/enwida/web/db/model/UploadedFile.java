@@ -9,14 +9,12 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -41,7 +39,7 @@ public class UploadedFile implements Serializable, Comparable<UploadedFile> {
 	 * 
 	 */
 	private static final long serialVersionUID = -2646705236947755657L;
-	public static final String ID = "ID";
+
 	public static final String PREVIOUS_FILE_ID = "PREVIOUS_FILE_ID";
 	public static final String DISPLAY_FILE_NAME = "DISPLAY_FILE_NAME";
 	public static final String FILE_NAME = "FILE_NAME";
@@ -50,14 +48,32 @@ public class UploadedFile implements Serializable, Comparable<UploadedFile> {
 	public static final String MODIFICATION_DATE = "MODIFICATION_DATE";
 	public static final String FORMAT = "FORMAT";
 	public static final String FILE_PATH = "FILE_PATH";
-	public static final String REVISION = "REVISION";
+
 	public static final String ACTIVE = "ACTIVE";
 	public static final SimpleDateFormat formatter = new SimpleDateFormat(
 			Constants.DISPLAY_DATE_FORMAT);
-	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "FILE_SEQ")
-	@Column(name = ID)
-	private long id;
+
+	/**
+	 * 
+	 */
+	public UploadedFile() {
+	}
+
+	/**
+	 * 
+	 */
+	public UploadedFile(long fileId, int revision) {
+		uploadedFileId = new UploadFilePrimaryKey(fileId, revision);
+	}
+
+	@EmbeddedId
+	// @GeneratedValue(strategy = GenerationType.SEQUENCE, generator =
+	// "FILE_SEQ")
+	// @Column(name = ID)
+	private UploadFilePrimaryKey uploadedFileId = new UploadFilePrimaryKey(1, 1);
+
+	// @Column(name = REVISION)
+	// private int revision;
 
 	@Column(name = DISPLAY_FILE_NAME, unique = false, nullable = false, length = 255)
 	private String displayFileName;
@@ -65,14 +81,16 @@ public class UploadedFile implements Serializable, Comparable<UploadedFile> {
 	@Column(name = FILE_NAME, unique = true, nullable = false, length = 255)
 	private String fileName;
 	
-	@Column(name = FILE_SET_UNIQUE_IDENTIFIER, nullable = false, length = 255)
-	private String fileSetUniqueIdentifier;
+	// @Column(name = FILE_SET_UNIQUE_IDENTIFIER, nullable = false, length =
+	// 255)
+	// private String fileSetUniqueIdentifier;
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = User.USER_ID)
 	private User uploader;
 
-	@OneToOne(mappedBy = "file")
+	// @OneToOne(mappedBy = "file")
+	@Embedded
 	private UserLinesMetaData metaData;
 
 	@Column(name = UPLOAD_DATE, nullable = false)
@@ -89,15 +107,12 @@ public class UploadedFile implements Serializable, Comparable<UploadedFile> {
 	@Column(name = FILE_PATH, length = 256)
 	private String filePath;
 
-	@Column(name = REVISION)
-	private int revision;
-	
 	@Column(name = ACTIVE)
 	private boolean active = false;
 
-	@OneToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = PREVIOUS_FILE_ID)
-	private UploadedFile previousFile;
+	// @OneToOne(fetch = FetchType.EAGER)
+	// @JoinColumn(name = PREVIOUS_FILE_ID)
+	// private UploadedFile previousFile;
 
 	@Transient
 	private File actualFile;
@@ -105,12 +120,12 @@ public class UploadedFile implements Serializable, Comparable<UploadedFile> {
 	@Transient
 	private File manifestFile;
 
-	public long getId() {
-		return id;
+	public UploadFilePrimaryKey getUploadedFileId() {
+		return uploadedFileId;
 	}
 
-	public void setId(long id) {
-		this.id = id;
+	public void setUploadedFileId(UploadFilePrimaryKey uploadedFileId) {
+		this.uploadedFileId = uploadedFileId;
 	}
 
 	public String getDisplayFileName() {
@@ -129,13 +144,13 @@ public class UploadedFile implements Serializable, Comparable<UploadedFile> {
 		this.fileName = fileName;
 	}
 
-	public String getFileSetUniqueIdentifier() {
-		return fileSetUniqueIdentifier;
-	}
-
-	public void setFileSetUniqueIdentifier(String fileSetUniqueIdentifier) {
-		this.fileSetUniqueIdentifier = fileSetUniqueIdentifier;
-	}
+	// public String getFileSetUniqueIdentifier() {
+	// return fileSetUniqueIdentifier;
+	// }
+	//
+	// public void setFileSetUniqueIdentifier(String fileSetUniqueIdentifier) {
+	// this.fileSetUniqueIdentifier = fileSetUniqueIdentifier;
+	// }
 
 	@Transient
 	public User getUploader() {
@@ -190,11 +205,11 @@ public class UploadedFile implements Serializable, Comparable<UploadedFile> {
 	}
 
 	public int getRevision() {
-		return revision;
+		return uploadedFileId.getRevision();
 	}
 
 	public void setRevision(int revision) {
-		this.revision = revision;
+		uploadedFileId.setRevision(revision);
 	}
 
 	public boolean isActive() {
@@ -205,13 +220,13 @@ public class UploadedFile implements Serializable, Comparable<UploadedFile> {
 		this.active = active;
 	}
 
-	public UploadedFile getPreviousFile() {
-		return previousFile;
-	}
-
-	public void setPreviousFile(UploadedFile previousFile) {
-		this.previousFile = previousFile;
-	}
+	// public UploadedFile getPreviousFile() {
+	// return previousFile;
+	// }
+	//
+	// public void setPreviousFile(UploadedFile previousFile) {
+	// this.previousFile = previousFile;
+	// }
 
 	public File getActualFile() {
 		if (actualFile == null) {
@@ -227,26 +242,24 @@ public class UploadedFile implements Serializable, Comparable<UploadedFile> {
 		return manifestFile;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#hashCode()
-	 */
+	public String getUserLineId() {
+		return "" + uploadedFileId.getId() + uploadedFileId.getRevision();
+	}
+
+	public String getUserLineIdOnNewRevision() {
+		int newrevision = uploadedFileId.getRevision() + 1;
+		return "" + uploadedFileId.getId() + newrevision;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + (int) (id ^ (id >>> 32));
 		result = prime * result
-				+ ((uploadDate == null) ? 0 : uploadDate.hashCode());
+				+ ((uploadedFileId == null) ? 0 : uploadedFileId.hashCode());
 		return result;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -256,32 +269,28 @@ public class UploadedFile implements Serializable, Comparable<UploadedFile> {
 		if (getClass() != obj.getClass())
 			return false;
 		UploadedFile other = (UploadedFile) obj;
-		if (id != other.id)
-			return false;
-		if (uploadDate == null) {
-			if (other.uploadDate != null)
+		if (uploadedFileId == null) {
+			if (other.uploadedFileId != null)
 				return false;
-		} else if (!uploadDate.equals(other.uploadDate))
+		} else if (!uploadedFileId.equals(other.uploadedFileId))
 			return false;
 		return true;
 	}
 
+
 	@Override
 	public String toString() {
-		return "UploadedFile [id="
-				+ id
-				+ ", "
+		return "UploadedFile ["
+				+ (uploadedFileId != null ? "uploadedFileId=" + uploadedFileId
+						+ ", " : "")
 				+ (displayFileName != null ? "displayFileName="
 						+ displayFileName + ", " : "")
 				+ (fileName != null ? "fileName=" + fileName + ", " : "")
-				+ (uploader != null ? "uploader=" + uploader.getUserName()
-						+ ", " : "")
-				+ (uploadDate != null ? "uploadDate=" + uploadDate + ", " : "")
+				+ (uploader != null ? "uploader=" + uploader + ", " : "")
 				+ (modificationDate != null ? "modificationDate="
 						+ modificationDate + ", " : "")
 				+ (format != null ? "format=" + format + ", " : "")
-				+ (filePath != null ? "filePath=" + filePath + ", " : "")
-				+ "revision=" + revision + "]";
+				+ (filePath != null ? "filePath=" + filePath : "") + "]";
 	}
 
 	@Override

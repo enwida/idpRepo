@@ -6,22 +6,16 @@ package de.enwida.web.db.model;
 import java.io.Serializable;
 
 import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-
-import de.enwida.web.utils.Constants;
+import javax.persistence.Embeddable;
 
 /**
  * @author Jitin
  *
  */
-@Entity
-@Table(name = Constants.USER_LINES_METADATA_TABLE_NAME, schema = Constants.USER_LINES_METADATA_TABLE_SCHEMA_NAME)
+@Embeddable
+// @Entity
+// @Table(name = Constants.USER_LINES_METADATA_TABLE_NAME, schema =
+// Constants.USER_LINES_METADATA_TABLE_SCHEMA_NAME)
 public class UserLinesMetaData implements Serializable{
 	
 	/**
@@ -42,19 +36,19 @@ public class UserLinesMetaData implements Serializable{
 	public static final String HEADER2 = "HEADER2";
 	public static final String ASPECT = "ASPECT";
 	
-	@Id
-	@Column(name = LINE_METADATA_ID)
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int metaDataId;
+	// @Id
+	// @Column(name = LINE_METADATA_ID)
+	// @GeneratedValue(strategy = GenerationType.IDENTITY)
+	// private int metaDataId;
 
 	// @OneToMany(cascade = CascadeType.ALL, mappedBy = "lineMetaData", fetch =
 	// FetchType.LAZY)
 	// @ElementCollection(targetClass = UserLines.class)
 	// private Set<UserLines> userLines;
 
-	@OneToOne
-	@JoinColumn(name = FILE_ID, referencedColumnName = UploadedFile.ID)
-	private UploadedFile file;
+	// @OneToOne
+	// @JoinColumn(name = FILE_ID, referencedColumnName = UploadedFile.ID)
+	// private UploadedFile file;
 
 	@Column(name = TYPE)
 	private String type;
@@ -86,13 +80,13 @@ public class UserLinesMetaData implements Serializable{
 	@Column(name = ASPECT)
 	private String aspect;
 
-	public int getMetaDataId() {
-		return metaDataId;
-	}
-
-	public void setMetaDataId(int metaDataId) {
-		this.metaDataId = metaDataId;
-	}
+	// public int getMetaDataId() {
+	// return metaDataId;
+	// }
+	//
+	// public void setMetaDataId(int metaDataId) {
+	// this.metaDataId = metaDataId;
+	// }
 
 	// public Set<UserLines> getUserLines() {
 	// return userLines;
@@ -102,13 +96,13 @@ public class UserLinesMetaData implements Serializable{
 	// this.userLines = userLines;
 	// }
 
-	public UploadedFile getFile() {
-		return file;
-	}
-
-	public void setFile(UploadedFile file) {
-		this.file = file;
-	}
+	// public UploadedFile getFile() {
+	// return file;
+	// }
+	//
+	// public void setFile(UploadedFile file) {
+	// this.file = file;
+	// }
 
 	public String getType() {
 		return type;
@@ -193,10 +187,10 @@ public class UserLinesMetaData implements Serializable{
 	@Override
 	public String toString() {
 		return "UserLinesMetaData [metaDataId="
-				+ metaDataId
+				// + metaDataId
 				+ ", "
 				// + (userLines != null ? "userLines=" + userLines + ", " : "")
-				+ (file != null ? "file=" + file + ", " : "")
+				// + (file != null ? "file=" + file + ", " : "")
 				+ (type != null ? "type=" + type + ", " : "")
 				+ (name != null ? "name=" + name + ", " : "")
 				+ (units != null ? "units=" + units + ", " : "")

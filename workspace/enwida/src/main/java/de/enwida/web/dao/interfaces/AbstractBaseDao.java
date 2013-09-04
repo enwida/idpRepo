@@ -211,6 +211,46 @@ public abstract class AbstractBaseDao<T> implements IDao<T> {
 	}
 	
 	/**
+	 * This will help in getting the next id to be generated for a sequence
+	 * 
+	 * @param schema
+	 * @param sequenceName
+	 * @return
+	 * @throws Exception
+	 */
+	public Long getNextSequenceNumber(String schema, String sequenceName,
+			boolean reset) throws Exception {
+		BigInteger nextCounter = null;
+		try {
+			Query q = em.createNativeQuery("select nextval('" + schema + "."
+					+ sequenceName + "')");
+			nextCounter = (BigInteger) q.getSingleResult();
+
+			Query q1 = null;
+
+			if (reset) {
+				if (nextCounter.intValue() == 1) {
+					// resetting sequence to old value again
+					q1 = em.createNativeQuery("select setval('" + schema + "."
+							+ sequenceName + "'," + nextCounter.intValue()
+							+ ",false)");
+				} else {
+					q1 = em.createNativeQuery("select setval('" + schema + "."
+							+ sequenceName + "',"
+							+ (nextCounter.intValue() - 1) + ",true)");
+				}
+				// dont do anything with result
+				q1.getSingleResult();
+			}
+
+		} catch (Exception e) {
+			logger.error("Unable to reset sequence value : ", e);
+			throw e;
+		}
+		return nextCounter.longValue();
+	}
+
+	/**
 	 * Flush cached statements to DB
 	 */
 	@Override

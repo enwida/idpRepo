@@ -6,7 +6,6 @@ import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.sql.Date;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -674,4 +673,16 @@ public class UserServiceImpl implements IUserService {
         group.setAutoPass(enabled);
         groupDao.save(group);
     }
+
+	@Override
+	public Long getNextSequence(String schema, String sequenceName,
+			boolean reset) {
+		Long value = null;
+		try {
+			value = userDao.getNextSequence(schema, sequenceName, reset);
+		} catch (Exception e) {
+			logger.error("Do nothing");
+		}
+		return value;
+	}
 }

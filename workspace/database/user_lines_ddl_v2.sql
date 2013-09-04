@@ -14,3 +14,12 @@ WITH (
 );
 ALTER TABLE public.user_lines
   OWNER TO enwida;
+
+DROP SCHEMA if exists users  cascade;
+CREATE SCHEMA users authorization enwida;
+
+CREATE SEQUENCE users.uploaded_file_sequence
+   INCREMENT 1
+   START 1;
+ALTER SEQUENCE users.uploaded_file_sequence
+  OWNER TO enwida;
