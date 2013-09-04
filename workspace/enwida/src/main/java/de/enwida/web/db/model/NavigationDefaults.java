@@ -29,9 +29,6 @@ import de.enwida.web.utils.Constants;
 // CalendarRange.TO }) })
 public class NavigationDefaults implements Cloneable,Serializable {
     
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1268487366015431606L;
 	public static final String NAVIGATION_DEFAULTS_ID = "NAVIGATION_DEFAULTS_ID";
 	public static final String DISABLED_LINE_ID = "DISABLED_LINE_ID";

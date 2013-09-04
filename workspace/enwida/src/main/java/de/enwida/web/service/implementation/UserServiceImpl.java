@@ -6,7 +6,6 @@ import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.sql.Date;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -570,19 +569,19 @@ public class UserServiceImpl implements IUserService {
      * Gets the current User
      */
     @Override
-    public User getCurrentUser()throws Exception  {
+    public User getCurrentUser() throws Exception  {
         String userName = SecurityContextHolder.getContext().getAuthentication().getName();
         User user=this.fetchUser(userName);
         //If user is not found return anonymous user;
         if (user==null){
-        	user = fetchUser("anonymous");
+        	user = fetchUser(Constants.ANONYMOUS_USER);
         	
         	if (user == null) {
-				user = new User("anonymous" + "anon@enwida.de", "anonymous", "secret", "Anonymous", "User", true);
+				user = new User("anon@enwida.de", Constants.ANONYMOUS_USER, "secret", "Anonymous", "User", true);
 				user.setCompanyName("enwida.de");
 				saveUser(user,false);
 				
-				final Group anonymousGroup = fetchGroup("anonymous");
+				final Group anonymousGroup = fetchGroup(Constants.ANONYMOUS_GROUP);
 				assignGroupToUser(user, anonymousGroup);
         	}
         }

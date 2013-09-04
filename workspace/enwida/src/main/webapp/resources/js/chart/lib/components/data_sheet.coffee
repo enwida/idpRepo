@@ -1,4 +1,4 @@
-define ["../util/time_utils"], (TimeUtils) ->
+define ["../util/time_utils", "util/number_utils"], (TimeUtils, NumberUtils) ->
 
   flight.component ->
 
@@ -12,6 +12,12 @@ define ["../util/time_utils"], (TimeUtils) ->
 
       resolution = lines[0].lineRequest.resolution
       dateFormat = TimeUtils.resolutionDateFormat[resolution]
+
+      # Helper function
+      formatNumber = (n) ->
+        NumberUtils.format n,
+          navigationData.options.decimals,
+          navigationData.localizations.locale
 
       # Merge lines
       data = {}
@@ -34,10 +40,10 @@ define ["../util/time_utils"], (TimeUtils) ->
         tr.append $("<td>").text \
           if navigationData.options.isDateScale
             dateFormat new Date parseInt x
-          else x
+          else formatNumber x
 
         for y in data[x]
-          tr.append $("<td>").text y
+          tr.append $("<td>").text formatNumber y
 
         table.append tr
         oddRow = not oddRow

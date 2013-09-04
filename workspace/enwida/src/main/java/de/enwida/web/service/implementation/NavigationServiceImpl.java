@@ -221,27 +221,18 @@ public class NavigationServiceImpl implements INavigationService {
 	}
 
 	@Override
-	public Set<NavigationSettings> getNavigationSettingsByUserId(
-			int userId) throws IOException {
-		return navigationDao.getUserNavigationSettings(userId);
+	public Set<NavigationSettings> getNavigationSettingsByUserId(int userId) throws IOException {
+		return navigationDao.getNavigationSettingsByUserID(userId);
 	}
 
 	@Override
-	public boolean saveUserNavigationSettings(
-			NavigationSettings navigationSettings) {
-		return navigationDao.saveUserNavigationSettings(navigationSettings);
+	public Set<NavigationSettings> getNavigationSettingsByClientId(String clientId) throws IOException {
+		return navigationDao.getNavigationSettingsByClientID(clientId);
 	}
 
 	@Override
-	public NavigationSettings getUserNavigationSettings(Object id,
-			int chartId, boolean isClient) {
-		return navigationDao.getUserNavigationSettings(id, chartId, isClient);
+	public void saveUserNavigationSettings(NavigationSettings navigationSettings) {
+		navigationDao.saveUserNavigationSettings(navigationSettings);
 	}
 
-	@Override
-	public ChartNavigationData getNavigationDataUNSECURE(int chartId,
-			User user, Locale locale) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 }

@@ -9,6 +9,7 @@ public class Constants {
 	// User Roles
 	public static final String ANONYMOUS_ROLE = "anonymous_role";
 	public static final String ANONYMOUS_GROUP = "anonymous";
+	public static final String ANONYMOUS_USER = "anonymous";
 	
 	// Rights
 	

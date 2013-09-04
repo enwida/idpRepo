@@ -7,11 +7,9 @@ import java.io.OutputStream;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
@@ -133,7 +131,7 @@ public class ChartDataController {
 			defaults.setResolution(resolution);
 			defaults.setTimeRange(new CalendarRange(startTime, endTime));
 			
-			updateChartDefaults(chartId, defaults, request);
+			setNavigationSettings(defaults, chartId, request);
         } catch (Exception ignored) { 
             logger.info(ignored.getMessage());
         }
@@ -181,7 +179,7 @@ public class ChartDataController {
                 }
                 defaults.setDisabledLines(disabledLines);
             }
-			updateChartDefaults(chartId, defaults, request);
+			setNavigationSettings(defaults, chartId, request);
         } catch (Exception ignored) { 
             logger.info(ignored.getMessage());
         }
@@ -233,72 +231,54 @@ public class ChartDataController {
     	}
     }
     
+	private NavigationSettings getNavigationSetting(int chartId, HttpServletRequest request) throws IOException {
+		final Set<NavigationSettings> chartSettings = getNavigationSettings(request);
+		for (final NavigationSettings setting : chartSettings) {
+			if (setting.getChartId() == chartId) {
+				return setting;
+			}
+		}
+	    return null;
+    }
+
 	private NavigationDefaults getNavigationDefaults(int chartId, HttpServletRequest request) throws IOException {
-		final Map<Integer, NavigationDefaults> chartDefaults = getUserSettings(request);
-	    return chartDefaults.get(chartId);
+		final NavigationSettings setting = getNavigationSetting(chartId, request);
+		if (setting == null) {
+			return null;
+		}
+		return setting.getSettingsData();
     }
 
-	private void updateChartDefaults(int chartId, NavigationDefaults defaults,
-			HttpServletRequest request) throws Exception {
-		setUserSettings(defaults, chartId, request);
-    }
-    
-	public void setUserSettings(NavigationDefaults defaults, int chartId,
-			HttpServletRequest request) throws Exception {
-
-		if (userSession.getUser() != null) {
-			// update database with navigation settings
-			userSession.getUser().addNavigationSettings(chartId, defaults);
-			userService.updateUser(userSession.getUser());
+	private Set<NavigationSettings> getNavigationSettings(HttpServletRequest request) throws IOException {
+		if (loggedIn()) {
+			return navigationService.getNavigationSettingsByUserId(userSession.getUser().getUserId().intValue());
 		} else {
-			// set anonymous user settings with userId
-			logger.debug(request.getAttribute("clientId"));
-			String clientId = (String) request.getAttribute("clientId");
-			NavigationSettings settings = navigationService
-					.getUserNavigationSettings(clientId, chartId, true);
-			if (settings == null) {
-				settings = new NavigationSettings(chartId, defaults, null,
-						clientId);
+			final String clientId = (String) request.getAttribute("clientId");
+			return navigationService.getNavigationSettingsByClientId(clientId);
+		}
+	}
+
+	private void setNavigationSettings(NavigationDefaults defaults, int chartId, HttpServletRequest request) throws Exception {
+		final String clientId = (String) request.getAttribute("clientId");
+
+		NavigationSettings newSetting = getNavigationSetting(chartId, request);
+		if (newSetting == null) {
+			if (loggedIn()) {
+				// Don't save client ID if user is logged in.
+				// This prevents changing the defaults after logout
+				newSetting = new NavigationSettings(chartId, defaults, userSession.getUser(), "-");
 			} else {
-				settings.setSettingsData(defaults);
+				newSetting = new NavigationSettings(chartId, defaults, userSession.getUser(), clientId);
 			}
-			navigationService.saveUserNavigationSettings(settings);
-		}
-	}
-
-	public Map<Integer, NavigationDefaults> getUserSettings( HttpServletRequest request) {
-
-		Map<Integer, NavigationDefaults> navigationSettings = null;
-		if (userSession.getUser() != null) {
-			// logged in user navigation settings
-			navigationSettings = userSession.getUser().getChartDefaults();
 		} else {
-			// anonymous user navigation settings
-			Integer clientId = (Integer) request.getAttribute("clientId");
-			try {
-				Set<NavigationSettings> navigationSettingsSet = navigationService
-						.getNavigationSettingsByUserId(clientId);
-				navigationSettings = getNavigationDefaultsMap(navigationSettingsSet);
-
-			} catch (IOException e) {
-				logger.error("Unable to get data for clientId : " + clientId, e);
-			}
+			newSetting.setSettingsData(defaults);
 		}
-		return navigationSettings;
+
+		navigationService.saveUserNavigationSettings(newSetting);
 	}
-
-	private Map<Integer, NavigationDefaults> getNavigationDefaultsMap(
-			Set<NavigationSettings> navigationSettingsSet) {
-		Map<Integer, NavigationDefaults> chartDefaults = new HashMap<Integer, NavigationDefaults>();
-
-		if (navigationSettingsSet != null) {
-			for (NavigationSettings setting : navigationSettingsSet) {
-				chartDefaults.put(setting.getChartId(),
-						setting.getSettingsData());
-			}
-		}
-
-		return chartDefaults;
+	
+	private boolean loggedIn() {
+		return userSession.getUser() != null && !userSession.getUser().isAnonymous();
 	}
 
 }
