@@ -1,6 +1,7 @@
 package de.enwida.web.controller;
 
 import java.io.OutputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -56,7 +57,8 @@ public class DownloadController {
 	    @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Calendar startTime,
 	    @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Calendar endTime,
 	    @RequestParam DataResolution resolution,
-	    @RequestParam String timeZone,
+	    @RequestParam String timezone,
+	    @RequestParam String timezoneInformation,
 	    @RequestParam String numberFormat,
 	    @RequestParam String disabledLines,
 	    HttpServletResponse response,
@@ -88,10 +90,15 @@ public class DownloadController {
         }
         
         ITimestampFormatter timestampFormatter;
-        if (timeZone.equalsIgnoreCase("UTC")) {
+        if (timezone.equalsIgnoreCase("UTC")) {
         	timestampFormatter = new UTCTimestampFormatter();
         } else {
         	timestampFormatter = new LocalTimestampFormatter();
+        }
+        if (timezoneInformation.equalsIgnoreCase("with")) {
+        	timestampFormatter.setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss Z"));
+        } else {
+        	timestampFormatter.setDateFormat(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss"));
         }
         
         INumberFormatter numberFormatter;
