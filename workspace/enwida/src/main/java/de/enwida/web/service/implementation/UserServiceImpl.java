@@ -159,7 +159,7 @@ public class UserServiceImpl implements IUserService {
                 userDao.create(user);
                 userId=user.getUserId();
             }else{
-                throw new Exception("This use is already in database");
+                throw new Exception("This user is already in database");
             }
         } catch (Exception e) {
             logger.info(e.getMessage());
@@ -660,7 +660,6 @@ public class UserServiceImpl implements IUserService {
 				activationLink +" \n"+ messageSource.getMessage("de.enwida.activation.email.signature", null, locale);	
 
 		mailService.SendEmail(user.getEmail(), messageSource.getMessage("de.enwida.activation.email.subject", null, locale), emailText );
-		lastActivationLink=activationLink;
 	    }catch(Exception ex){
 	        logger.error(ex);
 	        throw new Exception("Mailing Error occured");
