@@ -32,7 +32,7 @@ define ["../util/time_utils"], (TimeUtils) ->
       for x in _(data).keys().sort()
         tr = $("<tr>").addClass if oddRow then "odd" else "even"
         tr.append $("<td>").text \
-          if navigationData.isDateScale
+          if navigationData.options.isDateScale
             dateFormat new Date parseInt x
           else x
 

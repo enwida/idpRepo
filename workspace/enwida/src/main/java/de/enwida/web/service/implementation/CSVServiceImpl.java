@@ -109,7 +109,7 @@ public class CSVServiceImpl implements ICSVService  {
 	    	}
 	
 	    	for (final Double x : csvDataLines.keySet()) {
-	    		if (navigationData.getIsDateScale()) {
+	    		if (navigationData.getOptions().getIsDateScale()) {
 	    			final Date date = new Date(x.longValue());
 	    			builder.append(timestampFormatter.format(date));
 	    		} else {

@@ -15,6 +15,7 @@ import de.enwida.web.db.model.CalendarRange;
 import de.enwida.web.db.model.NavigationDefaults;
 import de.enwida.web.model.ProductTree.ProductAttributes;
 import de.enwida.web.utils.NavigationDictionary;
+import de.enwida.web.utils.NavigationOptions;
 
 
 public class ChartNavigationData implements Cloneable {
@@ -23,14 +24,8 @@ public class ChartNavigationData implements Cloneable {
 	private List<ProductTree> productTrees;
 	private List<String> timeRanges;
 	private List<Aspect> aspects;
+	private NavigationOptions options;
 
-	private List<String> colors;
-	private int decimals = 2;
-	private boolean isDateScale;
-	private boolean hasTimeSelection;
-	private boolean hasProductSelection;
-	private boolean hasLineSelection;
-	
 	@JsonIgnore
 	private NavigationDictionary dictionary;
 
@@ -38,7 +33,7 @@ public class ChartNavigationData implements Cloneable {
 		this.productTrees = new ArrayList<ProductTree>();
 		this.timeRanges = new ArrayList<String>();
 		this.aspects = new ArrayList<Aspect>();
-		this.colors = new ArrayList<String>();
+		this.options = new NavigationOptions();
 		this.dictionary = new NavigationDictionary();
 	}
 	
@@ -47,14 +42,8 @@ public class ChartNavigationData implements Cloneable {
 	    result.setDefaults(defaults.clone());
 	    result.aspects = new ArrayList<Aspect>(aspects);
 	    result.timeRanges = new ArrayList<String>(timeRanges);
+	    result.options = options.clone();
 	    result.dictionary = dictionary.clone();
-
-	    result.setColors(new ArrayList<String>(colors));
-	    result.setDecimals(decimals);
-	    result.setIsDateScale(isDateScale);
-	    result.setHasLineSelection(hasLineSelection);
-	    result.setHasProductSelection(hasProductSelection);
-	    result.setHasTimeSelection(hasTimeSelection);
 
 	    for (final ProductTree tree : productTrees) {
 	        result.addProductTree(tree.clone());
@@ -139,14 +128,6 @@ public class ChartNavigationData implements Cloneable {
 		this.defaults = defaults;
 	}
 
-    public boolean getIsDateScale() {
-        return isDateScale;
-    }
-
-    public void setIsDateScale(boolean dateScale) {
-        this.isDateScale = dateScale;
-    }
-
     public List<Aspect> getAspects() {
         return aspects;
     }
@@ -155,30 +136,6 @@ public class ChartNavigationData implements Cloneable {
         return timeRanges;
     }
 
-	public boolean getHasTimeSelection() {
-		return hasTimeSelection;
-	}
-
-	public void setHasTimeSelection(boolean hasTimeSelection) {
-		this.hasTimeSelection = hasTimeSelection;
-	}
-
-	public boolean getHasProductSelection() {
-		return hasProductSelection;
-	}
-
-	public void setHasProductSelection(boolean hasProductSelection) {
-		this.hasProductSelection = hasProductSelection;
-	}
-
-	public boolean getHasLineSelection() {
-		return hasLineSelection;
-	}
-
-	public void setHasLineSelection(boolean hasLineSelection) {
-		this.hasLineSelection = hasLineSelection;
-	}
-	
 	public NavigationDictionary getDictionary() {
 		return dictionary;
 	}
@@ -186,21 +143,13 @@ public class ChartNavigationData implements Cloneable {
 	public NavigationDictionary getLocalizations() {
 		return dictionary;
 	}
-
-	public int getDecimals() {
-		return decimals;
-	}
-
-	public void setDecimals(int decimals) {
-		this.decimals = decimals;
+	
+	public NavigationOptions getOptions() {
+		return options;
 	}
 	
-	public List<String> getColors() {
-		return colors;
+	public void setOptions(NavigationOptions options) {
+		this.options = options;
 	}
 
-	public void setColors(List<String> colors) {
-		this.colors = colors;
-	}
-	
 }
