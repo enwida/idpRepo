@@ -15,6 +15,8 @@ import de.enwida.web.model.User;
  * 
  */
 public interface IUserService {
+    
+    public String getLastActivationLink();
 
     /**
      * Get users by userID

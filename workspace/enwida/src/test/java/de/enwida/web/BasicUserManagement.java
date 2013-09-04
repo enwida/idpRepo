@@ -755,5 +755,4 @@ public class BasicUserManagement {
         final Group testee2=userService.findGroup(new Group("testgroup"));
         Assert.assertTrue(testee2.isAutoPass());
     }
-    
  }

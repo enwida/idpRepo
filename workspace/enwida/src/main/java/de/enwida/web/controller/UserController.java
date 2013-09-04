@@ -45,7 +45,7 @@ public class UserController {
 	private MessageSource messageSource;
  
 	@Autowired	
-	private MailServiceImpl mail;	
+	private MailServiceImpl mailService;	
 
     private static org.apache.log4j.Logger logger = Logger.getLogger(AdminController.class);
 
@@ -118,12 +118,12 @@ public class UserController {
 	        return "user/login";
 	    }
 	}
-	
-	@RequestMapping(value="/logout", method = RequestMethod.GET)
-	public String logout(ModelMap model) {
-		return "logout";
-	}
-	
+    
+    @RequestMapping(value="/logout", method = RequestMethod.GET)
+    public String logout(ModelMap model) {
+        return "logout";
+    }
+
 	@RequestMapping(value="/loginFailed", method = RequestMethod.GET)
     public String loginFailed(HttpServletRequest request,HttpServletResponse response,ModelMap model,Principal principal) {
         //if user is logged in, dont return him to loginFailed page
@@ -175,7 +175,7 @@ public class UserController {
             		if (session != null) {
             			session.invalidate();
             		}     
-            		response.sendRedirect("index");
+            		response.sendRedirect("registrationdone");
             	}
             }else{
                 model.addAttribute("content","user/register");
@@ -230,8 +230,15 @@ public class UserController {
 		
 		return availabilityCheck + "";
 	}
+	
+    
+    @RequestMapping(value="/registrationdone", method = RequestMethod.GET)
+    public String registrationDone(ModelMap model) {
+        model.addAttribute("content","user/registrationdone");
+        return "master";
+    }
 
-	@RequestMapping(value="/activateuser.html",method=RequestMethod.GET)
+	@RequestMapping(value="/activateuser",method=RequestMethod.GET)
 	public String activateUser(HttpServletRequest request,ModelMap model, String username, String actId,Locale locale){
 		
 		boolean activated = false;
@@ -243,20 +250,12 @@ public class UserController {
         }
 		if(activated)
 		{
-			User user = userService.fetchUser(username);
-			String name = user.getFirstName() + " " + user.getLastName();
-    		String userStatus="logout";
-    		String userStatusURL="../j_spring_security_logout";
-
-    		model.addAttribute("username", name);
-    		model.addAttribute("userStatus", userStatus);
-    		model.addAttribute("userStatusURL", userStatusURL);
-            model.addAttribute("info", "Activated");  
+            model.addAttribute("info", messageSource.getMessage("de.enwida.userManagement.activated", null, locale));  
 		}else{
 	        model.addAttribute("error", messageSource.getMessage("de.enwida.userManagement.notAllowed", null, locale));  
 		}
    
-        model.addAttribute("content", "user/index");
+        model.addAttribute("content", "user/activateuser");
         return "master";
 	}
 	
@@ -284,7 +283,7 @@ public class UserController {
 			model.addAttribute("error", messageSource.getMessage("de.enwida.userManagement.userNotFound", null, locale));
 		}else{
 			try {
-				mail.SendEmail(email, messageSource.getMessage("de.enwida.userManagement.yourPassword", null, locale)+":",password);
+				mailService.SendEmail(email, messageSource.getMessage("de.enwida.userManagement.yourPassword", null, locale)+":",password);
 			} catch (Exception e) {
 	            logger.error(e.getMessage());
 				model.addAttribute("error", messageSource.getMessage("de.enwida.userManagement.mailingError", null, locale));
