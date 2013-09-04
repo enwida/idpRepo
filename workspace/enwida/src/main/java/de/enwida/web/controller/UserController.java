@@ -158,6 +158,7 @@ public class UserController {
             if (!result.hasErrors())
             {                        
         		user.setUserName(user.getEmail());
+        		try{
             	if(userService.saveUser(user,"http://localhost:8080/enwida/user/", locale,true))
             	{                                       		
             		String name = user.getFirstName() + " " + user.getLastName();
@@ -175,8 +176,12 @@ public class UserController {
             		if (session != null) {
             			session.invalidate();
             		}     
-            		response.sendRedirect("registrationdone");
             	}
+        		}catch(Exception ex){
+    		        model.addAttribute("error", ex.getMessage());
+    		        logger.error(ex.getMessage());
+        		}
+                model.addAttribute("content","user/registrationdone");
             }else{
                 model.addAttribute("content","user/register");
             }
@@ -242,19 +247,24 @@ public class UserController {
 	public String activateUser(HttpServletRequest request,ModelMap model, String username, String actId,Locale locale){
 		
 		boolean activated = false;
-        try {
-            activated = userService.activateUser(username, actId);
-        } catch (Exception e) {
-            logger.info(e.getMessage());
-            model.addAttribute("Error", messageSource.getMessage("de.enwida.userManagement.notAllowed", null, locale));
-        }
-		if(activated)
-		{
-            model.addAttribute("info", messageSource.getMessage("de.enwida.userManagement.activated", null, locale));  
+		User user=userService.fetchUser(username);
+		if(!user.isEnabled()){
+            try {
+                activated = userService.activateUser(username, actId);
+            } catch (Exception e) {
+                logger.info(e.getMessage());
+                model.addAttribute("Error", messageSource.getMessage("de.enwida.userManagement.notAllowed", null, locale));
+            }
+            
+    		if(activated)
+    		{
+                model.addAttribute("info", messageSource.getMessage("de.enwida.userManagement.activated", null, locale));  
+    		}else{
+    	        model.addAttribute("error", messageSource.getMessage("de.enwida.userManagement.notAllowed", null, locale));  
+    		}
 		}else{
-	        model.addAttribute("error", messageSource.getMessage("de.enwida.userManagement.notAllowed", null, locale));  
+		    model.addAttribute("error", messageSource.getMessage("de.enwida.userManagement.alreadyActivated", null, locale));  
 		}
-   
         model.addAttribute("content", "user/activateuser");
         return "master";
 	}

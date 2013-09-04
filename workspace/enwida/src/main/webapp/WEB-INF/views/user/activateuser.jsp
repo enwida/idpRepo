@@ -4,4 +4,4 @@
 <head>
 		<title>Enwida Activation Page</title>
 </head>
-<a href="${userStatusURL}">${userStatus}</a>
+<a href="login"><message:message code="de.enwida.userManagement.login" /></a>
