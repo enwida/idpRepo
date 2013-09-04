@@ -165,11 +165,13 @@ public class UserServiceImpl implements IUserService {
             logger.info(e.getMessage());
             return false;
         }
-                
         if(userId != -1)
-        {           
+        {        
+        	// Getting domain name from email
+        	String domain = this.getDomainFromEmail(user.getEmail());
+        	
         	// Fetching the same group and assigning that group to user
-            Group group = this.fetchGroupByCompanyName(user.getCompanyName());            
+            Group group = this.fetchGroupByDomainName(domain);            
             if(group != null && group.isAutoPass())
             {
                 Group newGroup = groupDao.fetchById(group.getGroupID());
@@ -187,6 +189,7 @@ public class UserServiceImpl implements IUserService {
             }
             anonymousGroup = groupDao.addGroup(anonymousGroup);
             this.assignGroupToUser(userId, anonymousGroup.getGroupID());
+            
             if(sendEmail){          
                 sendUserActivationEmail(user, locale);
             }
@@ -195,8 +198,7 @@ public class UserServiceImpl implements IUserService {
         else
         {
             return false;
-        }        
-    }
+        }        }
 
 	/**
 	 * Gets user Password from the mail
@@ -676,5 +678,17 @@ public class UserServiceImpl implements IUserService {
         return lastActivationLink;
     }
     
+    private String getDomainFromEmail(String email){
+    	String company = email.substring(email.indexOf('@') + 1, email.length());
+    	return company;
+    }
     
+	@Override
+	public Group fetchGroupByDomainName(String domainName) {
+        for (Group group : groupDao.fetchAll()) {
+                if(group.getGroupName().equalsIgnoreCase(domainName))
+                    return group;
+        }
+        return null;
+	}
 }
