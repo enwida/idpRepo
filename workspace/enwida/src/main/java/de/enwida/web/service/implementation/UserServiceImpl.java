@@ -40,6 +40,9 @@ import de.enwida.web.utils.EnwidaUtils;
 @TransactionConfiguration(transactionManager = "jpaTransactionManager", defaultRollback = true)
 @Transactional(rollbackFor = Exception.class)
 public class UserServiceImpl implements IUserService {
+    
+    //This variable is used for tests
+    static String lastActivationLink="";
 
 	/**
 	 * User Data Access Object
@@ -127,7 +130,7 @@ public class UserServiceImpl implements IUserService {
     public List<User> fetchAllUsers() throws Exception {
         return userDao.fetchAll();
     }
-
+    
     /**
      * Saves user into Database
      * @throws Exception 
@@ -649,7 +652,7 @@ public class UserServiceImpl implements IUserService {
     }
 	
 	private void sendUserActivationEmail(User user, Locale locale){
-		String activationLink = "http://localhost:8080/enwida/user/activateuser.html?username=" + user.getUserName() + "&actId=" + user.getActivationKey();
+		String activationLink = Constants.ACTIVATION_URL+"username=" + user.getUserName() + "&actId=" + user.getActivationKey();
 		String emailText = messageSource.getMessage("de.enwida.activation.email.message", null, locale) + 
 				activationLink +" \n"+ messageSource.getMessage("de.enwida.activation.email.signature", null, locale);	
 		try {
@@ -665,7 +668,7 @@ public class UserServiceImpl implements IUserService {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+		lastActivationLink=activationLink;
 	}
 
     @Override
@@ -674,4 +677,10 @@ public class UserServiceImpl implements IUserService {
         group.setAutoPass(enabled);
         groupDao.save(group);
     }
+
+    public String getLastActivationLink() {
+        return lastActivationLink;
+    }
+    
+    
 }
