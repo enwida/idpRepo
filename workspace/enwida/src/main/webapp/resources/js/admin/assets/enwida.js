@@ -144,3 +144,9 @@ function enableAutoPass(groupID,checked){
      	  url: "enableAutoPass?groupID="+groupID+"&enabled="+checked
     });
 };
+
+function updateDomainAutoPass(groupID,val){
+	$.ajax({
+     	  url: "updateDomainAutoPass?groupID="+groupID+"&domainAutoPass="+val
+    });
+};

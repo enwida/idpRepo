@@ -713,16 +713,19 @@ public class BasicUserManagement {
 	public void testAutoPass() throws Exception {      
         //Group 1 with autopass
 		Group group = new Group("enwida-test.de");
+		group.setDomainAutoPass("enwida-test.de");
 		group.setAutoPass(true);
 		group = userService.saveGroup(group);
         
         //Group 2 with autopass
         Group group2 = new Group("enwida-test.de2");
+        group2.setDomainAutoPass("enwida-test.de2");
         group2.setAutoPass(true);
         group2 = userService.saveGroup(group2);   
         
         //Group 3 without autopass
         Group group3 = new Group("enwida-test.de3");
+        group3.setDomainAutoPass("");
         group3.setAutoPass(false);
         group3 = userService.saveGroup(group3);
 		

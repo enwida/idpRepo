@@ -54,7 +54,7 @@ public class UserLinesServiceImpl implements IUserLinesService {
 	}
 
 	@Override
-	public boolean createUserLines(List<DOUserLines> lines, String userLineId)
+	public boolean createUserLines(List<DOUserLines> lines, long userLineId)
 			throws Exception {
 
 		for (DOUserLines line : lines) {
@@ -72,7 +72,7 @@ public class UserLinesServiceImpl implements IUserLinesService {
 	}
 
 	@Override
-	public boolean eraseUserLines(String userLineId) {
+	public boolean eraseUserLines(long userLineId) {
 		return userLinesDao.deleteUserLines(userLineId);
 	}
 
@@ -98,7 +98,7 @@ public class UserLinesServiceImpl implements IUserLinesService {
 	}
 
 	@Override
-	public List<DOUserLines> getUserLines(String userLineId) {
+	public List<DOUserLines> getUserLines(long userLineId) {
 		return userLinesDao.getUserLines(userLineId);
 	}
 }

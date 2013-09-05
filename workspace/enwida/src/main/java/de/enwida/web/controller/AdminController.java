@@ -24,6 +24,7 @@ import de.enwida.web.model.Role;
 import de.enwida.web.model.User;
 import de.enwida.web.service.interfaces.IAspectService;
 import de.enwida.web.service.interfaces.IUserService;
+import de.enwida.web.utils.Constants;
 import de.enwida.web.validator.UserValidator;
 
 
@@ -237,7 +238,19 @@ public class AdminController {
             logger.info(e.getMessage());
             return false;      
         }
-    }   
+    }
+    
+    @RequestMapping(value = "/updateDomainAutoPass", method = RequestMethod.GET)
+    @ResponseBody
+    public boolean updateDomainAutoPass(Long groupID,String domainAutoPass) {
+        try {
+            userService.updateDomainAutoPass(groupID, domainAutoPass);
+            return true;       
+        } catch (Exception e) {   
+            logger.info(e.getMessage());
+            return false;      
+        }
+    }
     
     @RequestMapping(value="/admin_user", method = RequestMethod.GET)
     public String user(HttpServletRequest request,Model model,long userID,Locale locale) {
@@ -354,10 +367,11 @@ public class AdminController {
     }
     
     @RequestMapping(value="/admin_editgroup",method=RequestMethod.POST, params = "addGroup")
-    public String addGroup(HttpServletRequest request,Model model,String newGroup,boolean autoPass,Locale locale)
+    public String addGroup(HttpServletRequest request,Model model,String newGroup,String domainAutoPass,boolean autoPass,Locale locale)
     {
         Group group=new Group();
         group.setGroupName(newGroup);
+        group.setDomainAutoPass(domainAutoPass);
         group.setAutoPass(autoPass);
         try {
             userService.saveGroup(group);
