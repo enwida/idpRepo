@@ -333,8 +333,18 @@ $(function() {
 
 		<form:form method="POST" id="upload-file-form" modelAttribute="fileUpload" enctype="multipart/form-data" >
 			<form:errors path="*" cssClass="errorblock" element="div" />
-				Please Select a file to upload: 
-				<form:input path="file" type="file" name="file" />
+				<div>
+				    <label for="aspect">Aspect</label>
+				    <form:select path="aspect" name="aspect">
+				      <c:forEach var="aspect" items="${aspects}">
+				        <option value="${aspect.key}"><spring:message code="${aspect.value}" text="${aspect.key}"/></option>
+				      </c:forEach>
+				    </form:select>
+			    </div>
+			    <div>
+				    <label for="file">Please Select a file to upload</label>
+					<form:input path="file" type="file" name="file" />
+				</div>
 			<!-- <input type="submit" value="Upload" /> -->
 			<span> 
 				<form:errors path="file" cssClass="error" /> 

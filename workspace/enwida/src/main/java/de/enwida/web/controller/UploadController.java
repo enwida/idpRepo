@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -18,6 +19,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.MessageSource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -32,6 +34,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import de.enwida.rl.dtos.DOUserLines;
+import de.enwida.transport.Aspect;
 import de.enwida.web.db.model.UploadedFile;
 import de.enwida.web.db.model.UserLinesMetaData;
 import de.enwida.web.model.FileUpload;
@@ -51,6 +54,9 @@ import de.enwida.web.validator.FileValidator;
 @RequestMapping("/upload")
 public class UploadController {
 
+	@Autowired
+	MessageSource messageSource;
+	
 	@Autowired
 	private IUploadFileService uploadFileService;
 	
@@ -80,13 +86,21 @@ public class UploadController {
 	}
 
 	@RequestMapping(value="/files", method = RequestMethod.GET)
-	public ModelAndView getUplaodUserData(ModelMap model) throws Exception {
+	public ModelAndView getUplaodUserData(ModelMap model, Locale locale) throws Exception {
 		User user = userSession.getUser();
 		if (user != null) {
 			List<UploadedFile> filetable = new ArrayList<UploadedFile>(uploadFileService.getUploadedFiles(user));
 			Collections.sort(filetable);
 			model.put("uploadedfiletable", filetable);			
 		}
+		
+		final Map<Aspect, String> aspects = new HashMap<Aspect, String>();
+		for (final Aspect aspect : Aspect.values()) {
+			final String aspectMessageKey = "de.enwida.chart.aspect." + aspect.name().toLowerCase() + ".title";
+			aspects.put(aspect, aspectMessageKey);
+		}
+		
+		model.put("aspects", aspects);
 		model.put("fileUpload", new FileUpload());
 		model.put("fileReplace", new FileUpload());
 		return new ModelAndView("user/upload", model);
@@ -119,6 +133,7 @@ public class UploadController {
 						List<DOUserLines> userlines = (List<DOUserLines>) parsedData
 								.get(Constants.UPLOAD_LINES_KEY);
 						UserLinesMetaData metaData = (UserLinesMetaData) parsedData.get(Constants.UPLOAD_LINES_METADATA_KEY);
+						metaData.setAspect(fileUpload.getAspect().name());
 						Long nextFileId = getNextFileId(true);
 						boolean recordsInserted = userLineService
 								.createUserLines(userlines,
