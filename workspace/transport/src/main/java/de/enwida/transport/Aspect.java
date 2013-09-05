@@ -20,6 +20,17 @@ public enum Aspect {
 	CR_WORKPRICE_ACC_MAX,                 // 15 | rl_prs1
 	CR_WORKPRICE_MARG_MID,                // 16 | rl_prs1
 	CR_WORKPRICE_MARG_MAX,                // 17 | rl_prs1
-	CR_REVENUES                           // 18
+	CR_REVENUES,                          // 18
+	UL_TH_LOAD_PROFILE,
+	UL_EL_LOAD_PROFILE,
+	UL_BID_CF_PC,
+	UL_BID_CF_TC_POS,
+	UL_BID_CF_SC_POS,
+	UL_BID_WP_TC_POS,
+	UL_BID_WP_SC_POS,
+	UL_BID_CF_TC_NEG,
+	UL_BID_CF_SC_NEG,
+	UL_BID_WP_TC_NEG,
+	UL_BID_WP_SC_NEG
 
 }
