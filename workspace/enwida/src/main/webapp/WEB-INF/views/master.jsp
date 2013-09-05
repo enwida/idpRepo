@@ -3,8 +3,8 @@
 <!doctype html>
 <html>
 <head>
-	<script src="../resources/js/admin/assets/assets.js"></script>
-	<link rel="stylesheet" href="../resources/css/admin/assets/assets.css" />
+	<script src="~/resources/js/admin/assets/assets.js"></script>
+	<link rel="stylesheet" href=<c:url value="resources/css/admin/assets/assets.css"/> />
 </head>
 <body>
 	<div><br><br>

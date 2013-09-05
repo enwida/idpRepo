@@ -687,14 +687,15 @@ public class UserServiceImpl implements IUserService {
     	return company;
     }
     
-	@Override
-	public Group fetchGroupByDomainName(String domainName) {
+    @Override
+    public Group fetchGroupByDomainName(String domainName) {
         for (Group group : groupDao.fetchAll()) {
-                if(group.getDomainAutoPass().equalsIgnoreCase(domainName))
-                    return group;
+            if (group.getDomainAutoPass() != null
+                    && group.getDomainAutoPass().equalsIgnoreCase(domainName))
+                return group;
         }
         return null;
-	}
+    }
 	
 	@Override
     public void updateDomainAutoPass(Long groupID, String domainAutoPass) throws Exception {
