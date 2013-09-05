@@ -124,8 +124,7 @@ public class UploadController {
 						if (recordsInserted) {
 							// if atleast one record is written then upload
 							// file.
-							UploadedFile file = saveFile(filetobeuploaded,
-									user, 0, 1);
+							UploadedFile file = saveNewFile(filetobeuploaded, user);
 							// update user in session as well
 							userSession.setUserInSession(user);
 							// update file Id (which already have owner details)
@@ -178,12 +177,11 @@ public class UploadController {
 								.get(Constants.UPLOAD_LINES_KEY);
 						UserLinesMetaData metaData = (UserLinesMetaData) parsedData.get(Constants.UPLOAD_LINES_METADATA_KEY);
 
-						UploadedFile oldFile = uploadFileService.getFile(fileReplace.getFileIdToBeReplaced(),
-								fileReplace.getRevision());
+						UploadedFile oldFile = uploadFileService.getFile(Long.parseLong(fileReplace.getFileIdToBeReplaced().split("-")[0]),
+								Integer.parseInt(fileReplace.getFileIdToBeReplaced().split("-")[1]));
 						if (oldFile != null && oldFile.getUploader().equals(user)) {
 							//Deleting the old lines from the database
-							boolean success = userLineService.eraseUserLineMetaData(fileReplace.getFileIdToBeReplaced(),
-											fileReplace.getRevision());
+							boolean success = userLineService.eraseUserLines(Long.parseLong(fileReplace.getFileIdToBeReplaced().split("-")[0]));
 							
 							if (success) {
 								boolean recordsInserted = userLineService
@@ -191,16 +189,11 @@ public class UploadController {
 												.getUserLineIdOnNewRevision());
 								if (recordsInserted) {
 									// if atleast one record is written then upload file.
-									UploadedFile file = saveFile(
-											filetobeuploaded, user, oldFile
-													.getUploadedFileId()
-													.getId(),
-											oldFile.getRevision());
+									UploadedFile file = replaceFile(filetobeuploaded, oldFile, user);
 									// update user in session as well
 									userSession.setUserInSession(user);
 									// update file Id (which already have owner details)
 									// metaData.setFile(file);
-									userLineService.updateUserLineMetaData(metaData);
 
 									EnwidaUtils.removeTemporaryFile(filetobeuploaded);
 
@@ -223,10 +216,8 @@ public class UploadController {
 		}
 		return new ModelAndView("redirect:/upload/files");
 	}
-	
-	private UploadedFile saveFile(File file, User user,
- long fileId,
-			int revision)
+
+	private UploadedFile saveNewFile(File file, User user)
 			throws Exception {
 		String displayfileName = file.getName();
 
@@ -259,8 +250,7 @@ public class UploadController {
 		}
 
 		// create entry in file upload table
-		UploadedFile uploadedfile = fileId > 0 ? uploadFileService.getFile(
-				fileId, revision) : new UploadedFile(generatedId, 1);
+		UploadedFile uploadedfile = new UploadedFile(generatedId, 1);
 		// UploadedFile uploadedfile = new UploadedFile();
 		uploadedfile.setDisplayFileName(displayfileName);
 		uploadedfile.setFileName(fileName);
@@ -277,12 +267,60 @@ public class UploadController {
 		// uploadedfile.setPreviousFile(previousFile);
 		// }
 
-		if (fileId == 0) {
-			user = uploadFileService.saveUserUploadedFile(user, uploadedfile);
+		user = uploadFileService.saveUserUploadedFile(user, uploadedfile);
+		/*if (fileId == 0) {
+			
 		} else {
 			user = uploadFileService
 					.replaceUserUploadedFile(user, uploadedfile);
+		}*/
+
+		return uploadedfile;
+	}
+	
+	private UploadedFile replaceFile(File file, UploadedFile oldFile, User user)
+			throws Exception {
+		String displayfileName = file.getName();
+
+
+		String fileFormat = EnwidaUtils.extractFileFormat(displayfileName);
+		String fileName = "file";
+		Long generatedId = getNextFileId(false);
+		if (fileFormat != null && generatedId != null)
+			fileName += "_" + generatedId + "." + fileFormat;
+		else {
+			throw new Exception("No file format");
 		}
+		// make sure that file directory is present
+		// before uploading file
+		EnwidaUtils.createDirectory(fileUploadDirectory);
+
+		// upload file
+		FileUtils.copyFile(file, new File(fileUploadDirectory + File.separator
+				+ fileName));
+		// IOUtils.copyLarge(new FileInputStream(file), new FileOutputStream(
+		// uploadedFile));
+		// item.write(uploadedFile);
+
+		// update file manifest data
+		File manifestFile = new File(fileUploadDirectory + File.separator + fileName + ".mfst");
+		try {
+			EnwidaUtils.writeAllText(manifestFile, displayfileName);
+		} catch (Exception e) {
+			logger.error("Update Manifest data for uploaded File: " + file.getName(), e);
+		}
+
+		// create entry in file upload table
+		UploadedFile uploadedfile = uploadFileService.getFile(oldFile.getUploadedFileId().getId(), oldFile.getUploadedFileId().getRevision());
+		uploadedfile.setDisplayFileName(displayfileName);
+		uploadedfile.setFileName(fileName);
+		uploadedfile.setFilePath(fileUploadDirectory + File.separator + fileName);
+		uploadedfile.setFormat(fileFormat);
+		uploadedfile.setUploadDate(new Date());
+		uploadedfile.setUploader(user);
+		uploadedfile.setActive(true);
+		
+		user = uploadFileService.replaceUserUploadedFile(user, uploadedfile, oldFile);
 
 		return uploadedfile;
 	}
@@ -335,8 +373,7 @@ public class UploadController {
 				
 				// now delete file safely
 				try {
-					boolean success = userLineService.eraseUserLineMetaData(
-							downloadFile.getUploadedFileId().getId(), revision);
+					boolean success = userLineService.eraseUserLines(downloadFile.getUploadedFileId().getId());
 					// first remove all mappings
 					uploadFileService.removeUserUploadedFile(user, downloadFile);
 					// actual row deleted
@@ -373,7 +410,7 @@ public class UploadController {
 		return "SUCCESS";
 	}
 
-	@RequestMapping(value = "/files/{fileId}", method = RequestMethod.GET)
+	@RequestMapping(value = "/files/{fileId}/{revision}", method = RequestMethod.GET)
 	@ResponseBody
 	public FileSystemResource downloadFile(
 			@PathVariable("fileId") String fileId,

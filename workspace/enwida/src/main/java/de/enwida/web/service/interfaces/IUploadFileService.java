@@ -22,5 +22,5 @@ public interface IUploadFileService {
 
 	public List<UploadedFile> getFileSetByFileId(long fileid);
 
-	User replaceUserUploadedFile(User user, UploadedFile file) throws Exception;
+	User replaceUserUploadedFile(User user, UploadedFile file, UploadedFile oldFile) throws Exception;
 }

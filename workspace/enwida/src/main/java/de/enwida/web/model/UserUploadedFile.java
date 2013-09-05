@@ -6,6 +6,7 @@ import de.enwida.web.db.model.UploadedFile;
 
 public class UserUploadedFile {
 	private long id;
+	private int revision;
 	private String displayFileName;
 	private String fileName;
 	private Date uploadDate;
@@ -13,6 +14,7 @@ public class UserUploadedFile {
 	
 	public UserUploadedFile(UploadedFile file) {
 		this.id = file.getUploadedFileId().getId();
+		this.revision = file.getUploadedFileId().getRevision();
 		this.displayFileName = file.getDisplayFileName();
 		this.fileName = file.getFileName();
 		this.uploadDate = file.getUploadDate();
@@ -27,6 +29,14 @@ public class UserUploadedFile {
 		this.id = id;
 	}
 	
+	public int getRevision() {
+		return revision;
+	}
+
+	public void setRevision(int revision) {
+		this.revision = revision;
+	}
+
 	public String getDisplayFileName() {
 		return displayFileName;
 	}

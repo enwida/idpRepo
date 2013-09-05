@@ -5,7 +5,7 @@ import org.springframework.web.multipart.commons.CommonsMultipartFile;
 public class FileUpload {
 	
 	private CommonsMultipartFile file;
-	private int fileIdToBeReplaced;
+	private String fileIdToBeReplaced;
 	private int revision;
 	
 	public CommonsMultipartFile getFile() {
@@ -16,11 +16,11 @@ public class FileUpload {
 		this.file = file;
 	}
 
-	public int getFileIdToBeReplaced() {
+	public String getFileIdToBeReplaced() {
 		return fileIdToBeReplaced;
 	}
 
-	public void setFileIdToBeReplaced(int fileIdToBeReplaced) {
+	public void setFileIdToBeReplaced(String fileIdToBeReplaced) {
 		this.fileIdToBeReplaced = fileIdToBeReplaced;
 	}
 

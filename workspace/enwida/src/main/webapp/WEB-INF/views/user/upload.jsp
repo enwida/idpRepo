@@ -16,7 +16,7 @@
 var fileIdToDelete = -1;
 function openDeleteConfirmationDialog(controlId)
 {
-	fileIdToDelete = controlId.split("-")[2];
+	fileIdToDelete = controlId.split("-")[2] + "-" + controlId.split("-")[3];
 	$( "#delete-file-form-div" ).dialog( "open" );
 }
 
@@ -25,14 +25,14 @@ $(function() {
 	var fileIdToGetRevisions =  -1;
 	
 	<c:forEach var="file" items="${uploadedfiletable}">		
-		$( "#replace-file-${file.uploadedFileId.id}" )
+		$( "#replace-file-${file.uploadedFileId.id}-${file.uploadedFileId.revision}" )
 			.button()
 			.click(function() {
-				$("#fileIdToBeReplaced").val($(this).attr("id").split("-")[2]);				
+				$("#fileIdToBeReplaced").val($(this).attr("id").split("-")[2]+"-"+$(this).attr("id").split("-")[3]);				
 				$("#replace-file-form-div" ).dialog( "open" );
 		});
 		
-		$( "#download-file-${file.uploadedFileId.id}" )
+		$( "#download-file-${file.uploadedFileId.id}-${file.uploadedFileId.revision}" )
 			.button()
 			.click(function() {				
 		});
@@ -148,7 +148,8 @@ $(function() {
 	    	         url: "<c:url value='/upload/files/delete' />",
 	    	         type: 'GET',            
 	    	         data:  { 	
-	    	        	 	fileId : fileIdToDelete,
+	    	        	 	fileId : fileIdToDelete.split("-")[0],
+	    	        	 	revision : fileIdToDelete.split("-")[1]
 	    	         },
 	    	         success: function(result) {
 	    	        	 if (result == "SUCCESS") {
@@ -230,15 +231,15 @@ $(function() {
    	        		if (item.active == true) {
    	        			revisionsDialogHTML += "<div style=\"display: table-cell;padding: 5px;\"> Active </div>" +
    	        			"<div style=\"display: table-cell;padding: 5px;\">" +
-	        				"<a class=\"ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only\" style=\"display: table-cell;padding: 5px;\" href=\"<c:url value='/upload/files/" + item.id + "' />\" id=\"download-file-" + item.id + "\">Download</a>" +
+   	        			"<a class=\"ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only\" style=\"display: table-cell;padding: 5px;\" href=\"<c:url value='/upload/files/" + item.id + "/" + item.revision +"' />\" id=\"download-file-" + item.id + "-" + item.revision + "\">Download</a>" +
 	        				/* "<button class=\"ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only\" style=\"display: table-cell;padding: 5px;\" id=\"delete-file-" + item.id + "\">Delete</button>" + */
 	        			"</div></div>";
    	        		} else {
    	        			revisionsDialogHTML += "<div style=\"display: table-cell;padding: 5px;\"> Not Active </div>" +
    	        			"<div style=\"display: table-cell;padding: 5px;\">" +
-  	        				"<a class=\"ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only\" style=\"display: table-cell;padding: 5px;\" href=\"<c:url value='/upload/files/" + item.id + "/action/ma' />\" id=\"active-file-" + item.id + "\">Make Active</a>" +
-  	        				"<a class=\"ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only\" style=\"display: table-cell;padding: 5px;\" href=\"<c:url value='/upload/files/" + item.id + "' />\" id=\"download-file-" + item.id + "\">Download</a>" +
-   	        				"<button class=\"ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only\" style=\"display: table-cell;padding: 5px;\" onclick=\"openDeleteConfirmationDialog('delete-file-" + item.id + "\')\" id=\"delete-file-" + item.id + "\">Delete</button>" +
+  	        				"<a class=\"ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only\" style=\"display: table-cell;padding: 5px;\" href=\"<c:url value='/upload/files/" + item.id + "/"+ item.revision +"/action/ma' />\" id=\"active-file-" + item.id + "-" + item.revision +"\">Make Active</a>" +
+  	        				"<a class=\"ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only\" style=\"display: table-cell;padding: 5px;\" href=\"<c:url value='/upload/files/" + item.id + "-" + item.revision +"' />\" id=\"download-file-" + item.id + "-" + item.revision + "\">Download</a>" +
+   	        				"<button class=\"ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only\" style=\"display: table-cell;padding: 5px;\" onclick=\"openDeleteConfirmationDialog('delete-file-" + item.id + " - "+ item.revision + "\')\" id=\"delete-file-" + item.id + "-" + item.revision + "\">Delete</button>" +
    	        			"</div></div>";   	        				
    	        		}
    	        		
@@ -302,8 +303,8 @@ $(function() {
 									</c:choose> --%>
 								</td>
 								<td>
-									<button id="replace-file-${file.uploadedFileId.id}">Replace</button>
-									<a href="<c:url value='/upload/files/${file.uploadedFileId.id}' />" id="download-file-${file.uploadedFileId.id}">Download</a>
+									<button id="replace-file-${file.uploadedFileId.id}-${file.uploadedFileId.revision}">Replace</button>
+									<%-- <a href="<c:url value='/upload/files/${file.uploadedFileId.id}' />" id="download-file-${file.uploadedFileId.id}">Download</a> --%>
 									<button id="delete-file-set-${file.uploadedFileId.id}">Delete</button>
 								</td>
 							</tr>

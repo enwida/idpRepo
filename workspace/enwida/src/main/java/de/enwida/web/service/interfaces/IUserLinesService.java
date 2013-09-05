@@ -21,10 +21,8 @@ public interface IUserLinesService {
 
 	void createUserLineMetaData(UserLinesMetaData metaData, UploadedFile file) throws Exception;
 
-	void updateUserLineMetaData(UserLinesMetaData metaData) throws Exception;
+	/*void updateUserLineMetaData(UserLinesMetaData metaData) throws Exception;*/
 
 	boolean eraseUserLines(long userLineId);
-
-	boolean eraseUserLineMetaData(long fileId, int revision) throws Exception;
 
 }

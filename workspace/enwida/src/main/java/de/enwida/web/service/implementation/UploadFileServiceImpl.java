@@ -87,17 +87,17 @@ public class UploadFileServiceImpl implements IUploadFileService {
 	 * @throws Exception
 	 */
 	@Override
-	public User replaceUserUploadedFile(User user, UploadedFile file) throws Exception {
+	public User replaceUserUploadedFile(User user, UploadedFile newFile, UploadedFile oldFile) throws Exception {
 		if (user.getUserId() == null) {
 			throw new IllegalArgumentException("user object is not persisted");
 		}
 		// check for revision
-		int newrevision = file.getRevision() + 1;
-		file.setRevision(newrevision);
-		// file.setFileSetUniqueIdentifier(previousFile.getFileSetUniqueIdentifier());
+		newFile.setRevision(oldFile.getRevision() + 1);
+		newFile = fileDao.update(newFile, true); // with flush
 
-		file = fileDao.update(file, true); // with flush
-
+		oldFile.setActive(false);
+		oldFile = fileDao.update(oldFile, true); // with flush
+		
 		// Refresh the user in order to reflect the changes
 		user = userDao.update(user);
 		userDao.refresh(user);
