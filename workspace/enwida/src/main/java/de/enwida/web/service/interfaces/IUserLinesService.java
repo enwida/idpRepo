@@ -8,13 +8,14 @@ import de.enwida.web.db.model.UserLinesMetaData;
 
 public interface IUserLinesService {
 
-	boolean createUserLines(List<DOUserLines> lines, UserLinesMetaData metaData) throws Exception;
+	boolean createUserLines(List<DOUserLines> lines, String userLineId)
+			throws Exception;
 
 	boolean createUserLine(DOUserLines line);
 
 	public boolean createUserLines(List<DOUserLines> userlines);
 
-	public List<DOUserLines> getUserLines(int metaDataId);
+	public List<DOUserLines> getUserLines(String userLineId);
 
 	void createUserLineMetaData(UserLinesMetaData metaData) throws Exception;
 
@@ -22,8 +23,8 @@ public interface IUserLinesService {
 
 	void updateUserLineMetaData(UserLinesMetaData metaData) throws Exception;
 
-	boolean eraseUserLines(int metaDataId);
+	boolean eraseUserLines(String userLineId);
 
-	boolean eraseUserLineMetaData(long fileId) throws Exception;
+	boolean eraseUserLineMetaData(long fileId, int revision) throws Exception;
 
 }

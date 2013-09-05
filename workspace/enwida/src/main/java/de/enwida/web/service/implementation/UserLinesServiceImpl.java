@@ -54,14 +54,11 @@ public class UserLinesServiceImpl implements IUserLinesService {
 	}
 
 	@Override
-	public boolean createUserLines(List<DOUserLines> lines,
-			UserLinesMetaData metaData) throws Exception {
+	public boolean createUserLines(List<DOUserLines> lines, String userLineId)
+			throws Exception {
 
-		if (metaData.getMetaDataId() == 0) {
-			createUserLineMetaData(metaData);
-		}
 		for (DOUserLines line : lines) {
-			line.setUserLineId(metaData.getMetaDataId());
+			line.setUserLineId(userLineId);
 		}
 		return userLinesDao.createUserLines(lines);
 	}
@@ -69,23 +66,24 @@ public class UserLinesServiceImpl implements IUserLinesService {
 	@Override
 	public void createUserLineMetaData(UserLinesMetaData metaData,
 			UploadedFile file) throws Exception {
-		metaData.setFile(file);
+		// metaData.setFile(file);
 		createUserLineMetaData(metaData);
 
 	}
 
 	@Override
-	public boolean eraseUserLines(int metaDataId) {
-		return userLinesDao.deleteUserLines(metaDataId);
+	public boolean eraseUserLines(String userLineId) {
+		return userLinesDao.deleteUserLines(userLineId);
 	}
 
 	@Override
-	public boolean eraseUserLineMetaData(long fileId) throws Exception {
-		UploadedFile oldFile = fileDao.getFile(fileId);
+	public boolean eraseUserLineMetaData(long fileId, int revision)
+			throws Exception {
+		UploadedFile oldFile = fileDao.getFile(fileId, revision);
 		if (oldFile.getMetaData() != null) {
 			// First delete all user lines
-			boolean linesremoved = eraseUserLines(oldFile.getMetaData()
-					.getMetaDataId());
+			boolean linesremoved = eraseUserLines(oldFile
+					.getUserLineIdOnNewRevision());
 			if (linesremoved) {
 				// delete user lines
 				userLinesDao.delete(oldFile.getMetaData());
@@ -100,7 +98,7 @@ public class UserLinesServiceImpl implements IUserLinesService {
 	}
 
 	@Override
-	public List<DOUserLines> getUserLines(int metaDataId) {
-		return userLinesDao.getUserLines(metaDataId);
+	public List<DOUserLines> getUserLines(String userLineId) {
+		return userLinesDao.getUserLines(userLineId);
 	}
 }

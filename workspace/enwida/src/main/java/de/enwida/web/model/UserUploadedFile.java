@@ -12,7 +12,7 @@ public class UserUploadedFile {
 	private boolean active;
 	
 	public UserUploadedFile(UploadedFile file) {
-		this.id = file.getId();
+		this.id = file.getUploadedFileId().getId();
 		this.displayFileName = file.getDisplayFileName();
 		this.fileName = file.getFileName();
 		this.uploadDate = file.getUploadDate();

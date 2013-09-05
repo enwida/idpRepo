@@ -1,7 +1,5 @@
 package de.enwida.web.service.implementation;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.sql.Date;
@@ -11,19 +9,14 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
-import javax.mail.MessagingException;
-import javax.mail.internet.AddressException;
-
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
-import org.springframework.context.NoSuchMessageException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
-import de.enwida.web.controller.AdminController;
 import de.enwida.web.dao.interfaces.IGroupDao;
 import de.enwida.web.dao.interfaces.IRightDao;
 import de.enwida.web.dao.interfaces.IRoleDao;
@@ -159,7 +152,7 @@ public class UserServiceImpl implements IUserService {
                 userDao.create(user);
                 userId=user.getUserId();
             }else{
-                throw new Exception("This use is already in database");
+                throw new Exception("This user is already in database");
             }
         } catch (Exception e) {
             logger.info(e.getMessage());
@@ -660,7 +653,6 @@ public class UserServiceImpl implements IUserService {
 				activationLink +" \n"+ messageSource.getMessage("de.enwida.activation.email.signature", null, locale);	
 
 		mailService.SendEmail(user.getEmail(), messageSource.getMessage("de.enwida.activation.email.subject", null, locale), emailText );
-		lastActivationLink=activationLink;
 	    }catch(Exception ex){
 	        logger.error(ex);
 	        throw new Exception("Mailing Error occured");
@@ -674,7 +666,19 @@ public class UserServiceImpl implements IUserService {
         groupDao.save(group);
     }
 
-    public String getLastActivationLink() {
+	@Override
+	public Long getNextSequence(String schema, String sequenceName,
+			boolean reset) {
+		Long value = null;
+		try {
+			value = userDao.getNextSequence(schema, sequenceName, reset);
+		} catch (Exception e) {
+			logger.error("Do nothing");
+		}
+		return value;
+	}
+
+	public String getLastActivationLink() {
         return lastActivationLink;
     }
     

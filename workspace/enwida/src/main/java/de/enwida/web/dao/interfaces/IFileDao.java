@@ -5,13 +5,13 @@ import java.util.List;
 import de.enwida.web.db.model.UploadedFile;
 
 public interface IFileDao extends IDao<UploadedFile> {
-	UploadedFile getFile(long fileId);
+	UploadedFile getFile(long fileId, int revision);
 
 	UploadedFile getFileByFilePath(String filePath);
 
 	List<UploadedFile> fetchByFileSetUniqueIdentifier(
-			String fileSetUniqueIdentifier);
+			long fileSetUniqueIdentifier);
 
 	UploadedFile fetchActiveFileByFileSetUniqueIdentifier(
-			String fileSetUniqueIdentifier);
+			long fileSetUniqueIdentifier);
 }

@@ -3,7 +3,6 @@ package de.enwida.web.service.implementation;
 import java.io.File;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -60,30 +59,44 @@ public class UploadFileServiceImpl implements IUploadFileService {
 	 * @throws Exception
 	 */
 	@Override
-	public User saveUserUploadedFile(User user, UploadedFile file) throws Exception {
+	public User saveUserUploadedFile(User user, UploadedFile file)
+			throws Exception {
+		if (user.getUserId() == null) {
+			throw new IllegalArgumentException("user object is not persisted");
+		}
+		file.setRevision(1);
+		// file.setFileSetUniqueIdentifier(UUID.randomUUID().toString());
+
+		fileDao.create(file, true); // with flush
+		// if (previousFile != null) {
+		// previousFile.setActive(false);
+		// previousFile = fileDao.update(previousFile, true); // with flush
+		// }
+
+		// Refresh the user in order to reflect the changes
+		user = userDao.update(user);
+		userDao.refresh(user);
+		return user;
+	}
+	
+	/**
+	 * Caution: user should be persisted and in clean state! Dirty attributes
+	 * might be applied (i.e. committed to database, eventually).
+	 * 
+	 * @return the updated and managed user and file object
+	 * @throws Exception
+	 */
+	@Override
+	public User replaceUserUploadedFile(User user, UploadedFile file) throws Exception {
 		if (user.getUserId() == null) {
 			throw new IllegalArgumentException("user object is not persisted");
 		}
 		// check for revision
-		UploadedFile previousFile = file.getPreviousFile();
-		if (previousFile != null) {
-			int newrevision = previousFile.getRevision() + 1;
-			file.setRevision(newrevision);
-			file.setFileSetUniqueIdentifier(previousFile.getFileSetUniqueIdentifier());	
-		} else {
-			file.setRevision(1);
-			file.setFileSetUniqueIdentifier(UUID.randomUUID().toString());
-		}
+		int newrevision = file.getRevision() + 1;
+		file.setRevision(newrevision);
+		// file.setFileSetUniqueIdentifier(previousFile.getFileSetUniqueIdentifier());
 
-		if (file.getId() > 0) {
-			file = fileDao.update(file, true); // with flush			
-		} else {
-			fileDao.create(file, true); // with flush
-			if (previousFile != null) {
-				previousFile.setActive(false);
-				previousFile = fileDao.update(previousFile, true); // with flush
-			}
-		}
+		file = fileDao.update(file, true); // with flush
 
 		// Refresh the user in order to reflect the changes
 		user = userDao.update(user);
@@ -103,7 +116,7 @@ public class UploadFileServiceImpl implements IUploadFileService {
 		if (user.getUserId() == null) {
 			throw new IllegalArgumentException("user object is not persisted");
 		}
-		if (file.getId() > 0) {
+		if (file.getUploadedFileId().getId() > 0) {
 			file = fileDao.update(file, true); // with flush
 		} else {
 			fileDao.create(file, true); // with flush
@@ -124,13 +137,13 @@ public class UploadFileServiceImpl implements IUploadFileService {
 		if (user.getUserId() == null) {
 			throw new IllegalArgumentException("user object is not persisted");
 		}
-		if (file.getId() == 0) {
+		if (file.getUploadedFileId().getId() == 0) {
 			throw new IllegalArgumentException("user object is not persisted");
 		}
-		if (file.getId() > 0) {
+		if (file.getUploadedFileId().getId() > 0) {
 			file.setUploader(null);
 			file.setMetaData(null);
-			file.setPreviousFile(null);
+			// file.setPreviousFile(null);
 			fileDao.delete(file); // with flush
 		}
 
@@ -140,8 +153,8 @@ public class UploadFileServiceImpl implements IUploadFileService {
 	}
 	
 	@Override
-    public UploadedFile getFile(int fileId) {
-        return fileDao.getFile(fileId);
+	public UploadedFile getFile(long fileId, int revision) {
+		return fileDao.getFile(fileId, revision);
     }
 
     @Override
@@ -159,14 +172,17 @@ public class UploadFileServiceImpl implements IUploadFileService {
 		return userDao.getActiveUploadedFiles(user);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public void makeFileActive(int fileId, User user, FileValidator fileValidator) throws Exception {
+	public void makeFileActive(long fileId,int revision, User user, FileValidator fileValidator) throws Exception {
 		
-		UploadedFile fileToMakeActive = fileDao.getFile(fileId);		
+		UploadedFile fileToMakeActive = fileDao.getFile(fileId,revision);		
 		if (fileToMakeActive.getUploader().equals(user)) {
 			
 			//1. Get Active File of FileSet by FileSetUniqueIdentifier
-			UploadedFile fileAlreadyActive = fileDao.fetchActiveFileByFileSetUniqueIdentifier(fileToMakeActive.getFileSetUniqueIdentifier());
+			UploadedFile fileAlreadyActive = fileDao
+					.fetchActiveFileByFileSetUniqueIdentifier(fileToMakeActive
+							.getUploadedFileId().getId());
 			
 			//2. Erase the Data of the Active File from Database
 			UserLinesMetaData metadata = fileAlreadyActive.getMetaData();
@@ -181,8 +197,10 @@ public class UploadFileServiceImpl implements IUploadFileService {
 				Map<String, Object> parsedData = (Map<String, Object>) status.getArguments()[0];
 				List<DOUserLines> userlines = (List<DOUserLines>) parsedData
 						.get(Constants.UPLOAD_LINES_KEY);
-				UserLinesMetaData metaData = (UserLinesMetaData) parsedData.get(Constants.UPLOAD_LINES_METADATA_KEY);
-				userLineService.createUserLines(userlines, metaData);			
+				// UserLinesMetaData metaData = (UserLinesMetaData)
+				// parsedData.get(Constants.UPLOAD_LINES_METADATA_KEY);
+				userLineService.createUserLines(userlines,
+						fileToMakeActive.getUserLineId());
 			} else if (status.getCode().equalsIgnoreCase("file.upload.parse.error")) {
 				//TODO: FileUpload Fail: Parsing Error
 			}
@@ -196,7 +214,7 @@ public class UploadFileServiceImpl implements IUploadFileService {
 	}
 
 	@Override
-	public List<UploadedFile> getFileSetByUniqueIdentifier(int fileId) {
-		return fileDao.fetchByFileSetUniqueIdentifier(fileDao.getFile(fileId).getFileSetUniqueIdentifier());
+	public List<UploadedFile> getFileSetByFileId(long fileId) {
+		return fileDao.fetchByFileSetUniqueIdentifier(fileId);
 	}
 }

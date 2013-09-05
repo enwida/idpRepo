@@ -8,7 +8,7 @@ import de.enwida.web.validator.FileValidator;
 
 public interface IUploadFileService {
 	
-	public UploadedFile getFile(int fileId);
+	public UploadedFile getFile(long fileId, int revision);
     public UploadedFile getFileByFilePath(String filePath);
     public int getUploadedFileVersion(UploadedFile file, User user);
     public List<UploadedFile> getUploadedFiles(User user);
@@ -17,6 +17,10 @@ public interface IUploadFileService {
     User updateUserUploadedFile(User user, UploadedFile file) throws Exception;
 	void removeUserUploadedFile(User user, UploadedFile file) throws Exception;
 	
-	public void makeFileActive(int fileId, User user, FileValidator fileValidator) throws Exception;
-	public List<UploadedFile> getFileSetByUniqueIdentifier(int fileid);	
+	public void makeFileActive(long fileId, int revision, User user,
+			FileValidator fileValidator) throws Exception;
+
+	public List<UploadedFile> getFileSetByFileId(long fileid);
+
+	User replaceUserUploadedFile(User user, UploadedFile file) throws Exception;
 }

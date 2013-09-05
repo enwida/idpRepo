@@ -6,6 +6,7 @@ public class FileUpload {
 	
 	private CommonsMultipartFile file;
 	private int fileIdToBeReplaced;
+	private int revision;
 	
 	public CommonsMultipartFile getFile() {
 		return file;
@@ -21,5 +22,13 @@ public class FileUpload {
 
 	public void setFileIdToBeReplaced(int fileIdToBeReplaced) {
 		this.fileIdToBeReplaced = fileIdToBeReplaced;
+	}
+
+	public int getRevision() {
+		return revision;
+	}
+
+	public void setRevision(int revision) {
+		this.revision = revision;
 	}
 }
