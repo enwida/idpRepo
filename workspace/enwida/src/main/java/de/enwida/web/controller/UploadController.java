@@ -120,9 +120,7 @@ public class UploadController {
 								.get(Constants.UPLOAD_LINES_KEY);
 						UserLinesMetaData metaData = (UserLinesMetaData) parsedData.get(Constants.UPLOAD_LINES_METADATA_KEY);
 						Long nextFileId = getNextFileId(true);
-						boolean recordsInserted = userLineService
-								.createUserLines(userlines,
-										("" + nextFileId + 1));
+						boolean recordsInserted = userLineService.createUserLines(userlines, nextFileId);
 						if (recordsInserted) {
 							// if atleast one record is written then upload
 							// file.
@@ -180,14 +178,11 @@ public class UploadController {
 								.get(Constants.UPLOAD_LINES_KEY);
 						UserLinesMetaData metaData = (UserLinesMetaData) parsedData.get(Constants.UPLOAD_LINES_METADATA_KEY);
 
-						UploadedFile oldFile = uploadFileService.getFile(
-								fileReplace.getFileIdToBeReplaced(),
+						UploadedFile oldFile = uploadFileService.getFile(fileReplace.getFileIdToBeReplaced(),
 								fileReplace.getRevision());
 						if (oldFile != null && oldFile.getUploader().equals(user)) {
 							//Deleting the old lines from the database
-							boolean success = userLineService
-									.eraseUserLineMetaData(
-											fileReplace.getFileIdToBeReplaced(),
+							boolean success = userLineService.eraseUserLineMetaData(fileReplace.getFileIdToBeReplaced(),
 											fileReplace.getRevision());
 							
 							if (success) {

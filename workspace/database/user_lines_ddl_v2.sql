@@ -6,7 +6,7 @@ CREATE TABLE public.user_lines
 (
   "timestamp" timestamp with time zone,
   value double precision,
-  user_line_id varchar(255),
+  user_line_id bigint,
   CONSTRAINT user_lines_pkey PRIMARY KEY ("timestamp",user_line_id)
 )
 WITH (
