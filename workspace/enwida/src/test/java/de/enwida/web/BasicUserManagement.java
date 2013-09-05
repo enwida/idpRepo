@@ -741,24 +741,24 @@ public class BasicUserManagement {
         userService.assignGroupToUser(user, group3);
         Assert.assertEquals(4, user.getGroups().size());
 
-	    final User user2 = new User("test2@enwida-test.de2", "testuser2", "secret", "Test", "User", true);
-		user2.setCompanyName("enwida-test.de");
+	    final User user2 = new User("test2@enwida-test.de", "testuser2", "secret", "Test", "User", true);
+		user2.setCompanyName("enwida-test.de2");
 		userService.saveUser(user2,false);
 		
 		// User should be assigned to group 2
 		Assert.assertEquals(2, user2.getGroups().size());
 		Assert.assertTrue(user2.getGroups().contains(group2));
-        Assert.assertFalse(user2.getGroups().contains(group));
+        Assert.assertTrue(user2.getGroups().contains(group));
         Assert.assertFalse(user2.getGroups().contains(group3));
 
-	    final User user3 = new User("test3@enwida-test.de3", "testuser3", "secret", "Test", "User", true);
-		user2.setCompanyName("enwida-test.de");
+	    final User user3 = new User("test3@enwida-test.de", "testuser3", "secret", "Test", "User", true);
+		user2.setCompanyName("enwida-test.de3");
 		userService.saveUser(user3,false);
 		
 		// User shouldn't be assigned to group 3
 		Assert.assertEquals(1, user3.getGroups().size());
-        Assert.assertFalse(user3.getGroups().contains(group));
-		Assert.assertFalse(user3.getGroups().contains(group2));
+        Assert.assertTrue(user3.getGroups().contains(group));
+		Assert.assertTrue(user3.getGroups().contains(group2));
         Assert.assertFalse(user3.getGroups().contains(group3));
 	}
 
