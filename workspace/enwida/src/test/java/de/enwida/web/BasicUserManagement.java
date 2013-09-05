@@ -714,7 +714,7 @@ public class BasicUserManagement {
         //Group 1 with autopass
 		Group group = new Group("enwida-test.de");
 		group.setDomainAutoPass("enwida-test.de");
-		group.setAutoPass(true);
+        group.setAutoPass(true);
 		group = userService.saveGroup(group);
         
         //Group 2 with autopass
@@ -744,24 +744,24 @@ public class BasicUserManagement {
         userService.assignGroupToUser(user, group3);
         Assert.assertEquals(4, user.getGroups().size());
 
-	    final User user2 = new User("test2@enwida-test.de", "testuser2", "secret", "Test", "User", true);
+	    final User user2 = new User("test2@enwida-test.de2", "testuser2", "secret", "Test", "User", true);
 		user2.setCompanyName("enwida-test.de2");
 		userService.saveUser(user2,false);
 		
 		// User should be assigned to group 2
 		Assert.assertEquals(2, user2.getGroups().size());
 		Assert.assertTrue(user2.getGroups().contains(group2));
-        Assert.assertTrue(user2.getGroups().contains(group));
+        Assert.assertFalse(user2.getGroups().contains(group));
         Assert.assertFalse(user2.getGroups().contains(group3));
 
-	    final User user3 = new User("test3@enwida-test.de", "testuser3", "secret", "Test", "User", true);
-		user2.setCompanyName("enwida-test.de3");
+	    final User user3 = new User("test3@enwida-test.de3", "testuser3", "secret", "Test", "User", true);
+		user3.setCompanyName("enwida-test.de3");
 		userService.saveUser(user3,false);
 		
 		// User shouldn't be assigned to group 3
 		Assert.assertEquals(1, user3.getGroups().size());
-        Assert.assertTrue(user3.getGroups().contains(group));
-		Assert.assertTrue(user3.getGroups().contains(group2));
+        Assert.assertFalse(user3.getGroups().contains(group));
+		Assert.assertFalse(user3.getGroups().contains(group2));
         Assert.assertFalse(user3.getGroups().contains(group3));
 	}
 
