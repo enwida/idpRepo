@@ -415,13 +415,15 @@ public class UploadController {
 	}
 	
 	@RequestMapping(value = "/files/set/delete", method = RequestMethod.GET)
-	public @ResponseBody String deleteUploadedFileSet(@RequestParam("fileId") String fileId, Locale locale) {
+	public @ResponseBody String deleteUploadedFileSet(@RequestParam("fileId") String fileId, Locale locale) throws Exception {
 
+		final User user = userSession.getUser();
 		if (fileId != null && !fileId.isEmpty()) {
 			int fileid = Integer.parseInt(fileId);
-			// UploadedFile file = uploadFileService.getFile(fileid);
-			//TODO: Complete the Implementation
-			
+			for (final UploadedFile file : uploadFileService.getFileSetByFileId(fileid)) {
+				uploadFileService.removeUserUploadedFile(user, file);
+			}
+			userSession.setUserInSession(userService.syncUser(user));
 		}
 		return "SUCCESS";
 	}
