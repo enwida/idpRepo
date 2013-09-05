@@ -25,30 +25,22 @@ import de.enwida.transport.DataResolution;
 public class EnwidaUtils {
 
 	public static DataResolution getDataResolution(String legacyDataResolution) {
-		
-		DataResolution dR = null;		
-		switch (legacyDataResolution.trim()) {
-		case "15min":
-			dR = DataResolution.QUATER_HOURLY;
-			break;
-		case "1h":
-			dR = DataResolution.HOURLY;
-			break;
-		case "1d":
-			dR = DataResolution.DAILY;
-			break;
-		case "1w":
-			dR = DataResolution.WEEKLY;
-			break;
-		case "1m":
-			dR = DataResolution.MONTHLY;
-			break;
-		case "1a":
-			dR = DataResolution.YEARLY;
-			break;		
+		final String resolution = legacyDataResolution.trim();
+
+		if (resolution.equalsIgnoreCase("15min")) {
+			return DataResolution.QUATER_HOURLY;
+		} else if (resolution.equalsIgnoreCase("1h")) {
+			return DataResolution.HOURLY;
+		} else if (resolution.equalsIgnoreCase("1d")) {
+			return DataResolution.DAILY;
+		} else if (resolution.equalsIgnoreCase("1w")) {
+			return DataResolution.WEEKLY;
+		} else if (resolution.equalsIgnoreCase("1m")) {
+			return DataResolution.MONTHLY;
+		} else if (resolution.equalsIgnoreCase("1a")) {
+			return DataResolution.YEARLY;
 		}
-		
-		return dR;
+		return null;
 	}
 	
 	public static String getTableNameByAspect(Aspect aspect) {

@@ -27,25 +27,28 @@ define [ "components/visual"
   ) ->
 
     flight.component ->
+      @setVisible = (element, visible) ->
+        if visible
+          element.show()
+        else
+          element.hide()
+
       @applyVisibility = ->
         linesSelection   = @$node.find ".lines"
         productSelection = @$node.find ".productSelect"
         timeSelection    = @$node.find ".timeselect"
+        downloadSvg      = @$node.find ".downloadSvg"
+        downloadPng      = @$node.find ".downloadPng"
+        downloadCsv      = @$node.find ".downloadCsv"
+        dataSheet        = @$node.find ".datasheet"
 
-        if @attr.navigationData.hasLineSelection
-          linesSelection.show()
-        else
-          linesSelection.hide()
-
-        if @attr.navigationData.hasProductSelection
-          productSelection.show()
-        else
-          productSelection.hide()
-
-        if @attr.navigationData.hasTimeSelection
-          timeSelection.show()
-        else
-          timeSelection.hide()
+        @setVisible linesSelection, @attr.navigationData.options.hasLineSelection
+        @setVisible productSelection, @attr.navigationData.options.hasProductSelection
+        @setVisible timeSelection, @attr.navigationData.options.hasTimeSelection
+        @setVisible downloadSvg, @attr.navigationData.options.hasDownloadSVG
+        @setVisible downloadPng, @attr.navigationData.options.hasDownloadPNG
+        @setVisible downloadCsv, @attr.navigationData.options.hasDownloadCSV
+        @setVisible dataSheet, @attr.navigationData.options.hasDataSheet
 
       @getMsg = ->
         Loading.of @select("visual"),
@@ -120,9 +123,11 @@ define [ "components/visual"
           @attr.chartLines = LinesPreprocessor.transform @attr.type, data
           @triggerDraw @attr.chartLines
           @trigger @select("lines"), "updateLines", lines: @attr.chartLines
-          @trigger @select("dataSheet"), "refresh",
-            lines: data
-            navigationData: @attr.navigationData
+
+          if @attr.navigationData.options.hasDataSheet
+            @trigger @select("dataSheet"), "refresh",
+              lines: data
+              navigationData: @attr.navigationData
 
       @triggerDraw = (data) ->
         if data.length is @attr.disabledLines.length

@@ -31,25 +31,20 @@ define [ "components/visual"
     flight.component ->
       @dateFormat = d3.time.format "%Y-%m-%d"
 
+      @setVisible = (element, visible) ->
+        if visible
+          element.show()
+        else
+          element.hide()
+
       @applyVisibility = ->
         linesSelection   = @$node.find ".lines"
         productSelection = @$node.find ".productSelect"
         timeSelection    = @$node.find ".timeselect"
 
-        if @attr.navigationData.hasLineSelection
-          linesSelection.show()
-        else
-          linesSelection.hide()
-
-        if @attr.navigationData.hasProductSelection
-          productSelection.show()
-        else
-          productSelection.hide()
-
-        if @attr.navigationData.hasTimeSelection
-          timeSelection.show()
-        else
-          timeSelection.hide()
+        @setVisible linesSelection, @attr.navigationData.options.hasLineSelection
+        @setVisible productSelection, @attr.navigationData.options.hasProductSelection
+        @setVisible timeSelection, @attr.navigationData.options.hasTimeSelection
 
       @getMsg = ->
         Loading.of @select("visual"),

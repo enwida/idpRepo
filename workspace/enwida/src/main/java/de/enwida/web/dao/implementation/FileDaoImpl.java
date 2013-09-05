@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import de.enwida.web.dao.interfaces.AbstractBaseDao;
 import de.enwida.web.dao.interfaces.IFileDao;
+import de.enwida.web.db.model.UploadFilePrimaryKey;
 import de.enwida.web.db.model.UploadedFile;
 
 /**
@@ -26,8 +27,9 @@ public class FileDaoImpl extends AbstractBaseDao<UploadedFile> implements
 		IFileDao {
 
 	@Override
-	public UploadedFile getFile(long fileId) {
-		return fetchById(fileId);
+	public UploadedFile getFile(long fileId, int revision) {
+		return em.find(UploadedFile.class, new UploadFilePrimaryKey(fileId,
+				revision));
 	}
 
 	@Override
@@ -40,16 +42,18 @@ public class FileDaoImpl extends AbstractBaseDao<UploadedFile> implements
 
 	@Override
 	public List<UploadedFile> fetchByFileSetUniqueIdentifier(
-			String fileSetUniqueIdentifier) {
+			long fileSetUniqueIdentifier) {
 		TypedQuery<UploadedFile> query = em.createQuery("from "
 				+ UploadedFile.class.getName() + " where "
-				+ UploadedFile.FILE_SET_UNIQUE_IDENTIFIER + " = :fileSetUniqueIdentifier", UploadedFile.class);
-		return query.setParameter("fileSetUniqueIdentifier", fileSetUniqueIdentifier).getResultList();
+				+ UploadFilePrimaryKey.ID + " = :fileSetUniqueIdentifier",
+				UploadedFile.class);
+		return query.setParameter("fileSetUniqueIdentifier",
+				fileSetUniqueIdentifier).getResultList();
 	}
 
 	@Override
 	public UploadedFile fetchActiveFileByFileSetUniqueIdentifier(
-			String fileSetUniqueIdentifier) {
+			long fileSetUniqueIdentifier) {
 		TypedQuery<UploadedFile> query = em.createQuery("from "
 				+ UploadedFile.class.getName() + " where "
 				+ UploadedFile.FILE_SET_UNIQUE_IDENTIFIER + " = :fileSetUniqueIdentifier" + " AND "

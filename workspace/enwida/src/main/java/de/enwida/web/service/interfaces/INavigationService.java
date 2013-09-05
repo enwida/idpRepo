@@ -18,16 +18,10 @@ public interface INavigationService {
 	ChartNavigationData getNavigationDataFromJsonFile(int chartId) throws IOException;
 	Hashtable<Integer, ChartNavigationData> getAllDefaultNavigationData();
 	
-	Set<NavigationSettings> getNavigationSettingsByUserId(int userId)
-			throws IOException;
+	Set<NavigationSettings> getNavigationSettingsByUserId(int userId) throws IOException;
+	Set<NavigationSettings> getNavigationSettingsByClientId(String clientId) throws IOException;
 
-	boolean saveUserNavigationSettings(NavigationSettings navigationSettings);
+	void saveUserNavigationSettings(NavigationSettings navigationSettings);
 
-	NavigationSettings getUserNavigationSettings(Object id, int chartId,
-			boolean isClient);
-
-	ChartNavigationData getNavigationDataUNSECURE(int chartId, User user,
-			Locale locale);
-	
     ChartNavigationData getNavigationDataWithoutAvailablityCheck(int chartId, User user, Locale locale) throws Exception;
 }

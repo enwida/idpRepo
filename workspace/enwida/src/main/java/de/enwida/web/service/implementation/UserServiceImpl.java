@@ -1,24 +1,17 @@
 package de.enwida.web.service.implementation;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.math.BigInteger;
 import java.security.SecureRandom;
 import java.sql.Date;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
-import javax.mail.MessagingException;
-import javax.mail.internet.AddressException;
-
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
-import org.springframework.context.NoSuchMessageException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.test.context.transaction.TransactionConfiguration;
@@ -40,6 +33,9 @@ import de.enwida.web.utils.EnwidaUtils;
 @TransactionConfiguration(transactionManager = "jpaTransactionManager", defaultRollback = true)
 @Transactional(rollbackFor = Exception.class)
 public class UserServiceImpl implements IUserService {
+    
+    //This variable is used for tests
+    static String lastActivationLink="";
 
 	/**
 	 * User Data Access Object
@@ -127,7 +123,7 @@ public class UserServiceImpl implements IUserService {
     public List<User> fetchAllUsers() throws Exception {
         return userDao.fetchAll();
     }
-
+    
     /**
      * Saves user into Database
      * @throws Exception 
@@ -156,17 +152,19 @@ public class UserServiceImpl implements IUserService {
                 userDao.create(user);
                 userId=user.getUserId();
             }else{
-                throw new Exception("This use is already in database");
+                throw new Exception("This user is already in database");
             }
         } catch (Exception e) {
             logger.info(e.getMessage());
             return false;
         }
-                
         if(userId != -1)
-        {           
+        {        
+        	// Getting domain name from email
+        	String domain = this.getDomainFromEmail(user.getEmail());
+        	
         	// Fetching the same group and assigning that group to user
-            Group group = this.fetchGroupByCompanyName(user.getCompanyName());            
+            Group group = this.fetchGroupByDomainName(domain);            
             if(group != null && group.isAutoPass())
             {
                 Group newGroup = groupDao.fetchById(group.getGroupID());
@@ -184,6 +182,7 @@ public class UserServiceImpl implements IUserService {
             }
             anonymousGroup = groupDao.addGroup(anonymousGroup);
             this.assignGroupToUser(userId, anonymousGroup.getGroupID());
+            
             if(sendEmail){          
                 sendUserActivationEmail(user, locale);
             }
@@ -192,8 +191,7 @@ public class UserServiceImpl implements IUserService {
         else
         {
             return false;
-        }        
-    }
+        }        }
 
 	/**
 	 * Gets user Password from the mail
@@ -566,19 +564,19 @@ public class UserServiceImpl implements IUserService {
      * Gets the current User
      */
     @Override
-    public User getCurrentUser()throws Exception  {
+    public User getCurrentUser() throws Exception  {
         String userName = SecurityContextHolder.getContext().getAuthentication().getName();
         User user=this.fetchUser(userName);
         //If user is not found return anonymous user;
         if (user==null){
-        	user = fetchUser("anonymous");
+        	user = fetchUser(Constants.ANONYMOUS_USER);
         	
         	if (user == null) {
-				user = new User("anonymous" + "anon@enwida.de", "anonymous", "secret", "Anonymous", "User", true);
+				user = new User("anon@enwida.de", Constants.ANONYMOUS_USER, "secret", "Anonymous", "User", true);
 				user.setCompanyName("enwida.de");
 				saveUser(user,false);
 				
-				final Group anonymousGroup = fetchGroup("anonymous");
+				final Group anonymousGroup = fetchGroup(Constants.ANONYMOUS_GROUP);
 				assignGroupToUser(user, anonymousGroup);
         	}
         }
@@ -648,24 +646,17 @@ public class UserServiceImpl implements IUserService {
         return roleDao.fetchById(roleId);
     }
 	
-	private void sendUserActivationEmail(User user, Locale locale){
-		String activationLink = "http://localhost:8080/enwida/user/activateuser.html?username=" + user.getUserName() + "&actId=" + user.getActivationKey();
+	private void sendUserActivationEmail(User user, Locale locale) throws Exception {
+	    try{
+		String activationLink = Constants.ACTIVATION_URL+"username=" + user.getUserName() + "&actId=" + user.getActivationKey();
 		String emailText = messageSource.getMessage("de.enwida.activation.email.message", null, locale) + 
 				activationLink +" \n"+ messageSource.getMessage("de.enwida.activation.email.signature", null, locale);	
-		try {
-			mailService.SendEmail(user.getEmail(), messageSource.getMessage("de.enwida.activation.email.subject", null, locale), emailText );
-		} catch (AddressException e) {
-			e.printStackTrace();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (NoSuchMessageException e) {
-			e.printStackTrace();
-		} catch (MessagingException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
+
+		mailService.SendEmail(user.getEmail(), messageSource.getMessage("de.enwida.activation.email.subject", null, locale), emailText );
+	    }catch(Exception ex){
+	        logger.error(ex);
+	        throw new Exception("Mailing Error occured");
+	    }
 	}
 
     @Override
@@ -674,4 +665,34 @@ public class UserServiceImpl implements IUserService {
         group.setAutoPass(enabled);
         groupDao.save(group);
     }
+
+	@Override
+	public Long getNextSequence(String schema, String sequenceName,
+			boolean reset) {
+		Long value = null;
+		try {
+			value = userDao.getNextSequence(schema, sequenceName, reset);
+		} catch (Exception e) {
+			logger.error("Do nothing");
+		}
+		return value;
+	}
+
+	public String getLastActivationLink() {
+        return lastActivationLink;
+    }
+    
+    private String getDomainFromEmail(String email){
+    	String company = email.substring(email.indexOf('@') + 1, email.length());
+    	return company;
+    }
+    
+	@Override
+	public Group fetchGroupByDomainName(String domainName) {
+        for (Group group : groupDao.fetchAll()) {
+                if(group.getGroupName().equalsIgnoreCase(domainName))
+                    return group;
+        }
+        return null;
+	}
 }

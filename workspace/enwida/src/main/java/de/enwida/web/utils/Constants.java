@@ -9,6 +9,7 @@ public class Constants {
 	// User Roles
 	public static final String ANONYMOUS_ROLE = "anonymous_role";
 	public static final String ANONYMOUS_GROUP = "anonymous";
+	public static final String ANONYMOUS_USER = "anonymous";
 	
 	// Rights
 	
@@ -53,7 +54,7 @@ public class Constants {
 	public static final String ENCRYPTION_KEY = "enwidaChartCookieDataEncryptionKey";
 	
 	// URLs
-	public static final String ACTIVATION_URL = "http://localhost:8080/enwida/user/activateUser?";
+	public static final String ACTIVATION_URL = "http://localhost:8080/enwida/user/activateuser?";
 	
 	public static final String DISPLAY_DATE_FORMAT = "yyyy-MM-dd hh:mm:ss aaa";
 	public static final String UPLOAD_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss.SSSZ";

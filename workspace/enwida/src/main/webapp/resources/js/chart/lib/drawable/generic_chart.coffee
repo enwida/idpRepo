@@ -22,6 +22,7 @@ define ["util/scale", "util/number_utils"], (Scale, NumberUtils) ->
       @lines = options.lines
       @xLabel = @options.xLabel ? ""
       @yLabel = @options.yLabel ? ""
+      @legendLabel = @options.legendLabel ? ""
       @lineLabels = @lines.map (line) -> line.title
 
       # @data is an array of line data
@@ -35,8 +36,10 @@ define ["util/scale", "util/number_utils"], (Scale, NumberUtils) ->
         @xAxis.tickFormat (n) => @formatNumber n
 
     generateYAxis: ->
+      console.log @options
       @yAxis = d3.svg.axis().scale(@yScale).orient("left")
-        .tickFormat (n) => @formatNumber n
+      unless @options.type is "carpet"
+        @yAxis.tickFormat (n) => @formatNumber n
 
     generateAxes: (xScale, yScale) ->
       @generateXAxis()

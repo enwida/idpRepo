@@ -1,20 +1,14 @@
 package de.enwida.web.dao.interfaces;
 
-import java.util.Locale;
 import java.util.Set;
 
 import de.enwida.web.db.model.NavigationSettings;
-import de.enwida.web.model.ChartNavigationData;
 
 public interface INavigationDao extends IDao<NavigationSettings> {
     
-    ChartNavigationData getDefaultNavigation(int chartId, Locale locale);
+	Set<NavigationSettings> getNavigationSettingsByUserID(int userId);
+	Set<NavigationSettings> getNavigationSettingsByClientID(String clientId);
 
-	Set<NavigationSettings> getUserNavigationSettings(int userId);
-
-	boolean saveUserNavigationSettings(NavigationSettings navigationSettings);
-
-	NavigationSettings getUserNavigationSettings(Object id, int chartId,
-			boolean isClient);
+	void saveUserNavigationSettings(NavigationSettings navigationSettings);
 
 }

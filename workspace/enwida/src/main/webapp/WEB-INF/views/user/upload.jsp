@@ -25,26 +25,26 @@ $(function() {
 	var fileIdToGetRevisions =  -1;
 	
 	<c:forEach var="file" items="${uploadedfiletable}">		
-		$( "#replace-file-${file.id}" )
+		$( "#replace-file-${file.uploadedFileId.id}" )
 			.button()
 			.click(function() {
 				$("#fileIdToBeReplaced").val($(this).attr("id").split("-")[2]);				
 				$("#replace-file-form-div" ).dialog( "open" );
 		});
 		
-		$( "#download-file-${file.id}" )
+		$( "#download-file-${file.uploadedFileId.id}" )
 			.button()
 			.click(function() {				
 		});
 		
-		$( "#delete-file-set-${file.id}" )
+		$( "#delete-file-set-${file.uploadedFileId.id}" )
 			.button()
 			.click(function(event) {
 				fileSetIdToDelete = $(this).attr("id").split("-")[3];
 				$( "#delete-file-set-form-div" ).dialog( "open" );				
 		});	
 		
-		$( "#show-revisions-file-${file.id}" )
+		$( "#show-revisions-file-${file.uploadedFileId.id}" )
 			.button()
 			.click(function(event) {
 				fileIdToGetRevisions = $(this).attr("id").split("-")[3];
@@ -287,14 +287,14 @@ $(function() {
 					<c:when test="${not empty uploadedfiletable}">
 						<c:forEach var="file" items="${uploadedfiletable}">
 							<tr>
-								<%-- <td><c:out value="${file.id}" /></td> --%>
+								<%-- <td><c:out value="${file.uploadedFileId.id}" /></td> --%>
 								<td><c:out value="${file.displayFileName}" /></td>
 								<td><c:out value="${file.displayUploadDate}" /></td>
 								<td>
-									<button id="show-revisions-file-${file.id}">Show Revisions</button>
+									<button id="show-revisions-file-${file.uploadedFileId.id}">Show Revisions</button>
 									<%-- <c:choose>
 										<c:when test="${file.revision > 1}">
-											<button id="show-revisions-file-${file.id}">Show Revisions</button>
+											<button id="show-revisions-file-${file.uploadedFileId.id}">Show Revisions</button>
 										</c:when>
 										<c:otherwise>
 											<c:out value="${file.revision}" />
@@ -302,9 +302,9 @@ $(function() {
 									</c:choose> --%>
 								</td>
 								<td>
-									<button id="replace-file-${file.id}">Replace</button>
-									<a href="<c:url value='/upload/files/${file.id}' />" id="download-file-${file.id}">Download</a>
-									<button id="delete-file-set-${file.id}">Delete</button>
+									<button id="replace-file-${file.uploadedFileId.id}">Replace</button>
+									<a href="<c:url value='/upload/files/${file.uploadedFileId.id}' />" id="download-file-${file.uploadedFileId.id}">Download</a>
+									<button id="delete-file-set-${file.uploadedFileId.id}">Delete</button>
 								</td>
 							</tr>
 						</c:forEach>

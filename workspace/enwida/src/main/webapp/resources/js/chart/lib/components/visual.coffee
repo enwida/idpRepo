@@ -22,14 +22,16 @@ define [ "drawable/line_chart"
       carpet : CarpetChart
 
     @applyNavigation = (data) ->
+      @attr.chartOptions.type = @attr.type
       @attr.chartOptions.colors = data.colors
       @attr.chartOptions.locale = data.localizations.locale
       @attr.chartOptions.decimals = data.decimals
       @attr.chartOptions.xLabel = data.xAxisLabel
-      @attr.chartOptions.yLabel = data.yAxisLabel
+      @attr.chartOptions.yLabel = data.localizations.infoKeys.hour
+      @attr.chartOptions.legendLabel = data.yAxisLabel
       @attr.chartOptions.scale =
         x:
-          type: if data.isDateScale then "date" else "linear"
+          type: if data.options.isDateScale then "date" else "linear"
 
     @getChart = (lines) ->
       @attr.chartOptions.lines = lines

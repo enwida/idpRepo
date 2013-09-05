@@ -34,6 +34,7 @@ public class Group implements Serializable{
 	public static final String GROUP_ID = "GROUP_ID";
 	public static final String GROUP_NAME = "NAME";
 	public static final String AUTO_PASS = "AUTO_PASS";
+	public static final String DOMAIN_AUTO_PASS = "DOMAIN_AUTO_PASS";
 
 	@Id
 	@Column(name = GROUP_ID)
@@ -46,6 +47,9 @@ public class Group implements Serializable{
 	@Column(name = AUTO_PASS)
     private boolean autoPass;
 
+	@Column(name = DOMAIN_AUTO_PASS)
+    private String domainAutoPass;
+	
 	@ManyToMany(mappedBy = "groups", fetch = FetchType.EAGER)
 	private Set<User> assignedUsers;
 
@@ -133,6 +137,14 @@ public class Group implements Serializable{
 		}
 		final Group other = (Group) obj;
 		return groupName.equals(other.groupName);
+	}
+
+	public String getDomainAutoPass() {
+		return domainAutoPass;
+	}
+
+	public void setDomainAutoPass(String domainAutoPass) {
+		this.domainAutoPass = domainAutoPass;
 	}
 
 }

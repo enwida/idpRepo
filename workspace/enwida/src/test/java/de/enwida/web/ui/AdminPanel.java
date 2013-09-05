@@ -26,6 +26,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlTextInput;
 
 import de.enwida.web.model.User;
 import de.enwida.web.service.interfaces.IUserService;
+import de.enwida.web.utils.Constants;
 import de.enwida.web.utils.LogoFinder;
  
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -122,6 +123,11 @@ public class AdminPanel {
         String link=webSiteLink+"user/admin/";
         //Get user lists
         page = webClient.getPage(link);
+        
+        if(page.getTitleText().contains("Login")){
+            throw new Exception("Login unsuccessfull.Please check defaul password");
+        }
+        
         List<HtmlAnchor> list = page.getAnchors();
         for (HtmlAnchor htmlAnchor : list) {
             if (htmlAnchor.toString().contains("userID=")){
@@ -228,11 +234,17 @@ public class AdminPanel {
         final HtmlPage page2 = button.click();
         System.out.println(page2.asText());
         //Check if we passed the registration page
-        Assert.assertTrue(!page2.getTitleText().equalsIgnoreCase("Enwida Registration"));
-        //Check the home page is retrieved
-        Assert.assertTrue(page2.getTitleText().equalsIgnoreCase("Enwida Home Page"));
+        Assert.assertTrue(page2.getTitleText().equalsIgnoreCase("Enwida Registration Success"));
         System.out.println("User registered");
         webClient.closeAllWindows();
     }
     
+    public void registrationLink(String userName,String password) throws Exception {
+        // Get the activation page
+        final User testee = userService.fetchAllUsers().get(0);
+        final HtmlPage activationPage =webClient.getPage(Constants.ACTIVATION_URL+"username="+testee.getUsername()+"&actId="+testee.getActivationKey());
+        
+        Assert.assertTrue(activationPage.getTitleText().equalsIgnoreCase("Enwida Activation Page"));
+        
+    }
 }

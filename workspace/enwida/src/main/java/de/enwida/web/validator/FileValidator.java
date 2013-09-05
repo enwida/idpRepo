@@ -140,7 +140,7 @@ public class FileValidator implements Validator {
 							logger.debug("No record found at line number : "
 									+ linenumber);
 						} else {
-							userline.setUserLineId(metadata.getMetaDataId());
+							// userline.setUserLineId(metadata.getMetaDataId());
 							// check for unique lines
 							if (!dataLines.contains(userline)) {
 								dataLines.add(userline);

@@ -22,6 +22,9 @@ public interface IUserDao extends IDao<User> {
 
     Long getNextSequence(String schema, String sequenceName) throws Exception;
 
+	Long getNextSequence(String schema, String sequenceName, boolean reset)
+			throws Exception;
+
     int getUploadedFileVersion(UploadedFile uplaodedfile, User user);
 
 	List<UploadedFile> getActiveUploadedFiles(User user);

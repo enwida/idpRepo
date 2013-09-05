@@ -119,17 +119,22 @@ public class UploadController {
 						List<DOUserLines> userlines = (List<DOUserLines>) parsedData
 								.get(Constants.UPLOAD_LINES_KEY);
 						UserLinesMetaData metaData = (UserLinesMetaData) parsedData.get(Constants.UPLOAD_LINES_METADATA_KEY);
-
-						boolean recordsInserted = userLineService.createUserLines(userlines, metaData);
+						Long nextFileId = getNextFileId(true);
+						boolean recordsInserted = userLineService
+								.createUserLines(userlines,
+										("" + nextFileId + 1));
 						if (recordsInserted) {
 							// if atleast one record is written then upload
 							// file.
-							UploadedFile file = saveFile(filetobeuploaded, user, null);
+							UploadedFile file = saveFile(filetobeuploaded,
+									user, 0, 1);
 							// update user in session as well
 							userSession.setUserInSession(user);
 							// update file Id (which already have owner details)
-							metaData.setFile(file);
-							userLineService.updateUserLineMetaData(metaData);
+							// metaData.setFile(file);
+							file.setMetaData(metaData);
+							uploadFileService
+									.updateUserUploadedFile(user, file);
 
 							EnwidaUtils.removeTemporaryFile(filetobeuploaded);
 						} else {
@@ -175,20 +180,31 @@ public class UploadController {
 								.get(Constants.UPLOAD_LINES_KEY);
 						UserLinesMetaData metaData = (UserLinesMetaData) parsedData.get(Constants.UPLOAD_LINES_METADATA_KEY);
 
-						UploadedFile oldFile = uploadFileService.getFile(fileReplace.getFileIdToBeReplaced());						
+						UploadedFile oldFile = uploadFileService.getFile(
+								fileReplace.getFileIdToBeReplaced(),
+								fileReplace.getRevision());
 						if (oldFile != null && oldFile.getUploader().equals(user)) {
 							//Deleting the old lines from the database
-							boolean success = userLineService.eraseUserLineMetaData(fileReplace.getFileIdToBeReplaced());
+							boolean success = userLineService
+									.eraseUserLineMetaData(
+											fileReplace.getFileIdToBeReplaced(),
+											fileReplace.getRevision());
 							
 							if (success) {
-								boolean recordsInserted = userLineService.createUserLines(userlines, metaData);
+								boolean recordsInserted = userLineService
+										.createUserLines(userlines, oldFile
+												.getUserLineIdOnNewRevision());
 								if (recordsInserted) {
 									// if atleast one record is written then upload file.
-									UploadedFile file = saveFile(filetobeuploaded, user, oldFile);
+									UploadedFile file = saveFile(
+											filetobeuploaded, user, oldFile
+													.getUploadedFileId()
+													.getId(),
+											oldFile.getRevision());
 									// update user in session as well
 									userSession.setUserInSession(user);
 									// update file Id (which already have owner details)
-									metaData.setFile(file);
+									// metaData.setFile(file);
 									userLineService.updateUserLineMetaData(metaData);
 
 									EnwidaUtils.removeTemporaryFile(filetobeuploaded);
@@ -214,22 +230,15 @@ public class UploadController {
 	}
 	
 	private UploadedFile saveFile(File file, User user,
-			UploadedFile previousFile)
+ long fileId,
+			int revision)
 			throws Exception {
 		String displayfileName = file.getName();
 
-		// Get the next generated value of file sequence
-		Long generatedId = null;
-		try {
-			generatedId = userService.getNextSequence(
-					Constants.UPLOADED_FILE_SEQUENCE_SCHEMA_NAME,
-					Constants.UPLOADED_FILE_SEQUENCE_NAME);
-		} catch (Exception e) {
-			// TODO: handle exception
-			generatedId = new Long(1);
-		}
+
 		String fileFormat = EnwidaUtils.extractFileFormat(displayfileName);
 		String fileName = "file";
+		Long generatedId = getNextFileId(false);
 		if (fileFormat != null && generatedId != null)
 			fileName += "_" + generatedId + "." + fileFormat;
 		else {
@@ -255,9 +264,9 @@ public class UploadController {
 		}
 
 		// create entry in file upload table
-		// UploadedFile uploadedfile = fileId > 0 ? userService.getFile(fileId)
-		// : new UploadedFile();
-		UploadedFile uploadedfile = new UploadedFile();
+		UploadedFile uploadedfile = fileId > 0 ? uploadFileService.getFile(
+				fileId, revision) : new UploadedFile(generatedId, 1);
+		// UploadedFile uploadedfile = new UploadedFile();
 		uploadedfile.setDisplayFileName(displayfileName);
 		uploadedfile.setFileName(fileName);
 		uploadedfile.setFilePath(fileUploadDirectory + File.separator + fileName);
@@ -266,48 +275,73 @@ public class UploadController {
 		uploadedfile.setUploader(user);
 		uploadedfile.setActive(true);
 		
-		if (previousFile != null) {
-			// replace option means previous file should be set as reference in
-			// new file. Revision will be automatically updated
-			// based on previous file revision
-			uploadedfile.setPreviousFile(previousFile);					
-		}
+		// if (previousFile != null) {
+		// // replace option means previous file should be set as reference in
+		// // new file. Revision will be automatically updated
+		// // based on previous file revision
+		// uploadedfile.setPreviousFile(previousFile);
+		// }
 
-		user = uploadFileService.saveUserUploadedFile(user, uploadedfile);
+		if (fileId == 0) {
+			user = uploadFileService.saveUserUploadedFile(user, uploadedfile);
+		} else {
+			user = uploadFileService
+					.replaceUserUploadedFile(user, uploadedfile);
+		}
 
 		return uploadedfile;
 	}
 	
+	private long getNextFileId(boolean reset) {
+		// Get the next generated value of file sequence
+		Long generatedId = null;
+		try {
+			generatedId = userService.getNextSequence(
+					Constants.UPLOADED_FILE_SEQUENCE_SCHEMA_NAME,
+					Constants.UPLOADED_FILE_SEQUENCE_NAME, reset);
+		} catch (Exception e) {
+			// TODO: handle exception
+			generatedId = new Long(1);
+		}
+		return generatedId;
+	}
+
 	@RequestMapping(value = "/files/delete", method = RequestMethod.GET)
-	public @ResponseBody String deleteUploadedFile(@RequestParam("fileId") String fileId, Locale locale) throws Exception {
+	public @ResponseBody
+	String deleteUploadedFile(@RequestParam("fileId") String fileId,
+			@RequestParam("revision") int revision, Locale locale)
+			throws Exception {
 
 		if (fileId != null && !fileId.isEmpty()) {
-			UploadedFile downloadFile = uploadFileService.getFile(Integer.parseInt(fileId));
+			UploadedFile downloadFile = uploadFileService.getFile(
+					Long.parseLong(fileId), revision);
 			User user = userSession.getUser();
 			
 			if (downloadFile != null && downloadFile.getUploader().equals(user) && !downloadFile.isActive()) {
 				boolean isFileToDeleteLatest = true;
-				UploadedFile fileToMakeActive = null;
+				// UploadedFile fileToMakeActive = null;
 				
 				// Before deleting file entry update previous file properly
 				// get uploaded file where the deleted file was used as previous
 				// file. update previous entry reference with deleted file
 				// previous reference				
-				for (UploadedFile upfile : user.getUploadedFiles()) {
-					if (upfile.getPreviousFile() != null && upfile.getPreviousFile().equals(downloadFile)) {
-						// this means deleted file has been used as previous
-						// file in some other file
-						isFileToDeleteLatest = false;
-						logger.debug("Updating references");
-						upfile.setPreviousFile(downloadFile.getPreviousFile());
-						uploadFileService.updateUserUploadedFile(user, upfile);
-						fileToMakeActive = upfile;
-					}
-				}
+				// for (UploadedFile upfile : user.getUploadedFiles()) {
+				// if (upfile.getPreviousFile() != null &&
+				// upfile.getPreviousFile().equals(downloadFile)) {
+				// // this means deleted file has been used as previous
+				// // file in some other file
+				// isFileToDeleteLatest = false;
+				// logger.debug("Updating references");
+				// upfile.setPreviousFile(downloadFile.getPreviousFile());
+				// uploadFileService.updateUserUploadedFile(user, upfile);
+				// fileToMakeActive = upfile;
+				// }
+				// }
 				
 				// now delete file safely
 				try {
-					boolean success = userLineService.eraseUserLineMetaData(downloadFile.getId());
+					boolean success = userLineService.eraseUserLineMetaData(
+							downloadFile.getUploadedFileId().getId(), revision);
 					// first remove all mappings
 					uploadFileService.removeUserUploadedFile(user, downloadFile);
 					// actual row deleted
@@ -337,7 +371,7 @@ public class UploadController {
 
 		if (fileId != null && !fileId.isEmpty()) {
 			int fileid = Integer.parseInt(fileId);
-			UploadedFile file = uploadFileService.getFile(fileid);
+			// UploadedFile file = uploadFileService.getFile(fileid);
 			//TODO: Complete the Implementation
 			
 		}
@@ -346,13 +380,16 @@ public class UploadController {
 
 	@RequestMapping(value = "/files/{fileId}", method = RequestMethod.GET)
 	@ResponseBody
-	public FileSystemResource downloadFile(@PathVariable("fileId") String fileId, HttpServletResponse response) {
+	public FileSystemResource downloadFile(
+			@PathVariable("fileId") String fileId,
+			@PathVariable("revision") int revision, HttpServletResponse response) {
 		
 		if (fileId != null && !fileId.isEmpty()) {
 			int fileid = Integer.parseInt(fileId);
 			
 			User user = userSession.getUser();
-			UploadedFile downloadFile = uploadFileService.getFile(fileid);				
+			UploadedFile downloadFile = uploadFileService.getFile(fileid,
+					revision);
 			if (downloadFile != null && downloadFile.getUploader().equals(user)) {
 				String filePath = downloadFile.getFilePath();
 				File file = new File(filePath);
@@ -370,14 +407,17 @@ public class UploadController {
 	}
 	
 	@RequestMapping(value = "/files/{fileId}/action/{action}", method = RequestMethod.GET)
-	public ModelAndView makeFileActive(@PathVariable("fileId") String fileId, @PathVariable("action") String action, HttpServletResponse response) {
+	public ModelAndView makeFileActive(@PathVariable("fileId") String fileId,
+			@PathVariable("fileId") Integer revision,
+			@PathVariable("action") String action, HttpServletResponse response) {
 		
 		if (fileId != null && !fileId.isEmpty() && action!= null && !action.isEmpty()) {
 			if (action.equals("ma")) {				
 				try {
 					int fileid = Integer.parseInt(fileId);
 					User user = userSession.getUser();
-					uploadFileService.makeFileActive(fileid, user, fileValidator);
+					uploadFileService.makeFileActive(fileid, revision, user,
+							fileValidator);
 					userSession.setUserInSession(user);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -392,8 +432,9 @@ public class UploadController {
 		
 		List<UserUploadedFile> revisions = new ArrayList<UserUploadedFile>();
 		if (fileId != null && !fileId.isEmpty()) {
-			int fileid = Integer.parseInt(fileId);
-			List<UploadedFile> file = uploadFileService.getFileSetByUniqueIdentifier(fileid);	
+			long fileid = Long.parseLong(fileId);
+			List<UploadedFile> file = uploadFileService
+					.getFileSetByFileId(fileid);
 			for (UploadedFile uploadedFile : file) {
 				revisions.add(new UserUploadedFile(uploadedFile));
 			}

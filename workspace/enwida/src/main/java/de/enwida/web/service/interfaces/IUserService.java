@@ -15,6 +15,8 @@ import de.enwida.web.model.User;
  * 
  */
 public interface IUserService {
+    
+    public String getLastActivationLink();
 
     /**
      * Get users by userID
@@ -335,7 +337,14 @@ public interface IUserService {
     /**
      * Gets nextSequence from the database
      */
-    public Long getNextSequence(String schema, String sequenceName);    
+	public Long getNextSequence(String schema, String sequenceName);
+
+	/**
+	 * make nextSequence in the database
+	 */
+	public Long getNextSequence(String schema, String sequenceName,
+			boolean reset);
+
     /**
      * Gets the group name from the company name
      */
@@ -364,4 +373,8 @@ public interface IUserService {
      * Enables/Disables the autopass
      */
     public void enableDisableAutoPass(Long groupID, boolean enabled) throws Exception;
+    /**
+     * Get group by group domain
+     */
+	public Group fetchGroupByDomainName(String domainName);
 }
