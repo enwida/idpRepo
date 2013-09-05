@@ -81,10 +81,6 @@ public class UploadedFile implements Serializable, Comparable<UploadedFile> {
 	@Column(name = FILE_NAME, unique = true, nullable = false, length = 255)
 	private String fileName;
 	
-	// @Column(name = FILE_SET_UNIQUE_IDENTIFIER, nullable = false, length =
-	// 255)
-	// private String fileSetUniqueIdentifier;
-
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = User.USER_ID)
 	private User uploader;

@@ -161,7 +161,7 @@ public class UploadController {
 				logger.error("Unable to upload file : " + displayfileName, e);
             }			
         }		
-		return new ModelAndView("redirect:/upload/files");
+		return new ModelAndView("redirect:/user/upload/files");
 	}
 
 	@SuppressWarnings("unchecked")
@@ -230,7 +230,7 @@ public class UploadController {
             	logger.error("Unable to upload file : " + displayfileName, e);
             }			
 		}
-		return new ModelAndView("redirect:/upload/files");
+		return new ModelAndView("redirect:/user/upload/files");
 	}
 
 	private UploadedFile saveNewFile(File file, User user)
@@ -363,7 +363,7 @@ public class UploadController {
 
 		if (fileId != null && !fileId.isEmpty()) {
 			UploadedFile downloadFile = uploadFileService.getFile(
-					Long.parseLong(fileId), revision);
+					Long.parseLong(fileId.trim()), revision);
 			User user = userSession.getUser();
 			
 			if (downloadFile != null && downloadFile.getUploader().equals(user) && !downloadFile.isActive()) {
@@ -454,9 +454,9 @@ public class UploadController {
 		return null;
 	}
 	
-	@RequestMapping(value = "/files/{fileId}/action/{action}", method = RequestMethod.GET)
+	@RequestMapping(value = "/files/{fileId}/{revision}/action/{action}", method = RequestMethod.GET)
 	public ModelAndView makeFileActive(@PathVariable("fileId") String fileId,
-			@PathVariable("fileId") Integer revision,
+			@PathVariable("revision") Integer revision,
 			@PathVariable("action") String action, HttpServletResponse response) {
 		
 		if (fileId != null && !fileId.isEmpty() && action!= null && !action.isEmpty()) {
@@ -472,7 +472,7 @@ public class UploadController {
 				}
 			}
 		}
-		return new ModelAndView("redirect:/upload/files");
+		return new ModelAndView("redirect:/user/upload/files");
 	}
 	
 	@RequestMapping(value = "/files/revisions", method = RequestMethod.GET)

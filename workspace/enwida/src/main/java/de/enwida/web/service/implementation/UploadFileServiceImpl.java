@@ -181,14 +181,11 @@ public class UploadFileServiceImpl implements IUploadFileService {
 			
 			//1. Get Active File of FileSet by FileSetUniqueIdentifier
 			UploadedFile fileAlreadyActive = fileDao
-					.fetchActiveFileByFileSetUniqueIdentifier(fileToMakeActive
+					.fetchActiveFileByFileId(fileToMakeActive
 							.getUploadedFileId().getId());
 			
 			//2. Erase the Data of the Active File from Database
-			UserLinesMetaData metadata = fileAlreadyActive.getMetaData();
-			if (fileAlreadyActive.getMetaData() != null) {
-				userLinesDao.delete(fileAlreadyActive.getMetaData(), true);
-			}
+			userLineService.eraseUserLines(fileId);
 			
 			//3. Insert the data of the Required Active File
 			BindingResult results = EnwidaUtils.validateFile(new File(fileToMakeActive.getFilePath()), fileValidator);
@@ -215,6 +212,6 @@ public class UploadFileServiceImpl implements IUploadFileService {
 
 	@Override
 	public List<UploadedFile> getFileSetByFileId(long fileId) {
-		return fileDao.fetchByFileSetUniqueIdentifier(fileId);
+		return fileDao.fetchFilesByFileId(fileId);
 	}
 }

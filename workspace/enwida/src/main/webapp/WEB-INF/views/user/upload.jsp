@@ -107,7 +107,7 @@ $(function() {
 	    	"Delete this file set?": function() {
 	    		
 	    		$.ajax({
-	    	         url: "<c:url value='/upload/files/set/delete' />",
+	    	         url: "<c:url value='/user/upload/files/set/delete' />",
 	    	         type: 'GET',            
 	    	         data:  { 	
 	    	        	 	fileId : fileSetIdToDelete,
@@ -145,7 +145,7 @@ $(function() {
 	    	"Delete this file?": function() {
 	    		
 	    		$.ajax({
-	    	         url: "<c:url value='/upload/files/delete' />",
+	    	         url: "<c:url value='/user/upload/files/delete' />",
 	    	         type: 'GET',            
 	    	         data:  { 	
 	    	        	 	fileId : fileIdToDelete.split("-")[0],
@@ -182,7 +182,7 @@ $(function() {
 		buttons: {
 			Ok: function() {
 				$( this ).dialog( "close" );
-				window.location.assign("<c:url value='/upload/files' />");
+				window.location.assign("<c:url value='/user/upload/files' />");
 			}
 		}
 	});
@@ -195,7 +195,7 @@ $(function() {
 		buttons: {
 			Ok: function() {
 				$( this ).dialog( "close" );
-				window.location.assign("<c:url value='/upload/files' />");
+				window.location.assign("<c:url value='/user/upload/files' />");
 			}
 		}
 	});
@@ -208,7 +208,7 @@ $(function() {
 		open: function() {
 			
 			$.ajax({
-   	         url: "<c:url value='/upload/files/revisions' />",
+   	         url: "<c:url value='/user/upload/files/revisions' />",
    	         type: 'GET',
    	         data:  { 	
    	        	 	fileId : fileIdToGetRevisions,
@@ -231,14 +231,14 @@ $(function() {
    	        		if (item.active == true) {
    	        			revisionsDialogHTML += "<div style=\"display: table-cell;padding: 5px;\"> Active </div>" +
    	        			"<div style=\"display: table-cell;padding: 5px;\">" +
-   	        			"<a class=\"ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only\" style=\"display: table-cell;padding: 5px;\" href=\"<c:url value='/upload/files/" + item.id + "/" + item.revision +"' />\" id=\"download-file-" + item.id + "-" + item.revision + "\">Download</a>" +
+   	        			"<a class=\"ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only\" style=\"display: table-cell;padding: 5px;\" href=\"<c:url value='/user/upload/files/" + item.id + "/" + item.revision +"' />\" id=\"download-file-" + item.id + "-" + item.revision + "\">Download</a>" +
 	        				/* "<button class=\"ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only\" style=\"display: table-cell;padding: 5px;\" id=\"delete-file-" + item.id + "\">Delete</button>" + */
 	        			"</div></div>";
    	        		} else {
    	        			revisionsDialogHTML += "<div style=\"display: table-cell;padding: 5px;\"> Not Active </div>" +
    	        			"<div style=\"display: table-cell;padding: 5px;\">" +
-  	        				"<a class=\"ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only\" style=\"display: table-cell;padding: 5px;\" href=\"<c:url value='/upload/files/" + item.id + "/"+ item.revision +"/action/ma' />\" id=\"active-file-" + item.id + "-" + item.revision +"\">Make Active</a>" +
-  	        				"<a class=\"ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only\" style=\"display: table-cell;padding: 5px;\" href=\"<c:url value='/upload/files/" + item.id + "-" + item.revision +"' />\" id=\"download-file-" + item.id + "-" + item.revision + "\">Download</a>" +
+  	        				"<a class=\"ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only\" style=\"display: table-cell;padding: 5px;\" href=\"<c:url value='/user/upload/files/" + item.id + "/"+ item.revision +"/action/ma' />\" id=\"active-file-" + item.id + "-" + item.revision +"\">Make Active</a>" +
+  	        				"<a class=\"ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only\" style=\"display: table-cell;padding: 5px;\" href=\"<c:url value='/user/upload/files/" + item.id + "-" + item.revision +"' />\" id=\"download-file-" + item.id + "-" + item.revision + "\">Download</a>" +
    	        				"<button class=\"ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only\" style=\"display: table-cell;padding: 5px;\" onclick=\"openDeleteConfirmationDialog('delete-file-" + item.id + " - "+ item.revision + "\')\" id=\"delete-file-" + item.id + "-" + item.revision + "\">Delete</button>" +
    	        			"</div></div>";   	        				
    	        		}
@@ -403,7 +403,7 @@ $(function() {
 	<!-- /FileDelete Failure Div -->
 	
 	
-	
+<%-- 	
 <form name='f' method='POST'>
 	<table id="tblGroups" class="tablesorter">
 		<thead>
@@ -458,6 +458,6 @@ $(function() {
 			</tr>
 	<tfoot>
 	</table>
-	</form>
+	</form> --%>
 </body>
 </html>
