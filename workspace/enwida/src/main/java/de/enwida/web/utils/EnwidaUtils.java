@@ -14,6 +14,7 @@ import java.security.SecureRandom;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.fileupload.FileItem;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.DataBinder;
 import org.springframework.validation.Validator;
@@ -254,5 +255,16 @@ public class EnwidaUtils {
 		binder.validate();
 		// get BindingResult that includes any validation errors
 		return binder.getBindingResult();
+	}
+	
+	public static File getTemporaryFile(FileItem item, String fileUploadDirectory) throws Exception {
+		String tempFile = fileUploadDirectory + File.separator + "temp"
+				+ File.separator + EnwidaUtils.extractFileName(item.getName());
+		EnwidaUtils.createDirectory(fileUploadDirectory + File.separator
+				+ "temp");
+		// do validation here
+		File filetobeuploaded = new File(tempFile);
+		item.write(filetobeuploaded);
+		return filetobeuploaded;
 	}
 }

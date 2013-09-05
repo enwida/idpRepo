@@ -108,7 +108,7 @@ public class UploadController {
 				File filetobeuploaded = null;
             	if (!item.isFormField()) {
 					// save file in temporary directory
-					filetobeuploaded = getTemporaryFile(item);
+					filetobeuploaded = EnwidaUtils.getTemporaryFile(item, fileUploadDirectory);
 					// do validation here
 					BindingResult results = EnwidaUtils.validateFile(filetobeuploaded, fileValidator);
 					ObjectError status = results.getGlobalError();
@@ -120,9 +120,7 @@ public class UploadController {
 								.get(Constants.UPLOAD_LINES_KEY);
 						UserLinesMetaData metaData = (UserLinesMetaData) parsedData.get(Constants.UPLOAD_LINES_METADATA_KEY);
 						Long nextFileId = getNextFileId(true);
-						boolean recordsInserted = userLineService
-								.createUserLines(userlines,
-										("" + nextFileId + 1));
+						boolean recordsInserted = userLineService.createUserLines(userlines, nextFileId);
 						if (recordsInserted) {
 							// if atleast one record is written then upload
 							// file.
@@ -168,7 +166,7 @@ public class UploadController {
             	File filetobeuploaded = null;
             	if (!item.isFormField()) {
 					// save file in temporary directory
-					filetobeuploaded = getTemporaryFile(item);
+					filetobeuploaded = EnwidaUtils.getTemporaryFile(item, fileUploadDirectory);
 					// do validation here
 					BindingResult results = EnwidaUtils.validateFile(filetobeuploaded, fileValidator);
 					ObjectError status = results.getGlobalError();
@@ -180,14 +178,11 @@ public class UploadController {
 								.get(Constants.UPLOAD_LINES_KEY);
 						UserLinesMetaData metaData = (UserLinesMetaData) parsedData.get(Constants.UPLOAD_LINES_METADATA_KEY);
 
-						UploadedFile oldFile = uploadFileService.getFile(
-								fileReplace.getFileIdToBeReplaced(),
+						UploadedFile oldFile = uploadFileService.getFile(fileReplace.getFileIdToBeReplaced(),
 								fileReplace.getRevision());
 						if (oldFile != null && oldFile.getUploader().equals(user)) {
 							//Deleting the old lines from the database
-							boolean success = userLineService
-									.eraseUserLineMetaData(
-											fileReplace.getFileIdToBeReplaced(),
+							boolean success = userLineService.eraseUserLineMetaData(fileReplace.getFileIdToBeReplaced(),
 											fileReplace.getRevision());
 							
 							if (success) {
@@ -228,18 +223,7 @@ public class UploadController {
 		}
 		return new ModelAndView("redirect:/upload/files");
 	}
-
-	private File getTemporaryFile(FileItem item) throws Exception {
-		String tempFile = fileUploadDirectory + File.separator + "temp"
-				+ File.separator + EnwidaUtils.extractFileName(item.getName());
-		EnwidaUtils.createDirectory(fileUploadDirectory + File.separator
-				+ "temp");
-		// do validation here
-		File filetobeuploaded = new File(tempFile);
-		item.write(filetobeuploaded);
-		return filetobeuploaded;
-	}
-
+	
 	private UploadedFile saveFile(File file, User user,
  long fileId,
 			int revision)
