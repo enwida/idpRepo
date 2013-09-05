@@ -51,7 +51,7 @@ import de.enwida.web.validator.FileValidator;
  * Handles requests for the user service.
  */
 @Controller
-@RequestMapping("/upload")
+@RequestMapping("/user/upload")
 public class UploadController {
 
 	@Autowired
@@ -103,7 +103,8 @@ public class UploadController {
 		model.put("aspects", aspects);
 		model.put("fileUpload", new FileUpload());
 		model.put("fileReplace", new FileUpload());
-		return new ModelAndView("user/upload", model);
+		model.put("content", "upload");
+		return new ModelAndView("user/master", model);
 	}
 	
 	@SuppressWarnings("unchecked")

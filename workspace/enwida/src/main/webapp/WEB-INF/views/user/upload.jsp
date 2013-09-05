@@ -400,5 +400,63 @@ $(function() {
 		<p><span class="ui-icon ui-icon-alert" style="float: left; margin: 0 7px 20px 0;"></span>Deletion was not successful.</p>		
 	</div>
 	<!-- /FileDelete Failure Div -->
+	
+	
+	
+<form name='f' method='POST'>
+	<table id="tblGroups" class="tablesorter">
+		<thead>
+			<tr>
+				<th><spring:message code="de.enwida.upload.file_name" text="File Name" /></th>
+				<th><spring:message code="de.enwida.upload.upload_date" text="Upload Date" /></th>
+				<th><spring:message code="de.enwida.upload.revision" text="Revision" /></th>
+				<th><spring:message code="de.enwida.upload.revision_active" text="Revision Active" /></th>
+				<th><spring:message code="de.enwida.upload.aspect" text="Aspect" /></th>
+				<th><spring:message code="de.enwida.upload.actions" text="Actions" /></th>
+		  </tr>
+	</thead>
+	<tfoot>
+		<tr>
+			<th colspan="7" class="pager form-horizontal">
+				<button type="button" class="btn first"><i class="icon-step-backward"></i></button>
+				<button type="button" class="btn prev"><i class="icon-arrow-left"></i></button>
+				<span class="pagedisplay"></span> <!-- this can be any element, including an input -->
+				<button type="button" class="btn next"><i class="icon-arrow-right"></i></button>
+				<button type="button" class="btn last"><i class="icon-step-forward"></i></button>
+				<select class="pagesize input-mini" title="Select page size">
+					<option selected="selected" value="10">10</option>
+					<option value="20">20</option>
+					<option value="30">30</option>
+					<option value="40">40</option>
+				</select>
+				<select class="pagenum input-mini" title="Select page number"></select>
+			</th>
+		</tr>
+	</tfoot>
+	<tbody>
+			<c:forEach var="group" items="${groupsWithUsers}">
+				<tr>
+					<td>${group.groupName}</td>
+					<td><c:forEach var="user" items="${group.assignedUsers}"><a href='admin_user.html?userID=${user.userId}'>${user.userName}</a>,</c:forEach>
+					</td>
+					<td><input type="text" onchange="updateDomainAutoPass(${group.groupID},this.value);" value="${group.domainAutoPass}"/></td>
+					<td><input type="checkbox" onclick="enableAutoPass(${group.groupID},this.checked);" ${group.autoPass == 'true' ? 'checked' : ''}/></td>
+					<td>
+						<a href='admin_editgroup.html?groupID=${group.groupID}&action=delete'> <spring:message code="de.enwida.userManagement.delete" /></a>
+					</td>
+				</tr>
+			</c:forEach>
+	</tbody>
+	<tfoot>
+			<tr>
+				<td><input name="newGroup" type='text' placeholder=" <spring:message code="de.enwida.userManagement.addGroup" />" /></td>
+				<td></td>
+				<td><input name="domainAutoPass" type='text' /></td>
+				<td><input name="autoPass" type='checkbox' /></td>
+				<td><input type="submit" class="btn btn-primary"  name="addGroup" value=" <spring:message code="de.enwida.userManagement.add" />"/></td>
+			</tr>
+	<tfoot>
+	</table>
+	</form>
 </body>
 </html>
