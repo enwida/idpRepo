@@ -5,6 +5,7 @@
 <head>
 <script src="../../resources/js/admin/assets/admin.js"></script>
 <script src="../../resources/js/admin/assets/jquery.js"></script>
+<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
 <script src="../../resources/js/admin/assets/jquery.tablesorter.js"></script>
 <script src="../../resources/js/admin/assets/jquery.tablesorter.widgets.js"></script>
 <script src="../../resources/js/admin/assets/jquery.tablesorter.pager.js"></script>

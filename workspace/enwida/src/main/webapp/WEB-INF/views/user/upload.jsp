@@ -7,8 +7,6 @@
 <meta charset="utf-8" />
 <title>Upload User Data</title>
 <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
-<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
-<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
 <script src="/enwida/resources/js/chart/date.format.js"></script>
 <!-- <link rel="stylesheet" href="/resources/demos/style.css" /> -->
 <script>
@@ -107,7 +105,7 @@ $(function() {
 	    	"Delete this file set?": function() {
 	    		
 	    		$.ajax({
-	    	         url: "<c:url value='/upload/files/set/delete' />",
+	    	         url: "<c:url value='/user/upload/files/set/delete' />",
 	    	         type: 'GET',            
 	    	         data:  { 	
 	    	        	 	fileId : fileSetIdToDelete,
@@ -145,7 +143,7 @@ $(function() {
 	    	"Delete this file?": function() {
 	    		
 	    		$.ajax({
-	    	         url: "<c:url value='/upload/files/delete' />",
+	    	         url: "<c:url value='/user/upload/files/delete' />",
 	    	         type: 'GET',            
 	    	         data:  { 	
 	    	        	 	fileId : fileIdToDelete,
@@ -181,7 +179,7 @@ $(function() {
 		buttons: {
 			Ok: function() {
 				$( this ).dialog( "close" );
-				window.location.assign("<c:url value='/upload/files' />");
+				window.location.assign("<c:url value='/user/upload/files' />");
 			}
 		}
 	});
@@ -194,7 +192,7 @@ $(function() {
 		buttons: {
 			Ok: function() {
 				$( this ).dialog( "close" );
-				window.location.assign("<c:url value='/upload/files' />");
+				window.location.assign("<c:url value='/user/upload/files' />");
 			}
 		}
 	});
@@ -207,7 +205,7 @@ $(function() {
 		open: function() {
 			
 			$.ajax({
-   	         url: "<c:url value='/upload/files/revisions' />",
+   	         url: "<c:url value='/user/upload/files/revisions' />",
    	         type: 'GET',
    	         data:  { 	
    	        	 	fileId : fileIdToGetRevisions,
@@ -230,14 +228,14 @@ $(function() {
    	        		if (item.active == true) {
    	        			revisionsDialogHTML += "<div style=\"display: table-cell;padding: 5px;\"> Active </div>" +
    	        			"<div style=\"display: table-cell;padding: 5px;\">" +
-	        				"<a class=\"ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only\" style=\"display: table-cell;padding: 5px;\" href=\"<c:url value='/upload/files/" + item.id + "' />\" id=\"download-file-" + item.id + "\">Download</a>" +
+	        				"<a class=\"ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only\" style=\"display: table-cell;padding: 5px;\" href=\"<c:url value='/user/upload/files/" + item.id + "' />\" id=\"download-file-" + item.id + "\">Download</a>" +
 	        				/* "<button class=\"ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only\" style=\"display: table-cell;padding: 5px;\" id=\"delete-file-" + item.id + "\">Delete</button>" + */
 	        			"</div></div>";
    	        		} else {
    	        			revisionsDialogHTML += "<div style=\"display: table-cell;padding: 5px;\"> Not Active </div>" +
    	        			"<div style=\"display: table-cell;padding: 5px;\">" +
-  	        				"<a class=\"ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only\" style=\"display: table-cell;padding: 5px;\" href=\"<c:url value='/upload/files/" + item.id + "/action/ma' />\" id=\"active-file-" + item.id + "\">Make Active</a>" +
-  	        				"<a class=\"ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only\" style=\"display: table-cell;padding: 5px;\" href=\"<c:url value='/upload/files/" + item.id + "' />\" id=\"download-file-" + item.id + "\">Download</a>" +
+  	        				"<a class=\"ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only\" style=\"display: table-cell;padding: 5px;\" href=\"<c:url value='/user/upload/files/" + item.id + "/action/ma' />\" id=\"active-file-" + item.id + "\">Make Active</a>" +
+  	        				"<a class=\"ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only\" style=\"display: table-cell;padding: 5px;\" href=\"<c:url value='/user/upload/files/" + item.id + "' />\" id=\"download-file-" + item.id + "\">Download</a>" +
    	        				"<button class=\"ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only\" style=\"display: table-cell;padding: 5px;\" onclick=\"openDeleteConfirmationDialog('delete-file-" + item.id + "\')\" id=\"delete-file-" + item.id + "\">Delete</button>" +
    	        			"</div></div>";   	        				
    	        		}
@@ -275,48 +273,6 @@ $(function() {
 			<button id="upload-file">Upload File</button>
 			<br/>
 			<br/>
-			<table border="1">
-				<tr>
-					<!-- <th>Id</th> -->
-					<th>File Name</th>
-					<th>Upload Date</th>
-					<th>Revision</th>
-					<th>Options</th>
-				</tr>
-				<c:choose>
-					<c:when test="${not empty uploadedfiletable}">
-						<c:forEach var="file" items="${uploadedfiletable}">
-							<tr>
-								<%-- <td><c:out value="${file.uploadedFileId.id}" /></td> --%>
-								<td><c:out value="${file.displayFileName}" /></td>
-								<td><c:out value="${file.displayUploadDate}" /></td>
-								<td>
-									<button id="show-revisions-file-${file.uploadedFileId.id}">Show Revisions</button>
-									<%-- <c:choose>
-										<c:when test="${file.revision > 1}">
-											<button id="show-revisions-file-${file.uploadedFileId.id}">Show Revisions</button>
-										</c:when>
-										<c:otherwise>
-											<c:out value="${file.revision}" />
-										</c:otherwise>
-									</c:choose> --%>
-								</td>
-								<td>
-									<button id="replace-file-${file.uploadedFileId.id}">Replace</button>
-									<a href="<c:url value='/upload/files/${file.uploadedFileId.id}' />" id="download-file-${file.uploadedFileId.id}">Download</a>
-									<button id="delete-file-set-${file.uploadedFileId.id}">Delete</button>
-								</td>
-							</tr>
-						</c:forEach>
-					</c:when>
-					<c:otherwise>
-						<tr>
-							<td colspan="5">No data found</td>
-						</tr>
-					</c:otherwise>
-				</c:choose>
-			</table>
-
 			<c:if test="${not empty errormsg}">
 				<small><font color="red"> <c:out value="${errormsg}" />
 				</font></small>
@@ -404,59 +360,77 @@ $(function() {
 	
 	
 <form name='f' method='POST'>
-	<table id="tblGroups" class="tablesorter">
-		<thead>
-			<tr>
-				<th><spring:message code="de.enwida.upload.file_name" text="File Name" /></th>
-				<th><spring:message code="de.enwida.upload.upload_date" text="Upload Date" /></th>
-				<th><spring:message code="de.enwida.upload.revision" text="Revision" /></th>
-				<th><spring:message code="de.enwida.upload.revision_active" text="Revision Active" /></th>
-				<th><spring:message code="de.enwida.upload.aspect" text="Aspect" /></th>
-				<th><spring:message code="de.enwida.upload.actions" text="Actions" /></th>
-		  </tr>
-	</thead>
-	<tfoot>
-		<tr>
-			<th colspan="7" class="pager form-horizontal">
-				<button type="button" class="btn first"><i class="icon-step-backward"></i></button>
-				<button type="button" class="btn prev"><i class="icon-arrow-left"></i></button>
-				<span class="pagedisplay"></span> <!-- this can be any element, including an input -->
-				<button type="button" class="btn next"><i class="icon-arrow-right"></i></button>
-				<button type="button" class="btn last"><i class="icon-step-forward"></i></button>
-				<select class="pagesize input-mini" title="Select page size">
-					<option selected="selected" value="10">10</option>
-					<option value="20">20</option>
-					<option value="30">30</option>
-					<option value="40">40</option>
-				</select>
-				<select class="pagenum input-mini" title="Select page number"></select>
-			</th>
-		</tr>
-	</tfoot>
-	<tbody>
-			<c:forEach var="group" items="${groupsWithUsers}">
+		<table border="1" id="tblGroups" class="tablesorter">
+			<thead>
 				<tr>
-					<td>${group.groupName}</td>
-					<td><c:forEach var="user" items="${group.assignedUsers}"><a href='admin_user.html?userID=${user.userId}'>${user.userName}</a>,</c:forEach>
-					</td>
-					<td><input type="text" onchange="updateDomainAutoPass(${group.groupID},this.value);" value="${group.domainAutoPass}"/></td>
-					<td><input type="checkbox" onclick="enableAutoPass(${group.groupID},this.checked);" ${group.autoPass == 'true' ? 'checked' : ''}/></td>
-					<td>
-						<a href='admin_editgroup.html?groupID=${group.groupID}&action=delete'> <spring:message code="de.enwida.userManagement.delete" /></a>
-					</td>
+					<th><spring:message code="de.enwida.upload.file_name" text="File Name" /></th>
+					<th><spring:message code="de.enwida.upload.upload_date" text="Upload Date" /></th>
+					<th><spring:message code="de.enwida.upload.revision" text="Revision" /></th>
+					<th><spring:message code="de.enwida.upload.revision_active" text="Revision Active" /></th>
+					<th><spring:message code="de.enwida.upload.aspect" text="Aspect" /></th>
+					<th><spring:message code="de.enwida.upload.actions" text="Actions" /></th>
 				</tr>
-			</c:forEach>
-	</tbody>
-	<tfoot>
-			<tr>
-				<td><input name="newGroup" type='text' placeholder=" <spring:message code="de.enwida.userManagement.addGroup" />" /></td>
-				<td></td>
-				<td><input name="domainAutoPass" type='text' /></td>
-				<td><input name="autoPass" type='checkbox' /></td>
-				<td><input type="submit" class="btn btn-primary"  name="addGroup" value=" <spring:message code="de.enwida.userManagement.add" />"/></td>
-			</tr>
-	<tfoot>
-	</table>
+			</thead>
+			<tfoot>
+				<tr>
+					<th colspan="7" class="pager form-horizontal">
+						<button type="button" class="btn first">
+							<i class="icon-step-backward"></i>
+						</button>
+						<button type="button" class="btn prev">
+							<i class="icon-arrow-left"></i>
+						</button> <span class="pagedisplay"></span> <!-- this can be any element, including an input -->
+						<button type="button" class="btn next">
+							<i class="icon-arrow-right"></i>
+						</button>
+						<button type="button" class="btn last">
+							<i class="icon-step-forward"></i>
+						</button> <select class="pagesize input-mini" title="Select page size">
+							<option selected="selected" value="10">10</option>
+							<option value="20">20</option>
+							<option value="30">30</option>
+							<option value="40">40</option>
+					</select> <select class="pagenum input-mini" title="Select page number"></select>
+					</th>
+				</tr>
+			</tfoot>
+			<tbody>
+				<c:choose>
+					<c:when test="${not empty uploadedfiletable}">
+						<c:forEach var="file" items="${uploadedfiletable}">
+							<tr>
+								<%-- <td><c:out value="${file.uploadedFileId.id}" /></td> --%>
+								<td><c:out value="${file.displayFileName}" /></td>
+								<td><c:out value="${file.displayUploadDate}" /></td>
+								<td>
+									<button id="show-revisions-file-${file.uploadedFileId.id}">Show
+										Revisions</button> <%-- <c:choose>
+										<c:when test="${file.revision > 1}">
+											<button id="show-revisions-file-${file.uploadedFileId.id}">Show Revisions</button>
+										</c:when>
+										<c:otherwise>
+											<c:out value="${file.revision}" />
+										</c:otherwise>
+									</c:choose> --%>
+								</td>
+								<td>
+									<button id="replace-file-${file.uploadedFileId.id}">Replace</button>
+									<a
+									href="<c:url value='/user/upload/files/${file.uploadedFileId.id}' />"
+									id="download-file-${file.uploadedFileId.id}">Download</a>
+									<button id="delete-file-set-${file.uploadedFileId.id}">Delete</button>
+								</td>
+							</tr>
+						</c:forEach>
+					</c:when>
+					<c:otherwise>
+						<tr>
+							<td colspan="5">No data found</td>
+						</tr>
+					</c:otherwise>
+				</c:choose>
+			</tbody>
+		</table>
 	</form>
 </body>
 </html>
