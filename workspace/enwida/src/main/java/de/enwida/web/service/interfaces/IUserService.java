@@ -377,4 +377,9 @@ public interface IUserService {
      * Get group by group domain
      */
 	public Group fetchGroupByDomainName(String domainName);
+	/**
+     * Update domain auto pass of the group
+     */
+	void updateDomainAutoPass(Long groupID, String domainAutoPass)
+			throws Exception;
 }
