@@ -9,9 +9,7 @@ public interface IFileDao extends IDao<UploadedFile> {
 
 	UploadedFile getFileByFilePath(String filePath);
 
-	List<UploadedFile> fetchByFileSetUniqueIdentifier(
-			long fileSetUniqueIdentifier);
+	UploadedFile fetchActiveFileByFileId(long id);
 
-	UploadedFile fetchActiveFileByFileSetUniqueIdentifier(
-			long fileSetUniqueIdentifier);
+	List<UploadedFile> fetchFilesByFileId(long id);
 }

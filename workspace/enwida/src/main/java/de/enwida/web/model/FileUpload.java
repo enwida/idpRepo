@@ -7,7 +7,7 @@ import de.enwida.transport.Aspect;
 public class FileUpload {
 	
 	private CommonsMultipartFile file;
-	private int fileIdToBeReplaced;
+	private String fileIdToBeReplaced;
 	private int revision;
 	private Aspect aspect;
 	
@@ -19,11 +19,11 @@ public class FileUpload {
 		this.file = file;
 	}
 
-	public int getFileIdToBeReplaced() {
+	public String getFileIdToBeReplaced() {
 		return fileIdToBeReplaced;
 	}
 
-	public void setFileIdToBeReplaced(int fileIdToBeReplaced) {
+	public void setFileIdToBeReplaced(String fileIdToBeReplaced) {
 		this.fileIdToBeReplaced = fileIdToBeReplaced;
 	}
 

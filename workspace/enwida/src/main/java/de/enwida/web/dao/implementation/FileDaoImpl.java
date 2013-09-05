@@ -39,26 +39,44 @@ public class FileDaoImpl extends AbstractBaseDao<UploadedFile> implements
 				+ UploadedFile.FILE_PATH + " = :filePath", UploadedFile.class);
 		return query.setParameter("filePath", filePath).getSingleResult();
 	}
+//
+//	@Override
+//	public List<UploadedFile> fetchByFileSetUniqueIdentifier(
+//			long fileSetUniqueIdentifier) {
+//		TypedQuery<UploadedFile> query = em.createQuery("from "
+//				+ UploadedFile.class.getName() + " where "
+//				+ UploadFilePrimaryKey.ID + " = :fileSetUniqueIdentifier",
+//				UploadedFile.class);
+//		return query.setParameter("fileSetUniqueIdentifier",
+//				fileSetUniqueIdentifier).getResultList();
+//	}
+//
+//	@Override
+//	public UploadedFile fetchActiveFileByFileSetUniqueIdentifier(
+//			long fileSetUniqueIdentifier) {
+//		TypedQuery<UploadedFile> query = em.createQuery("from "
+//				+ UploadedFile.class.getName() + " where "
+//				+ UploadedFile.FILE_SET_UNIQUE_IDENTIFIER + " = :fileSetUniqueIdentifier" + " AND "
+//				+ UploadedFile.ACTIVE + " = :active", UploadedFile.class);
+//		return query.setParameter("fileSetUniqueIdentifier", fileSetUniqueIdentifier)
+//				.setParameter("active", true).getSingleResult();
+//	}
 
 	@Override
-	public List<UploadedFile> fetchByFileSetUniqueIdentifier(
-			long fileSetUniqueIdentifier) {
+	public UploadedFile fetchActiveFileByFileId(long id) {
 		TypedQuery<UploadedFile> query = em.createQuery("from "
 				+ UploadedFile.class.getName() + " where "
-				+ UploadFilePrimaryKey.ID + " = :fileSetUniqueIdentifier",
-				UploadedFile.class);
-		return query.setParameter("fileSetUniqueIdentifier",
-				fileSetUniqueIdentifier).getResultList();
-	}
-
-	@Override
-	public UploadedFile fetchActiveFileByFileSetUniqueIdentifier(
-			long fileSetUniqueIdentifier) {
-		TypedQuery<UploadedFile> query = em.createQuery("from "
-				+ UploadedFile.class.getName() + " where "
-				+ UploadedFile.FILE_SET_UNIQUE_IDENTIFIER + " = :fileSetUniqueIdentifier" + " AND "
+				+ UploadFilePrimaryKey.ID + " = :fileId" + " AND "
 				+ UploadedFile.ACTIVE + " = :active", UploadedFile.class);
-		return query.setParameter("fileSetUniqueIdentifier", fileSetUniqueIdentifier)
-				.setParameter("active", true).getSingleResult();
+
+		return query.setParameter("fileId", id)
+				    .setParameter("active", true).getSingleResult();	}
+
+	public List<UploadedFile> fetchFilesByFileId(long id) {
+		TypedQuery<UploadedFile> query = em.createQuery("from "
+				+ UploadedFile.class.getName() + " where "
+				+ UploadFilePrimaryKey.ID + " = :fileId", UploadedFile.class);
+
+		return query.setParameter("fileId", id).getResultList();
 	}
 }

@@ -87,17 +87,17 @@ public class UploadFileServiceImpl implements IUploadFileService {
 	 * @throws Exception
 	 */
 	@Override
-	public User replaceUserUploadedFile(User user, UploadedFile file) throws Exception {
+	public User replaceUserUploadedFile(User user, UploadedFile newFile, UploadedFile oldFile) throws Exception {
 		if (user.getUserId() == null) {
 			throw new IllegalArgumentException("user object is not persisted");
 		}
 		// check for revision
-		int newrevision = file.getRevision() + 1;
-		file.setRevision(newrevision);
-		// file.setFileSetUniqueIdentifier(previousFile.getFileSetUniqueIdentifier());
+		newFile.setRevision(oldFile.getRevision() + 1);
+		newFile = fileDao.update(newFile, true); // with flush
 
-		file = fileDao.update(file, true); // with flush
-
+		oldFile.setActive(false);
+		oldFile = fileDao.update(oldFile, true); // with flush
+		
 		// Refresh the user in order to reflect the changes
 		user = userDao.update(user);
 		userDao.refresh(user);
@@ -181,14 +181,11 @@ public class UploadFileServiceImpl implements IUploadFileService {
 			
 			//1. Get Active File of FileSet by FileSetUniqueIdentifier
 			UploadedFile fileAlreadyActive = fileDao
-					.fetchActiveFileByFileSetUniqueIdentifier(fileToMakeActive
+					.fetchActiveFileByFileId(fileToMakeActive
 							.getUploadedFileId().getId());
 			
 			//2. Erase the Data of the Active File from Database
-			UserLinesMetaData metadata = fileAlreadyActive.getMetaData();
-			if (fileAlreadyActive.getMetaData() != null) {
-				userLinesDao.delete(fileAlreadyActive.getMetaData(), true);
-			}
+			userLineService.eraseUserLines(fileId);
 			
 			//3. Insert the data of the Required Active File
 			BindingResult results = EnwidaUtils.validateFile(new File(fileToMakeActive.getFilePath()), fileValidator);
@@ -215,6 +212,6 @@ public class UploadFileServiceImpl implements IUploadFileService {
 
 	@Override
 	public List<UploadedFile> getFileSetByFileId(long fileId) {
-		return fileDao.fetchByFileSetUniqueIdentifier(fileId);
+		return fileDao.fetchFilesByFileId(fileId);
 	}
 }
