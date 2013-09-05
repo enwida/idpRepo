@@ -12,6 +12,7 @@
 			<tr>
 				<th><message:message code="de.enwida.userManagement.groupName" /></th>
 				<th><message:message code="de.enwida.userManagement.users" /></th>
+				<th><message:message code="de.enwida.userManagement.domainAutoPass" /></th>
 				<th><message:message code="de.enwida.userManagement.autoPass" /></th>
 				<th><message:message code="de.enwida.userManagement.operation" /></th>
 		  </tr>
@@ -40,6 +41,7 @@
 					<td>${group.groupName}</td>
 					<td><c:forEach var="user" items="${group.assignedUsers}"><a href='admin_user.html?userID=${user.userId}'>${user.userName}</a>,</c:forEach>
 					</td>
+					<td><input type="text" onchange="updateDomainAutoPass(${group.groupID},this.value);" value="${group.domainAutoPass}"/></td>
 					<td><input type="checkbox" onclick="enableAutoPass(${group.groupID},this.checked);" ${group.autoPass == 'true' ? 'checked' : ''}/></td>
 					<td>
 						<a href='admin_editgroup.html?groupID=${group.groupID}&action=delete'> <message:message code="de.enwida.userManagement.delete" /></a>
@@ -51,6 +53,7 @@
 			<tr>
 				<td><input name="newGroup" type='text' placeholder=" <message:message code="de.enwida.userManagement.addGroup" />" /></td>
 				<td></td>
+				<td><input name="domainAutoPass" type='text' /></td>
 				<td><input name="autoPass" type='checkbox' /></td>
 				<td><input type="submit" class="btn btn-primary"  name="addGroup" value=" <message:message code="de.enwida.userManagement.add" />"/></td>
 			</tr>
