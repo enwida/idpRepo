@@ -246,7 +246,6 @@ $(function() {
 		<div style="width: 15%; float: left;"></div>
 		<div style="text-align: center; width: 70%; margin-left: 15%">
 			<h2>Import CSV File</h2>
-			<button class="btn btn-primary" id="upload-file">Upload File</button>
 			<br/>
 			<br/>
 
@@ -310,8 +309,7 @@ $(function() {
 	<!-- /FileDelete Failure Div -->
 	
 		
-<form name='f' method='POST'>
-	<table border="1" id="tblGroups" class="tablesorter">
+	<table border="1" id="tblFiles" class="tablesorter">
 	<thead>
 			<tr>
 				<th><spring:message code="de.enwida.upload.file_name" text="File Name" /></th>
@@ -323,6 +321,7 @@ $(function() {
 		  </tr>
 	</thead>
 	<tbody>
+	<form name='f' method='POST'>
 		<c:choose>
 					<c:when test="${not empty uploadedfiletable}">
 						<c:forEach var="file" items="${uploadedfiletable}">
@@ -341,6 +340,7 @@ $(function() {
 										</c:otherwise>
 									</c:choose> --%>
 								</td>
+								<td></td>
 								<td>
 									<button id="replace-file-${file.uploadedFileId.id}-${file.uploadedFileId.revision}">Replace</button>
 									<%-- <a href="<c:url value='/upload/files/${file.uploadedFileId.id}' />" id="download-file-${file.uploadedFileId.id}">Download</a> --%>
@@ -355,12 +355,30 @@ $(function() {
 						</tr>
 					</c:otherwise>
 				</c:choose>
-	</tbody>
-				
-	</table>
 	</form>
-	
-	<!-- FileUpload Div -->
+	</tbody>
+	<tfoot>
+		<tr>
+			<th colspan="7" class="pager form-horizontal">
+				<button type="button" class="btn first"><i class="icon-step-backward"></i></button>
+				<button type="button" class="btn prev"><i class="icon-arrow-left"></i></button>
+				<span class="pagedisplay"></span> <!-- this can be any element, including an input -->
+				<button type="button" class="btn next"><i class="icon-arrow-right"></i></button>
+				<button type="button" class="btn last"><i class="icon-step-forward"></i></button>
+				<select class="pagesize input-mini" title="Select page size">
+					<option selected="selected" value="10">10</option>
+					<option value="20">20</option>
+					<option value="30">30</option>
+					<option value="40">40</option>
+				</select>
+				<select class="pagenum input-mini" title="Select page number"></select>
+			</th>
+		</tr>
+	</tfoot>
+	<tfoot>
+		<tr>
+			<td colspan=7>
+								<!-- FileUpload Div -->
 		<div id="upload-file-form-div" title="Upload new File">
 	
 			<form:form method="POST" id="upload-file-form" modelAttribute="fileUpload" enctype="multipart/form-data" >
@@ -375,9 +393,9 @@ $(function() {
 				    </div>
 				    <div>
 					    <label for="file">Please Select a file to upload</label>
-						<form:input path="file" type="file" name="file" />
+						<form:input  path="file" type="file" name="file" />
 					</div>
-				<input type="submit" value="Upload" />
+				<input class="btn btn-primary" type="submit" value="Upload" />
 				<span> 
 					<form:errors path="file" cssClass="error" /> 
 					<c:out value="${invalidFileMessage}"></c:out>
@@ -385,5 +403,11 @@ $(function() {
 			</form:form>
 		</div>
 	<!-- /FileUpload Div -->
+			</td>
+		</tr>
+	</tfoot>		
+	</table>
+	
+	
 </body>
 </html>
