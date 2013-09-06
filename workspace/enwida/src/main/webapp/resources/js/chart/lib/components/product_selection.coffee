@@ -1,17 +1,16 @@
-define ->
+define ["util/product_tree"], (ProductTree) ->
 
   flight.component ->
 
-    @productParts     = ["type", "posneg", "timeslot"]
-
     @refresh = (data) ->
       @attr.navigationData = data
+      @attr.tree = ProductTree.init data
+      @attr.treeDepth = @attr.tree.maxDepth()
 
       @createElements()
       @setupEvents()
 
       @fillTso()
-      @fillProduct()
 
       # Apply defaults
       @select("tso").val data.defaults.tsoId
@@ -21,18 +20,20 @@ define ->
     @createElements = ->
       @$node.empty()
       @$node.append $("<select>").addClass("tso")
+      @$node.append $("<div>").addClass("product").css("display", "inline")
+      @createProductElements @attr.treeDepth
 
-      product = $("<div>").addClass("product").css("display", "inline")
-      for name in @productParts
-        product.append $("<select>").addClass(name)
-      @$node.append product
+    @createProductElements = (n) ->
+      product = @select "product"
+      for i in [0...n]
+        product.append $("<select>").addClass("product-#{i}")
 
     @setupEvents = ->
       @$node.find("select").change =>
         tso = @select("tso").val()
         product = @normalizeProduct()
-        @trigger "productSelectionChanged", tso: tso, product: product
         @setProduct product
+        @trigger "productSelectionChanged", tso: tso, product: product
 
     @fillTso = ->
       element = @select("tso")
@@ -41,37 +42,60 @@ define ->
         tsoName = tsos[key]
         element.append($("<option>").val(key).text(tsoName))
 
-    @fillProduct = ->
-      @setProduct 111
-
     @setProduct = (product) ->
       product = "" + product # convert to string
-      values = {}
-      for i in [0...@productParts.length]
-        id = parseInt product.substring i, i + 1
-        values[@productParts[i]] = id
-
       node = @getProductTree().root
-      for name, i in @productParts
-        element = @select("product").find ".#{name}"
+      level = 0
+
+      while product.length > 0 and node.children.length > 0
+        # Fill selection box of current tree level
+        element = @select("product").find ".product-#{level}"
         element.empty()
         for child in node.children
           element.append $("<option>").val(child.id).text(child.name)
 
+        # Apply visibility of selection box
         if node.children.length <= 1
           element.hide()
         else
           element.show()
 
-        id = values[name]
-        element.val id
-        node = (_.find node.children, (c) -> c.id is id) ? node.children[0]
+        # Find matching child
+        child = _.find node.children, (c) -> product.indexOf(c.id + "") is 0
+        # Use first child in case of no match
+        child ?= node.children[0]
+        # Update product string
+        product = product.replace child.id + "", ""
+        # Set child value
+        element.val child.id
+        node = child
+        level++
+
+      @attr.currentLevel = level
+      for i in [level...@attr.treeDepth]
+        @$node.find(".product-#{i}").hide()
 
     @getProduct = ->
+      tso = @select("tso").val()
+      node = @getProductTree().root
       result = ""
-      for name in @productParts
-        element = @select("product").find(".#{name}")
-        result += element.val()
+      for i in [0...@attr.treeDepth]
+        # Get value of current element
+        element = @select("product").find(".product-#{i}")
+        val = element.val()
+
+        # Try to traverse the tree
+        testNode = @attr.tree.traverse tso, result + val
+        # Take the safe way if no node was reached
+        val = node.children[0].id + "" unless testNode?
+
+        # Update result and current node
+        result += val
+        node = @attr.tree.traverse tso, result
+
+        # Return early if we reached a leaf
+        return result if node.children.length is 0
+
       result
     
     @normalizeProduct = ->

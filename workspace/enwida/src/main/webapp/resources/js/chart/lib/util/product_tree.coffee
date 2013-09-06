@@ -10,14 +10,22 @@ define ->
     tree: (tso) -> @trees[parseInt tso]
 
     traverse: (tso, product) ->
-      tree = @tree tso
+      tree = @tree parseInt tso
       node = tree.root
 
       sProduct = product + "" # convert to string
-      for i in [0...sProduct.length]
-        id = parseInt sProduct[i]
-        node = _(node.children).find (child) -> child.id is id
+      while sProduct.length > 0 and node.children.length > 0
+        node = _.find node.children, (child) -> sProduct.indexOf(child.id + "") is 0
+        return null unless node?
+        sProduct = sProduct.replace node.id + "", ""
       node
+
+    maxDepth: ->
+      nodeMaxDepth = (node) ->
+        return 0 if not node.children? or node.children.length is 0
+        1 + _.max node.children.map (child) -> nodeMaxDepth child
+
+      _.max _.values(@trees).map (tree) -> nodeMaxDepth tree.root
 
   init: (navigationData) -> new ProductTree navigationData
 
