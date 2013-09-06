@@ -61,7 +61,7 @@ define ["util/product_tree"], (ProductTree) ->
           element.show()
 
         # Find matching child
-        child = _.find node.children, (c) -> product.indexOf(c.id + "") is 0
+        child = ProductTree.matchingChild product, node
         # Use first child in case of no match
         child ?= node.children[0]
         # Update product string
