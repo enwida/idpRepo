@@ -24,26 +24,22 @@ $(function() {
 	
 	<c:forEach var="file" items="${uploadedfiletable}">		
 		$( "#replace-file-${file.uploadedFileId.id}-${file.uploadedFileId.revision}" )
-			.button()
 			.click(function() {
 				$("#fileIdToBeReplaced").val($(this).attr("id").split("-")[2]+"-"+$(this).attr("id").split("-")[3]);				
 				$("#replace-file-form-div" ).dialog( "open" );
 		});
 		
 		$( "#download-file-${file.uploadedFileId.id}-${file.uploadedFileId.revision}" )
-			.button()
 			.click(function() {				
 		});
 		
 		$( "#delete-file-set-${file.uploadedFileId.id}" )
-			.button()
 			.click(function(event) {
 				fileSetIdToDelete = $(this).attr("id").split("-")[3];
 				$( "#delete-file-set-form-div" ).dialog( "open" );				
 		});	
 		
 		$( "#show-revisions-file-${file.uploadedFileId.id}" )
-			.button()
 			.click(function(event) {
 				fileIdToGetRevisions = $(this).attr("id").split("-")[3];
 				$( "#show-revisions-file-div" ).dialog( "open" );				
@@ -204,15 +200,15 @@ $(function() {
    	        		if (item.active == true) {
    	        			revisionsDialogHTML += "<div style=\"display: table-cell;padding: 5px;\"> Active </div>" +
    	        			"<div style=\"display: table-cell;padding: 5px;\">" +
-   	        			"<a class=\"ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only\" style=\"display: table-cell;padding: 5px;\" href=\"<c:url value='/user/upload/files/" + item.id + "/" + item.revision +"' />\" id=\"download-file-" + item.id + "-" + item.revision + "\">Download</a>" +
-	        				/* "<button class=\"ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only\" style=\"display: table-cell;padding: 5px;\" id=\"delete-file-" + item.id + "\">Delete</button>" + */
+   	        			"<a class=\"btn btn-primary\" style=\"display: table-cell;padding: 5px;\" href=\"<c:url value='/user/upload/files/" + item.id + "/" + item.revision +"' />\" id=\"download-file-" + item.id + "-" + item.revision + "\">Download</a>" +
+	        				/* "<button class=\"btn btn-primary\" style=\"display: table-cell;padding: 5px;\" id=\"delete-file-" + item.id + "\">Delete</button>" + */
 	        			"</div></div>";
    	        		} else {
    	        			revisionsDialogHTML += "<div style=\"display: table-cell;padding: 5px;\"> Not Active </div>" +
    	        			"<div style=\"display: table-cell;padding: 5px;\">" +
-  	        				"<a class=\"ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only\" style=\"display: table-cell;padding: 5px;\" href=\"<c:url value='/user/upload/files/" + item.id + "/"+ item.revision +"/action/ma' />\" id=\"active-file-" + item.id + "-" + item.revision +"\">Make Active</a>" +
-  	        				"<a class=\"ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only\" style=\"display: table-cell;padding: 5px;\" href=\"<c:url value='/user/upload/files/" + item.id + "-" + item.revision +"' />\" id=\"download-file-" + item.id + "-" + item.revision + "\">Download</a>" +
-   	        				"<button class=\"ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only\" style=\"display: table-cell;padding: 5px;\" onclick=\"openDeleteConfirmationDialog('delete-file-" + item.id + " - "+ item.revision + "\')\" id=\"delete-file-" + item.id + "-" + item.revision + "\">Delete</button>" +
+  	        				"<a class=\"btn btn-primary\" style=\"display: table-cell;padding: 5px;\" href=\"<c:url value='/user/upload/files/" + item.id + "/"+ item.revision +"/action/ma' />\" id=\"active-file-" + item.id + "-" + item.revision +"\">Make Active</a>" +
+  	        				"<a class=\"btn btn-primary\" style=\"display: table-cell;padding: 5px;\" href=\"<c:url value='/user/upload/files/" + item.id + "-" + item.revision +"' />\" id=\"download-file-" + item.id + "-" + item.revision + "\">Download</a>" +
+   	        				"<button class=\"btn btn-primary\" style=\"display: table-cell;padding: 5px;\" onclick=\"openDeleteConfirmationDialog('delete-file-" + item.id + " - "+ item.revision + "\')\" id=\"delete-file-" + item.id + "-" + item.revision + "\">Delete</button>" +
    	        			"</div></div>";   	        				
    	        		}
    	        		
@@ -330,10 +326,10 @@ $(function() {
 								<td><c:out value="${file.displayFileName}" /></td>
 								<td><c:out value="${file.displayUploadDate}" /></td>
 								<td>
-									<button id="show-revisions-file-${file.uploadedFileId.id}">Show Revisions</button>
+									<button class="btn btn-primary"  id="show-revisions-file-${file.uploadedFileId.id}">Show Revisions</button>
 									<%-- <c:choose>
 										<c:when test="${file.revision > 1}">
-											<button id="show-revisions-file-${file.uploadedFileId.id}">Show Revisions</button>
+											<button class="btn btn-primary" id="show-revisions-file-${file.uploadedFileId.id}">Show Revisions</button>
 										</c:when>
 										<c:otherwise>
 											<c:out value="${file.revision}" />
@@ -341,10 +337,11 @@ $(function() {
 									</c:choose> --%>
 								</td>
 								<td></td>
+								<td></td>
 								<td>
-									<button id="replace-file-${file.uploadedFileId.id}-${file.uploadedFileId.revision}">Replace</button>
+									<button class="btn btn-primary" id="replace-file-${file.uploadedFileId.id}-${file.uploadedFileId.revision}">Replace</button>
 									<%-- <a href="<c:url value='/upload/files/${file.uploadedFileId.id}' />" id="download-file-${file.uploadedFileId.id}">Download</a> --%>
-									<button id="delete-file-set-${file.uploadedFileId.id}">Delete</button>
+									<button class="btn btn-primary" id="delete-file-set-${file.uploadedFileId.id}">Delete</button>
 								</td>
 							</tr>
 						</c:forEach>
@@ -378,31 +375,31 @@ $(function() {
 	<tfoot>
 		<tr>
 			<td colspan=7>
-								<!-- FileUpload Div -->
-		<div id="upload-file-form-div" title="Upload new File">
-	
-			<form:form method="POST" id="upload-file-form" modelAttribute="fileUpload" enctype="multipart/form-data" >
-				<form:errors path="*" cssClass="errorblock" element="div" />
-					<div>
-					    <label for="aspect">Aspect</label>
-					    <form:select path="aspect" name="aspect">
-					      <c:forEach var="aspect" items="${aspects}">
-					        <option value="${aspect.key}"><spring:message code="${aspect.value}" text="${aspect.key}"/></option>
-					      </c:forEach>
-					    </form:select>
-				    </div>
-				    <div>
-					    <label for="file">Please Select a file to upload</label>
-						<form:input  path="file" type="file" name="file" />
+				<!-- FileUpload Div -->
+					<div id="upload-file-form-div" title="Upload new File">
+				
+						<form:form method="POST" id="upload-file-form" modelAttribute="fileUpload" enctype="multipart/form-data" >
+							<form:errors path="*" cssClass="errorblock" element="div" />
+								<div>
+								    <label for="aspect">Aspect</label>
+								    <form:select path="aspect" name="aspect">
+								      <c:forEach var="aspect" items="${aspects}">
+								        <option value="${aspect.key}"><spring:message code="${aspect.value}" text="${aspect.key}"/></option>
+								      </c:forEach>
+								    </form:select>
+							    </div>
+							    <div>
+								    <label for="file">Please Select a file to upload</label>
+									<form:input  path="file" type="file" name="file" />
+								</div>
+							<input class="btn btn-primary" type="submit" value="Upload" />
+							<span> 
+								<form:errors path="file" cssClass="error" /> 
+								<c:out value="${invalidFileMessage}"></c:out>
+							</span>
+						</form:form>
 					</div>
-				<input class="btn btn-primary" type="submit" value="Upload" />
-				<span> 
-					<form:errors path="file" cssClass="error" /> 
-					<c:out value="${invalidFileMessage}"></c:out>
-				</span>
-			</form:form>
-		</div>
-	<!-- /FileUpload Div -->
+				<!-- /FileUpload Div -->
 			</td>
 		</tr>
 	</tfoot>		
