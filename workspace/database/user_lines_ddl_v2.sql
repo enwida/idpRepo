@@ -15,8 +15,10 @@ WITH (
 ALTER TABLE public.user_lines
   OWNER TO enwida;
 
-DROP SCHEMA if exists users  cascade;
+DROP SCHEMA IF EXISTS users  cascade;
 CREATE SCHEMA users authorization enwida;
+
+DROP SEQUENCE IF EXISTS users.uploaded_file_sequence;
 
 CREATE SEQUENCE users.uploaded_file_sequence
    INCREMENT 1

@@ -304,7 +304,7 @@ $(function() {
 	</div>
 	<!-- /FileDelete Failure Div -->
 	
-		
+	
 	<table border="1" id="tblFiles" class="tablesorter">
 	<thead>
 			<tr>
@@ -317,7 +317,7 @@ $(function() {
 		  </tr>
 	</thead>
 	<tbody>
-	<form name='f' method='POST'>
+	<form name='f' method='POST'>	
 		<c:choose>
 					<c:when test="${not empty uploadedfiletable}">
 						<c:forEach var="file" items="${uploadedfiletable}">
@@ -337,7 +337,7 @@ $(function() {
 									</c:choose> --%>
 								</td>
 								<td></td>
-								<td></td>
+								<td><spring:message code="${file.metaData.aspectKey}" text="${file.metaData.aspect}"/></td>
 								<td>
 									<button class="btn btn-primary" id="replace-file-${file.uploadedFileId.id}-${file.uploadedFileId.revision}">Replace</button>
 									<%-- <a href="<c:url value='/upload/files/${file.uploadedFileId.id}' />" id="download-file-${file.uploadedFileId.id}">Download</a> --%>
@@ -352,8 +352,9 @@ $(function() {
 						</tr>
 					</c:otherwise>
 				</c:choose>
-	</form>
+	
 	</tbody>
+	</form>
 	<tfoot>
 		<tr>
 			<th colspan="7" class="pager form-horizontal">
@@ -404,7 +405,7 @@ $(function() {
 		</tr>
 	</tfoot>		
 	</table>
-	
+
 	
 </body>
 </html>

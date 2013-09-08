@@ -184,6 +184,10 @@ public class UserLinesMetaData implements Serializable{
 		this.aspect = aspect;
 	}
 
+	public String getAspectKey() {
+		return "de.enwida.chart.aspect." + aspect.toLowerCase() + ".title";
+	}
+
 	@Override
 	public String toString() {
 		return "UserLinesMetaData [metaDataId="
@@ -191,6 +195,7 @@ public class UserLinesMetaData implements Serializable{
 				+ ", "
 				// + (userLines != null ? "userLines=" + userLines + ", " : "")
 				// + (file != null ? "file=" + file + ", " : "")
+				+ (aspect != null ? "aspect=" + aspect : "")
 				+ (type != null ? "type=" + type + ", " : "")
 				+ (name != null ? "name=" + name + ", " : "")
 				+ (units != null ? "units=" + units + ", " : "")
@@ -200,8 +205,7 @@ public class UserLinesMetaData implements Serializable{
 						+ ", " : "")
 				+ (resolution != null ? "resolution=" + resolution + ", " : "")
 				+ (header1 != null ? "header1=" + header1 + ", " : "")
-				+ (header2 != null ? "header2=" + header2 + ", " : "")
-				+ (aspect != null ? "aspect=" + aspect : "") + "]";
+				+ (header2 != null ? "header2=" + header2 + ", " : "") + "]";
 	}
 
 }

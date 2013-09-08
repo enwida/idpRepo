@@ -1,9 +1,10 @@
--- Clean start
+﻿-- Clean start
 TRUNCATE users.users CASCADE;
 TRUNCATE users.groups CASCADE;
 TRUNCATE users.roles CASCADE;
 TRUNCATE users.rights CASCADE;
 
+DROP SEQUENCE IF EXISTS users.uploaded_file_sequence;
 CREATE SEQUENCE users.uploaded_file_sequence
    INCREMENT 1
    START 1;

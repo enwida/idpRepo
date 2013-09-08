@@ -285,7 +285,8 @@ public class UploadedFile implements Serializable, Comparable<UploadedFile> {
 				+ (modificationDate != null ? "modificationDate="
 						+ modificationDate + ", " : "")
 				+ (format != null ? "format=" + format + ", " : "")
-				+ (filePath != null ? "filePath=" + filePath : "") + "]";
+				+ (filePath != null ? "filePath=" + filePath : "")
+				+ (metaData != null ? "metaData=" + metaData + ", " : "") + "]";
 	}
 
 	@Override
