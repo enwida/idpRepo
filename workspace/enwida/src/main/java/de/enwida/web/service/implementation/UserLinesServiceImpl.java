@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
+import de.enwida.rl.daos.ListOfAvailability;
 import de.enwida.rl.dtos.DOUserLines;
 import de.enwida.web.dao.interfaces.IFileDao;
 import de.enwida.web.dao.interfaces.IUserLinesDao;
@@ -29,6 +30,9 @@ import de.enwida.web.service.interfaces.IUserLinesService;
 public class UserLinesServiceImpl implements IUserLinesService {
 
 	private Logger logger = Logger.getLogger(getClass());
+	
+	@Autowired
+	private ListOfAvailability listOfAvailability;
 	
 	@Autowired
 	private IUserLinesDao userLinesDao;
@@ -60,7 +64,9 @@ public class UserLinesServiceImpl implements IUserLinesService {
 		for (DOUserLines line : lines) {
 			line.setUserLineId(userLineId);
 		}
-		return userLinesDao.createUserLines(lines);
+		final boolean success = userLinesDao.createUserLines(lines);
+		listOfAvailability.update("user_lines", 0, (int) userLineId);
+		return success;
 	}
 
 	@Override
