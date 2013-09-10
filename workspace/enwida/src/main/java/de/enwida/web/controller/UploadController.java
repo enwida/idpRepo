@@ -194,6 +194,7 @@ public class UploadController {
 						List<DOUserLines> userlines = (List<DOUserLines>) parsedData
 								.get(Constants.UPLOAD_LINES_KEY);
 						UserLinesMetaData metaData = (UserLinesMetaData) parsedData.get(Constants.UPLOAD_LINES_METADATA_KEY);
+						metaData.setAspect(fileReplace.getAspect().name());
 
 						UploadedFile oldFile = uploadFileService.getFile(Long.parseLong(fileReplace.getFileIdToBeReplaced().split("-")[0]),
 								Integer.parseInt(fileReplace.getFileIdToBeReplaced().split("-")[1]));
@@ -208,6 +209,7 @@ public class UploadController {
 								if (recordsInserted) {
 									// if atleast one record is written then upload file.
 									UploadedFile file = replaceFile(filetobeuploaded, oldFile, user);
+									file.setMetaData(metaData);
 									// update user in session as well
 									userSession.setUserInSession(user);
 									// update file Id (which already have owner details)

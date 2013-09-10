@@ -263,9 +263,19 @@ $(function() {
 
 		<form:form method="POST" id="replace-file-form" modelAttribute="fileReplace" enctype="multipart/form-data" action="files/replace" >
 			<form:errors path="*" cssClass="errorblock" element="div" />
-				Please Select a file to upload: 
-				<form:input path="file" type="file" name="file" />
-				<form:input path="fileIdToBeReplaced" type="hidden" id ="fileIdToBeReplaced" name="fileIdToBeReplaced"  value="" />
+				<div>
+				    <label for="aspect">Aspect</label>
+				    <form:select path="aspect" name="aspect">
+				      <c:forEach var="aspect" items="${aspects}">
+				        <option value="${aspect.value}"><spring:message code="${aspect.key}" text="${aspect.value}"/></option>
+				      </c:forEach>
+				    </form:select>
+			    </div>
+			    <div>
+					Please Select a file to upload: 
+					<form:input path="file" type="file" name="file" />
+					<form:input path="fileIdToBeReplaced" type="hidden" id ="fileIdToBeReplaced" name="fileIdToBeReplaced"  value="" />
+				</div>
 			<span> 
 				<form:errors path="file" cssClass="error" /> 
 				<c:out value="${invalidFileMessage}"></c:out>
