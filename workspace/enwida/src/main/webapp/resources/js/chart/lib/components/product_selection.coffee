@@ -104,7 +104,7 @@ define ["util/product_tree"], (ProductTree) ->
       @getProduct()
 
     @getProductTree = ->
-      tso = @select("tso").val()
+      tso = parseInt @select("tso").val()
       result = _(@attr.navigationData.productTrees).find (tree) -> tree.tso is tso
       result ? @attr.navigationData.productTrees[0]
 
