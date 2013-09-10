@@ -142,6 +142,10 @@ public class NavigationServiceImpl implements INavigationService {
 		final ProductTree tree = new ProductTree(0);
 		for (final UploadedFile file : user.getUploadedFiles()) {
 			try {
+				// Only consider active uploads
+				if (!file.isActive()) {
+					continue;
+				}
 				// Filter by aspect
 				final Aspect aspect = Aspect.valueOf(file.getMetaData().getAspect());
 				if (!navigationData.getAspects().contains(aspect)) {
