@@ -21,6 +21,7 @@
 					<li><a href="admin_userlist">Users</a></li>
 					<li><a href="admin_editgroup">Groups</a></li>
 					<li><a href="admin_rolelist">Roles</a></li>
+					<li><a href="#">${userSession.userName}</a></li>
 				</ul>
 			</div>
 			<!--/.nav-collapse -->

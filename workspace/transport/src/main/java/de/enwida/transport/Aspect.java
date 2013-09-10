@@ -1,5 +1,8 @@
 package de.enwida.transport;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public enum Aspect {
 	
 	CR_VOL_ACTIVATION,                    // 0  | rl_ab1
@@ -31,6 +34,31 @@ public enum Aspect {
 	UL_BID_CF_TC_NEG,
 	UL_BID_CF_SC_NEG,
 	UL_BID_WP_TC_NEG,
-	UL_BID_WP_SC_NEG
+ UL_BID_WP_SC_NEG;
 
+	private static Map<Aspect, String> aspects = null;
+
+	public static Map<Aspect, String> getAspectMap() {
+		if (aspects == null) {
+			aspects = new HashMap<Aspect, String>();
+			for (final Aspect aspect : Aspect.values()) {
+				final String aspectMessageKey = "de.enwida.chart.aspect."
+						+ aspect.name().toLowerCase() + ".title";
+				aspects.put(aspect, aspectMessageKey);
+			}
+		}
+		return aspects;
+	}
+
+	public static String getAspectMessageKey(String aspectKey) {
+		if (aspectKey != null) {
+			for (final Aspect aspect : Aspect.values()) {
+				if (aspect.name().equalsIgnoreCase(aspectKey)) {
+					return "de.enwida.chart.aspect."
+							+ aspect.name().toLowerCase() + ".title";
+				}
+			}
+		}
+		return null;
+	}
 }

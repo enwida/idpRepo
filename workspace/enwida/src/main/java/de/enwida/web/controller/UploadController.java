@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -94,13 +93,7 @@ public class UploadController {
 			model.put("uploadedfiletable", filetable);			
 		}
 		
-		final Map<Aspect, String> aspects = new HashMap<Aspect, String>();
-		for (final Aspect aspect : Aspect.values()) {
-			final String aspectMessageKey = "de.enwida.chart.aspect." + aspect.name().toLowerCase() + ".title";
-			aspects.put(aspect, aspectMessageKey);
-		}
-		
-		model.put("aspects", aspects);
+		model.put("aspects", Aspect.getAspectMap());
 		model.put("fileUpload", new FileUpload());
 		model.put("fileReplace", new FileUpload());
 		model.put("content", "upload");
@@ -388,21 +381,24 @@ public class UploadController {
 				// }
 				
 				// now delete file safely
-				try {
-					boolean success = userLineService.eraseUserLines(downloadFile.getUploadedFileId().getId());
-					// first remove all mappings
-					uploadFileService.removeUserUploadedFile(user, downloadFile);
-					// actual row deleted
-					uploadFileService.removeUserUploadedFile(user, downloadFile);
-					userSession.setUserInSession(userService.fetchUser(user.getUserId()));
-					if (success) {
-						EnwidaUtils.removeTemporaryFile(downloadFile.getActualFile());
-						EnwidaUtils.removeTemporaryFile(downloadFile.getManifestFile());
-					}
-				} catch (Exception e) {
-					logger.error("Unable to delete file :'"	+ downloadFile.getFilePath()
-									+ "' .Please delete file manually.", e);
-				}
+				removeFileAndData(downloadFile, user);
+				// try {
+				// boolean success =
+				// userLineService.eraseUserLines(downloadFile.getUploadedFileId().getId());
+				// // first remove all mappings
+				// uploadFileService.removeUserUploadedFile(user, downloadFile);
+				// // actual row deleted
+				// uploadFileService.removeUserUploadedFile(user, downloadFile);
+				// userSession.setUserInSession(userService.fetchUser(user.getUserId()));
+				// if (success) {
+				// EnwidaUtils.removeTemporaryFile(downloadFile.getActualFile());
+				// EnwidaUtils.removeTemporaryFile(downloadFile.getManifestFile());
+				// }
+				// } catch (Exception e) {
+				// logger.error("Unable to delete file :'" +
+				// downloadFile.getFilePath()
+				// + "' .Please delete file manually.", e);
+				// }
 				
 				// This case will never be executed as File to be Deleted is always not active 
 				if (isFileToDeleteLatest) {
@@ -421,11 +417,33 @@ public class UploadController {
 		if (fileId != null && !fileId.isEmpty()) {
 			int fileid = Integer.parseInt(fileId);
 			for (final UploadedFile file : uploadFileService.getFileSetByFileId(fileid)) {
-				uploadFileService.removeUserUploadedFile(user, file);
+				removeFileAndData(file, user);
+				// uploadFileService.removeUserUploadedFile(user, file);
 			}
 			userSession.setUserInSession(userService.syncUser(user));
 		}
 		return "SUCCESS";
+	}
+
+	private void removeFileAndData(UploadedFile fileToRemove, User user) {
+		try {
+			boolean success = userLineService.eraseUserLines(fileToRemove
+					.getUploadedFileId().getId());
+			// first remove all mappings
+			uploadFileService.removeUserUploadedFile(user, fileToRemove);
+			// actual row deleted
+			uploadFileService.removeUserUploadedFile(user, fileToRemove);
+			userSession
+					.setUserInSession(userService.fetchUser(user.getUserId()));
+			if (success) {
+				EnwidaUtils.removeTemporaryFile(fileToRemove.getActualFile());
+				EnwidaUtils.removeTemporaryFile(fileToRemove.getManifestFile());
+			}
+		} catch (Exception e) {
+			logger.error(
+					"Unable to delete file :'" + fileToRemove.getFilePath()
+							+ "' .Please delete file manually.", e);
+		}
 	}
 
 	@RequestMapping(value = "/files/{fileId}/{revision}", method = RequestMethod.GET)

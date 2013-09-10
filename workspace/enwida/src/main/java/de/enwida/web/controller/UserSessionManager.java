@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import de.enwida.web.model.User;
 import de.enwida.web.service.interfaces.IUserService;
+import de.enwida.web.utils.Constants;
 
 public class UserSessionManager implements Serializable {
 
@@ -44,6 +45,22 @@ public class UserSessionManager implements Serializable {
 	public void setUserInSession(User user) throws Exception {
 		user = userService.fetchUser(user.getUsername());
 		setUser(user);
+	}
+
+	public String getUserName() {
+		if (user != null) {
+			return user.getUserName();
+		} else {
+			return Constants.ANONYMOUS_USER;
+		}
+	}
+
+	public boolean isUserLoggedIn() {
+		if (user != null) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 }

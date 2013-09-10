@@ -8,6 +8,8 @@ import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
+import de.enwida.transport.Aspect;
+
 /**
  * @author Jitin
  *
@@ -185,7 +187,7 @@ public class UserLinesMetaData implements Serializable{
 	}
 
 	public String getAspectKey() {
-		return "de.enwida.chart.aspect." + aspect.toLowerCase() + ".title";
+		return Aspect.getAspectMessageKey(aspect);
 	}
 
 	@Override
