@@ -4,7 +4,7 @@ TRUNCATE users.groups CASCADE;
 TRUNCATE users.roles CASCADE;
 TRUNCATE users.rights CASCADE;
 
-DROP SEQUENCE users.uploaded_file_sequence;
+DROP SEQUENCE IF EXISTS users.uploaded_file_sequence;
 
 CREATE SEQUENCE users.uploaded_file_sequence
    INCREMENT 1
