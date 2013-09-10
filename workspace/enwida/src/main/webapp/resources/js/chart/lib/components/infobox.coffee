@@ -19,7 +19,7 @@ define ->
 
       # Construct product from selection
       product = ""
-      @$node.closest(".chart").find(".productSelection select")[1..3].each ->
+      @$node.closest(".chart").find(".productSelection select.active").each ->
         product += $(@).find("option:selected").text() + " "
 
       @select("table").empty()

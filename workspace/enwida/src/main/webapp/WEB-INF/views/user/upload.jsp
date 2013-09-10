@@ -384,7 +384,7 @@ $(function() {
 								    <label for="aspect">Aspect</label>
 								    <form:select path="aspect" name="aspect">
 								      <c:forEach var="aspect" items="${aspects}">
-								        <option value="${aspect.key}"><spring:message code="${aspect.value}" text="${aspect.key}"/></option>
+								        <option value="${aspect.value}"><spring:message code="${aspect.key}" text="${aspect.value}"/></option>
 								      </c:forEach>
 								    </form:select>
 							    </div>

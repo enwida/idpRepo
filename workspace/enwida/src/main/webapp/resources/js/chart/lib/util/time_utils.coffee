@@ -128,7 +128,7 @@ define ->
     switch sender
       when "Day"
         if timeRange is "Week"
-          TimeUtils.getWeekStart syncDate
+          @getWeekStart syncDate
         else
           syncDate
       when "Week"

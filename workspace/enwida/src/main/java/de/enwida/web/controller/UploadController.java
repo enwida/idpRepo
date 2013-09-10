@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
@@ -94,10 +96,10 @@ public class UploadController {
 			model.put("uploadedfiletable", filetable);			
 		}
 		
-		final Map<Aspect, String> aspects = new HashMap<Aspect, String>();
+		final SortedMap<String, Aspect> aspects = new TreeMap<String, Aspect>();
 		for (final Aspect aspect : Aspect.values()) {
 			final String aspectMessageKey = "de.enwida.chart.aspect." + aspect.name().toLowerCase() + ".title";
-			aspects.put(aspect, aspectMessageKey);
+			aspects.put(aspectMessageKey, aspect);
 		}
 		
 		model.put("aspects", aspects);
