@@ -54,6 +54,9 @@ define ["util/product_tree"], (ProductTree) ->
         for child in node.children
           element.append $("<option>").val(child.id).text(child.name)
 
+        # Make selection box active
+        element.addClass "active"
+
         # Apply visibility of selection box
         if node.children.length <= 1
           element.hide()
@@ -73,7 +76,9 @@ define ["util/product_tree"], (ProductTree) ->
 
       @attr.currentLevel = level
       for i in [level...@attr.treeDepth]
-        @$node.find(".product-#{i}").hide()
+        element = @$node.find ".product-#{i}"
+        element.removeClass "active"
+        element.hide()
 
     @getProduct = ->
       tso = @select("tso").val()
