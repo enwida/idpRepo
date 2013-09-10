@@ -54,7 +54,7 @@ public class AdminController {
 	
 	
 	@RequestMapping(value="/admin_editaspect", method = RequestMethod.GET)
-	public String editAspect(HttpServletRequest request,Model model,Long roleID,Integer start,Integer max,Locale locale) {
+	public String editAspect(HttpServletRequest request,Model model,Integer start,Integer max,Locale locale) {
 	    List<Right> aspectRights;
         List<Role> roles = null;
         //Dont load all data
@@ -66,9 +66,9 @@ public class AdminController {
         }
         try {
             if (request.getParameterValues("all")==null){
-            aspectRights = aspectService.getAllAspects(roleID,start,max);
+            aspectRights = aspectService.getAllAspects(start,max);
             }else{
-                aspectRights = aspectService.getAllAspects(roleID);
+                aspectRights = aspectService.getAllAspects();
             }
             roles = userService.fetchAllRoles();
             //Get all roles

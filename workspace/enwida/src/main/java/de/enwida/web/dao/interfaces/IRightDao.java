@@ -14,6 +14,6 @@ public interface IRightDao extends IDao<Right> {
     public boolean isAuthorizedByExample(Right dataAuthorization)throws Exception;
     public List<CalendarRange> getAllowedTimeRanges(AuthorizationRequest request) throws Exception;
     public List<Right> getListByExample(Right dataAuthorization)throws Exception;
-    List<Right> getAllAspects(long roleID, int startPosition, int maxResult);
+    List<Right> getAllAspects(int startPosition, int maxResult);
 
 }

@@ -6,13 +6,6 @@
 	<form action="admin_editaspect.html" method="GET">
 	<table>
 		<tr>
-			<td>
-				<message:message code="de.enwida.userManagement.roleName" />: <select name="roleID" id="myselect">
-						<c:forEach var="role" items="${roles}">
-							<option value="${role.roleID}">${role.roleName}</option>
-						</c:forEach>
-					</select>
-			</td>
 			<td><message:message code="de.enwida.userManagement.max" />:<input type='text' name='max' id='max'   value="10" /></td>
 			<td><input name="submit" type="submit" value='ok' class="btn btn-primary" />
 			<td><input name="all" type="submit" value='<message:message code="de.enwida.userManagement.allAspects" />' class="btn btn-primary" /></td>
@@ -20,9 +13,7 @@
 	</table>			
 	</form>
 	</h4>
-	<script>
-$("#myselect").val(get_url_parameter('roleID'));
-</script>
+
 	<table id="tblAspects" class="tablesorter">
 	<thead>
 		<tr>

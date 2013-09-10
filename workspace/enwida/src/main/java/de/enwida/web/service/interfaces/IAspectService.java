@@ -5,7 +5,7 @@ import java.util.List;
 import de.enwida.web.model.Right;
 
 public interface IAspectService {
-    public List<Right> getAllAspects(long roleID,int startPosition,int maxResult) throws Exception;
+    public List<Right> getAllAspects(int startPosition,int maxResult) throws Exception;
 
-    public List<Right> getAllAspects(Long roleID);
+    public List<Right> getAllAspects();
 }

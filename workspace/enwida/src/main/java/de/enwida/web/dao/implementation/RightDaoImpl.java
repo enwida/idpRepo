@@ -125,12 +125,11 @@ public class RightDaoImpl extends AbstractBaseDao<Right> implements IRightDao {
     }
 
     @Override
-    public List<Right> getAllAspects(long roleID,int startPosition,int maxResult) {
+    public List<Right> getAllAspects(int startPosition,int maxResult) {
         TypedQuery<Right> typedQuery = em.createQuery( "from "+ Right.class.getName()
-                + " INNER JOIN users.role_right ON users.role_right.right_id=users.rights.right_id  WHERE users.role_right.role_id in :role_id AND enabled = TRUE", Right.class);
+                + " INNER JOIN users.role_right ON users.role_right.right_id=users.rights.right_id ", Right.class);
         typedQuery.setFirstResult(startPosition);
         typedQuery.setMaxResults(maxResult);
-            typedQuery.setParameter("role_id", roleID);
             return typedQuery.getResultList();
     }
 }
