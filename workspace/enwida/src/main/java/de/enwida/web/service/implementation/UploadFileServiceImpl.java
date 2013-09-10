@@ -1,8 +1,11 @@
 package de.enwida.web.service.implementation;
 
 import java.io.File;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,7 +19,7 @@ import de.enwida.web.dao.interfaces.IFileDao;
 import de.enwida.web.dao.interfaces.IUserDao;
 import de.enwida.web.dao.interfaces.IUserLinesDao;
 import de.enwida.web.db.model.UploadedFile;
-import de.enwida.web.db.model.UserLinesMetaData;
+import de.enwida.web.model.Right;
 import de.enwida.web.model.User;
 import de.enwida.web.service.interfaces.IUploadFileService;
 import de.enwida.web.service.interfaces.IUserLinesService;
@@ -213,5 +216,33 @@ public class UploadFileServiceImpl implements IUploadFileService {
 	@Override
 	public List<UploadedFile> getFileSetByFileId(long fileId) {
 		return fileDao.fetchFilesByFileId(fileId);
+	}
+
+	@Override
+	public Set<UploadedFile> getUploadedFilesUserHasAccessTo(User user) {
+		final Map<Integer, List<UploadedFile>> map = new HashMap<Integer, List<UploadedFile>>();
+
+		for (final Right right : user.getAllRights()) {
+			// Did we check this product already?
+			if (map.containsKey(right.getProduct())) {
+				continue;
+			}
+			// Try to get file
+			final List<UploadedFile> files = getFileSetByFileId(right.getProduct());
+			if (files == null || files.size() < 1) {
+				// No such file found
+				// Put a null entry into the map for speedup
+				map.put(right.getProduct(), null);
+				continue;
+			}
+			map.put(right.getProduct(), files);
+		}
+		final Set<UploadedFile> result = new HashSet<UploadedFile>();
+		for (final List<UploadedFile> files : map.values()) {
+			if (files != null) {
+				result.addAll(files);
+			}
+		}
+		return result;
 	}
 }

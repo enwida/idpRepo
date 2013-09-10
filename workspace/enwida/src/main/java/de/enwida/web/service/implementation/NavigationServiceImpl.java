@@ -42,6 +42,7 @@ import de.enwida.web.model.User;
 import de.enwida.web.service.interfaces.IAvailibilityService;
 import de.enwida.web.service.interfaces.INavigationService;
 import de.enwida.web.service.interfaces.ISecurityService;
+import de.enwida.web.service.interfaces.IUploadFileService;
 import de.enwida.web.utils.ChartNavigationLocalizer;
 import de.enwida.web.utils.EnwidaUtils;
 import de.enwida.web.utils.ObjectMapperFactory;
@@ -69,6 +70,9 @@ public class NavigationServiceImpl implements INavigationService {
 	
 	@Autowired
 	private ChartNavigationLocalizer navigationLocalizer;
+	
+	@Autowired
+	private IUploadFileService uploadFileService;
 
 	@Value("#{applicationProperties['navigation.json.dir']}")
 	protected String jsonDir;
@@ -139,8 +143,12 @@ public class NavigationServiceImpl implements INavigationService {
 	}
 	
 	private void addUploadedLines(ChartNavigationData navigationData, User user) {
-		final ProductTree tree = new ProductTree(0);
-		for (final UploadedFile file : user.getUploadedFiles()) {
+		ProductTree tree = navigationData.getProductTree(0);
+		if (tree == null) {
+			tree = new ProductTree(0);
+		}
+
+		for (final UploadedFile file : uploadFileService.getUploadedFilesUserHasAccessTo(user)) {
 			try {
 				// Only consider active uploads
 				if (!file.isActive()) {
