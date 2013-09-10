@@ -239,7 +239,21 @@ public class AdminController {
             return false;      
         }
     }
+        
     
+    @RequestMapping(value = "/enableDisableAspectForRole", method = RequestMethod.GET)
+    @ResponseBody
+    public Role enableDisableAspectForRole(Long rightID,Long roleID,boolean enabled) {
+        try {
+            Right right=userService.fetchRight(rightID);
+            Role role=userService.fetchRoleById(roleID);
+            return userService.enableDisableAspectForRole(right,role,enabled);      
+        } catch (Exception e) {   
+            logger.info(e.getMessage());
+            return null;      
+        }
+    }
+        
     @RequestMapping(value = "/updateDomainAutoPass", method = RequestMethod.GET)
     @ResponseBody
     public boolean updateDomainAutoPass(Long groupID,String domainAutoPass) {

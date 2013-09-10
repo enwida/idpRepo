@@ -26,6 +26,7 @@ $("#myselect").val(get_url_parameter('roleID'));
 	<table id="tblAspects" class="tablesorter">
 	<thead>
 		<tr>
+			<th>Right ID</th>
 			<th><message:message code="de.enwida.userManagement.aspect" /></th>
 			<th><message:message code="de.enwida.userManagement.product" /></th>
 			<th><message:message code="de.enwida.userManagement.t1" /></th>
@@ -33,6 +34,11 @@ $("#myselect").val(get_url_parameter('roleID'));
 			<th><message:message code="de.enwida.userManagement.resolution" /></th>
 			<th><message:message code="de.enwida.userManagement.tso" /></th>
 			<th><message:message code="de.enwida.userManagement.enabled" /></th>
+			<c:forEach var="role" items="${roles}">
+				<th>
+					${role.roleName}
+				</th>
+			</c:forEach>
 		</tr>
 	</thead>
 	<tfoot>
@@ -56,14 +62,20 @@ $("#myselect").val(get_url_parameter('roleID'));
 	<tbody>
 		<c:forEach var="right" items="${aspectRights}">
 			<tr>
+				<td>${right.rightID}</td>
 				<td>${right.aspect}</td>
 				<td>${right.product}</td>
 				<td>${right.timeRange.from.time}</td>
 				<td>${right.timeRange.to.time}</td>
 				<td>${right.resolution}</td>
 				<td>${right.tso}</td>
-				<td><input type="checkbox"
-					onclick="enableDisableAspect(${right.rightID},this.checked);"  ${right.enabled == 'true' ? 'checked' : ''}></td>
+				<td><input type="checkbox" onclick="enableDisableAspect(${right.rightID},this.checked);"  ${right.enabled == 'true' ? 'checked' : ''}></td>
+				
+				<c:forEach var="role" items="${roles}">
+					<td>
+						<input type="checkbox" onclick="enableDisableAspectForRole(${right.rightID},${role.roleID},this.checked);"  ${role.hasRight(right) == 'true' ? 'checked' : ''}/>
+					</td>
+				</c:forEach>
 			</tr>
 		</c:forEach>
 	</tbody>

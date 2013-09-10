@@ -1,8 +1,8 @@
 package de.enwida.web.model;
 
 import java.io.Serializable;
+import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -10,8 +10,7 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 import de.enwida.web.db.model.CalendarRange;
@@ -40,9 +39,8 @@ public class Right implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long rightID;
     
-	@ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = Role.ROLE_ID)
-	private Role role;
+    @ManyToMany(mappedBy = "rights", fetch = FetchType.EAGER)
+    private Set<Role> assignedRoles;
     
     @Column(name = TSO)
     private int tso;
@@ -92,14 +90,6 @@ public class Right implements Serializable {
     public void setRightID(long rightID) {
         this.rightID = rightID;
     }
-
-	public Role getRole() {
-		return role;
-	}
-
-	public void setRole(Role role) {
-		this.role = role;
-	}
 
 	public int getTso() {
         return tso;
@@ -162,5 +152,13 @@ public class Right implements Serializable {
 	public String toString() {
 		return "Right [rightID=" + rightID + "]";
 	}
+
+    public Set<Role> getAssignedRoles() {
+        return assignedRoles;
+    }
+
+    public void setAssignedRoles(Set<Role> assignedRoles) {
+        this.assignedRoles = assignedRoles;
+    }
 
 }

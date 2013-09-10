@@ -36,11 +36,17 @@ public class RightDaoImpl extends AbstractBaseDao<Right> implements IRightDao {
     public boolean isAuthorizedByExample(Right dataAuthorization)
             throws Exception {
 
+        //Find all the role IDs
+        final List<Long> allRoleIDs = new ArrayList<Long>();
+        for (final Role role : dataAuthorization.getAssignedRoles()) {
+            allRoleIDs.add(role.getRoleID());
+        }
+        
         TypedQuery<Right> typedQuery = em.createQuery("from " + Right.class.getName()
-                                + "  WHERE role_id = :role_id AND tso = :tso AND product = :product AND aspect = :aspect AND resolution = :resolution AND time1 <= :time1 AND time1 >= :time2 AND enabled = :enabled",
+                                + " INNER JOIN users.role_right ON users.role_right.right_id=users.rights.right_id   WHERE users.role_right.role_id = :role_id AND tso = :tso AND product = :product AND aspect = :aspect AND resolution = :resolution AND time1 <= :time1 AND time1 >= :time2 AND enabled = :enabled",
                         Right.class);
-
-        typedQuery.setParameter("role_id", dataAuthorization.getRole().getRoleID());
+        //TODO:fix here
+        typedQuery.setParameter("role_id", allRoleIDs);
         typedQuery.setParameter("tso", dataAuthorization.getTso());
         typedQuery.setParameter("product", dataAuthorization.getProduct());
         typedQuery.setParameter("aspect", dataAuthorization.getAspect());
@@ -61,7 +67,7 @@ public class RightDaoImpl extends AbstractBaseDao<Right> implements IRightDao {
     	}
     	
         TypedQuery<Right> typedQuery = em.createQuery( "from "+ Right.class.getName()
-                + "  WHERE role_id in :role_id AND tso = :tso AND product = :product AND aspect = :aspect AND resolution = :resolution AND enabled = true",
+                + " INNER JOIN users.role_right ON users.role_right.right_id=users.rights.right_id  WHERE users.role_right.role_id in :role_id AND tso = :tso AND product = :product AND aspect = :aspect AND resolution = :resolution AND enabled = true",
         Right.class);
         typedQuery.setParameter("role_id", allRoleIDs);
         typedQuery.setParameter("tso",request.getTso());
@@ -95,10 +101,17 @@ public class RightDaoImpl extends AbstractBaseDao<Right> implements IRightDao {
     
     public List<Right> getListByExample(Right dataAuthorization)
             throws Exception {
+        
+        //Find all the role IDs
+        final List<Long> allRoleIDs = new ArrayList<Long>();
+        for (final Role role : dataAuthorization.getAssignedRoles()) {
+            allRoleIDs.add(role.getRoleID());
+        }
+        
         TypedQuery<Right> typedQuery = em.createQuery( "from "+ Right.class.getName()
-                                + "  WHERE role_id = :role_id AND tso = :tso AND product = :product AND aspect = :aspect AND enabled = :enabled",
+                                + " INNER JOIN users.role_right ON users.role_right.right_id=users.rights.right_id  WHERE users.role_right.role_id in :role_id AND tso = :tso AND product = :product AND aspect = :aspect AND enabled = :enabled",
                         Right.class);
-        typedQuery.setParameter("role_id", dataAuthorization.getRole().getRoleID());
+        typedQuery.setParameter("role_id", allRoleIDs);
         typedQuery.setParameter("tso", dataAuthorization.getTso());
         typedQuery.setParameter("product", dataAuthorization.getProduct());
         typedQuery.setParameter("aspect", dataAuthorization.getAspect());
@@ -114,10 +127,10 @@ public class RightDaoImpl extends AbstractBaseDao<Right> implements IRightDao {
     @Override
     public List<Right> getAllAspects(long roleID,int startPosition,int maxResult) {
         TypedQuery<Right> typedQuery = em.createQuery( "from "+ Right.class.getName()
-                + "  WHERE role_id = :roleID AND enabled = TRUE", Right.class);
+                + " INNER JOIN users.role_right ON users.role_right.right_id=users.rights.right_id  WHERE users.role_right.role_id in :role_id AND enabled = TRUE", Right.class);
         typedQuery.setFirstResult(startPosition);
         typedQuery.setMaxResults(maxResult);
-            typedQuery.setParameter("roleID", roleID);
+            typedQuery.setParameter("role_id", roleID);
             return typedQuery.getResultList();
     }
 }
