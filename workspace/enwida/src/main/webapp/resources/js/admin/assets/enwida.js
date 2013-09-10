@@ -150,3 +150,10 @@ function updateDomainAutoPass(groupID,val){
      	  url: "updateDomainAutoPass?groupID="+groupID+"&domainAutoPass="+val
     });
 };
+
+
+function enableDisableAspectForRole(rightID,roleID,val){
+	$.ajax({
+     	  url: "enableDisableAspectForRole?rightID="+rightID+"&roleID="+roleID+"&enabled="+val
+    });
+};

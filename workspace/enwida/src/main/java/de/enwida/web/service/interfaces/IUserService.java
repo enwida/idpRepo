@@ -235,11 +235,6 @@ public interface IUserService {
 	 */
 	public Role revokeRoleFromGroup(Role role, Group group) throws Exception;
 
-	// TODO: comments
-	public Role assignRightToRole(Right right, Role role) throws Exception;
-
-	public Role revokeRightFromRole(Right right, Role role) throws Exception;
-
     /**
      * Enables or disables the user
      * 
@@ -382,4 +377,6 @@ public interface IUserService {
      */
 	void updateDomainAutoPass(Long groupID, String domainAutoPass)
 			throws Exception;
+
+    public Role enableDisableAspectForRole(Right right, Role role,boolean enabled) throws Exception;
 }

@@ -12,9 +12,12 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 
 import org.springframework.security.core.GrantedAuthority;
 
@@ -47,7 +50,9 @@ public class Role implements Serializable, GrantedAuthority {
 	@ManyToMany(mappedBy = "assignedRoles", fetch = FetchType.EAGER)
 	private Set<Group> assignedGroups;
     
-	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "role")
+	@ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinTable(name = Constants.ROLE_RIGHT_TABLE_NAME, schema = Constants.ROLE_RIGHT_TABLE_SCHEMA_NAME, uniqueConstraints = { @UniqueConstraint(columnNames = {
+            Right.RIGHT_ID, Role.ROLE_ID }) }, joinColumns = { @JoinColumn(name = ROLE_ID) }, inverseJoinColumns = { @JoinColumn(name = Right.RIGHT_ID) })
 	private Set<Right> rights;
     
 	/**
@@ -122,6 +127,10 @@ public class Role implements Serializable, GrantedAuthority {
 	@Override
 	public int hashCode() {
 		return roleName.hashCode();
+	}
+	
+	public boolean hasRight(Right right){
+	    return rights.contains(right);
 	}
 	
 	@Override
