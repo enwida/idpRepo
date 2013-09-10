@@ -172,8 +172,7 @@ public class UserServiceImpl implements IUserService {
             }
         
             // saving in default group (Anonymous)
-			Group anonymousGroup = groupDao
-					.fetchByName(Constants.ANONYMOUS_GROUP);
+			Group anonymousGroup = groupDao.fetchByName(Constants.ANONYMOUS_GROUP);
             if(anonymousGroup == null)
             {
                 anonymousGroup = new Group();
@@ -182,6 +181,18 @@ public class UserServiceImpl implements IUserService {
             }
             anonymousGroup = groupDao.addGroup(anonymousGroup);
             this.assignGroupToUser(userId, anonymousGroup.getGroupID());
+            
+            //creating individual group to see uploaded data for the user
+            Group userGroup = new Group(Constants.USER_UPLOAD_PREFIX+user.getUserName()); 
+            userGroup=groupDao.addGroup(userGroup);
+            //assign user to this group
+            this.assignGroupToUser(userId, userGroup.getGroupID());
+            
+            //saving individual role for the group
+            Role userRole = new Role(Constants.USER_UPLOAD_PREFIX+user.getUserName()); 
+            userRole=roleDao.addRole(userRole); 
+            //assign group to this role
+            this.assignRoleToGroup(userRole.getRoleID(),userGroup.getGroupID());
             
             if(sendEmail){          
                 sendUserActivationEmail(user, locale);

@@ -67,4 +67,6 @@ public class Constants {
 	public static final String COMMENT_START_SYMBOL = "#";
 	public static final String DATA_SEPARATOR = ";";
 
+    public static final String USER_UPLOAD_PREFIX = "upload_";
+
 }
