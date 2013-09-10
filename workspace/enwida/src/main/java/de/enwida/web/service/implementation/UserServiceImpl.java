@@ -202,7 +202,8 @@ public class UserServiceImpl implements IUserService {
         else
         {
             return false;
-        }        }
+        }
+    }
 
 	/**
 	 * Gets user Password from the mail
