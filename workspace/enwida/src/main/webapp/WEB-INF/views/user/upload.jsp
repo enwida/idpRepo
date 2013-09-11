@@ -26,8 +26,7 @@ $(function() {
 		$( "#replace-file-${file.uploadedFileId.id}-${file.uploadedFileId.revision}" )
 			.click(function() {
 				$("#fileIdToBeReplaced").val($(this).attr("id").split("-")[2]+"-"+$(this).attr("id").split("-")[3]);
-				$("#replace-file-form-div" ).dialog( "open" );
-				
+				$("#replace-file-form-div" ).dialog( "open" );				
 		});
 		
 		$( "#download-file-${file.uploadedFileId.id}-${file.uploadedFileId.revision}" )
@@ -55,7 +54,6 @@ $(function() {
 		modal: true,
 		buttons: {
 			"Replace File": function() {
-				alert($("#fileIdToBeReplaced").val());					
 				$("#replace-file-form").submit();
 				$( this ).dialog( "close" );
 			},
@@ -63,8 +61,7 @@ $(function() {
 				$( this ).dialog( "close" );
 			}
 		},
-		close: function() {
-			$("#fileIdToBeReplaced").val("123123");
+		close: function() {			
 		}
 	});
 	
@@ -365,7 +362,7 @@ $(function() {
 										        </c:if>
 										      </c:forEach>
 										    </form:select>
-										    <form:input path="fileIdToBeReplaced" type="hidden" value="${file.uploadedFileId.id}" />
+										    <form:input  path="fileIdToBeReplaced" type="hidden" value="${file.uploadedFileId.id}" id ="fileIdToBeUpdated" />
 										    <form:input path="revision" type="hidden" value="${file.uploadedFileId.revision}" />
 											<input class="btn btn-primary" type="submit" value="Update" />
 											</form:form>
