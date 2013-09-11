@@ -11,7 +11,228 @@
 
 <!-- <link rel="stylesheet" href="/resources/demos/style.css" /> -->
 <script>
+var fileIdToDelete = -1;
+function openDeleteConfirmationDialog(controlId)
+{
+	fileIdToDelete = controlId.split("-")[2] + "-" + controlId.split("-")[3];
+	$( "#delete-file-form-div" ).dialog( "open" );
+}
 
+$(function() {
+	var fileSetIdToDelete =  -1;
+	var fileIdToGetRevisions =  -1;
+	
+	<c:forEach var="file" items="${uploadedfiletable}">		
+		$( "#replace-file-${file.uploadedFileId.id}-${file.uploadedFileId.revision}" )
+			.click(function() {
+				$("#fileIdToBeReplaced").val($(this).attr("id").split("-")[2]+"-"+$(this).attr("id").split("-")[3]);
+				$("#replace-file-form-div" ).dialog( "open" );
+				
+		});
+		
+		$( "#download-file-${file.uploadedFileId.id}-${file.uploadedFileId.revision}" )
+			.click(function() {				
+		});
+		
+		$( "#delete-file-set-${file.uploadedFileId.id}" )
+			.click(function(event) {
+				fileSetIdToDelete = $(this).attr("id").split("-")[3];
+				$( "#delete-file-set-form-div" ).dialog( "open" );				
+		});	
+		
+		$( "#show-revisions-file-${file.uploadedFileId.id}" )
+			.click(function(event) {
+				fileIdToGetRevisions = $(this).attr("id").split("-")[3];
+				$( "#show-revisions-file-div" ).dialog( "open" );				
+		});	
+		
+	</c:forEach>
+
+	$( "#replace-file-form-div" ).dialog({
+		autoOpen: false,
+		height: 300,
+		width: 450,
+		modal: true,
+		buttons: {
+			"Replace File": function() {
+				alert($("#fileIdToBeReplaced").val());					
+				$("#replace-file-form").submit();
+				$( this ).dialog( "close" );
+			},
+			Cancel: function() {
+				$( this ).dialog( "close" );
+			}
+		},
+		close: function() {
+			$("#fileIdToBeReplaced").val("123123");
+		}
+	});
+	
+	$( "#delete-file-set-form-div" ).dialog({
+		autoOpen: false,
+		resizable: false,
+	    height:300,
+	    width: 450,
+	    modal: true,
+	    buttons: {
+	    	"Delete this file set?": function() {
+	    		
+	    		$.ajax({
+	    	         url: "<c:url value='/user/upload/files/set/delete' />",
+	    	         type: 'GET',            
+	    	         data:  { 	
+	    	        	 	fileId : fileSetIdToDelete,
+	    	         },
+	    	         success: function(result) {
+	    	        	 if (result == "SUCCESS") {
+	    	        		 $( "#delete-file-form-success-div" ).dialog( "open" ); 
+	    	        	 } else {
+	    	        		 $( "#delete-file-form-failure-div" ).dialog( "open" );	    	        				 
+	    	        	 }	    	        	 	    	        	 
+	    	         }, 
+	    	         error: function(xhr, ajaxOptions, thrownError) {
+	    	        	 $( "#delete-file-form-failure-div" ).dialog( "open" );
+	    	       	 }
+	    	     });
+	    		
+	    		$( this ).dialog( "close" );
+	    	},
+	    	Cancel: function() {
+	    		$( this ).dialog( "close" );
+	    	}
+		},
+		close: function() {
+			fileSetIdToDelete = -1;
+		}
+	});
+	
+	$( "#delete-file-form-div" ).dialog({
+		autoOpen: false,
+		resizable: false,
+	    height:300,
+	    width: 450,
+	    modal: true,
+	    buttons: {
+	    	"Delete this file?": function() {
+	    		
+	    		$.ajax({
+	    	         url: "<c:url value='/user/upload/files/delete' />",
+	    	         type: 'GET',            
+	    	         data:  { 	
+	    	        	 	fileId : fileIdToDelete.split("-")[0],
+	    	        	 	revision : fileIdToDelete.split("-")[1]
+	    	         },
+	    	         success: function(result) {
+	    	        	 if (result == "SUCCESS") {
+	    	        		 $( "#delete-file-form-success-div" ).dialog( "open" ); 
+	    	        	 } else {
+	    	        		 $( "#delete-file-form-failure-div" ).dialog( "open" );	    	        				 
+	    	        	 }	    	        	 	    	        	 
+	    	         }, 
+	    	         error: function(xhr, ajaxOptions, thrownError) {
+	    	        	 $( "#delete-file-form-failure-div" ).dialog( "open" );
+	    	       	 }
+	    	     });
+	    		
+	    		$( this ).dialog( "close" );
+	    	},
+	    	Cancel: function() {
+	    		$( this ).dialog( "close" );
+	    	}
+		},
+		close: function() {
+			fileIdToDelete = -1;
+		}
+	});
+	
+	$( "#delete-file-form-failure-div" ).dialog({
+		autoOpen: false,
+		height: 200,
+		width: 350,
+		modal: true,
+		buttons: {
+			Ok: function() {
+				$( this ).dialog( "close" );
+				window.location.assign("<c:url value='/user/upload/files' />");
+			}
+		}
+	});
+	
+	$( "#delete-file-form-success-div" ).dialog({
+		autoOpen: false,
+		height: 200,
+		width: 350,
+		modal: true,
+		buttons: {
+			Ok: function() {
+				$( this ).dialog( "close" );
+				window.location.assign("<c:url value='/user/upload/files' />");
+			}
+		}
+	});
+	
+	$( "#show-revisions-file-div" ).dialog({
+		autoOpen: false,
+		height: 400,
+		width: 800,
+		modal: true,
+		open: function() {
+			
+			$.ajax({
+   	         url: "<c:url value='/user/upload/files/revisions' />",
+   	         type: 'GET',
+   	         data:  { 	
+   	        	 	fileId : fileIdToGetRevisions,
+   	         },
+   	         success: function(result) {
+   	        	$("#show-revisions-file-div-inner").html("");
+   	        	$("#show-revisions-file-div-inner").append("<div style=\"display: table-row;font-weight: bold;\">" +  
+   	     				/* "<div style=\"display: table-cell;padding: 5px;\"> Id </div>" + */
+   	     				"<div style=\"display: table-cell;padding: 5px;\"> Filename </div>" +
+   	     				"<div style=\"display: table-cell;padding: 5px;\"> Date </div>" +
+   	     				"<div style=\"display: table-cell;padding: 5px;\"> IsActive </div>" +
+   	     				"<div style=\"display: table-cell;padding: 5px;\"> Options </div>" +
+   	     			"</div>");
+   	        	$.each(result, function(i, item) {
+   	        		var revisionsDialogHTML = "<div style=\"display: table-row;\">" + 
+   	        		/* "<div style=\"display: table-cell;padding: 5px;\"> " + item.id + "</div>" + */ 
+   	        		"<div style=\"display: table-cell;padding: 5px;\"> " + item.displayFileName + "</div>" + 
+   	        		"<div style=\"display: table-cell;padding: 5px;\"> " + (new Date(item.uploadDate)).format() + "</div>";
+   	        		
+   	        		if (item.active == true) {
+   	        			revisionsDialogHTML += "<div style=\"display: table-cell;padding: 5px;\"> Active </div>" +
+   	        			"<div style=\"display: table-cell;padding: 5px;\">" +
+   	        			"<a class=\"btn btn-primary\" style=\"display: table-cell;padding: 5px;\" href=\"<c:url value='/user/upload/files/" + item.id + "/" + item.revision +"' />\" id=\"download-file-" + item.id + "-" + item.revision + "\">Download</a>" +
+	        				/* "<button class=\"btn btn-primary\" style=\"display: table-cell;padding: 5px;\" id=\"delete-file-" + item.id + "\">Delete</button>" + */
+	        			"</div></div>";
+   	        		} else {
+   	        			revisionsDialogHTML += "<div style=\"display: table-cell;padding: 5px;\"> Not Active </div>" +
+   	        			"<div style=\"display: table-cell;padding: 5px;\">" +
+  	        				"<a class=\"btn btn-primary\" style=\"display: table-cell;padding: 5px;\" href=\"<c:url value='/user/upload/files/" + item.id + "/"+ item.revision +"/action/ma' />\" id=\"active-file-" + item.id + "-" + item.revision +"\">Make Active</a>" +
+  	        				"<a class=\"btn btn-primary\" style=\"display: table-cell;padding: 5px;\" href=\"<c:url value='/user/upload/files/" + item.id + "-" + item.revision +"' />\" id=\"download-file-" + item.id + "-" + item.revision + "\">Download</a>" +
+   	        				"<button class=\"btn btn-primary\" style=\"display: table-cell;padding: 5px;\" onclick=\"openDeleteConfirmationDialog('delete-file-" + item.id + " - "+ item.revision + "\')\" id=\"delete-file-" + item.id + "-" + item.revision + "\">Delete</button>" +
+   	        			"</div></div>";   	        				
+   	        		}
+   	        		
+					$("#show-revisions-file-div-inner").append(revisionsDialogHTML);
+   	        	});
+   	         }, 
+   	         error: function(xhr, ajaxOptions, thrownError) {
+   	        	alert(thrownError);
+   	       	 }
+   	     });
+	    },
+		buttons: {
+			Ok: function() {
+				$( this ).dialog( "close" );
+			}
+		},
+		close: function() {
+			fileIdToGetRevisions = -1;
+		}
+	});
+	
+});
 </script>
 </head>
 <body>
@@ -45,8 +266,8 @@
 		<form:form method="POST" id="replace-file-form" modelAttribute="fileReplace" enctype="multipart/form-data" action="files/replace" >
 			<form:errors path="*" cssClass="errorblock" element="div" />
 				Please Select a file to upload: 
-				<form:input path="file" type="file" name="file" />
-				<form:input path="fileIdToBeReplaced" type="hidden" id ="fileIdToBeReplaced" name="fileIdToBeReplaced"  value="" />
+				<form:input path="file" type="file" />
+				<form:input path="fileIdToBeReplaced" type="hidden" id="fileIdToBeReplaced" />
 			<span> 
 				<form:errors path="file" cssClass="error" /> 
 				<c:out value="${invalidFileMessage}"></c:out>
@@ -96,35 +317,56 @@
 					<th><spring:message code="de.enwida.upload.actions" text="Actions" /></th>
 			  </tr>
 		</thead>
+		
+		
 		<tbody>
-		<form name='f' method='POST'>	
+		
 			<c:choose>
+			
 						<c:when test="${not empty uploadedfiletable}">
-							<c:forEach var="file" items="${uploadedfiletable}">
-								<tr>
-									<%-- <td><c:out value="${file.uploadedFileId.id}" /></td> --%>
-									<td><c:out value="${file.displayFileName}" /></td>
-									<td><c:out value="${file.displayUploadDate}" /></td>
-									<td>
-										<button class="btn btn-primary"  id="show-revisions-file-${file.uploadedFileId.id}">Show Revisions</button>
-										<%-- <c:choose>
-											<c:when test="${file.revision > 1}">
-												<button class="btn btn-primary" id="show-revisions-file-${file.uploadedFileId.id}">Show Revisions</button>
-											</c:when>
-											<c:otherwise>
-												<c:out value="${file.revision}" />
-											</c:otherwise>
-										</c:choose> --%>
-									</td>
-									<td></td>
-									<td><spring:message code="${file.metaData.aspectKey}" text="${file.metaData.aspect}"/></td>
-									<td>
-										<button class="btn btn-primary" id="replace-file-${file.uploadedFileId.id}-${file.uploadedFileId.revision}">Replace</button>
-										<%-- <a href="<c:url value='/upload/files/${file.uploadedFileId.id}' />" id="download-file-${file.uploadedFileId.id}">Download</a> --%>
-										<button class="btn btn-primary" id="delete-file-set-${file.uploadedFileId.id}">Delete</button>
-									</td>
-								</tr>
-							</c:forEach>
+							
+								<c:forEach var="file" items="${uploadedfiletable}">
+									<tr>
+										<%-- <td><c:out value="${file.uploadedFileId.id}" /></td> --%>
+										<td><c:out value="${file.displayFileName}" /></td>
+										<td><c:out value="${file.displayUploadDate}" /></td>
+										<td>
+											<button class="btn btn-primary"  id="show-revisions-file-${file.uploadedFileId.id}">Show Revisions</button>
+											<%-- <c:choose>
+												<c:when test="${file.revision > 1}">
+													<button class="btn btn-primary" id="show-revisions-file-${file.uploadedFileId.id}">Show Revisions</button>
+												</c:when>
+												<c:otherwise>
+													<c:out value="${file.revision}" />
+												</c:otherwise>
+											</c:choose> --%>
+										</td>
+										<td></td>
+										
+										<td> 
+											<form:form method="POST" id="update-metadata-form" modelAttribute="fileMetaDataUpdate" action="updateMetadata" enctype="multipart/form-data">
+											<form:select path="aspectName" name="aspectName">
+										      <c:forEach var="aspect" items="${aspects}">
+										      	<c:if test="${aspect.aspectName eq file.metaData.aspect}">
+										        	<option selected="selected" value="${aspect.aspectName}"><spring:message code="${aspect.messageKey}" text="${aspect.aspectName}"/></option>
+										        </c:if>
+										        <c:if test="${aspect.aspectName ne file.metaData.aspect}">
+										        	<option value="${aspect.aspectName}"><spring:message code="${aspect.messageKey}" text="${aspect.aspectName}"/></option>
+										        </c:if>
+										      </c:forEach>
+										    </form:select>
+										    <form:input path="fileIdToBeReplaced" type="hidden" value="${file.uploadedFileId.id}" />
+										    <form:input path="revision" type="hidden" value="${file.uploadedFileId.revision}" />
+											<input class="btn btn-primary" type="submit" value="Update" />
+											</form:form>
+										</td>
+										<td>
+											<button class="btn btn-primary" id="replace-file-${file.uploadedFileId.id}-${file.uploadedFileId.revision}">Replace</button>
+											<%-- <a href="<c:url value='/upload/files/${file.uploadedFileId.id}' />" id="download-file-${file.uploadedFileId.id}">Download</a> --%>
+											<button class="btn btn-primary" id="delete-file-set-${file.uploadedFileId.id}">Delete</button>
+										</td>
+									</tr>
+								</c:forEach>
 						</c:when>
 						<c:otherwise>
 							<tr>
@@ -132,9 +374,9 @@
 							</tr>
 						</c:otherwise>
 					</c:choose>
-		
+					
 		</tbody>
-		</form>
+		
 		<tfoot>
 			<tr>
 				<th colspan="7" class="pager form-horizontal">
@@ -163,9 +405,9 @@
 								<form:errors path="*" cssClass="errorblock" element="div" />
 									<div>
 									    <label for="aspect">Aspect</label>
-									    <form:select path="aspect" name="aspect">
+									    <form:select path="aspectName" name="aspectName">
 									      <c:forEach var="aspect" items="${aspects}">
-									        <option value="${aspect.key}"><spring:message code="${aspect.value}" text="${aspect.key}"/></option>
+									        <option value="${aspect.aspectName}"><spring:message code="${aspect.messageKey}" text="${aspect.aspectName}"/></option>
 									      </c:forEach>
 									    </form:select>
 								    </div>

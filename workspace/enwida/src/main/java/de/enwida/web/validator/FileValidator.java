@@ -135,7 +135,7 @@ public class FileValidator implements Validator {
 					if (userline != null) {
 						// this case for blank data lines but format is correct
 						// continue processing data
-						if (userline.getTimestamp() == 0
+						if (userline.getTime() == 0
 								&& userline.getValue() == -1) {
 							logger.debug("No record found at line number : "
 									+ linenumber);

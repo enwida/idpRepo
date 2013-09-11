@@ -1,6 +1,7 @@
 package de.enwida.web.service.implementation;
 
 import java.io.File;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
@@ -16,7 +17,6 @@ import de.enwida.web.dao.interfaces.IFileDao;
 import de.enwida.web.dao.interfaces.IUserDao;
 import de.enwida.web.dao.interfaces.IUserLinesDao;
 import de.enwida.web.db.model.UploadedFile;
-import de.enwida.web.db.model.UserLinesMetaData;
 import de.enwida.web.model.User;
 import de.enwida.web.service.interfaces.IUploadFileService;
 import de.enwida.web.service.interfaces.IUserLinesService;
@@ -117,6 +117,7 @@ public class UploadFileServiceImpl implements IUploadFileService {
 			throw new IllegalArgumentException("user object is not persisted");
 		}
 		if (file.getUploadedFileId().getId() > 0) {
+			file.setModificationDate(Calendar.getInstance().getTime());
 			file = fileDao.update(file, true); // with flush
 		} else {
 			fileDao.create(file, true); // with flush

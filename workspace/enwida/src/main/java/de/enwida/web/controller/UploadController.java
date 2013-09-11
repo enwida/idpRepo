@@ -2,6 +2,7 @@ package de.enwida.web.controller;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -93,16 +94,35 @@ public class UploadController {
 			model.put("uploadedfiletable", filetable);			
 		}
 		
-		model.put("aspects", Aspect.getAspectMap());
+		List<Aspect> aspects = Arrays.asList(Aspect.values());
+		model.put("aspects", aspects);
 		model.put("fileUpload", new FileUpload());
 		model.put("fileReplace", new FileUpload());
+		model.put("fileMetaDataUpdate", new FileUpload());
 		model.put("content", "upload");
 		return new ModelAndView("user/master", model);
 	}
 	
+	@RequestMapping(value = "/updateMetadata", method = RequestMethod.POST)
+	public ModelAndView updateUploadedFileMetaData(ModelMap model,
+			@ModelAttribute(value = "fileMetaDataUpdate") FileUpload fileUpload,
+			BindingResult result, HttpServletRequest request) throws Exception {
+		Aspect newAspect = Aspect.valueOf(fileUpload.getAspectName()
+				.toUpperCase());
+		Long fileId = Long.parseLong(fileUpload.getFileIdToBeReplaced());
+		UploadedFile uploadedfile = uploadFileService.getFile(fileId,
+				fileUpload.getRevision());
+		uploadedfile.getMetaData().setAspect(newAspect.getAspectName());
+		User updatedUser = uploadFileService.updateUserUploadedFile(
+				userSession.getUser(),
+				uploadedfile);
+		userSession.setUserInSession(updatedUser);
+		return new ModelAndView("redirect:/user/upload/files");
+	}
+
 	@SuppressWarnings("unchecked")
-	@RequestMapping(value="/files", method = RequestMethod.POST)
-	public ModelAndView postUplaodUserData(ModelMap model,
+	@RequestMapping(value = "/files", method = RequestMethod.POST)
+	public ModelAndView postUploadUserData(ModelMap model,
 			@ModelAttribute(value = "fileUpload") FileUpload fileUpload,
 			BindingResult result, HttpServletRequest request) throws Exception {
 		
@@ -127,21 +147,23 @@ public class UploadController {
 						List<DOUserLines> userlines = (List<DOUserLines>) parsedData
 								.get(Constants.UPLOAD_LINES_KEY);
 						UserLinesMetaData metaData = (UserLinesMetaData) parsedData.get(Constants.UPLOAD_LINES_METADATA_KEY);
-						metaData.setAspect(fileUpload.getAspect().name());
+						metaData.setAspect(fileUpload.getAspectName()
+								.toUpperCase());
 						Long nextFileId = getNextFileId(true);
 						boolean recordsInserted = userLineService.createUserLines(userlines, nextFileId);
 						if (recordsInserted) {
 							// if atleast one record is written then upload
 							// file.
 							UploadedFile file = saveNewFile(filetobeuploaded, user);
-							// update user in session as well
-							userSession.setUserInSession(user);
+
 							// update file Id (which already have owner details)
 							// metaData.setFile(file);
 							file.setMetaData(metaData);
 							uploadFileService
 									.updateUserUploadedFile(user, file);
 
+							// update user in session as well
+							userSession.setUserInSession(user);
 							EnwidaUtils.removeTemporaryFile(filetobeuploaded);
 						} else {
 							//TODO: FileUpload Fail: Duplicate File Upload
@@ -159,7 +181,7 @@ public class UploadController {
 
 	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/files/replace", method = RequestMethod.POST)
-	public ModelAndView replaceUplaodUserData(ModelMap model,
+	public ModelAndView replaceUploadUserData(ModelMap model,
 			@ModelAttribute(value = "fileReplace") FileUpload fileReplace,
 			BindingResult result, HttpServletRequest request) throws Exception {
 

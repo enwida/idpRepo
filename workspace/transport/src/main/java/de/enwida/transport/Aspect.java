@@ -36,27 +36,45 @@ public enum Aspect {
 	UL_BID_WP_TC_NEG,
  UL_BID_WP_SC_NEG;
 
+	private String messageKey;
+	private String aspectName;
+
+	Aspect() {
+		this.aspectName = getAspectName();
+		this.messageKey = "de.enwida.chart.aspect."
+				+ getAspectName().toLowerCase()
+				+ ".title";
+	}
+
+	public String getMessageKey() {
+		return messageKey;
+	}
+
+	public String getAspectName() {
+		if (this.aspectName == null) {
+			this.aspectName = this.name();
+		}
+		return this.aspectName;
+	}
+
 	private static Map<Aspect, String> aspects = null;
 
 	public static Map<Aspect, String> getAspectMap() {
 		if (aspects == null) {
 			aspects = new HashMap<Aspect, String>();
 			for (final Aspect aspect : Aspect.values()) {
-				final String aspectMessageKey = "de.enwida.chart.aspect."
-						+ aspect.name().toLowerCase() + ".title";
-				aspects.put(aspect, aspectMessageKey);
+				aspects.put(aspect, aspect.messageKey);
 			}
 		}
 		return aspects;
 	}
 
-	public static String getAspectMessageKey(String aspectKey) {
-		if (aspectKey != null) {
-			for (final Aspect aspect : Aspect.values()) {
-				if (aspect.name().equalsIgnoreCase(aspectKey)) {
-					return "de.enwida.chart.aspect."
-							+ aspect.name().toLowerCase() + ".title";
-				}
+	public static String getAspectMessageKey(String aspectname) {
+		if (aspectname != null) {
+			Aspect aspect = Aspect.valueOf(aspectname.toUpperCase());
+
+			if (aspect != null) {
+				return aspect.getMessageKey();
 			}
 		}
 		return null;

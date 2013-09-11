@@ -2,14 +2,12 @@ package de.enwida.web.model;
 
 import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
-import de.enwida.transport.Aspect;
-
 public class FileUpload {
 	
 	private CommonsMultipartFile file;
 	private String fileIdToBeReplaced;
 	private int revision;
-	private Aspect aspect;
+	private String aspectName;
 	
 	public CommonsMultipartFile getFile() {
 		return file;
@@ -34,12 +32,13 @@ public class FileUpload {
 	public void setRevision(int revision) {
 		this.revision = revision;
 	}
-	
-	public Aspect getAspect() {
-		return aspect;
+
+	public String getAspectName() {
+		return aspectName;
 	}
-	
-	public void setAspect(Aspect aspect) {
-		this.aspect = aspect;
+
+	public void setAspectName(String aspectName) {
+		this.aspectName = aspectName;
 	}
+
 }
