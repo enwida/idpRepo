@@ -206,7 +206,7 @@ $(function() {
    	        			revisionsDialogHTML += "<div style=\"display: table-cell;padding: 5px;\"> Not Active </div>" +
    	        			"<div style=\"display: table-cell;padding: 5px;\">" +
   	        				"<a class=\"btn btn-primary\" style=\"display: table-cell;padding: 5px;\" href=\"<c:url value='/user/upload/files/" + item.id + "/"+ item.revision +"/action/ma' />\" id=\"active-file-" + item.id + "-" + item.revision +"\">Make Active</a>" +
-  	        				"<a class=\"btn btn-primary\" style=\"display: table-cell;padding: 5px;\" href=\"<c:url value='/user/upload/files/" + item.id + "-" + item.revision +"' />\" id=\"download-file-" + item.id + "-" + item.revision + "\">Download</a>" +
+  	        				"<a class=\"btn btn-primary\" style=\"display: table-cell;padding: 5px;\" href=\"<c:url value='/user/upload/files/" + item.id + "/" + item.revision +"' />\" id=\"download-file-" + item.id + "-" + item.revision + "\">Download</a>" +
    	        				"<button class=\"btn btn-primary\" style=\"display: table-cell;padding: 5px;\" onclick=\"openDeleteConfirmationDialog('delete-file-" + item.id + " - "+ item.revision + "\')\" id=\"delete-file-" + item.id + "-" + item.revision + "\">Delete</button>" +
    	        			"</div></div>";   	        				
    	        		}

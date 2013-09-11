@@ -239,11 +239,13 @@ public class UploadedFile implements Serializable, Comparable<UploadedFile> {
 	}
 
 	public long getUserLineId() {
-		return uploadedFileId.getId();
+		return new Long(uploadedFileId.getId() + ""
+				+ uploadedFileId.getRevision());
 	}
 
 	public long getUserLineIdOnNewRevision() {
-		return uploadedFileId.getId();
+		return new Long(uploadedFileId.getId() + ""
+				+ (uploadedFileId.getRevision() + 1));
 	}
 
 	@Override

@@ -152,7 +152,12 @@ public class UploadController {
 						metaData.setAspect(fileUpload.getAspectName()
 								.toUpperCase());
 						Long nextFileId = getNextFileId(true);
-						boolean recordsInserted = userLineService.createUserLines(userlines, nextFileId);
+						// since fresh upload so revision
+						int revision = 1;
+						String userLineId = nextFileId + "" + revision;
+						boolean recordsInserted = userLineService
+								.createUserLines(userlines,
+										new Long(userLineId));
 						if (recordsInserted) {
 							// if atleast one record is written then upload
 							// file.
@@ -212,11 +217,17 @@ public class UploadController {
 						metaData.setAspect(fileReplace.getAspectName()
 								.toUpperCase());
 
-						UploadedFile oldFile = uploadFileService.getFile(Long.parseLong(fileReplace.getFileIdToBeReplaced().split("-")[0]),
-								Integer.parseInt(fileReplace.getFileIdToBeReplaced().split("-")[1]));
+						String[] fileId_revision = fileReplace
+								.getFileIdToBeReplaced().split("-");
+						Long fileId = Long.parseLong(fileId_revision[0]);
+						int revision = Integer.parseInt(fileId_revision[1]);
+						UploadedFile oldFile = uploadFileService.getFile(
+								fileId, revision);
+						;
 						if (oldFile != null && oldFile.getUploader().equals(user)) {
 							//Deleting the old lines from the database
-							boolean success = userLineService.eraseUserLines(Long.parseLong(fileReplace.getFileIdToBeReplaced().split("-")[0]));
+							boolean success = userLineService
+									.eraseUserLines(oldFile.getUserLineId());
 							
 							if (success) {
 								boolean recordsInserted = userLineService
@@ -457,7 +468,7 @@ public class UploadController {
 	private void removeFileAndData(UploadedFile fileToRemove, User user) {
 		try {
 			boolean success = userLineService.eraseUserLines(fileToRemove
-					.getUploadedFileId().getId());
+					.getUserLineId());
 			// first remove all mappings
 			uploadFileService.removeUserUploadedFile(user, fileToRemove);
 			// actual row deleted

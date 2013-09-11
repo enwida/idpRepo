@@ -188,7 +188,7 @@ public class UploadFileServiceImpl implements IUploadFileService {
 							.getUploadedFileId().getId());
 			
 			//2. Erase the Data of the Active File from Database
-			userLineService.eraseUserLines(fileId);
+			userLineService.eraseUserLines(fileAlreadyActive.getUserLineId());
 			
 			//3. Insert the data of the Required Active File
 			BindingResult results = EnwidaUtils.validateFile(new File(fileToMakeActive.getFilePath()), fileValidator);
