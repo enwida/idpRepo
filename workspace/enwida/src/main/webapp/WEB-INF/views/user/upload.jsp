@@ -267,9 +267,9 @@ $(function() {
 			<form:errors path="*" cssClass="errorblock" element="div" />
 				<div>
 				    <label for="aspect">Aspect</label>
-				    <form:select path="aspect" name="aspect">
+				    <form:select path="aspectName" name="aspectName">
 				      <c:forEach var="aspect" items="${aspects}">
-				        <option value="${aspect.value}"><spring:message code="${aspect.key}" text="${aspect.value}"/></option>
+				       	<option value="${aspect.aspectName}"><spring:message code="${aspect.messageKey}" text="${aspect.aspectName}"/></option>
 				      </c:forEach>
 				    </form:select>
 			    </div>
