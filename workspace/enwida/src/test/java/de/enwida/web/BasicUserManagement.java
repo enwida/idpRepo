@@ -1,6 +1,7 @@
 package de.enwida.web;
 
 import java.sql.Connection;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,9 +17,11 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 
+import de.enwida.transport.Aspect;
 import de.enwida.web.dao.interfaces.IGroupDao;
 import de.enwida.web.dao.interfaces.IRightDao;
 import de.enwida.web.dao.interfaces.IRoleDao;
+import de.enwida.web.db.model.CalendarRange;
 import de.enwida.web.model.Group;
 import de.enwida.web.model.Right;
 import de.enwida.web.model.Role;
@@ -788,4 +791,28 @@ public class BasicUserManagement {
         Assert.assertTrue(testee2.isAutoPass());
     }
 
+    private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    
+    @Test
+    public void createRights() throws Exception{
+        int[] tsoList = {99,341};
+
+        int[] productList = {200 ,300 ,210 ,220 ,310 ,320 ,211 ,212 ,221 ,222 ,311 ,312 ,313 ,314 ,315 ,316 ,321 ,322 ,323 ,324 ,325 ,326 };
+        
+        String[] resolutionList= {"HOURLY","MONTHLY", "DAILY", "WEEKLY", "QUATER_HOURLY", "YEARLY"};
+        
+        CalendarRange timeRange=new CalendarRange(dateFormat.parse("1967-05-21"), dateFormat.parse("2016-11-19"));
+        
+        for (Integer tso : tsoList) {
+            for (Integer product : productList) {
+                for (String resolution : resolutionList) {
+                    for (Aspect aspect : Aspect.values()) {
+                        Right right=new Right(tso, product, resolution, timeRange, aspect.toString(), true);
+                        rightDao.addRight(right);
+                    }
+                }
+            }
+        }
+    }
+    
  }
