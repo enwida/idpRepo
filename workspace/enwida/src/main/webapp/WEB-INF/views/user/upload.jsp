@@ -264,7 +264,7 @@ $(function() {
 			<form:errors path="*" cssClass="errorblock" element="div" />
 				<div>
 				    <label for="aspect">Aspect</label>
-				    <form:select path="aspectName" name="aspectName">
+				    <form:select path="aspectName" name="aspectName" id="replaceFormAspectId">
 				      <c:forEach var="aspect" items="${aspects}">
 				       	<option value="${aspect.aspectName}"><spring:message code="${aspect.messageKey}" text="${aspect.aspectName}"/></option>
 				      </c:forEach>
@@ -352,7 +352,7 @@ $(function() {
 										
 										<td> 
 											<form:form method="POST" id="update-metadata-form" modelAttribute="fileMetaDataUpdate" action="updateMetadata" enctype="multipart/form-data">
-											<form:select path="aspectName" name="aspectName">
+											<form:select path="aspectName" name="aspectName" id="updateAspectId">
 										      <c:forEach var="aspect" items="${aspects}">
 										      	<c:if test="${aspect.aspectName eq file.metaData.aspect}">
 										        	<option selected="selected" value="${aspect.aspectName}"><spring:message code="${aspect.messageKey}" text="${aspect.aspectName}"/></option>
@@ -362,7 +362,7 @@ $(function() {
 										        </c:if>
 										      </c:forEach>
 										    </form:select>
-										    <form:input  path="fileIdToBeReplaced" type="hidden" value="${file.uploadedFileId.id}" id ="fileIdToBeUpdated" />
+										    <form:input  path="fileIdToBeReplaced" type="hidden" value="${file.uploadedFileId.id}" id="fileIdToBeUpdated" />
 										    <form:input path="revision" type="hidden" value="${file.uploadedFileId.revision}" />
 											<input class="btn btn-primary" type="submit" value="Update" />
 											</form:form>

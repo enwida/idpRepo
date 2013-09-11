@@ -1,7 +1,6 @@
 package de.enwida.web.service.implementation;
 
 import java.io.File;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -121,7 +120,6 @@ public class UploadFileServiceImpl implements IUploadFileService {
 			throw new IllegalArgumentException("user object is not persisted");
 		}
 		if (file.getUploadedFileId().getId() > 0) {
-			file.setModificationDate(Calendar.getInstance().getTime());
 			file = fileDao.update(file, true); // with flush
 		} else {
 			fileDao.create(file, true); // with flush

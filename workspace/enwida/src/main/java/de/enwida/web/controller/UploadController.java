@@ -3,6 +3,7 @@ package de.enwida.web.controller;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -113,6 +114,7 @@ public class UploadController {
 		UploadedFile uploadedfile = uploadFileService.getFile(fileId,
 				fileUpload.getRevision());
 		uploadedfile.getMetaData().setAspect(newAspect.getAspectName());
+		uploadedfile.setModificationDate(Calendar.getInstance().getTime());
 		User updatedUser = uploadFileService.updateUserUploadedFile(
 				userSession.getUser(),
 				uploadedfile);
@@ -159,7 +161,7 @@ public class UploadController {
 							// update file Id (which already have owner details)
 							// metaData.setFile(file);
 							file.setMetaData(metaData);
-							uploadFileService
+							user = uploadFileService
 									.updateUserUploadedFile(user, file);
 
 							// update user in session as well
@@ -224,6 +226,8 @@ public class UploadController {
 									// if atleast one record is written then upload file.
 									UploadedFile file = replaceFile(filetobeuploaded, oldFile, user);
 									file.setMetaData(metaData);
+									user = uploadFileService
+											.updateUserUploadedFile(user, file);
 									// update user in session as well
 									userSession.setUserInSession(user);
 									// update file Id (which already have owner details)
