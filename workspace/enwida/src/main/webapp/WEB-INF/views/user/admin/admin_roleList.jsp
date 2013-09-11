@@ -40,7 +40,7 @@
 				
 				<td>${role.roleName}</td>
 				<td>
-					<a href='admin_editaspect?roleID=${role.roleID}&start=10&max=50'> <message:message code="de.enwida.userManagement.details" /></a>
+					<a href='admin_editaspect?roleID=${role.roleID}'> <message:message code="de.enwida.userManagement.details" /></a>
 				</td>
 			</tr>
 		</c:forEach>

@@ -127,7 +127,10 @@ public class Group implements Serializable{
 
 	@Override
 	public int hashCode() {
-		return groupName.hashCode();
+	    if (groupName!=null)
+	        return groupName.hashCode();
+	    else
+	        return 0;
 	}
 
 	@Override

@@ -13,8 +13,7 @@
 						</c:forEach>
 					</select>
 			</td>
-			<td><message:message code="de.enwida.userManagement.max" />:<input type='text' name='max' id='max'   value="10" /></td>
-			<td><input name="submit" type="submit" value='ok' class="btn btn-primary" />
+			<td><input name="submit" type="submit" value='Only Enabled' class="btn btn-primary" /></td>
 			<td><input name="all" type="submit" value='<message:message code="de.enwida.userManagement.allAspects" />' class="btn btn-primary" /></td>
 		</tr>
 	</table>			
@@ -34,11 +33,6 @@ $("#myselect").val(get_url_parameter('roleID'));
 			<th><message:message code="de.enwida.userManagement.resolution" /></th>
 			<th><message:message code="de.enwida.userManagement.tso" /></th>
 			<th><message:message code="de.enwida.userManagement.enabled" /></th>
-			<c:forEach var="role" items="${roles}">
-				<th>
-					${role.roleName}
-				</th>
-			</c:forEach>
 		</tr>
 	</thead>
 	<tfoot>
@@ -69,13 +63,7 @@ $("#myselect").val(get_url_parameter('roleID'));
 				<td>${right.timeRange.to.time}</td>
 				<td>${right.resolution}</td>
 				<td>${right.tso}</td>
-				<td><input type="checkbox" onclick="enableDisableAspect(${right.rightID},this.checked);"  ${right.enabled == 'true' ? 'checked' : ''}></td>
-				
-				<c:forEach var="role" items="${roles}">
-					<td>
-						<input type="checkbox" onclick="enableDisableAspectForRole(${right.rightID},${role.roleID},this.checked);"  ${role.hasRight(right) == 'true' ? 'checked' : ''}/>
-					</td>
-				</c:forEach>
+				<td><input type="checkbox" onclick="enableDisableAspect(${right.rightID},get_url_parameter('roleID'),this.checked);"  ${selectedRole.hasRight(right) == 'true' ? 'checked' : ''}></td>
 			</tr>
 		</c:forEach>
 	</tbody>

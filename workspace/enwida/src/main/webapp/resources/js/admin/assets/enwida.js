@@ -133,9 +133,9 @@ function enableDisableUser(userID,checked){
     });
 };
 
-function enableDisableAspect(userID,checked){
+function enableDisableAspect(rightID,roleID,checked){
 	$.ajax({
-     	  url: "enableDisableAspect?rightID="+userID+"&enabled="+checked
+     	  url: "enableDisableAspect?rightID="+rightID+"&roleID="+roleID+"&enabled="+checked
     });
 };
 
@@ -151,9 +151,3 @@ function updateDomainAutoPass(groupID,val){
     });
 };
 
-
-function enableDisableAspectForRole(rightID,roleID,val){
-	$.ajax({
-     	  url: "enableDisableAspectForRole?rightID="+rightID+"&roleID="+roleID+"&enabled="+val
-    });
-};

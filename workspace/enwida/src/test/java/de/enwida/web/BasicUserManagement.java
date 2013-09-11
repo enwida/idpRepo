@@ -530,7 +530,7 @@ public class BasicUserManagement {
 		
 		// Assigning it should cause an exception
 		try {
-			userService.enableDisableAspectForRole(right, role,true);
+			userService.enableDisableAspect(right, role,true);
 			throw new Exception("Shouldn't be reachable; IllegalArgumentException expected");
 		} catch (IllegalArgumentException e) {
 			// Expected
@@ -545,10 +545,10 @@ public class BasicUserManagement {
 		final Right right1 = testUtils.saveTestRight(211);
 		final Right right2 = testUtils.saveTestRight(221);
 		
-		userService.enableDisableAspectForRole(right1, role,true);
-		userService.enableDisableAspectForRole(right2, role,true);
+		userService.enableDisableAspect(right1, role,true);
+		userService.enableDisableAspect(right2, role,true);
 		
-		final Role freshRole = userService.enableDisableAspectForRole(right1, role,false);
+		final Role freshRole = userService.enableDisableAspect(right1,role,false);
 		
 		// Role is removed from right
 		Assert.assertTrue(right1.getAssignedRoles().size()==0);
@@ -580,8 +580,8 @@ public class BasicUserManagement {
 		
 		Assert.assertTrue(role.getRights().isEmpty());
 		
-		userService.enableDisableAspectForRole(right1, role,true);
-		final Role freshRole = userService.enableDisableAspectForRole(right2, role,true);
+		userService.enableDisableAspect(right1, role,true);
+		final Role freshRole = userService.enableDisableAspect(right2, role,true);
 		
 		// Role is assigned to right objects
 		Assert.assertTrue(right1.getAssignedRoles().contains(role));
@@ -611,10 +611,10 @@ public class BasicUserManagement {
 		final Role role = testUtils.saveTestRole("testrole");
 		final Right right = testUtils.saveTestRight(211);
 		
-		userService.enableDisableAspectForRole(right, role,true);
+		userService.enableDisableAspect(right, role,true);
 
 		// Second add succeeds due to set semantics
-		final Role freshRole = userService.enableDisableAspectForRole(right, role,true);
+		final Role freshRole = userService.enableDisableAspect(right, role,true);
 
 		Assert.assertEquals(1, freshRole.getRights().size());
 		Assert.assertTrue(freshRole.getRights().contains(right));
@@ -652,12 +652,12 @@ public class BasicUserManagement {
 		userService.assignRoleToGroup(role3, group2);
 		userService.assignRoleToGroup(role4, group3);
 		
-		userService.enableDisableAspectForRole(right1, role1,true);
-		userService.enableDisableAspectForRole(right2, role1,true);
-		userService.enableDisableAspectForRole(right3, role2,true);
-		userService.enableDisableAspectForRole(right4, role2,true);
-		userService.enableDisableAspectForRole(right5, role3,true);
-		userService.enableDisableAspectForRole(right6, role4,true);
+		userService.enableDisableAspect(right1, role1,true);
+		userService.enableDisableAspect(right2, role1,true);
+		userService.enableDisableAspect(right3, role2,true);
+		userService.enableDisableAspect(right4, role2,true);
+		userService.enableDisableAspect(right5, role3,true);
+		userService.enableDisableAspect(right6, role4,true);
 
 		// Check user 1
 		final User freshUser1 = userService.fetchUser("testuser1");

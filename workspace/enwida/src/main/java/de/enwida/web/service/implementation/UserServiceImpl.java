@@ -491,13 +491,7 @@ public class UserServiceImpl implements IUserService {
     public boolean userNameAvailability(String username) throws Exception {
         return userDao.usernameAvailablility(username);
     }
-    /**
-     * Enables or disables the aspect based on rightID
-     */
-    @Override
-    public void enableDisableAspect(int rightID, boolean enabled)throws Exception  {
-        rightDao.enableDisableAspect(rightID,enabled);
-    }
+
     /**
      * Activates the user
      */
@@ -667,9 +661,12 @@ public class UserServiceImpl implements IUserService {
         groupDao.save(group);
     }
 
+    /**
+     * Enables or disables the aspect based on rightID
+     */
     @Override
     @Transactional
-    public Role enableDisableAspectForRole(Right right, Role role,boolean enabled) throws Exception {
+    public Role enableDisableAspect(Right right, Role role,boolean enabled) throws Exception {
         
         if (role.getRoleID() == null) {
             throw new IllegalArgumentException("role object is not persisted");

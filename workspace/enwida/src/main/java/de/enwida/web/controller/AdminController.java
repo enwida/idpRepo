@@ -54,25 +54,21 @@ public class AdminController {
 	
 	
 	@RequestMapping(value="/admin_editaspect", method = RequestMethod.GET)
-	public String editAspect(HttpServletRequest request,Model model,Long roleID,Integer start,Integer max,Locale locale) {
+	public String editAspect(HttpServletRequest request,Model model,Long roleID,Locale locale) {
 	    List<Right> aspectRights;
         List<Role> roles = null;
-        //Dont load all data
-        if(start==null){
-            start=10;
-        }
-        if( max==null){
-            max=10;
-        }
         try {
             if (request.getParameterValues("all")==null){
-            aspectRights = aspectService.getAllAspects(roleID,start,max);
+                //Get role aspects
+                aspectRights = aspectService.getRoleAspects(roleID);
             }else{
-                aspectRights = aspectService.getAllAspects(roleID);
+                //get all of the aspects
+                aspectRights = aspectService.getAllAspects();
             }
             roles = userService.fetchAllRoles();
             //Get all roles
             model.addAttribute("roles", roles);
+            model.addAttribute("selectedRole", userService.fetchRoleById(roleID));
             //Get all aspects status of requested role
             model.addAttribute("aspectRights", aspectRights);
         } catch (Exception e) {
@@ -216,9 +212,11 @@ public class AdminController {
     
     @RequestMapping(value = "/enableDisableAspect", method = RequestMethod.GET)
     @ResponseBody
-    public boolean enableDisableAspect(int rightID,boolean enabled) {
+    public boolean enableDisableAspect(Long rightID,Long roleID,boolean enabled) {
         try {
-            userService.enableDisableAspect(rightID,enabled);
+            Right right=userService.fetchRight(rightID);
+            Role role=userService.fetchRoleById(roleID);
+            userService.enableDisableAspect(right,role,enabled);
             return true;       
         } catch (Exception e) {   
             logger.info(e.getMessage());
@@ -247,7 +245,7 @@ public class AdminController {
         try {
             Right right=userService.fetchRight(rightID);
             Role role=userService.fetchRoleById(roleID);
-            return userService.enableDisableAspectForRole(right,role,enabled);      
+            return userService.enableDisableAspect(right,role,enabled);      
         } catch (Exception e) {   
             logger.info(e.getMessage());
             return null;      

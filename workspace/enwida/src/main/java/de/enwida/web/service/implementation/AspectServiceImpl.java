@@ -19,12 +19,12 @@ public class AspectServiceImpl implements IAspectService {
 	@Autowired
 	private IRightDao rightDao;
 
-    public List<Right> getAllAspects(long roleID,int startPosition,int maxResult) throws Exception {
-        return rightDao.getAllAspects(roleID,startPosition,maxResult);
+    public List<Right> getAllAspects() throws Exception {
+        return rightDao.fetchAll();
     }
 
     @Override
-    public List<Right> getAllAspects(Long roleID) {
-        return rightDao.fetchAll();
+    public List<Right> getRoleAspects(Long roleID) {
+        return rightDao.getRoleAspects(roleID);
     }
 }

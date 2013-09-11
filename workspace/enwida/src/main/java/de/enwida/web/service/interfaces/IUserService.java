@@ -286,16 +286,6 @@ public interface IUserService {
     public boolean emailAvailability(final String email) throws Exception;
     
     /**
-     * Enabled or disables the user
-     * 
-     * @param rightID
-     * @param enabled
-     * @return
-     * @throws Exception 
-     */
-    public void enableDisableAspect(int rightID, boolean enabled) throws Exception;
-
-    /**
      * Activates the user
      * 
      * @param username
@@ -377,6 +367,13 @@ public interface IUserService {
      */
 	void updateDomainAutoPass(Long groupID, String domainAutoPass)
 			throws Exception;
-
-    public Role enableDisableAspectForRole(Right right, Role role,boolean enabled) throws Exception;
+    /**
+     * Enabled or disables the user
+     * 
+     * @param rightID
+     * @param enabled
+     * @return
+     * @throws Exception 
+     */
+    public Role enableDisableAspect(Right right, Role role, boolean enabled) throws Exception;
 }
