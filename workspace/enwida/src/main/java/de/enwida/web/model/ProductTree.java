@@ -83,23 +83,21 @@ public class ProductTree implements Cloneable {
                 return null;
             }
         }
-        // Split the product id
-        final int nextId = Integer.parseInt(product.substring(0, 1));
-        final String remainingId = product.substring(1);
-        
-        // Find the child node with id
+        // Find longest prefix match
         ProductNode nextNode = null;
         for (ProductNode child : node.getChildren()) {
-            if (child.getId() == nextId) {
-                nextNode = child;
-                break;
-            }
+        	final String sId = String.valueOf(child.getId());
+        	if (product.startsWith(sId)) {
+        		if (nextNode == null || sId.length() > String.valueOf(nextNode.getId()).length()) {
+        			nextNode = child;
+        		}
+        	}
         }
-        
         // Check if we found the next node
         if (nextNode == null) {
             return null;
         }
+        final String remainingId = product.substring(String.valueOf(nextNode.getId()).length());
         return getLeaf(remainingId, nextNode, trace);
     }
     

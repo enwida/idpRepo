@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
@@ -33,6 +34,7 @@ import de.enwida.transport.DataResolution;
 import de.enwida.web.dao.interfaces.INavigationDao;
 import de.enwida.web.db.model.CalendarRange;
 import de.enwida.web.db.model.NavigationSettings;
+import de.enwida.web.db.model.UploadedFile;
 import de.enwida.web.model.ChartNavigationData;
 import de.enwida.web.model.ProductTree;
 import de.enwida.web.model.ProductTree.ProductAttributes;
@@ -40,6 +42,7 @@ import de.enwida.web.model.User;
 import de.enwida.web.service.interfaces.IAvailibilityService;
 import de.enwida.web.service.interfaces.INavigationService;
 import de.enwida.web.service.interfaces.ISecurityService;
+import de.enwida.web.service.interfaces.IUploadFileService;
 import de.enwida.web.utils.ChartNavigationLocalizer;
 import de.enwida.web.utils.EnwidaUtils;
 import de.enwida.web.utils.ObjectMapperFactory;
@@ -67,6 +70,9 @@ public class NavigationServiceImpl implements INavigationService {
 	
 	@Autowired
 	private ChartNavigationLocalizer navigationLocalizer;
+	
+	@Autowired
+	private IUploadFileService uploadFileService;
 
 	@Value("#{applicationProperties['navigation.json.dir']}")
 	protected String jsonDir;
@@ -105,6 +111,9 @@ public class NavigationServiceImpl implements INavigationService {
 	    // internationalized properties
         final ChartNavigationData navigationData = getDefaultNavigationData(chartId);
         
+        // Add user uploaded data
+        addUploadedLines(navigationData, user);
+        
         // Fetch the related aspects and shrink the navigation data
         // under security and availability perspective
         shrinkNavigationOnAvailibility(navigationData, user);
@@ -126,11 +135,46 @@ public class NavigationServiceImpl implements INavigationService {
         shrinkNavigationOnSecurity(navigationData, user);
         return navigationLocalizer.localize(navigationData, chartId, locale);
     }
-    
+	
 	@Override
 	public ChartNavigationData getNavigationDataFromJsonFile(int chartId) throws IOException {
 		final InputStream in = new FileInputStream(new File(jsonDir, chartId + ".json"));
 		return objectMapper.readValue(in, ChartNavigationData.class);
+	}
+	
+	private void addUploadedLines(ChartNavigationData navigationData, User user) {
+		ProductTree tree = navigationData.getProductTree(0);
+		if (tree == null) {
+			tree = new ProductTree(0);
+		}
+
+		for (final UploadedFile file : uploadFileService.getUploadedFilesUserHasAccessTo(user)) {
+			try {
+				// Only consider active uploads
+				if (!file.isActive()) {
+					continue;
+				}
+				// Filter by aspect
+				final Aspect aspect = Aspect.valueOf(file.getMetaData().getAspect());
+				if (!navigationData.getAspects().contains(aspect)) {
+					continue;
+				}
+				final DataResolution resolution = DataResolution.valueOf(file.getMetaData().getResolution().toUpperCase());
+	
+				// Add file as a leaf to the product tree with TSO 0
+				final ProductLeaf leaf = new ProductLeaf((int) file.getUploadedFileId().getId(),
+						                                 file.getMetaData().getName(),
+														 Collections.singletonList(resolution),
+						                                 CalendarRange.always()
+						                                );
+				tree.getRoot().addChild(leaf);
+			} catch (Exception e) {
+				logger.error("Error while adding uploaded lines: " + e.getLocalizedMessage());
+			}
+		}
+		if (tree.getRoot().getChildren().size() > 0) {
+			navigationData.addProductTree(tree);
+		}
 	}
 	
     private interface IProductRestrictionGetter {

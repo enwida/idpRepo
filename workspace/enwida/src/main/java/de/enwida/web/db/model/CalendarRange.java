@@ -57,7 +57,7 @@ public class CalendarRange implements Serializable, Cloneable, Comparable<Calend
 		final Calendar from = Calendar.getInstance();
 		final Calendar to = Calendar.getInstance();
 		from.setTimeInMillis(0);
-		to.setTimeInMillis(9007199254740992l); // Biggest possible data in JavaScript
+		to.setTimeInMillis(900719925474099l); // Biggest possible date in JavaScript
 		return new CalendarRange(from, to);
     }
     

@@ -235,11 +235,6 @@ public interface IUserService {
 	 */
 	public Role revokeRoleFromGroup(Role role, Group group) throws Exception;
 
-	// TODO: comments
-	public Role assignRightToRole(Right right, Role role) throws Exception;
-
-	public Role revokeRightFromRole(Right right, Role role) throws Exception;
-
     /**
      * Enables or disables the user
      * 
@@ -290,16 +285,6 @@ public interface IUserService {
      */
     public boolean emailAvailability(final String email) throws Exception;
     
-    /**
-     * Enabled or disables the user
-     * 
-     * @param rightID
-     * @param enabled
-     * @return
-     * @throws Exception 
-     */
-    public void enableDisableAspect(int rightID, boolean enabled) throws Exception;
-
     /**
      * Activates the user
      * 
@@ -382,4 +367,13 @@ public interface IUserService {
      */
 	void updateDomainAutoPass(Long groupID, String domainAutoPass)
 			throws Exception;
+    /**
+     * Enabled or disables the user
+     * 
+     * @param rightID
+     * @param enabled
+     * @return
+     * @throws Exception 
+     */
+    public Role enableDisableAspect(Right right, Role role, boolean enabled) throws Exception;
 }

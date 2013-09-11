@@ -172,8 +172,7 @@ public class UserServiceImpl implements IUserService {
             }
         
             // saving in default group (Anonymous)
-			Group anonymousGroup = groupDao
-					.fetchByName(Constants.ANONYMOUS_GROUP);
+			Group anonymousGroup = groupDao.fetchByName(Constants.ANONYMOUS_GROUP);
             if(anonymousGroup == null)
             {
                 anonymousGroup = new Group();
@@ -183,6 +182,18 @@ public class UserServiceImpl implements IUserService {
             anonymousGroup = groupDao.addGroup(anonymousGroup);
             this.assignGroupToUser(userId, anonymousGroup.getGroupID());
             
+            //creating individual group to see uploaded data for the user
+            Group userGroup = new Group(Constants.USER_UPLOAD_PREFIX+user.getUserName()); 
+            userGroup=groupDao.addGroup(userGroup);
+            //assign user to this group
+            this.assignGroupToUser(userId, userGroup.getGroupID());
+            
+            //saving individual role for the group
+            Role userRole = new Role(Constants.USER_UPLOAD_PREFIX+user.getUserName()); 
+            userRole=roleDao.addRole(userRole); 
+            //assign group to this role
+            this.assignRoleToGroup(userRole.getRoleID(),userGroup.getGroupID());
+            
             if(sendEmail){          
                 sendUserActivationEmail(user, locale);
             }
@@ -191,7 +202,8 @@ public class UserServiceImpl implements IUserService {
         else
         {
             return false;
-        }        }
+        }
+    }
 
 	/**
 	 * Gets user Password from the mail
@@ -446,55 +458,6 @@ public class UserServiceImpl implements IUserService {
 			}
     }
 
-	/**
-	 * Caution: role and right parameters should be persisted and in clean state!
-	 * Dirty attributes might be applied (i.e. committed to database, eventually).
-	 * @return the updated and managed role object
-	 * @throws Exception 
-	 */
-	@Override
-	public Role assignRightToRole(Right right, Role role) throws Exception {
-		if (role.getRoleID() == null) {
-			throw new IllegalArgumentException("role object is not persisted");
-		}
-		if (right.getRightID() == null) {
-			throw new IllegalArgumentException("right object is not persisted");
-		}
-		// Modify right's role
-		right.setRole(role);
-		rightDao.update(right, true); // with flush
- 		
-		// Refresh the role in order to reflect the changes
-		final Role result = fetchRoleById(role.getRoleID());
-		roleDao.refresh(result);
-		return result;
-	}
-
-	/**
-	 * Caution: role and right parameters should be persisted and in clean state!
-	 * Dirty attributes might be applied (i.e. committed to database, eventually).
-	 * @return the updated and managed role object
-	 * @throws Exception 
-	 */
-	@Override
-	public Role revokeRightFromRole(Right right, Role role) throws Exception {
-		if (role.getRoleID() == null) {
-			throw new IllegalArgumentException("role object is not persisted");
-		}
-		if (right.getRightID() == null) {
-			throw new IllegalArgumentException("right object is not persisted");
-		}
-		// Modify right's role
-		right.setRole(null);
-		right = rightDao.update(right);
-		rightDao.delete(right);
-		rightDao.flush();
- 		
-		// Refresh the role in order to reflect the changes
-		final Role result = fetchRoleById(role.getRoleID());
-		roleDao.refresh(result);
-		return result;
-	}
 
     /**
      * Enables or Disables the user
@@ -528,13 +491,7 @@ public class UserServiceImpl implements IUserService {
     public boolean userNameAvailability(String username) throws Exception {
         return userDao.usernameAvailablility(username);
     }
-    /**
-     * Enables or disables the aspect based on rightID
-     */
-    @Override
-    public void enableDisableAspect(int rightID, boolean enabled)throws Exception  {
-        rightDao.enableDisableAspect(rightID,enabled);
-    }
+
     /**
      * Activates the user
      */
@@ -703,4 +660,33 @@ public class UserServiceImpl implements IUserService {
         group.setDomainAutoPass(domainAutoPass);
         groupDao.save(group);
     }
+
+    /**
+     * Enables or disables the aspect based on rightID
+     */
+    @Override
+    @Transactional
+    public Role enableDisableAspect(Right right, Role role,boolean enabled) throws Exception {
+        
+        if (role.getRoleID() == null) {
+            throw new IllegalArgumentException("role object is not persisted");
+        }
+        if (right.getRightID() == null) {
+            throw new IllegalArgumentException("right object is not persisted");
+        }
+        
+        final Set<Right> rights=new HashSet<Right>(role.getRights());
+        if(enabled)
+            rights.add(right);
+        else
+            rights.remove(right);
+        role.setRights(rights);
+        roleDao.update(role, true);
+       
+        final Right result =rightDao.fetchById(right.getRightID());
+        rightDao.refresh(result);
+        
+        return  role;
+    }
+
 }

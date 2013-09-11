@@ -59,6 +59,15 @@ public class ChartNavigationData implements Cloneable {
 		return this.productTrees;
 	}
 	
+	public ProductTree getProductTree(int tso) {
+		for (final ProductTree tree : productTrees) {
+			if (tree.getTso() == tso) {
+				return tree;
+			}
+		}
+		return null;
+	}
+	
 	public void addProductTree(ProductTree productTree) {
 	    this.productTrees.add(productTree);
 	}

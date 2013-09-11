@@ -1,6 +1,7 @@
 package de.enwida.web.service.interfaces;
 
 import java.util.List;
+import java.util.Set;
 
 import de.enwida.web.db.model.UploadedFile;
 import de.enwida.web.model.User;
@@ -12,6 +13,7 @@ public interface IUploadFileService {
     public UploadedFile getFileByFilePath(String filePath);
     public int getUploadedFileVersion(UploadedFile file, User user);
     public List<UploadedFile> getUploadedFiles(User user);
+    public Set<UploadedFile> getUploadedFilesUserHasAccessTo(User user);
     
     User saveUserUploadedFile(User user, UploadedFile file) throws Exception;
     User updateUserUploadedFile(User user, UploadedFile file) throws Exception;

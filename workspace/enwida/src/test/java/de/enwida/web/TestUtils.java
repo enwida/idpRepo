@@ -110,12 +110,12 @@ public class TestUtils {
 	
 	public Role saveRight(User user, Right right) throws Exception {
 		userService.saveRight(right);
-		return userService.assignRightToRole(right, user.getAllRoles().get(0));
+		return userService.enableDisableAspect(right, user.getAllRoles().get(0),true);
 	}
 	
 	public Role saveRight(Role role, Right right) throws Exception {
 		userService.saveRight(right);
-		return userService.assignRightToRole(right, role);
+		return userService.enableDisableAspect(right, role,true);
 	}
 
 	

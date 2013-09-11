@@ -3,13 +3,13 @@ package de.enwida.web.dao.implementation;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import org.springframework.stereotype.Repository;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 
-import de.enwida.transport.Aspect;
 import de.enwida.web.dao.interfaces.AbstractBaseDao;
 import de.enwida.web.dao.interfaces.IRightDao;
 import de.enwida.web.db.model.CalendarRange;
@@ -26,7 +26,7 @@ public class RightDaoImpl extends AbstractBaseDao<Right> implements IRightDao {
 	 * Enables or disables the Aspects in the database.So that right won't see that aspect 
 	 */
     @Override
-    public boolean enableDisableAspect(long rightID, boolean enabled) throws Exception{
+    public boolean enableDisableAspect(long rightID,long roleID, boolean enabled) throws Exception{
 		Right right = fetchById(rightID);
 		right.setEnabled(enabled);
 		update(right);
@@ -36,11 +36,17 @@ public class RightDaoImpl extends AbstractBaseDao<Right> implements IRightDao {
     public boolean isAuthorizedByExample(Right dataAuthorization)
             throws Exception {
 
+        //Find all the role IDs
+        final List<Long> allRoleIDs = new ArrayList<Long>();
+        for (final Role role : dataAuthorization.getAssignedRoles()) {
+            allRoleIDs.add(role.getRoleID());
+        }
+        
         TypedQuery<Right> typedQuery = em.createQuery("from " + Right.class.getName()
-                                + "  WHERE role_id = :role_id AND tso = :tso AND product = :product AND aspect = :aspect AND resolution = :resolution AND time1 <= :time1 AND time1 >= :time2 AND enabled = :enabled",
+                                + " INNER JOIN users.role_right ON users.role_right.right_id=users.rights.right_id   WHERE users.role_right.role_id = :role_id AND tso = :tso AND product = :product AND aspect = :aspect AND resolution = :resolution AND time1 <= :time1 AND time1 >= :time2 AND enabled = :enabled",
                         Right.class);
-
-        typedQuery.setParameter("role_id", dataAuthorization.getRole().getRoleID());
+        //TODO:fix here
+        typedQuery.setParameter("role_id", allRoleIDs);
         typedQuery.setParameter("tso", dataAuthorization.getTso());
         typedQuery.setParameter("product", dataAuthorization.getProduct());
         typedQuery.setParameter("aspect", dataAuthorization.getAspect());
@@ -61,7 +67,7 @@ public class RightDaoImpl extends AbstractBaseDao<Right> implements IRightDao {
     	}
     	
         TypedQuery<Right> typedQuery = em.createQuery( "from "+ Right.class.getName()
-                + "  WHERE role_id in :role_id AND tso = :tso AND product = :product AND aspect = :aspect AND resolution = :resolution AND enabled = true",
+                + " INNER JOIN users.role_right ON users.role_right.right_id=users.rights.right_id  WHERE users.role_right.role_id in :role_id AND tso = :tso AND product = :product AND aspect = :aspect AND resolution = :resolution AND enabled = true",
         Right.class);
         typedQuery.setParameter("role_id", allRoleIDs);
         typedQuery.setParameter("tso",request.getTso());
@@ -95,10 +101,17 @@ public class RightDaoImpl extends AbstractBaseDao<Right> implements IRightDao {
     
     public List<Right> getListByExample(Right dataAuthorization)
             throws Exception {
+        
+        //Find all the role IDs
+        final List<Long> allRoleIDs = new ArrayList<Long>();
+        for (final Role role : dataAuthorization.getAssignedRoles()) {
+            allRoleIDs.add(role.getRoleID());
+        }
+        
         TypedQuery<Right> typedQuery = em.createQuery( "from "+ Right.class.getName()
-                                + "  WHERE role_id = :role_id AND tso = :tso AND product = :product AND aspect = :aspect AND enabled = :enabled",
+                                + " INNER JOIN users.role_right ON users.role_right.right_id=users.rights.right_id  WHERE users.role_right.role_id in :role_id AND tso = :tso AND product = :product AND aspect = :aspect AND enabled = :enabled",
                         Right.class);
-        typedQuery.setParameter("role_id", dataAuthorization.getRole().getRoleID());
+        typedQuery.setParameter("role_id", allRoleIDs);
         typedQuery.setParameter("tso", dataAuthorization.getTso());
         typedQuery.setParameter("product", dataAuthorization.getProduct());
         typedQuery.setParameter("aspect", dataAuthorization.getAspect());
@@ -110,14 +123,12 @@ public class RightDaoImpl extends AbstractBaseDao<Right> implements IRightDao {
     public void enableLine(Right dataAuthorization) throws Exception{
         update(dataAuthorization);
     }
-
+    
     @Override
-    public List<Right> getAllAspects(long roleID,int startPosition,int maxResult) {
-        TypedQuery<Right> typedQuery = em.createQuery( "from "+ Right.class.getName()
-                + "  WHERE role_id = :roleID AND enabled = TRUE", Right.class);
-        typedQuery.setFirstResult(startPosition);
-        typedQuery.setMaxResults(maxResult);
-            typedQuery.setParameter("roleID", roleID);
-            return typedQuery.getResultList();
+    public List<Right> getRoleAspects(long roleID) {
+        Query typedQuery = em.createNativeQuery( "SELECT * from users.rights INNER JOIN users.role_right ON users.role_right.right_id=users.rights.right_id  WHERE users.role_right.role_id=:role_id", Right.class);
+            typedQuery.setParameter("role_id", roleID);
+        List results =  typedQuery.getResultList();
+        return results;
     }
 }

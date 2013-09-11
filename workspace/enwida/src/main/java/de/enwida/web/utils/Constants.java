@@ -45,6 +45,8 @@ public class Constants {
     public static final String USER_GROUP_TABLE_SCHEMA_NAME = USERS_SCHEMA_NAME;
     public static final String GROUP_ROLE_TABLE_NAME = "group_role";
     public static final String GROUP_ROLE_TABLE_SCHEMA_NAME = USERS_SCHEMA_NAME;
+    public static final String ROLE_RIGHT_TABLE_NAME = "role_right";
+    public static final String ROLE_RIGHT_TABLE_SCHEMA_NAME = USERS_SCHEMA_NAME;
 
 
 	// Cookie Constants
@@ -64,5 +66,7 @@ public class Constants {
 	public static final String COMMENT_VALUE_SEPARATOR = ":";
 	public static final String COMMENT_START_SYMBOL = "#";
 	public static final String DATA_SEPARATOR = ";";
+
+    public static final String USER_UPLOAD_PREFIX = "upload_";
 
 }

@@ -58,7 +58,7 @@ public class TestController {
 		Calendar cal = Calendar.getInstance();
 		
 		Right da = new Right();
-		da.setRole(new Role(3));
+		da.getAssignedRoles().add(new Role(3));
 		da.setTso(99);
 		da.setProduct(321);
 		da.setAspect("rl_ab1");

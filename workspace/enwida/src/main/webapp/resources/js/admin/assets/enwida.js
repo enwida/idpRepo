@@ -133,9 +133,9 @@ function enableDisableUser(userID,checked){
     });
 };
 
-function enableDisableAspect(userID,checked){
+function enableDisableAspect(rightID,roleID,checked){
 	$.ajax({
-     	  url: "enableDisableAspect?rightID="+userID+"&enabled="+checked
+     	  url: "enableDisableAspect?rightID="+rightID+"&roleID="+roleID+"&enabled="+checked
     });
 };
 
@@ -150,3 +150,4 @@ function updateDomainAutoPass(groupID,val){
      	  url: "updateDomainAutoPass?groupID="+groupID+"&domainAutoPass="+val
     });
 };
+
