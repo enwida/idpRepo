@@ -1,5 +1,23 @@
 /*****************************************************************************/
 /*
+/* General
+/*
+/*****************************************************************************/
+body {
+  font-family: Optima, 'Bell MT';
+  font-size: 20px;
+}
+
+h5,h6 {
+  font-size: 18px;
+}
+h1,h2,h3,h4,h5,h6 {
+  margin-top: 30px;
+  margin-bottom: 20px;
+}
+
+/*****************************************************************************/
+/*
 /* Home
 /*
 /*****************************************************************************/
@@ -25,6 +43,7 @@ ul.posts span {
 /*****************************************************************************/
 
 .sidebar {
+  font-size: 18px;
   /*margin-top: 100px;*/
   width: 250px;
   padding: 5px;
@@ -54,8 +73,8 @@ ul.posts span {
 .site .header {
   background-color: #aa0000;
   text-align: center;
-  height: 150px;
-  margin-top: 20px;
+  height: 100px;
+  margin-top: 0;
   margin-bottom: 20px;
   border-top: 1px solid #770000;
   border-bottom: 1px solid #770000;
@@ -65,7 +84,7 @@ ul.posts span {
   color: #FFFFFF;
   font-weight: bold;
   text-decoration: none;
-  padding-top: 34px;
+  padding-top: 0;
 }
 
 .site .header a {
@@ -103,44 +122,6 @@ ul.posts span {
 
 .site .footer .rss img {
   border: 0;
-}
-
-/*****************************************************************************/
-/*
-/* Posts
-/*
-/*****************************************************************************/
-
-/* standard */
-.post pre {
-  border: 1px solid #ddd;
-  background-color: #eef;
-  padding: 0 .4em;
-}
-
-.post ul, .post ol {
-  margin-left: 1.35em;
-}
-
-.post code {
-  border: 1px solid #ddd;
-  background-color: #eef;
-  padding: 0 .2em;
-}
-
-.post pre code {
-  border: none;
-}
-
-/* terminal */
-.post pre.terminal {
-  border: 1px solid #000;
-  background-color: #333;
-  color: #FFF;
-}
-
-.post pre.terminal code {
-  background-color: #333;
 }
 
 /*****************************************************************************/
