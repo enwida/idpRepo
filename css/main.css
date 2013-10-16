@@ -8,12 +8,32 @@ body {
   font-size: 20px;
 }
 
-h5,h6 {
-  font-size: 18px;
-}
+/* Whitespace around headings */
 h1,h2,h3,h4,h5,h6 {
   margin-top: 30px;
   margin-bottom: 20px;
+}
+
+/* Don't let headings become much smaller than body text */
+h5,h6 {
+  font-size: 18px;
+}
+
+/* Don't let headings become too huge */
+h1 {
+  font-size: 24px;
+}
+h2 {
+  font-size: 22px;
+}
+h3 {
+  font-size: 20px;
+}
+
+code {
+  font-size: 80%;
+  color: black;
+  background-color: #f3f3f3;
 }
 
 /*****************************************************************************/
