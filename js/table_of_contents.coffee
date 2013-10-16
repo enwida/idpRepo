@@ -5,6 +5,10 @@ $(document).ready ->
   setupTableOfContents ".toc", "h1,h2,h3,h4,h5,h6,h7,h8"
   setupTableOfContents ".sidebar", "h1,h2,h3", ["nav", "nav-stacked"]
   $('body').scrollspy({ target: '.sidebar' })
+  updateSidebarVisibility()
+
+  $(window).resize ->
+    updateSidebarVisibility()
 
 setupTableOfContents = (parent, selector, klasses=[]) ->
   roots = [$(parent)]
@@ -41,4 +45,10 @@ getHeadlineNest = (element) ->
 
 getAnchorName = (title) ->
   title.replace(/\s|\//g, "-")
+
+updateSidebarVisibility = ->
+  if document.width < 1200
+    $(".sidebar").parent().hide()
+  else
+    $(".sidebar").parent().show()
 
