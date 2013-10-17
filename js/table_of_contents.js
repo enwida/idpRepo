@@ -3,8 +3,8 @@
   var getAnchorName, getHeadlineNest, setupTableOfContents, updateSidebarVisibility;
 
   $(document).ready(function() {
-    setupTableOfContents(".toc", "h1,h2,h3,h4,h5,h6,h7,h8");
-    setupTableOfContents(".sidebar", "h1,h2,h3", ["nav", "nav-stacked"]);
+    setupTableOfContents(".toc", "h2,h3,h4,h5,h6,h7,h8");
+    setupTableOfContents(".sidebar", "h2,h3", ["nav", "nav-stacked"]);
     $('body').scrollspy({
       target: '.sidebar'
     });
