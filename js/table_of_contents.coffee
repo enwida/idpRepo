@@ -4,9 +4,13 @@
 $(document).ready ->
   setupTableOfContents ".toc", "h2,h3,h4,h5,h6,h7,h8"
   setupTableOfContents ".sidebar", "h2,h3", ["nav", "nav-stacked"]
-  $('body').scrollspy({ target: '.sidebar' })
-  updateSidebarVisibility()
+  $("body").scrollspy({ target: ".sidebar" })
+  
+  # Make first navbar item active
+  $(".sidebar li").first().addClass "active"
 
+  # Show/hide navbar depending on window width
+  updateSidebarVisibility()
   $(window).resize ->
     updateSidebarVisibility()
 

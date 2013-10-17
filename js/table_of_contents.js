@@ -5,9 +5,10 @@
   $(document).ready(function() {
     setupTableOfContents(".toc", "h2,h3,h4,h5,h6,h7,h8");
     setupTableOfContents(".sidebar", "h2,h3", ["nav", "nav-stacked"]);
-    $('body').scrollspy({
-      target: '.sidebar'
+    $("body").scrollspy({
+      target: ".sidebar"
     });
+    $(".sidebar li").first().addClass("active");
     updateSidebarVisibility();
     return $(window).resize(function() {
       return updateSidebarVisibility();
